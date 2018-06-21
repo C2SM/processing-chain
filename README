@@ -1,0 +1,13 @@
+COSMO processing chain
+======================
+
+Usage example:
+$ python run_chain.py cases/example/config.py 2015-01-01 0 24 meteo
+
+Structure:
+- run_chain.py: Main script to be called for running the chain.
+- jobs: package with modules for each job
+- jobs/tools: tools for doing jobs
+- doc: documentation
+- cases/example: example case
+
