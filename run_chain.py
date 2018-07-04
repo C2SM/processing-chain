@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 import importlib
 import logging
+import warnings
 import os
 import subprocess
 import sys
@@ -132,10 +133,17 @@ def run_chain(work_root, start_time, hstart=0.0, hstop=24.0, step=24.0,
         if not skip:
             print('Process "%s" for chain "%s"' % (job, job_id))
             sys.stdout.flush()
-            exitcode = call_bash_function(
-                os.path.join(cfg.chain_src_dir, 'jobs_mother', '%s.bash' % job),
-                job
-            )
+            
+            try:
+                to_call = getattr(jobs,job)
+                to_call.main(start_time,hstart,hstop,cfg)
+                exitcode=0
+            except AttributeError:
+                exitcode = call_bash_function(
+                    os.path.join(cfg.chain_src_dir, 'jobs_mother', '%s.bash' % job),
+                    job
+                )
+                
             if exitcode != 0 or not os.path.exists( os.path.join(log_finished_dir, job) ):
                 subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (job, job_id)
                 with open(os.path.join(log_working_dir, job)) as logfile:
@@ -181,7 +189,7 @@ if __name__ == '__main__':
     start_time = datetime.strptime(sys.argv[2], '%Y-%m-%d')
     offset = int(sys.argv[3])
     days = int(sys.argv[4])
-    job_names = sys.argv[4:]
+    job_names = sys.argv[5:]
 
     #restart_runs(start_time, work_root, days, offset, jobs)
     run_chain(cfg.work_root, start_time, hstart=offset, hstop=days, step=24.0,

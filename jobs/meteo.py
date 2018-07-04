@@ -33,7 +33,7 @@ def main(starttime, hstart, hstop, cfg):
     scratch_path = os.path.join(cfg.int2lm_input, 'meteo')
 
     try:
-        os.makedirs(meteo_dir, exists_ok=True)
+        os.makedirs(meteo_dir, exist_ok=True)
     except (OSError, PermissionError):
         logging.error("Creating meteo input folder failed")
         raise
