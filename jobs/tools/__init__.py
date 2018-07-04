@@ -2,6 +2,8 @@
 
 from datetime import datetime, timedelta
 import subprocess
+from . import cams4int2cosmo
+from . import ctnoaa4int2cosmo
 
 
 def iter_hours(starttime, hstart, hstop, step=1):
