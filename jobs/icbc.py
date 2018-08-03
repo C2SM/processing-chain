@@ -1,15 +1,17 @@
 #!/usr/bin/env python
-# coding: utf-8
+# -*- coding: utf-8 -*-
 #
 # Check presence of CarbonTracker files, preprocess, and soft link
 #
-# result in case of success: all emission input-files necessary are found in 
+# Result in case of success: all emission input-files necessary are found in 
 #                            ${int2lm_input}/icbc/
 #
 # Dominik Brunner, Jul 2013
 #
-# 17.07.2013 Initial release, based on Christoph Knotes' artbd.bash
-# 21.06.2018 Translated to Python (hjm)
+# 2013-07-17 Initial release, based on Christoph Knotes' artbd.bash
+# 2018-06-21 Translated to Python (hjm)
+
+### DEVELOPMENT VERSION ###
 
 import os
 import shutil

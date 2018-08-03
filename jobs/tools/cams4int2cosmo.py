@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Prepare CAMS CO2, CO and NOx boundary conditions for int2lm/int2cosmo

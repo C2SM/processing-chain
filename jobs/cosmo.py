@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # Setup the namelist for a COSMO tracer run and submit the job to the queue
 #
 # result in case of success: forecast fields found in  
@@ -5,10 +8,12 @@
 #
 # Dominik Brunner, July 2013
 #
-# 21.07.2013 Initial release, adopted from Christoph Knote's cosmo.bash
-# 10.07.2018 adapted to python by muq
+# 2013-07-21 Initial release, adopted from Christoph Knote's cosmo.bash (brd)
+# 2018-07-10 Translated to Python (muq)
 
 # Not tested yet. Note the comment.
+
+### DEVELOPMENT VERSION ###
 
 import logging
 import os
@@ -71,7 +76,8 @@ def main(starttime, cfg):
     
 # copy cosmo.exe
     try:
-        shutil.copy(cfg.cosmo_bin, os.path.join(cfg.work_root,'cosmo')  # 'cosmo' file name or directory
+        # 'cosmo' file name or directory
+        shutil.copy(cfg.cosmo_bin, os.path.join(cfg.work_root,'cosmo')
     except FileNotFoundError:
         logging.error("cosmo_bin not found")
         raise
@@ -79,11 +85,21 @@ def main(starttime, cfg):
         logging.error("Copying cosmo_bin failed")
         raise
 
-# INPUT_BGC from csv file
-    tools.write_cosmo_input_bgc(os.path.join(cfg.chain_src_dir,'cases','berlin2_cosmo_tracers.csv'), os.path.join(cfg.work_root,'INPUT_BGC')
+# Write INPUT_BGC from csv file
+    # csv file with tracer definitions 
+    tracer_csvfile = ''.join(cfg.casename,'_cosmo_tracers.csv')
 
-#prepare namelist and submit job
-    subprocess.call(["source", cfg.cosmo_namelist])    #will these *.sh be converted to python as well?
+    tracer_filename = os.path.join(cfg.chain_src_dir,'cases',tracer_csvfile)
+    input_bgc_filename = os.path.join(cfg.work_root,'INPUT_BGC')
+
+    tools.write_cosmo_input_bgc(os.path.join(tracer_filename,
+                                              input_bgc_filename,
+                                             )
+                                )
+
+# Prepare namelist and submit job
+    #will these *.sh be converted to python as well?
+    subprocess.call(["source", cfg.cosmo_namelist])
     subprocess.call(["source", cfg.cosmo_runjob])   
-
     subprocess.call(["sbatch", "--wait", os.path.join(cfg.work_root,'run.job')])
+

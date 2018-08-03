@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# coding: utf-8
+# -*- coding: utf-8 -*-
 #
 # Prepare input for meteorological initial and boundary conditions
 # by copying files from OSM archive to INT2LM input folder
@@ -9,12 +9,13 @@
 # result in case of success: all meteo input-files necessary are found in 
 #                            ${int2lm_input}/meteo/
 #
-# Dominik Brunner, Empa
+# Dominik Brunner, July 2013
 #
-# 16.07.2013 Initial release, based on Christoph Knote script
-# 15.01.2017 Modified for hypatia and project SmartCarb
-# 21.06.2018 Translated to Python (kug)
-#
+# 2013-07-16 Initial release, based on Christoph Knote script
+# 2017-01-15 Modified for hypatia and project SmartCarb
+# 2018-06-21 Translated to Python (kug)
+
+### DEVELOPMENT VERSION ###
 
 import os
 import logging

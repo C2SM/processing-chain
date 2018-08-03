@@ -6,7 +6,9 @@
 
 #####################
 ##  Problems:
-##  - need to see if some variables are define (hstart, inidate ...)
+##  - need to see if some variables are defined (hstart, inidate ...)
+
+### DEVELOPMENT VERSION ###
 
 import logging
 import os
