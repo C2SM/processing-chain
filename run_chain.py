@@ -18,6 +18,7 @@ from jobs import tools
 # try to load config file
 try:
     fn = os.path.splitext(sys.argv[1])[0]
+    casename = fn[fn.index('cases/')+len('cases/'):fn.index('/config')]
     sys.path.append(os.path.dirname(fn))
     cfg = importlib.import_module(os.path.basename(fn))
 except IndexError:
@@ -67,7 +68,7 @@ def run_chain(work_root, start_time, hstart=0.0, hstop=24.0, step=24.0,
 
     # chain 
     job_id = '%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
-    chain_root = os.path.join(work_root, job_id)
+    chain_root = os.path.join(work_root, casename, job_id)
     setattr(cfg,'chain_root', chain_root)
 
     # INT2LM

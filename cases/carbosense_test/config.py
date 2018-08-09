@@ -111,7 +111,7 @@ post_int2lm_species = ['CO2_BG', 'CO_BG', 'CH4_BG']
 cosmo_bin = '/users/mjaehn/github/cosmo-pompa/cosmo/cosmo_smartcarb_ser_gpu'
 
 # Case specific settings (int2lm and cosmo namelists and runscripts)
-path = os.getcwd()
+path = os.path.realpath(__file__)
 casename = os.path.basename(os.path.dirname(path)) # pathname in example/
 
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT' % (chain_src_dir, casename)
