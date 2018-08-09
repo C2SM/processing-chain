@@ -35,30 +35,6 @@ def main(starttime, hstart, hstop, cfg):
 
     logging.info('Setup the namelist for a COSMO tracer run and submit the job to the queue')
 
-    np_io= 0 ;     setattr(cfg,"np_io",np_io)
-
-
-# Set number of nodes and cores for COSMO 
-    if cfg.compute_queue=="normal":
-        walltime="08:00:00"
-        np_x=5
-        np_y=4
-    elif cfg.compute_queue=="debug":
-        walltime="00:30:00"
-        np_x=1
-        np_y=1
-        ppn=1    
-    else: 
-        logging.error("unsetted queueName %s" %cfg.compute_queue)
-        sys.exit(1)
-
-    np_tot = np_x * np_y + np_io     
-
-    setattr(cfg,"np_x",np_x)
-    setattr(cfg,"np_y",np_y)
-    setattr(cfg,"np_tot",np_tot)
-    setattr(cfg,"walltime",walltime)
-
 # change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
     if int(starttime.strftime("%Y%m%d%H")) < 2007080200:   #input starttime as a number
         multi_layer=".FALSE."

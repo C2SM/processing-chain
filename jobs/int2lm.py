@@ -31,28 +31,6 @@ def main(starttime, hstart, hstop, cfg):
     logfile_finish=os.path.join(cfg.log_finished_dir,"int2lm")
     tools.change_logfile(logfile)
 
-    logging.info('Setup the namelist for INT2LM and submit the job to the queue')
-
-
-# Set number of nodes and cores for INT2LM 
-    walltime="24:00:00" # TODO: make walltime dependent on simulation period?
-                        #       3 days ~ 10 hours walltime
-                        # Even possible to adapt the following parameters...
-    nodes = 2 ; setattr(cfg,"nodes",nodes)
-    ntasks_per_node = 12 ; setattr(cfg,"ntasks_per_node",ntasks_per_node)
-    np_x = 8; setattr(cfg,"np_x",np_x)
-    np_y = 3; setattr(cfg,"np_y",np_y)
-    np_io = 0; setattr(cfg,"np_io",np_io)
-
-    np_tot = np_x * np_y + np_io; setattr(cfg,"np_tot",np_tot)
-
-    # Queue information
-    if cfg.compute_queue=="debug":
-        walltime="00:30:00"
-    else:
-        walltime="06:00:00"
-    setattr(cfg,"walltime",walltime)
-
 # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
     if int(starttime.strftime("%Y%m%d%H")) < 2007080200:   #input starttime as a number
         multi_layer=".FALSE."
