@@ -42,28 +42,36 @@ vprm_dir = os.path.join(input_root,'vprm_smartcarb','processed')
 vprm_prefix = ["vprm_"] #could be [gpp_, ra_]
 
 # CAMS for CO2, CO and NOX initial and boundary conditions
+
+# if the data is already preprocessed and just need to be copied, 
+# - cams_dir_orig is not used
+# - cams_dir_proc is where your data to be copied is
+# - cams_parameters should have one element per type of file you need to copy. It should have:
+#       - "suffix" : files are called cams_dir_proc/suffix_date.nc
+#       - "inc" : increment between icbc data 
 cams_dir_orig = os.path.join(input_root, 'icbc') #Input directory
 cams_dir_proc = os.path.join(input_root, 'icbc', 'processed2') #Output directory
-# required parameters for cams preprocessing
-# The list should contain one element per output file
-# If cams4int2cosmo.py is used, need all the following, otherwise just the suffix
+
+
+# If the data is not yet preprocessed and needs to run cams4int2cosmo
+# cams_parameters should have one element per type of file you need to output. It should have:
 # - species : the list of species to put in said file (within CO2, CO, CH4, NOX)
 # - inc : the increment between timesteps
 # - prefix1 : the input file prefix (cams_dir_orig/prefix1_date.nc)
 # - prefix2 : the input surface pressure file prefix (cams_dir_orig/prefix2_date.nc)
 # - lev : the number of levels (137 or 60)
 # - suffix : for the output file (cams_dir_proc/suffix_date.nc)
-cams_parameters = [
-    {"suffix":"cams_co2",
-     # " species" :["CO2","CO","CH4"],
-     # "inc" : 3,
+cams_parameters = [{
+    "suffix" : "cams_co2",
+    "inc" : 3
+     # "species" :["CO2","CO","CH4"],     
      # "prefix1":"cams_gf39",
      # "prefix2":"sfc_gf39",
      # "lev":137,
-     }
+},
     {"suffix":"cams_nox",
-     # "species" :["NOX"],
-     # "inc" : 3,
+     "inc" : 3,
+     # "species" :["NOX"],     
      # "prefix1":"cams_0001",
      # "prefix2":"sfc_0001",
      # "lev":60,
@@ -115,7 +123,8 @@ post_int2lm_species = ["CO2_BG"]#,"CO_BG","CH4_BG","NOX_BG"]
 cosmo_bin= '/users/haussaij/cosmo_official/cosmo-pompa/cosmo/cosmo'
 
 # Case specific settings (int2lm and cosmo namelists and runscripts)
-casename = os.path.basename(os.path.dirname(path))
+path = os.path.realpath(__file__)
+casename = os.path.basename(os.path.dirname(path)) # pathname in example/
 
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT' % (chain_src_dir,casename)
 int2lm_runjob = '%s/cases/%s/int2lm_runjob' % (chain_src_dir,casename)
@@ -123,8 +132,35 @@ cosmo_namelist = '%s/cases/%s/cosmo_INPUT' % (chain_src_dir,casename)
 cosmo_runjob = '%s/cases/%s/cosmo_runjob' % (chain_src_dir,casename)
 
 
-# add local variables (defined after "not_config") to os.environ to be used
-# in bash scripts called by this script
-for key, value in list(locals().items()):
-    if key != 'not_config' and key not in not_config:
-        os.environ[key] = str(value)
+# Walltimes and domain decomposition
+
+## INT2LM
+if compute_queue=="normal":
+    int2lm_walltime="24:00:00"
+elif compute_queue=="debug":
+    int2lm_walltime="00:30:00"
+else: 
+    logging.error("Unset queue name: %s" % compute_queue)
+    sys.exit(1)
+
+int2lm_nodes = 2
+int2lm_ntasks_per_node = 12 
+int2lm_np_x = 8
+int2lm_np_y = 3
+int2lm_np_tot = int2lm_np_x * int2lm_np_y
+
+## COSMO 
+if compute_queue=="normal":
+    cosmo_walltime="24:00:00"
+    cosmo_np_x=6
+    cosmo_np_y=5
+elif compute_queue=="debug":
+    cosmo_walltime="00:30:00"
+    cosmo_np_x=1
+    cosmo_np_y=1
+else: 
+    logging.error("Unknown queue name: %s" % compute_queue)
+    sys.exit(1)
+
+cosmo_np_io = 0
+cosmo_np_tot = cosmo_np_x * cosmo_np_y + cosmo_np_io     

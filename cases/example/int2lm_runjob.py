@@ -6,10 +6,10 @@ def main(cfg,logfile,logfile_finish):
     with open(output_file,"w") as of:
         to_write = f"""#!/bin/bash -l
 #SBATCH --job-name=int2lm_{cfg.inidate_yyyymmddhh}_{cfg.forecasttime}
-#SBATCH --time={cfg.walltime}
-#SBATCH --nodes={cfg.nodes}
+#SBATCH --time={cfg.int2lm_walltime}
+#SBATCH --nodes={cfg.int2lm_nodes}
 #SBATCH --ntasks-per-core=1
-#SBATCH --ntasks-per-node={cfg.ntasks_per_node}
+#SBATCH --ntasks-per-node={cfg.int2lm_ntasks_per_node}
 #SBATCH --cpus-per-task=1
 #SBATCH --partition={cfg.compute_queue}
 #SBATCH --constraint=gpu
@@ -50,7 +50,7 @@ echo "============== StartTime: `date +%s` s"
 echo "============== StartTime: `date`"
 echo "====================================================="
         
-srun -u -n {cfg.np_tot} ./int2lm >> {logfile} 2>&1
+srun -u -n {cfg.int2lm_np_tot} ./int2lm >> {logfile} 2>&1
 pid=$?
 
 echo "====================================================="

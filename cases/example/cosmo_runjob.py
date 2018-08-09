@@ -7,10 +7,10 @@ def main(cfg,logfile,logfile_finish):
 #SBATCH --account={cfg.compute_account}
 #SBATCH --job-name="cosmo_{cfg.inidate_yyyymmddhh}_{cfg.forecasttime}"
 #SBATCH --output={logfile}
-#SBATCH --time={cfg.walltime}
+#SBATCH --time={cfg.cosmo_walltime}
 #SBATCH --workdir={cfg.cosmo_work}
 #SBATCH --constraint=gpu
-#SBATCH --ntasks={cfg.np_tot}
+#SBATCH --ntasks={cfg.cosmo_np_tot}
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:1
 
@@ -40,7 +40,7 @@ echo "============== StartTime: `date +%s` s"
 echo "============== StartTime: `date`"
 echo "====================================================="
 
-srun -u -n {cfg.np_tot} ./cosmo >> {logfile} 2>&1
+srun -u -n {cfg.cosmo_np_tot} ./cosmo >> {logfile} 2>&1
 pid=$?
 
 echo "====================================================="

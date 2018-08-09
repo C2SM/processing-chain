@@ -39,7 +39,7 @@ def change_logfile(filename):
 
     log = logging.getLogger()  # root logger
     if len(log.handlers)>0:
-        log.addHandler = fileh      # set the new handler
+        log.handlers = [fileh]      # set the new handler
     else:
         logging.basicConfig(filename=filename,level=logging.INFO)
 

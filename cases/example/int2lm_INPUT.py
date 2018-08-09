@@ -11,8 +11,8 @@ def main(cfg):
     hstop = {cfg.hstop_int2lm},        ! last hour to be processed
     hincbound = 1.0,     ! increment in hours for the processing
 
-    nprocx = {cfg.np_x},         ! number of processors in east-west direction
-    nprocy = {cfg.np_y},          ! number of processors in north-south direction
+    nprocx = {cfg.int2lm_np_x},         ! number of processors in east-west direction
+    nprocy = {cfg.int2lm_np_y},          ! number of processors in north-south direction
     nprocio = 0,         ! number of extra processors for asynchronous IO
     nincwait = 30,       ! seconds to wait until next attempt if a ready file is
                          ! not available
