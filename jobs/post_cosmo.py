@@ -16,17 +16,23 @@ import shutil
 import glob 
 from subprocess import call
 import sys
+from . import tools
+
 
 def main(starttime, hstart, hstop, cfg):
-    cosmo_work = os.environ["cosmo_work"]
-    cosmo_output = os.environ["cosmo_output"]
-    int2lm_work = os.environ["int2lm_work"]
-    log_working_dir = os.environ["log_working_dir"]
-    log_finished_dir = os.environ['log_finished_dir']
+    cosmo_work = cfg.cosmo_work
+    cosmo_output = cfg.cosmo_output
+    int2lm_work = cfg.int2lm_work
+    log_working_dir = cfg.log_working_dir
+    log_finished_dir = cfg.log_finished_dir
 
     runscript = os.path.join(cosmo_work,"cp_cosmo.job")
-    copy_path = os.join.path(cfg.output_root,start_time.strftime('%Y%m%d%H')+"_"+hstart+"_"+hstop)
+    copy_path = os.path.join(cfg.output_root,starttime.strftime('%Y%m%d%H')+"_"+str(hstart)+"_"+str(hstop))
+
     logfile = os.path.join(log_working_dir,"post_cosmo")
+    logfile_finish=os.path.join(cfg.log_finished_dir,"post_int2lm")
+    tools.change_logfile(logfile)
+
 
     try:
         os.makedirs(copy_path, exist_ok=True)
@@ -40,6 +46,8 @@ def main(starttime, hstart, hstop, cfg):
 
     with open(runscript,"w") as script:        
         to_write = [
+            "#!/bin/bash",
+            "",
             "#SBATCH --job-name=post_cosmo",
             "#SBATCH --nodes=1",
             "#SBATCH --partition=xfer",
@@ -47,16 +55,17 @@ def main(starttime, hstart, hstop, cfg):
             "#SBATCH --account="+cfg.compute_account]
 
         to_write.append("#SBATCH --output="+logfile)
-        to_write.append("#SBATCH --workdir="+cosmo_work]
-        to_write.append("cp -R "+int2lm_work + " " + os.join.path(copy_path,"int2lm_run"))
-        to_write.append("cp -R "+cosmo_work + " " + os.join.path(copy_path,"cosmo_run"))
-        to_write.append("cp -R "+cosmo_output + " " + os.join.path(copy_path,"cosmo_output"))
-        to_write.append("cp -R "+log_finished_dir + " " + os.join.path(copy_path,"logs"))
-        to_write.append("cp -R "+logfile + " " + os.join.path(log_finised_dir,"logs"))
-        to_write.append("cp -R "+os.join.path(log_finished_dir,"post_cosmo") + " " + os.join.path(copy_path,"logs"))
+        to_write.append("#SBATCH --workdir="+cosmo_work)
+        to_write.append("mkdir -p %s" % copy_path)
+        to_write.append("cp -R "+int2lm_work + " " + os.path.join(copy_path,"int2lm_run"))
+        to_write.append("cp -R "+cosmo_work + " " + os.path.join(copy_path,"cosmo_run"))
+        to_write.append("cp -R "+cosmo_output + " " + os.path.join(copy_path,"cosmo_output"))
+        to_write.append("cp -R "+log_finished_dir + " " + os.path.join(copy_path,"logs"))
+        to_write.append("cp -R "+logfile + " " + os.path.join(log_finished_dir,"post_cosmo"))
+        to_write.append("cp -R "+os.path.join(log_finished_dir,"post_cosmo") + " " + os.path.join(copy_path,"logs"))
 
-        script.writelines(to_write)
+        script.write("\n".join(to_write))
 
 
-    subprocess.call(["sbatch","--wait" ,runscript])
-    shutil.copy(logfile,os.join.path(log_finished_dir,"post_cosmo"))
+    call(["sbatch","--wait" ,runscript])
+    shutil.copy(logfile,logfile_finish)

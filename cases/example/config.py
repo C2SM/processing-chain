@@ -6,7 +6,8 @@ user = os.environ['USER']
 mail_address = {
     'gkuhl':    'gerrit.kuhlmann@empa.ch',
     'kug':      'gerrit.kuhlmann@empa.ch',
-    'dbrunner': 'dominik.brunner@empa.ch'
+    'dbrunner': 'dominik.brunner@empa.ch',
+    'haussaij' : 'jean-matthieu.haussaire@empa.ch'
 }[user]
 
 
@@ -17,41 +18,79 @@ not_config = list(locals().keys())
 
 compute_host = 'daint'
 compute_queue = 'normal' #'debug' #'normal'
-compute_account = 'd73' #'pr04'
+compute_account = 'sd02' #'pr04'
 
 # input root
-input_root = '/project/kug/cosmo/test/input'
+input_root = '/scratch/snx3000/haussaij/input'
 meteo_dir = os.path.join(input_root, 'meteo')
 
 # output
-output_root = '/project/kug/cosmo/test/output'
+output_root = '/scratch/snx3000/haussaij/output_proc_chain'
 
 # working root
-work_root = '/project/kug/cosmo/test/run/'
+work_root = '/scratch/snx3000/haussaij/test_processing_chain'
 log_dir = os.path.join(work_root, 'logs')
 
 
 # anthropogenic emissions pre-processed for mother and nested domain
-emis_dir_mother = os.path.join(input_root, 'emissions')
-emis_dir_nest = os.path.join(input_root, 'emissions')
-emis_gridname = "Berlin2"
+emissions_dir = os.path.join(input_root, 'emissions_coarse')
+emis_gridname = "CO2_CO_NOX_Berlin-coarse_"
+
 
 # VPRM biogenic fluxes
-#vprm_dir_orig = os.path.join(input_root, 'vprm')
-#vprm_dir_proc = os.path.join(input_root, 'vprm', 'processed')
-vprm_dir_orig = '/project/d73/input/vprm_smartcarb/'
-vprm_dir_proc = '/project/d73/input/vprm_smartcarb/processed/'
+vprm_dir = os.path.join(input_root,'vprm_smartcarb','processed')
+vprm_prefix = ["vprm_"] #could be [gpp_, ra_]
 
 # CAMS for CO2, CO and NOX initial and boundary conditions
-cams_dir_orig = os.path.join(input_root, 'icbc')
-#cams_dir_proc = os.path.join(input_root, 'icbc', 'processed') 
-cams_dir_proc = os.path.join(input_root, 'icbc', 'processed2')
+cams_dir_orig = os.path.join(input_root, 'icbc') #Input directory
+cams_dir_proc = os.path.join(input_root, 'icbc', 'processed2') #Output directory
+# required parameters for cams preprocessing
+# The list should contain one element per output file
+# If cams4int2cosmo.py is used, need all the following, otherwise just the suffix
+# - species : the list of species to put in said file (within CO2, CO, CH4, NOX)
+# - inc : the increment between timesteps
+# - prefix1 : the input file prefix (cams_dir_orig/prefix1_date.nc)
+# - prefix2 : the input surface pressure file prefix (cams_dir_orig/prefix2_date.nc)
+# - lev : the number of levels (137 or 60)
+# - suffix : for the output file (cams_dir_proc/suffix_date.nc)
+cams_parameters = [
+    {"suffix":"cams_co2",
+     # " species" :["CO2","CO","CH4"],
+     # "inc" : 3,
+     # "prefix1":"cams_gf39",
+     # "prefix2":"sfc_gf39",
+     # "lev":137,
+     }
+    {"suffix":"cams_nox",
+     # "species" :["NOX"],
+     # "inc" : 3,
+     # "prefix1":"cams_0001",
+     # "prefix2":"sfc_0001",
+     # "lev":60,
+     }]
+
+# CarbonTracker for CO2, CO and NOX initial and boundary conditions
+# ct_dir_orig = os.path.join(input_root, 'icbc') #Input directory
+# ct_dir_proc = os.path.join(input_root, 'icbc', 'processed') #Output directory
+# # required parameters for ct preprocessing
+# # The list should contain one element per output file
+# If ctnoaa4int2cosmo.py is used, need all the following, otherwise just the suffix
+# # - inc : the increment between two input files. 
+# #         It should be 24 since there's 1 input file per day
+# #         The increment is hard coded to 3h
+# # - prefix : the input file prefix (cams_dir_orig/prefix_YYYY-MM-DD.nc)
+# # - suffix : for the output file (cams_dir_proc/suffix_YYYYMMDDHH.nc)
+# # as of today, it only computes CO2
+# ct_parameters = [
+#     {"inc" : 24,
+#     "prefix":"CT2016.molefrac_glb3x2",
+#     "suffix":"ct"}]
+
 
 
 # chain root (TODO: remove)
-chain_src_dir = '/project/d73/%s/processing_chain/' % user
-chain_src_dir = '/users/%s/projects/cosmo/processing_chain/' % user
-tools_dir = os.path.join(chain_src_dir, 'tools')
+chain_src_dir = '/users/haussaij/cosmo_test/python_proc_chain/cosmo_processing_chain/'
+tools_dir = os.path.join(chain_src_dir, 'jobs/tools')
 
 # some constants for scripts
 del_tmp_timeout = 120   # timeout in days after which temporary files 
@@ -65,17 +104,23 @@ meteo_spinup = 0        # time in hours the model is integrated before transport
 
 # INT2LM
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
-int2lm_extpar_file = 'domain_berlin_big.nc'
-int2lm_bin = '/users/%s/projects/cosmo/int2lm/int2lm' % user
+int2lm_extpar_file = "test_domain.nc"
+int2lm_bin = '/users/haussaij/cosmo_official/int2lm/int2lm'
+
+#post_int2lm
+post_int2lm_species = ["CO2_BG"]#,"CO_BG","CH4_BG","NOX_BG"]
+
 
 # COSMO
-cosmo_bin= '/users/%s/projects/cosmo/cosmo-pompa/cosmo/cosmo' % user
+cosmo_bin= '/users/haussaij/cosmo_official/cosmo-pompa/cosmo/cosmo'
 
 # Case specific settings (int2lm and cosmo namelists and runscripts)
-int2lm_namelist = '%s/cases/berlin2_int2lm_INPUT.sh' % chain_src_dir
-int2lm_runjob = '%s/cases/berlin2_int2lm_runjob.sh' % chain_src_dir
-cosmo_namelist = '%s/cases/berlin2_cosmo_INPUT.sh' % chain_src_dir
-cosmo_runjob = '%s/cases/berlin2_cosmo_runjob.sh' % chain_src_dir
+casename = "example"
+
+int2lm_namelist = '%s/cases/%s/int2lm_INPUT' % (chain_src_dir,casename)
+int2lm_runjob = '%s/cases/%s/int2lm_runjob' % (chain_src_dir,casename)
+cosmo_namelist = '%s/cases/%s/cosmo_INPUT' % (chain_src_dir,casename)
+cosmo_runjob = '%s/cases/%s/cosmo_runjob' % (chain_src_dir,casename)
 
 
 # add local variables (defined after "not_config") to os.environ to be used
@@ -83,13 +128,3 @@ cosmo_runjob = '%s/cases/berlin2_cosmo_runjob.sh' % chain_src_dir
 for key, value in list(locals().items()):
     if key != 'not_config' and key not in not_config:
         os.environ[key] = str(value)
-
-
-
-
-
-
-
-
-
-

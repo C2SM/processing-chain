@@ -26,25 +26,31 @@ def main(starttime, hstart, hstop, cfg):
     Copy biofluxes files from project folder (cfg.vprm_dir) to INT2LM input folder
     on scratch (cfg.int2lm_input/vprm)
     """
+    logfile=os.path.join(cfg.log_working_dir,"biofluxes")
+    logfile_finish=os.path.join(cfg.log_finished_dir,"biofluxes")
+    tools.change_logfile(logfile)
+
+
+    scratch_path = os.path.join(cfg.int2lm_input,'vprm')
 
     try:
-        os.makedirs(vprm_dir, exists_ok=True)
+        os.makedirs(scratch_path, exist_ok=True)
     except (OSError, PermissionError):
         logging.error("Creating biofluxes input dir failed")
         raise
 
-    scratch_path = os.path.join(cfg.int2lm_input,'vprm')
-
     for time in tools.iter_hours(starttime, hstart, hstop):
         logging.info(time)
-        file_gpp = os.path.join(cfg.vprm_dir, time.strftime('gpp_%Y%m%d%H.nc'))
-        file_ra = os.path.join(cfg.vprm_dir, time.strftime('ra_%Y%m%d%H.nc'))
-        file_gpp_sc = os.path.join(scratch_path, time.strftime('gpp_%Y%m%d%H.nc'))
-        file_ra_sc = os.path.join(scratch_path, time.strftime('ra_%Y%m%d%H.nc'))
-        if ((os.path.isfile(file_gpp)and(os.path.isfile(file_ra)):
-            shutil.copy(file_gpp, scratch_path)
-            shutil.copy(file_ra, scratch_path)
-        else:
-            tools.vprmsplit(time,cfg.vprm_dir,scratch_path)
-        if not((os.path.isfile(file_gpp_sc))) or (not(os.path.isfile(file_ra_sc))):
-            loggig.error("Splitting or copying of GPP or/and RA files to scratch failed.")
+        
+        for prefix in cfg.vprm_prefix:
+            filename = os.path.join(cfg.vprm_dir, prefix+time.strftime('%Y%m%d%H.nc'))       
+            filename_sc = os.path.join(scratch_path, prefix+time.strftime('%Y%m%d%H.nc'))
+            if not (os.path.isfile(filename)):
+                logging.error("File %s not found. Consider using the vprmsplit.py script prior",filename)
+                #tools.vprmsplit.main(time.strftime("%Y%m%d%H"),cfg.vprm_dir_orig,cfg.vprm_dir_proc,cfg)
+            shutil.copy(filename, scratch_path)
+
+            if not os.path.isfile(filename_sc):
+                loggig.error("Splitting or copying of GPP or/and RA files to scratch failed.")
+
+    shutil.copy(logfile, logfile_finish)

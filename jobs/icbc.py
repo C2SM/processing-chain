@@ -23,25 +23,39 @@ from . import tools
 #from tools import mozart2int2lm
 
 def main(starttime,hstart,hstop,cfg):
+    """
+    Copy CAMS or CarbonTracker files from project folder to INT2LM input folder
+    on scratch (cfg.int2lm_input/icbc)
+    If needed, launch cams4int2cosmo or ctnoaa4int2cosmo to adapt the files to int2lm
+    """
+    logfile=os.path.join(cfg.log_working_dir,"icbc")
+    logfile_finish=os.path.join(cfg.log_finished_dir,"icbc")
+    tools.change_logfile(logfile)
+
+    inv_to_process = []
     try:
         CAMS = dict(fullname= "CAMS",nickname="cams",executable="cams4int2cosmo",indir = cfg.cams_dir_orig, outdir = cfg.cams_dir_proc, param=cfg.cams_parameters)
+        inv_to_process.append(CAMS)
+    except AttributeError:
+        pass
+    try:
         CT = dict(fullname="CarbonTracker",nickname="ct",executable="ctnoaa4int2cosmo",indir = cfg.ct_dir_orig, outdir = cfg.ct_dir_proc,param=cfg.ct_parameters)
-    except:
-        print("todo")
+        inv_to_process.append(CT)
+    except AttributeError:
+        pass
 
     # TO DO 
     #MOZART = dict(fullname="MOZART", nickname="mozart",executable="cams4int2cosmo")
         
-    logging.info("CAMS, CarbonTracker and/or MOZART data")
+    logging.info("Processing " + ", ".join([i["fullname"] for i in inv_to_process])+" data")
 
-    scratch_path = os.path.join(os.environ['int2lm_input'],'icbc') #cfg.int2lm_input, 'icbc')
+    scratch_path = os.path.join(cfg.int2lm_input,'icbc') #cfg.int2lm_input, 'icbc')
     try:
         os.makedirs(scratch_path, exist_ok=True)
     except (OSError, PermissionError):
         logging.error("Creating icbc input folder failed")
         raise
 
-    inv_to_process=[CAMS,CT] #,"MOZART"]
     for inv in inv_to_process:
         logging.info(inv["fullname"]+" files")
         #process_inv(starttime,hstart,hstop,increment,inv,cfg)
@@ -61,14 +75,16 @@ def main(starttime,hstart,hstop,cfg):
                         logging.error("Preprocessing "+inv["fullname"] + " data failed")
                         raise
 
-                    # copy to (temporary) run input directory
-                    try:
-                        shutil.copy(filename, scratch_path)
-                    except FileNotFoundError:
-                        logging.error("Processed "+inv["fullname"]+ " "+p["suffix"]+" data file not found at %s" % filename)
-                        raise
-                    except (PermissionError, OSError):
-                        logging.error("Copying processed "+inv["fullname"]+" "+p["suffix"]+" data file failed")
-                        raise
+                # copy to (temporary) run input directory
+                try:
+                    shutil.copy(filename, scratch_path)
+                except FileNotFoundError:
+                    logging.error("Processed "+inv["fullname"]+ " "+p["suffix"]+" data file not found at %s" % filename)
+                    raise
+                except (PermissionError, OSError):
+                    logging.error("Copying processed "+inv["fullname"]+" "+p["suffix"]+" data file failed")
+                    raise
 
                 logging.info("OK")
+
+    shutil.copy(logfile, logfile_finish)

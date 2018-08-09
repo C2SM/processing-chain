@@ -54,43 +54,43 @@ def run_chain(work_root, start_time, hstart=0.0, hstop=24.0, step=24.0,
                                 ).strftime('%Y%m%d%H')
     forecasttime = '%d' % (hstop - hstart)
 
-    os.environ['inidate'] = '%d' % inidate
-    os.environ['inidate_yyyymmddhh'] = inidate_yyyymmddhh
-    os.environ['forecasttime'] = forecasttime
-    os.environ['hstart'] = '%d' % hstart
-    os.environ['hstop'] = '%d' % hstop
+    setattr(cfg,'inidate', inidate)
+    setattr(cfg,'inidate_yyyymmddhh',inidate_yyyymmddhh)
+    setattr(cfg,'forecasttime', forecasttime)
+    setattr(cfg,'hstart', hstart)
+    setattr(cfg,'hstop', hstop)
 
     # int2lm processing always starts at hstart=0 and we modify inidate instead
-    os.environ['inidate_int2lm_yyyymmddhh'] = inidate_int2lm_yyyymmddhh
-    os.environ['hstart_int2lm'] = '0'
-    os.environ['hstop_int2lm'] = forecasttime
+    setattr(cfg,'inidate_int2lm_yyyymmddhh', inidate_int2lm_yyyymmddhh)
+    setattr(cfg,'hstart_int2lm', '0')
+    setattr(cfg,'hstop_int2lm', forecasttime)
 
     # chain 
     job_id = '%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
-    chain_root = os.path.join(work_root, 'mother', job_id)
-    os.environ['chain_root'] = chain_root
+    chain_root = os.path.join(work_root, job_id)
+    setattr(cfg,'chain_root', chain_root)
 
     # INT2LM
-    os.environ['int2lm_base']   = os.path.join(chain_root, 'int2lm')
-    os.environ['int2lm_input']  = os.path.join(chain_root, 'int2lm', 'input')
-    os.environ['int2lm_work']   = os.path.join(chain_root, 'int2lm', 'run')
-    os.environ['int2lm_output'] = os.path.join(chain_root, 'int2lm', 'output')
+    setattr(cfg,'int2lm_base', os.path.join(chain_root, 'int2lm'))
+    setattr(cfg,'int2lm_input', os.path.join(chain_root, 'int2lm', 'input'))
+    setattr(cfg,'int2lm_work', os.path.join(chain_root, 'int2lm', 'run'))
+    setattr(cfg,'int2lm_output', os.path.join(chain_root, 'int2lm', 'output'))
 
     # COSMO
-    os.environ['cosmo_base']   = os.path.join(chain_root, 'cosmo')
-    os.environ['cosmo_work']   = os.path.join(chain_root, 'cosmo', 'run')
-    os.environ['cosmo_output'] = os.path.join(chain_root, 'cosmo', 'output')
+    setattr(cfg,'cosmo_base', os.path.join(chain_root, 'cosmo'))
+    setattr(cfg,'cosmo_work', os.path.join(chain_root, 'cosmo', 'run'))
+    setattr(cfg,'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
 
     job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh, hstart-step, hstop-step)
-    chain_root_last_run = os.path.join(work_root, 'mother', job_id_last_run)
-    os.environ['cosmo_restart_in'] = os.path.join(chain_root_last_run, 'cosmo', 'restart')
-    os.environ['cosmo_restart_out'] = os.path.join(chain_root, 'cosmo', 'restart')
+    chain_root_last_run = os.path.join(work_root, job_id_last_run)
+    setattr(cfg,'cosmo_restart_in', os.path.join(chain_root_last_run, 'cosmo', 'restart'))
+    setattr(cfg,'cosmo_restart_out', os.path.join(chain_root, 'cosmo', 'restart'))
 
     # logging
     log_working_dir = os.path.join(chain_root, 'checkpoints', 'working')
     log_finished_dir = os.path.join(chain_root, 'checkpoints', 'finished')
-    os.environ['log_working_dir'] = log_working_dir
-    os.environ['log_finished_dir'] = log_finished_dir
+    setattr(cfg,'log_working_dir', log_working_dir)
+    setattr(cfg,'log_finished_dir', log_finished_dir)
 
     # create working dirs
     if not os.path.exists(chain_root):
@@ -99,7 +99,7 @@ def run_chain(work_root, start_time, hstart=0.0, hstop=24.0, step=24.0,
         os.makedirs(log_finished_dir)
 
     # run jobs (if required)
-    if job_names is None:
+    if job_names == [] or job_names is None:
         job_names = [
             'meteo', 'icbc', 'emissions', 'biofluxes',
             'int2lm', 'post_int2lm',
@@ -110,9 +110,9 @@ def run_chain(work_root, start_time, hstart=0.0, hstop=24.0, step=24.0,
 
         # mapping of scripts in jobs with their arguments
 
-        if job == 'meteo':
-            job.meteo.main(start_time, hstart, hstop, cfg)
-            continue
+        # if job == 'meteo':
+        #     job.meteo.main(start_time, hstart, hstop, cfg)
+        #     continue
 
         skip = False
 
@@ -138,11 +138,20 @@ def run_chain(work_root, start_time, hstart=0.0, hstop=24.0, step=24.0,
                 to_call = getattr(jobs,job)
                 to_call.main(start_time,hstart,hstop,cfg)
                 exitcode=0
-            except AttributeError:
-                exitcode = call_bash_function(
-                    os.path.join(cfg.chain_src_dir, 'jobs_mother', '%s.bash' % job),
-                    job
-                )
+            except:
+                subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (job, job_id)
+                logging.exception(subject)
+                with open(os.path.join(log_working_dir, job)) as logfile:
+                    message = logfile.read()
+                tools.send_mail(cfg.mail_address, subject, message)
+                raise RuntimeError(subject)
+                
+            # except AttributeError:
+            #     print(job+".py not found so running the bash script instead")
+            #     exitcode = call_bash_function(
+            #         os.path.join(cfg.chain_src_dir, 'jobs', '%s.bash' % job),
+            #         job
+            #     )
                 
             if exitcode != 0 or not os.path.exists( os.path.join(log_finished_dir, job) ):
                 subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (job, job_id)
@@ -158,11 +167,11 @@ def restart_runs(start, work_root, days=210, offset=0, job_names=None):
 
     # simulate 24 days (short month)
     end = start + timedelta(days=days) # timedelta(days=9*4)
-    step = 3 * 24.0 # in hours (has to be multiple of 3)
+    step = 24.0 # in hours (has to be multiple of 3)
 
     # restart writing step
-    restart_step = 3.0 * 24.0 # in hours
-    os.environ['restart_step'] = '%d' % restart_step
+    restart_step = 24.0 # in hours
+    setattr(cfg,'restart_step', restart_step)
 
     # run restarts
     for time in tools.iter_times(
@@ -192,8 +201,10 @@ if __name__ == '__main__':
     job_names = sys.argv[5:]
 
     #restart_runs(start_time, work_root, days, offset, jobs)
-    run_chain(cfg.work_root, start_time, hstart=offset, hstop=days, step=24.0,
-              job_names=job_names)
+    # run_chain(cfg.work_root, start_time, hstart=offset, hstop=days, step=24.0,
+    #           job_names=job_names)
+    restart_runs(start_time, cfg.work_root, days=days, offset=offset, job_names=job_names)
+    
     print('>>> finished chain for good or bad! <<<')
 
 

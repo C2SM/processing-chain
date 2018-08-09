@@ -4,9 +4,13 @@
 
 from datetime import datetime, timedelta
 import subprocess
+import logging
 from . import cams4int2cosmo
 from . import ctnoaa4int2cosmo
-
+from . import string2char
+from . import vprmsplit
+from . import write_int2lm_input_art
+from . import write_cosmo_input_bgc
 
 def iter_hours(starttime, hstart, hstop, step=1):
 
@@ -28,4 +32,16 @@ def send_mail(address, subject, message=''):
     p.stdin.write(message.encode('utf-8'))
     p.stdin.close()
 
+def change_logfile(filename):
+    fileh = logging.FileHandler(filename, 'a')
+    # log_format = logging.Formatter('%(levelname)s:%(message)s')
+    # fileh.setFormatter(log_format)
+
+    log = logging.getLogger()  # root logger
+    if len(log.handlers)>0:
+        log.addHandler = fileh      # set the new handler
+    else:
+        logging.basicConfig(filename=filename,level=logging.INFO)
+
+    
 

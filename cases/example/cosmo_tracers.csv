@@ -1,0 +1,10 @@
+,yshort_name,igribparam,igribtable,itype_emiss,itype_flux,yunits,ystandard_name,ylong_name,ytype_adv,ytype_diff,ytype_turbmix,ytype_passconv,ytype_ini,ytype_lbc,ytype_bbc,ytype_relax,ytype_damp,ytype_clip,ldecay,lifetime
+#,,,,,,,,,,,,,,,,,,,,
+,CO2_BG,10,13,0,0,kg kg-1,time-varying_CO2_mass_fraction_at_lateral_boundary,time-varying_CO2_mass_fraction_at_lateral_boundary,on,off,1D,on,file,file,zero_flux,full,on,off,.FALSE.,0
+,CO2_GPP,11,13,0,1,kg kg-1,CO2_mass_fraction_of_time-varying_surface_flux_from_gross_photosynthetic_production,CO2_mass_fraction_of_time-varying_surface_flux_from_gross_photosynthetic_production,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0
+,CO2_RA,12,13,0,1,kg kg-1,CO2_mass_fraction_of_time-varying_surface_flux_from_respiration,CO2_mass_fraction_of_time-varying_surface_flux_from_respiration,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0
+,CO2_A,15,13,1,0,kg kg-1,CO2_mass_fraction_of_time-varying_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,CO2_mass_fraction_of_time-varying_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0
+#,,,,,,,,,,,,,,,,,,,,
+,CO_A,42,13,1,0,kg kg-1,CO_mass_fraction_of_time-varying_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,CO_mass_fraction_of_time-varying_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0
+#,,,,,,,,,,,,,,,,,,,,
+,NOX_A,61,13,1,0,kg kg-1,NOX_mass_fraction_of_time-varying_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,NOX_mass_fraction_of_time-varying_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,on,off,1D,on,zero,zero,zero_flux,full,off,off,.TRUE.,14400

@@ -21,21 +21,29 @@ import shutil
 from subprocess import call
 import sys
 from . import tools
+import importlib
+import subprocess
 
-def main(starttime, cfg):
+
+def main(starttime, hstart, hstop, cfg):
     """
     Setup the namelist for a COSMO tracer run and submit the job to the queue
     """
+    logfile=os.path.join(cfg.log_working_dir,"cosmo")
+    logfile_finish=os.path.join(cfg.log_finished_dir,"cosmo")
+    tools.change_logfile(logfile)
+
     logging.info('Setup the namelist for a COSMO tracer run and submit the job to the queue')
 
-    np_io= 1
+    np_io= 0 ;     setattr(cfg,"np_io",np_io)
+
 
 # Set number of nodes and cores for COSMO 
-    if cfg.compute_queue="normal":
+    if cfg.compute_queue=="normal":
         walltime="08:00:00"
         np_x=5
         np_y=4
-    elif cfg.compute_queue="debug":
+    elif cfg.compute_queue=="debug":
         walltime="00:30:00"
         np_x=1
         np_y=1
@@ -46,38 +54,41 @@ def main(starttime, cfg):
 
     np_tot = np_x * np_y + np_io     
 
+    setattr(cfg,"np_x",np_x)
+    setattr(cfg,"np_y",np_y)
+    setattr(cfg,"np_tot",np_tot)
+    setattr(cfg,"walltime",walltime)
+
 # change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
-    if starttime < 2007080200:   #input starttime as a number
+    if int(starttime.strftime("%Y%m%d%H")) < 2007080200:   #input starttime as a number
         multi_layer=".FALSE."
     else:
         multi_layer=".TRUE."
+    setattr(cfg,"multi_layer",multi_layer)
 
 # create directory
     try:
-        os.makedirs(cfg.work_root, exist_ok=True)
+        os.makedirs(cfg.cosmo_work, exist_ok=True)
     except (OSError, PermissionError):
         logging.error("Creating cosmo_work folder failed")
         raise
-    #cosmo_work = cfg.work_root      #create "cosmo_work" or not?
   
     try:
-        os.makedirs(cfg.output_root, exist_ok=True)   #output_root not used in cfg
+        os.makedirs(cfg.cosmo_output, exist_ok=True)   #output_root not used in cfg
     except (OSError, PermissionError):
         logging.error("Creating cosmo_output folder failed")
         raise
-    #cosmo_output = cfg.output_root 
 
     try:
-        os.makedirs(cfg.restart_out_root, exist_ok=True)   #can't find this root in cfg. Use a temporary name here.
+        os.makedirs(cfg.cosmo_restart_out, exist_ok=True)   #can't find this root in cfg. Use a temporary name here.
     except (OSError, PermissionError):
         logging.error("Creating cosmo_restart_out folder failed")
         raise
-    #cosmo_restart_out = cfg.restart_out_root
     
 # copy cosmo.exe
     try:
         # 'cosmo' file name or directory
-        shutil.copy(cfg.cosmo_bin, os.path.join(cfg.work_root,'cosmo')
+        shutil.copy(cfg.cosmo_bin, os.path.join(cfg.cosmo_work,'cosmo'))
     except FileNotFoundError:
         logging.error("cosmo_bin not found")
         raise
@@ -87,19 +98,20 @@ def main(starttime, cfg):
 
 # Write INPUT_BGC from csv file
     # csv file with tracer definitions 
-    tracer_csvfile = ''.join(cfg.casename,'_cosmo_tracers.csv')
+    tracer_csvfile = os.path.join(cfg.casename,'cosmo_tracers.csv')
 
     tracer_filename = os.path.join(cfg.chain_src_dir,'cases',tracer_csvfile)
-    input_bgc_filename = os.path.join(cfg.work_root,'INPUT_BGC')
+    input_bgc_filename = os.path.join(cfg.cosmo_work,'INPUT_BGC')
 
-    tools.write_cosmo_input_bgc(os.path.join(tracer_filename,
-                                              input_bgc_filename,
-                                             )
-                                )
-
+    tools.write_cosmo_input_bgc.main(tracer_filename,input_bgc_filename)
 # Prepare namelist and submit job
-    #will these *.sh be converted to python as well?
-    subprocess.call(["source", cfg.cosmo_namelist])
-    subprocess.call(["source", cfg.cosmo_runjob])   
-    subprocess.call(["sbatch", "--wait", os.path.join(cfg.work_root,'run.job')])
+    sys.path.append(os.path.dirname(cfg.cosmo_namelist))
+    input_script = importlib.import_module(os.path.basename(cfg.cosmo_namelist))
+    input_script.main(cfg)
+
+    sys.path.append(os.path.dirname(cfg.cosmo_runjob))
+    input_script = importlib.import_module(os.path.basename(cfg.cosmo_runjob))
+    input_script.main(cfg,logfile,logfile_finish)
+
+    subprocess.call(["sbatch", "--wait", os.path.join(cfg.cosmo_work,'run.job')])
 

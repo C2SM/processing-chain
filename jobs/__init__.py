@@ -4,6 +4,9 @@
 
 from . import meteo
 from . import icbc
+from . import emissions
+from . import biofluxes
+from . import int2lm
 from . import post_int2lm
+from . import cosmo
 from . import post_cosmo
-

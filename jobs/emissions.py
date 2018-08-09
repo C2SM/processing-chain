@@ -22,33 +22,38 @@ import shutil
 
 from . import tools
 
-def main(starttime,hstart,hstop,cgf):
+def main(starttime,hstart,hstop,cfg):
     """
     Copy emission files from project folder (cfg.emissions_dir) to INT2LM input folder
     on scratch (cfg.int2lm_input/emissions)
     """
+    logfile=os.path.join(cfg.log_working_dir,"emissions")
+    logfile_finish=os.path.join(cfg.log_finished_dir,"emissions")
+    tools.change_logfile(logfile)
+
 
     try:
-        os.makedirs(emissions_dir, exists_ok=True)
+        os.makedirs(os.path.join(cfg.int2lm_input,"emissions"), exist_ok=True)
     except (OSError, PermissionError):
         logging.error("Creating emissions input dir failed")
         raise
 
     for time in tools.iter_hours(starttime, hstart, hstop):
         logging.info(time)
-        filename = os.path.join(cfg.emissions_dir, time.strftime('CO2_CO_Carbosense-CTDAS_%Y%m%d%H.nc'))
-        scratch_path = os.path.join(cfg.int2lm_input, time.strftime('emissions/emis_%Y%m%d%H'))
-        if not os.path.exits(filename):
+        filename = os.path.join(cfg.emissions_dir, time.strftime(cfg.emis_gridname+'%Y%m%d%H.nc'))
+        scratch_path = os.path.join(cfg.int2lm_input, time.strftime('emissions/emis_%Y%m%d%H.nc'))
+        if not os.path.exists(filename):
             pass
         try:
             shutil.copy(filename, scratch_path)
 
         except FileNotFoundError:
-            logging.error("Emission input file not found at %s" % filename)
+            logging.error("Emission input file not found at %s, or output directory doesn't exist to copy %s" % (filename,scratch_path))
             raise
         except (PermissionError, OSError):
             logging.error("Copying emission data file failed")
             raise
 
         # convert grid_mapping_name from string (NF90_STRING) to char (NF90_CHAR)
-        tools.string2char(scratch_path)
+        tools.string2char.main(scratch_path)
+    shutil.copy(logfile, logfile_finish)
