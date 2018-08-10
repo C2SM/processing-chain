@@ -56,6 +56,8 @@ def main(start_time, hstart, hstop, cfg):
         for chem in chem_list:
             outf.createVariable(chem,inf[chem].dtype,inf[chem].dimensions)
             outf[chem][:] = inf[chem][:]
+            for attr in inf[chem].ncattrs():
+                outf[chem].setncattr(attr,inf[chem].getncattr(attr))
 
     # Add CO2, CO and NOX background tracers in all "lbfd**t.nc" files to
     # normal lbfd files, because CAMS tracers are only every 3 hours.
@@ -81,6 +83,8 @@ def main(start_time, hstart, hstop, cfg):
                     for chem in chem_list:
                         try:
                             outf.createVariable(chem,inf[chem].dtype,inf[chem].dimensions)#("rlat","rlon"))#
+                            for attr in inf[chem].ncattrs():
+                                outf[chem].setncattr(attr,inf[chem].getncattr(attr))
                         except RuntimeError:
                             pass
                         outf[chem][:] = inf[chem][:]
