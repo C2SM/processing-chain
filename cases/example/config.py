@@ -17,18 +17,18 @@ not_config = list(locals().keys())
 
 
 compute_host = 'daint'
-compute_queue = 'normal' #'debug' #'normal'
+compute_queue = 'debug' #'debug' #'normal'
 compute_account = 'sd02' #'pr04'
 
 # input root
-input_root = '/scratch/snx3000/haussaij/input'
+input_root = '/store/empa/em05/input_processing_chain_example/'
 meteo_dir = os.path.join(input_root, 'meteo')
 
 # output
-output_root = '/scratch/snx3000/haussaij/output_proc_chain'
+output_root = '/scratch/snx3000/%s/processing_chain/output_example' % user
 
 # working root
-work_root = '/scratch/snx3000/haussaij/test_processing_chain'
+work_root = '/scratch/snx3000/%s/processing_chain' % user
 log_dir = os.path.join(work_root, 'logs')
 
 
@@ -50,7 +50,7 @@ vprm_prefix = ["vprm_"] #could be [gpp_, ra_]
 #       - "suffix" : files are called cams_dir_proc/suffix_date.nc
 #       - "inc" : increment between icbc data 
 cams_dir_orig = os.path.join(input_root, 'icbc') #Input directory
-cams_dir_proc = os.path.join(input_root, 'icbc', 'processed2') #Output directory
+cams_dir_proc = os.path.join(input_root, 'icbc', 'processed') #Output directory
 
 
 # If the data is not yet preprocessed and needs to run cams4int2cosmo
@@ -97,7 +97,7 @@ cams_parameters = [{
 
 
 # chain root (TODO: remove)
-chain_src_dir = '/users/haussaij/cosmo_test/python_proc_chain/cosmo_processing_chain/'
+chain_src_dir = os.getcwd()
 tools_dir = os.path.join(chain_src_dir, 'jobs/tools')
 
 # some constants for scripts
@@ -113,14 +113,14 @@ meteo_spinup = 0        # time in hours the model is integrated before transport
 # INT2LM
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = "test_domain.nc"
-int2lm_bin = '/users/haussaij/cosmo_official/int2lm/int2lm'
+int2lm_bin = os.path.join(input_root,"executables/int2lm") 
 
 #post_int2lm
 post_int2lm_species = ["CO2_BG"]#,"CO_BG","CH4_BG","NOX_BG"]
 
 
 # COSMO
-cosmo_bin= '/users/haussaij/cosmo_official/cosmo-pompa/cosmo/cosmo'
+cosmo_bin=  os.path.join(input_root,"executables/cosmo") 
 
 # Case specific settings (int2lm and cosmo namelists and runscripts)
 path = os.path.realpath(__file__)

@@ -149,7 +149,7 @@ def main(cfg):
            'ASWDIFD_S',                           ! short wave diffuse down
            'TKVH',                                ! atmosphere heat diffusivity (for Arjo)
            'HP',                                  ! air pressure at layer interfaces (for Arjo)
-           'CO2_BG','CO2_GPP','CO2_RA','CO2_TOT','CO2_SURF','CO2_A','CO2_BV','CO2_JV','CO_TOT','NOX_TOT',
+           'CO2_BG','CO2_GPP','CO2_RA','CO2_A','CO_A','NOX_A',
   l_z_filter       = .FALSE.,
   l_p_filter       = .FALSE.,
   luvmasspoint     = .FALSE.,
