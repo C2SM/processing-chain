@@ -136,7 +136,7 @@ cosmo_runjob = '%s/cases/%s/cosmo_runjob' % (chain_src_dir,casename)
 
 ## INT2LM
 if compute_queue=="normal":
-    int2lm_walltime="24:00:00"
+    int2lm_walltime="01:00:00"
 elif compute_queue=="debug":
     int2lm_walltime="00:30:00"
 else: 
