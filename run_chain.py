@@ -17,7 +17,7 @@ from jobs import tools
 
 # try to load config file
 try:
-    fn = os.path.splitext(sys.argv[1])[0]
+    fn = os.path.join('cases',sys.argv[1],'config')
     sys.path.append(os.path.dirname(fn))
     cfg = importlib.import_module(os.path.basename(fn))
 except IndexError:
