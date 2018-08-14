@@ -54,10 +54,14 @@ def main(start_time, hstart, hstop, cfg):
     outfile = os.path.join(int2lm_output,"laf"+inidate_int2lm_yyyymmddhh+".nc")
     with nc.Dataset(infile) as inf,nc.Dataset(outfile,"a") as outf:
         for chem in chem_list:
-            outf.createVariable(chem,inf[chem].dtype,inf[chem].dimensions)
-            outf[chem][:] = inf[chem][:]
-            for attr in inf[chem].ncattrs():
-                outf[chem].setncattr(attr,inf[chem].getncattr(attr))
+            if chem in outf.variables.keys():
+                logging.warning('Variable %s already present in file %s'
+                                % (chem, outfile))
+            else:
+                outf.createVariable(chem,inf[chem].dtype,inf[chem].dimensions)
+                outf[chem][:] = inf[chem][:]
+                for attr in inf[chem].ncattrs():
+                    outf[chem].setncattr(attr,inf[chem].getncattr(attr))
 
     # Add CO2, CO and NOX background tracers in all "lbfd**t.nc" files to
     # normal lbfd files, because CAMS tracers are only every 3 hours.
