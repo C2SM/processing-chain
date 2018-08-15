@@ -7,6 +7,7 @@ def main(cfg,logfile,logfile_finish):
 #SBATCH --account={cfg.compute_account}
 #SBATCH --job-name="cosmo_{cfg.inidate_yyyymmddhh}_{cfg.forecasttime}"
 #SBATCH --output={logfile}
+#SBATCH --open-mode=append
 #SBATCH --time={cfg.cosmo_walltime}
 #SBATCH --workdir={cfg.cosmo_work}
 #SBATCH --constraint=gpu

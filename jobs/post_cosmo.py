@@ -1,18 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copy cosmo output from scratch to project.
-#
-
-#####################
-##  Problems:
-##  - need to see if some variables are defined (hstart, inidate ...)
+# Copy cosmo output from scratch to store (or anywhere else)
 
 ### DEVELOPMENT VERSION ###
 
 import logging
 import os
 import shutil
+import datetime as dt
 import glob 
 from subprocess import call
 import sys
@@ -26,13 +22,26 @@ def main(starttime, hstart, hstop, cfg):
     log_working_dir = cfg.log_working_dir
     log_finished_dir = cfg.log_finished_dir
 
+
     runscript = os.path.join(cosmo_work,"cp_cosmo.job")
-    copy_path = os.path.join(cfg.output_root,starttime.strftime('%Y%m%d%H')+"_"+str(hstart)+"_"+str(hstop))
+    copy_path = os.path.join(cfg.output_root,starttime.strftime('%Y%m%d%H')+
+                             "_"+str(int(hstart))+"_"+str(int(hstop)))
 
     logfile = os.path.join(log_working_dir,"post_cosmo")
-    logfile_finish=os.path.join(cfg.log_finished_dir,"post_int2lm")
+    logfile_finish=os.path.join(log_finished_dir,"post_cosmo")
     tools.change_logfile(logfile)
 
+    date = dt.datetime.today()
+
+    to_print = """POST_COSMO
+
+=====================================================
+============== POST PROCESSING BEGINS ===============
+============== StartTime: %s 
+=====================================================""" %date.strftime("%s")
+    
+    logging.info(to_print)
+    logging.info("Copy output, run directoy and logfiles to output path")
 
     try:
         os.makedirs(copy_path, exist_ok=True)
@@ -55,6 +64,7 @@ def main(starttime, hstart, hstop, cfg):
             "#SBATCH --account="+cfg.compute_account]
 
         to_write.append("#SBATCH --output="+logfile)
+        to_write.append("#SBATCH --open-mode=append")
         to_write.append("#SBATCH --workdir="+cosmo_work)
         to_write.append("mkdir -p %s" % copy_path)
         to_write.append("cp -R "+int2lm_work + " " + os.path.join(copy_path,"int2lm_run"))
@@ -68,4 +78,12 @@ def main(starttime, hstart, hstop, cfg):
 
 
     call(["sbatch","--wait" ,runscript])
+
+    date = dt.datetime.today()
+    to_print = """=====================================================
+============== POST PROCESSING ENDS ==================
+============== EndTime: %s
+====================================================="""%date.strftime("%s")
+
+    logging.info(to_print)
     shutil.copy(logfile,logfile_finish)

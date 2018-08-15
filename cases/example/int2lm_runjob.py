@@ -15,6 +15,7 @@ def main(cfg,logfile,logfile_finish):
 #SBATCH --constraint=gpu
 #SBATCH --account={cfg.compute_account}
 #SBATCH --output={logfile}
+#SBATCH --open-mode=append
 #SBATCH --workdir={cfg.int2lm_work}
 
 # Export env variables
