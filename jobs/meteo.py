@@ -45,10 +45,10 @@ def main(starttime, hstart, hstop, cfg):
         logging.error("Creating meteo input folder failed")
         raise
 
-    for time in tools.iter_hours(starttime, hstart, hstop):
+    for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
         logging.info(time)
 
-        filename = os.path.join(cfg.meteo_dir, time.strftime('laf%Y%m%d%H'))
+        filename = os.path.join(cfg.meteo_dir, time.strftime(cfg.meteo_prefix+'%Y%m%d%H'))
 
         if not os.path.exists(filename):
             # TODO: if meteo file not in cfg.meteo_dir, try copy file from

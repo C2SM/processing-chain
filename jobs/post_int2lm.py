@@ -46,22 +46,21 @@ def main(start_time, hstart, hstop, cfg):
     # add CO2, CO and NOX tracers in "laf**t.nc" file to normal laf file
     infile = os.path.join(int2lm_output,"laf"+inidate_int2lm_yyyymmddhh+"t.nc")
 
-    if not os.path.exists(infile):
-        logging.error("Appending BG tracer using file %s failed."%infile)
-        raise FileNotFoundError
-
-
-    outfile = os.path.join(int2lm_output,"laf"+inidate_int2lm_yyyymmddhh+".nc")
-    with nc.Dataset(infile) as inf,nc.Dataset(outfile,"a") as outf:
-        for chem in chem_list:
-            if chem in outf.variables.keys():
-                logging.warning('Variable %s already present in file %s'
-                                % (chem, outfile))
-            else:
-                outf.createVariable(chem,inf[chem].dtype,inf[chem].dimensions)
-                outf[chem][:] = inf[chem][:]
-                for attr in inf[chem].ncattrs():
-                    outf[chem].setncattr(attr,inf[chem].getncattr(attr))
+    if os.path.exists(infile):
+        outfile = os.path.join(int2lm_output,"laf"+inidate_int2lm_yyyymmddhh+".nc")
+        try:
+            with nc.Dataset(infile) as inf,nc.Dataset(outfile,"a") as outf:
+                for chem in chem_list:
+                    if chem in outf.variables.keys():
+                        logging.warning('Variable %s already present in file %s'
+                                        % (chem, outfile))
+                    else:
+                        outf.createVariable(chem,inf[chem].dtype,inf[chem].dimensions)
+                        outf[chem][:] = inf[chem][:]
+                        for attr in inf[chem].ncattrs():
+                            outf[chem].setncattr(attr,inf[chem].getncattr(attr))
+        except:
+            logging.error("Appending BG tracer from file %s to file %s failed." % (infile,outfile))
 
     # Add CO2, CO and NOX background tracers in all "lbfd**t.nc" files to
     # normal lbfd files, because CAMS tracers are only every 3 hours.

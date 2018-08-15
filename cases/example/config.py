@@ -30,6 +30,8 @@ casename = os.path.basename(os.path.dirname(path))
 # input root
 input_root = '/store/empa/em05/input_processing_chain_example/'
 meteo_dir = os.path.join(input_root, 'meteo')
+meteo_prefix = "laf"
+meteo_inc = 1
 
 # output
 output_root = '/scratch/snx3000/%s/processing_chain/output/%s' % (user, casename)
@@ -46,7 +48,7 @@ emis_gridname = "CO2_CO_NOX_Berlin-coarse_"
 
 # VPRM biogenic fluxes
 vprm_dir = os.path.join(input_root,'vprm_smartcarb','processed')
-vprm_prefix = ["vprm_"] #could be [gpp_, ra_]
+vprm_prefix = ["vprm_"] #could be ["gpp_", "ra_"]
 
 # CAMS for CO2, CO and NOX initial and boundary conditions
 
