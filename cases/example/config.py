@@ -23,12 +23,16 @@ compute_host = 'daint'
 compute_queue = 'debug' #'debug' #'normal'
 compute_account = 'sd02' #'pr04'
 
+# case name = pathname in cases/
+path = os.path.realpath(__file__)
+casename = os.path.basename(os.path.dirname(path)) 
+
 # input root
 input_root = '/store/empa/em05/input_processing_chain_example/'
 meteo_dir = os.path.join(input_root, 'meteo')
 
 # output
-output_root = '/scratch/snx3000/%s/processing_chain/output_example' % user
+output_root = '/scratch/snx3000/%s/processing_chain/output/%s' % (user, casename)
 
 # working root
 work_root = '/scratch/snx3000/%s/processing_chain' % user
@@ -126,8 +130,6 @@ post_int2lm_species = ["CO2_BG"]#,"CO_BG","CH4_BG","NOX_BG"]
 cosmo_bin=  os.path.join(input_root,"executables/cosmo") 
 
 # Case specific settings (int2lm and cosmo namelists and runscripts)
-path = os.path.realpath(__file__)
-casename = os.path.basename(os.path.dirname(path)) # pathname in example/
 
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT' % (chain_src_dir,casename)
 int2lm_runjob = '%s/cases/%s/int2lm_runjob' % (chain_src_dir,casename)
