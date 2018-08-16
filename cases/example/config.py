@@ -21,7 +21,7 @@ not_config = list(locals().keys())
 
 compute_host = 'daint'
 compute_queue = 'debug' #'debug' #'normal'
-compute_account = 'sd02' #'pr04'
+compute_account = 'em05' #'pr04'
 
 # case name = pathname in cases/
 path = os.path.realpath(__file__)
