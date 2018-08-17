@@ -133,10 +133,10 @@ cosmo_bin=  os.path.join(input_root,"executables/cosmo")
 
 # Case specific settings (int2lm and cosmo namelists and runscripts)
 
-int2lm_namelist = '%s/cases/%s/int2lm_INPUT' % (chain_src_dir,casename)
-int2lm_runjob = '%s/cases/%s/int2lm_runjob' % (chain_src_dir,casename)
-cosmo_namelist = '%s/cases/%s/cosmo_INPUT' % (chain_src_dir,casename)
-cosmo_runjob = '%s/cases/%s/cosmo_runjob' % (chain_src_dir,casename)
+int2lm_namelist = '%s/cases/%s/int2lm_INPUT.cfg' % (chain_src_dir,casename)
+int2lm_runjob = '%s/cases/%s/int2lm_runjob.cfg' % (chain_src_dir,casename)
+cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir,casename)
+cosmo_runjob = '%s/cases/%s/cosmo_runjob.cfg' % (chain_src_dir,casename)
 
 
 # Walltimes and domain decomposition

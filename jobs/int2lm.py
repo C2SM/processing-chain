@@ -76,7 +76,7 @@ def main(starttime, hstart, hstop, cfg):
         logging.error("Copying int2lm extpar file failed")
         raise
 
-# Write INPUT_ART from csv file
+    # Write INPUT_ART from csv file
     # csv file with tracer definitions 
     tracer_csvfile = os.path.join(cfg.casename,'int2lm_tracers.csv')
     # csv file with tracer datasets
@@ -88,13 +88,21 @@ def main(starttime, hstart, hstop, cfg):
 
     tools.write_int2lm_input_art.main(tracer_filename, set_filename, input_art_filename)
 
-# Prepare namelist and submit job
-    sys.path.append(os.path.dirname(cfg.int2lm_namelist))
-    input_script = importlib.import_module(os.path.basename(cfg.int2lm_namelist))
-    input_script.main(cfg)
+    # Prepare namelist and submit job
+    with open(cfg.int2lm_namelist) as input_file:
+        to_write = input_file.read();
+        output_file = os.path.join(cfg.int2lm_work,"INPUT")
+        with open(output_file,"w") as outf:
+            outf.write(to_write.format(cfg=cfg))
 
-    sys.path.append(os.path.dirname(cfg.int2lm_runjob))
-    input_script = importlib.import_module(os.path.basename(cfg.int2lm_runjob))
-    input_script.main(cfg,logfile,logfile_finish)
+    with open(cfg.int2lm_runjob) as input_file:
+            to_write = input_file.read();
+            output_file = os.path.join(cfg.int2lm_work,"run.job")
+            with open(output_file,"w") as outf:
+                outf.write(to_write.format(
+                    cfg=cfg,
+                    ini_day = cfg.inidate_int2lm_yyyymmddhh[0:8], 
+                    ini_hour = cfg.inidate_int2lm_yyyymmddhh[8:], 
+                    logfile=logfile,logfile_finish = logfile_finish))
 
     subprocess.call(["sbatch", "--wait", os.path.join(cfg.int2lm_work,'run.job')])

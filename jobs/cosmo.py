@@ -72,7 +72,7 @@ def main(starttime, hstart, hstop, cfg):
         logging.error("Copying cosmo_bin failed")
         raise
 
-# Write INPUT_BGC from csv file
+    # Write INPUT_BGC from csv file
     # csv file with tracer definitions 
     tracer_csvfile = os.path.join(cfg.casename,'cosmo_tracers.csv')
 
@@ -80,14 +80,25 @@ def main(starttime, hstart, hstop, cfg):
     input_bgc_filename = os.path.join(cfg.cosmo_work,'INPUT_BGC')
 
     tools.write_cosmo_input_bgc.main(tracer_filename,input_bgc_filename)
-# Prepare namelist and submit job
-    sys.path.append(os.path.dirname(cfg.cosmo_namelist))
-    input_script = importlib.import_module(os.path.basename(cfg.cosmo_namelist))
-    input_script.main(cfg)
 
-    sys.path.append(os.path.dirname(cfg.cosmo_runjob))
-    input_script = importlib.import_module(os.path.basename(cfg.cosmo_runjob))
-    input_script.main(cfg,logfile,logfile_finish)
+    # Prepare namelist and submit job
+    for section in ["AF","ORG","IO","DYN","PHY","DIA","ASS"]:
+        with open(cfg.cosmo_namelist+section+".cfg") as input_file:
+            to_write = input_file.read();
+            output_file = os.path.join(cfg.cosmo_work,"INPUT_"+section)
+            with open(output_file,"w") as outf:
+                outf.write(to_write.format(cfg=cfg, 
+                                           restart_start = cfg.hstart + cfg.restart_step,
+                                           restart_stop = cfg.hstop,
+                                           restart_step = cfg.restart_step))
+
+    with open(cfg.cosmo_runjob) as input_file:
+            to_write = input_file.read();
+            output_file = os.path.join(cfg.cosmo_work,"run.job")
+            with open(output_file,"w") as outf:
+                outf.write(to_write.format(
+                    cfg=cfg,
+                    logfile=logfile,logfile_finish = logfile_finish))
 
     subprocess.call(["sbatch", "--wait", os.path.join(cfg.cosmo_work,'run.job')])
 

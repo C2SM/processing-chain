@@ -162,10 +162,17 @@ def main(date,inpath,outpath,param):
 
     species = []
     for s in param["species"]:
-        try:
-            species.append(eval(s))
-        except:
-            logging.error("Variable "+s+" is not part of the available list of variables.")    
+        if s == "CO2":
+            species.append(CO2)
+        elif s == "CO":
+            species.append(CO)
+        elif s == "CH4":
+            species.append(CH4)
+        elif s == "NOX":
+            species.append(NOX)
+        else:
+            logging.error("Variable "+s+" is not part of the available list of variables.")
+
     main_process(date,inpath,outpath,species,param)
 
 
