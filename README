@@ -1,8 +1,13 @@
 COSMO processing chain
 ======================
 
-Usage for 'example' case:
+Usage:
+$ python run_chain.py <casename> <startdate> <hstart> <hstop> [jobs]
+
+How to run the example case:
 $ python run_chain.py example 2015-01-01 0 24 meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo 
+
+If [jobs] are not specified, all jobs are executed.
 
 Configuration of 'example' case:
   cases/example/config.py
