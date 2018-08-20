@@ -155,22 +155,18 @@ def main(date,inpath,outpath,param):
         logging.error("Creating output directory failed")
         raise
 
-    CO2 = dict(name = "CO2_BG", short_name = "co2", long_name= "carbon_dioxide")
-    CO = dict(name = "CO_BG", short_name = "co", long_name= "carbon_monoxide")
-    CH4 = dict(name = "CH4_BG", short_name = "ch4", long_name= "methane")
-    NOX = dict(name = "NOX_BG", short_name = "NOx", long_name= "nitrogen_oxide")
+    tracer2dict = {
+            'CO2': dict(name = "CO2_BG", short_name = "co2", long_name= "carbon_dioxide")
+            'CO':  dict(name = "CO_BG", short_name = "co", long_name= "carbon_monoxide")
+            'CH4': dict(name = "CH4_BG", short_name = "ch4", long_name= "methane")
+            'NOX': dict(name = "NOX_BG", short_name = "NOx", long_name= "nitrogen_oxide")
+    }
 
     species = []
     for s in param["species"]:
-        if s == "CO2":
-            species.append(CO2)
-        elif s == "CO":
-            species.append(CO)
-        elif s == "CH4":
-            species.append(CH4)
-        elif s == "NOX":
-            species.append(NOX)
-        else:
+        try:
+            s.append(tracer2dict[s])
+        except KeyError:
             logging.error("Variable "+s+" is not part of the available list of variables.")
 
     main_process(date,inpath,outpath,species,param)
