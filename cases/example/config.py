@@ -171,3 +171,6 @@ else:
 
 cosmo_np_io = 0
 cosmo_np_tot = cosmo_np_x * cosmo_np_y + cosmo_np_io     
+
+# Restart 
+restart_step = 24
