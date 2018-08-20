@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #                                                                              
-# Setup the namelist for an INT2LM-trcr run and submit the job to the queue       
-#                                                                              
-# result in case of success: all INT2LM-trcr input-files are found in           
-#                            ${int2lm_output}                                  
+# Setup the namelist for int2lm and submit the job to the queue       
 #                                                                              
 # Dominik Brunner, July 2013                                                   
 #                                                                              
@@ -21,21 +18,22 @@ from . import tools
 import subprocess
 import sys
 import importlib
+from datetime import datetime
 
 
 def main(starttime, hstart, hstop, cfg):
     """
-    Setup the namelist for a INT2LM and submit the job to the queue
+    Setup the namelist for int2lm and submit the job to the queue
     """
-    logfile=os.path.join(cfg.log_working_dir,"int2lm")
-    logfile_finish=os.path.join(cfg.log_finished_dir,"int2lm")
+    logfile = os.path.join(cfg.log_working_dir, "int2lm")
+    logfile_finish = os.path.join(cfg.log_finished_dir, "int2lm")
 
 # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
-    if int(starttime.strftime("%Y%m%d%H")) < 2007080200:   #input starttime as a number
-        multi_layer=".FALSE."
+    if starttime < datetime.strpdate('2007-08-02', '%Y-%m-%d'): 
+        multi_layer = ".FALSE."
     else:
-        multi_layer=".TRUE."
-    setattr(cfg,"multi_layer",multi_layer)
+        multi_layer = ".TRUE."
+    setattr(cfg, "multi_layer", multi_layer)
 
 # Create int2lm directory
     try:
@@ -45,7 +43,7 @@ def main(starttime, hstart, hstop, cfg):
         raise
   
     try:
-        os.makedirs(cfg.int2lm_output, exist_ok=True)   #output_root not used in cfg
+        os.makedirs(cfg.int2lm_output, exist_ok=True)
     except (OSError, PermissionError):
         logging.error("Creating int2lm_output folder failed")
         raise
@@ -53,7 +51,7 @@ def main(starttime, hstart, hstop, cfg):
 # copy int2lm executable
     try:
         # 'int2lm' file name or directory
-        shutil.copy(cfg.int2lm_bin, os.path.join(cfg.int2lm_work,'int2lm'))
+        shutil.copy(cfg.int2lm_bin, os.path.join(cfg.int2lm_work, 'int2lm'))
     except FileNotFoundError:
         logging.error("int2lm_bin not found")
         raise
@@ -65,8 +63,9 @@ def main(starttime, hstart, hstop, cfg):
     try:
         # 'int2lm' file name or directory
         extpar_folder = os.path.join(cfg.int2lm_input,"extpar")
-        os.makedirs(extpar_folder, exist_ok=True)   #output_root not used in cfg
-        extpar_file = os.path.join(cfg.int2lm_extpar_dir,cfg.int2lm_extpar_file)
+        os.makedirs(extpar_folder, exist_ok=True)
+        extpar_file = os.path.join(cfg.int2lm_extpar_dir, 
+                                   cfg.int2lm_extpar_file)
         shutil.copy(extpar_file, extpar_folder)
     except FileNotFoundError:
         logging.error("int2lm extpar file not found")
@@ -81,29 +80,31 @@ def main(starttime, hstart, hstop, cfg):
     # csv file with tracer datasets
     set_csvfile = os.path.join(cfg.casename,'int2lm_datasets.csv')
 
-    tracer_filename = os.path.join(cfg.chain_src_dir,'cases',tracer_csvfile)
-    set_filename = os.path.join(cfg.chain_src_dir,'cases',set_csvfile) 
-    input_art_filename = os.path.join(cfg.int2lm_work,'INPUT_ART')
+    tracer_filename = os.path.join(cfg.chain_src_dir, 'cases', tracer_csvfile)
+    set_filename = os.path.join(cfg.chain_src_dir, 'cases', set_csvfile) 
+    input_art_filename = os.path.join(cfg.int2lm_work, 'INPUT_ART')
 
-    tools.write_int2lm_input_art.main(tracer_filename, set_filename, input_art_filename)
+    tools.write_int2lm_input_art.main(tracer_filename, set_filename,
+                                      input_art_filename)
 
     # Prepare namelist and submit job
     with open(cfg.int2lm_namelist) as input_file:
         to_write = input_file.read()
 
-    output_file = os.path.join(cfg.int2lm_work,"INPUT")
-    with open(output_file,"w") as outf:
+    output_file = os.path.join(cfg.int2lm_work, "INPUT")
+    with open(output_file, "w") as outf:
         outf.write(to_write.format(cfg=cfg))
 
     with open(cfg.int2lm_runjob) as input_file:
         to_write = input_file.read()
 
-    output_file = os.path.join(cfg.int2lm_work,"run.job")
-    with open(output_file,"w") as outf:
+    output_file = os.path.join(cfg.int2lm_work, "run.job")
+    with open(output_file, "w") as outf:
         outf.write(to_write.format(
             cfg=cfg,
             ini_day = cfg.inidate_int2lm_yyyymmddhh[0:8],
             ini_hour = cfg.inidate_int2lm_yyyymmddhh[8:],
-            logfile=logfile,logfile_finish = logfile_finish))
+            logfile=logfile, logfile_finish = logfile_finish))
 
-    subprocess.call(["sbatch", "--wait", os.path.join(cfg.int2lm_work,'run.job')])
+    subprocess.call(["sbatch", "--wait",
+                     os.path.join(cfg.int2lm_work, "run.job")])
