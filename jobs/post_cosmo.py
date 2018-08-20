@@ -16,6 +16,7 @@ from . import tools
 
 
 def main(starttime, hstart, hstop, cfg):
+    logfile=os.path.join(cfg.log_working_dir,"post_cosmo")
     cosmo_work = cfg.cosmo_work
     cosmo_output = cfg.cosmo_output
     int2lm_work = cfg.int2lm_work
@@ -27,9 +28,6 @@ def main(starttime, hstart, hstop, cfg):
     copy_path = os.path.join(cfg.output_root,starttime.strftime('%Y%m%d%H')+
                              "_"+str(int(hstart))+"_"+str(int(hstop)))
 
-    logfile = os.path.join(log_working_dir,"post_cosmo")
-    logfile_finish=os.path.join(log_finished_dir,"post_cosmo")
-    tools.change_logfile(logfile)
 
     date = dt.datetime.today()
 
@@ -86,4 +84,3 @@ def main(starttime, hstart, hstop, cfg):
 ====================================================="""%date.strftime("%s")
 
     logging.info(to_print)
-    shutil.copy(logfile,logfile_finish)

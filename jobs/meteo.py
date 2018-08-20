@@ -29,11 +29,6 @@ def main(starttime, hstart, hstop, cfg):
     Copy meteo files from project folder (cfg.meteo_dir) to INT2LM input folder
     on scratch (cfg.int2lm_input/meteo)
     """
-    logfile=os.path.join(cfg.log_working_dir,"meteo")
-    logfile_finish=os.path.join(cfg.log_finished_dir,"meteo")
-    tools.change_logfile(logfile)
-        
-
     logging.info('COSMO analysis data for IC/BC')
 
     scratch_path = os.path.join(cfg.int2lm_input, 'meteo')
@@ -68,4 +63,3 @@ def main(starttime, hstart, hstop, cfg):
         except:
             raise
 
-    shutil.copy(logfile, logfile_finish)

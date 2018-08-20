@@ -29,7 +29,6 @@ def main(starttime, hstart, hstop, cfg):
     """
     logfile=os.path.join(cfg.log_working_dir,"int2lm")
     logfile_finish=os.path.join(cfg.log_finished_dir,"int2lm")
-    tools.change_logfile(logfile)
 
 # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
     if int(starttime.strftime("%Y%m%d%H")) < 2007080200:   #input starttime as a number

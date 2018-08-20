@@ -26,10 +26,6 @@ def main(starttime, hstart, hstop, cfg):
     Copy biofluxes files from project folder (cfg.vprm_dir) to INT2LM input folder
     on scratch (cfg.int2lm_input/vprm)
     """
-    logfile=os.path.join(cfg.log_working_dir,"biofluxes")
-    logfile_finish=os.path.join(cfg.log_finished_dir,"biofluxes")
-    tools.change_logfile(logfile)
-
 
     scratch_path = os.path.join(cfg.int2lm_input,'vprm')
 
@@ -53,4 +49,3 @@ def main(starttime, hstart, hstop, cfg):
             if not os.path.isfile(filename_sc):
                 loggig.error("Splitting or copying of GPP or/and RA files to scratch failed.")
 
-    shutil.copy(logfile, logfile_finish)

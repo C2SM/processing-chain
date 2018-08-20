@@ -21,10 +21,6 @@ def main(start_time, hstart, hstop, cfg):
     """
     Add tracer that are in different int2lm output files into one single output file for cosmo.
     """
-    logfile=os.path.join(cfg.log_working_dir,"post_int2lm")
-    logfile_finish=os.path.join(cfg.log_finished_dir,"post_int2lm")
-    tools.change_logfile(logfile)
-    
 
     int2lm_output = cfg.int2lm_output
     inidate_int2lm_yyyymmddhh = start_time.strftime('%Y%m%d%H')
@@ -99,6 +95,3 @@ def main(start_time, hstart, hstop, cfg):
 ====================================================="""%date.strftime("%s")
 
     logging.info(to_print)
-    shutil.copy(logfile, logfile_finish)
-
-

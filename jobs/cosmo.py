@@ -31,7 +31,6 @@ def main(starttime, hstart, hstop, cfg):
     """
     logfile=os.path.join(cfg.log_working_dir,"cosmo")
     logfile_finish=os.path.join(cfg.log_finished_dir,"cosmo")
-    tools.change_logfile(logfile)
 
     logging.info('Setup the namelist for a COSMO tracer run and submit the job to the queue')
 

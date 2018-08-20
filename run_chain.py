@@ -10,6 +10,7 @@ import os
 import subprocess
 import sys
 import time
+import shutil
 
 import jobs
 from jobs import tools
@@ -135,8 +136,17 @@ def run_chain(work_root, start_time, hstart=0.0, hstop=24.0, step=24.0,
             sys.stdout.flush()
             
             try:
-                to_call = getattr(jobs,job)
+                # Change the log file
+                logfile=os.path.join(cfg.log_working_dir,job)
+                logfile_finish=os.path.join(cfg.log_finished_dir,job)
+                tools.change_logfile(logfile)
+
+                # Launch the job
+                to_call = getattr(jobs,job)                
                 to_call.main(start_time,hstart,hstop,cfg)
+                
+                shutil.copy(logfile, logfile_finish)
+
                 exitcode=0
             except:
                 subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (job, job_id)

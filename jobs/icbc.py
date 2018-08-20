@@ -28,9 +28,6 @@ def main(starttime,hstart,hstop,cfg):
     on scratch (cfg.int2lm_input/icbc)
     If needed, launch cams4int2cosmo or ctnoaa4int2cosmo to adapt the files to int2lm
     """
-    logfile=os.path.join(cfg.log_working_dir,"icbc")
-    logfile_finish=os.path.join(cfg.log_finished_dir,"icbc")
-    tools.change_logfile(logfile)
 
     inv_to_process = []
     try:
@@ -87,4 +84,3 @@ def main(starttime,hstart,hstop,cfg):
 
                 logging.info("OK")
 
-    shutil.copy(logfile, logfile_finish)

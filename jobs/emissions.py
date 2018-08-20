@@ -27,10 +27,6 @@ def main(starttime,hstart,hstop,cfg):
     Copy emission files from project folder (cfg.emissions_dir) to INT2LM input folder
     on scratch (cfg.int2lm_input/emissions)
     """
-    logfile=os.path.join(cfg.log_working_dir,"emissions")
-    logfile_finish=os.path.join(cfg.log_finished_dir,"emissions")
-    tools.change_logfile(logfile)
-
 
     try:
         os.makedirs(os.path.join(cfg.int2lm_input,"emissions"), exist_ok=True)
@@ -56,4 +52,3 @@ def main(starttime,hstart,hstop,cfg):
 
         # convert grid_mapping_name from string (NF90_STRING) to char (NF90_CHAR)
         tools.string2char.main(scratch_path)
-    shutil.copy(logfile, logfile_finish)
