@@ -156,10 +156,10 @@ def main(date,inpath,outpath,param):
         raise
 
     tracer2dict = {
-            'CO2': dict(name = "CO2_BG", short_name = "co2", long_name= "carbon_dioxide")
-            'CO':  dict(name = "CO_BG", short_name = "co", long_name= "carbon_monoxide")
-            'CH4': dict(name = "CH4_BG", short_name = "ch4", long_name= "methane")
-            'NOX': dict(name = "NOX_BG", short_name = "NOx", long_name= "nitrogen_oxide")
+            'CO2': dict(name = "CO2_BG", short_name = "co2", long_name= "carbon_dioxide"),
+            'CO':  dict(name = "CO_BG", short_name = "co", long_name= "carbon_monoxide"),
+            'CH4': dict(name = "CH4_BG", short_name = "ch4", long_name= "methane"),
+            'NOX': dict(name = "NOX_BG", short_name = "NOx", long_name= "nitrogen_oxide"),
     }
 
     species = []
