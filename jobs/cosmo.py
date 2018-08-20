@@ -84,20 +84,25 @@ def main(starttime, hstart, hstop, cfg):
     for section in ["AF","ORG","IO","DYN","PHY","DIA","ASS"]:
         with open(cfg.cosmo_namelist+section+".cfg") as input_file:
             to_write = input_file.read();
-            output_file = os.path.join(cfg.cosmo_work,"INPUT_"+section)
-            with open(output_file,"w") as outf:
-                outf.write(to_write.format(cfg=cfg, 
-                                           restart_start = cfg.hstart + cfg.restart_step,
-                                           restart_stop = cfg.hstop,
-                                           restart_step = cfg.restart_step))
 
+        output_file = os.path.join(cfg.cosmo_work,"INPUT_"+section)
+        with open(output_file, "w") as outf:
+            to_write = to_write.format(cfg=cfg,
+                                       restart_start = cfg.hstart + cfg.restart_step,
+                                       restart_stop = cfg.hstop,
+                                       restart_step = cfg.restart_step)
+            outf.write(to_write)
+
+    # write run script (run.job)
     with open(cfg.cosmo_runjob) as input_file:
-            to_write = input_file.read();
-            output_file = os.path.join(cfg.cosmo_work,"run.job")
-            with open(output_file,"w") as outf:
-                outf.write(to_write.format(
-                    cfg=cfg,
-                    logfile=logfile,logfile_finish = logfile_finish))
+        to_write = input_file.read()
+
+    output_file = os.path.join(cfg.cosmo_work, "run.job")
+    with open(output_file, "w") as outf:
+        outf.write(to_write.format(
+            cfg=cfg,
+            logfile=logfile, logfile_finish=logfile_finish)
+        )
 
     subprocess.call(["sbatch", "--wait", os.path.join(cfg.cosmo_work,'run.job')])
 

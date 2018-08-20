@@ -89,19 +89,21 @@ def main(starttime, hstart, hstop, cfg):
 
     # Prepare namelist and submit job
     with open(cfg.int2lm_namelist) as input_file:
-        to_write = input_file.read();
-        output_file = os.path.join(cfg.int2lm_work,"INPUT")
-        with open(output_file,"w") as outf:
-            outf.write(to_write.format(cfg=cfg))
+        to_write = input_file.read()
+
+    output_file = os.path.join(cfg.int2lm_work,"INPUT")
+    with open(output_file,"w") as outf:
+        outf.write(to_write.format(cfg=cfg))
 
     with open(cfg.int2lm_runjob) as input_file:
-            to_write = input_file.read();
-            output_file = os.path.join(cfg.int2lm_work,"run.job")
-            with open(output_file,"w") as outf:
-                outf.write(to_write.format(
-                    cfg=cfg,
-                    ini_day = cfg.inidate_int2lm_yyyymmddhh[0:8], 
-                    ini_hour = cfg.inidate_int2lm_yyyymmddhh[8:], 
-                    logfile=logfile,logfile_finish = logfile_finish))
+        to_write = input_file.read()
+
+    output_file = os.path.join(cfg.int2lm_work,"run.job")
+    with open(output_file,"w") as outf:
+        outf.write(to_write.format(
+            cfg=cfg,
+            ini_day = cfg.inidate_int2lm_yyyymmddhh[0:8],
+            ini_hour = cfg.inidate_int2lm_yyyymmddhh[8:],
+            logfile=logfile,logfile_finish = logfile_finish))
 
     subprocess.call(["sbatch", "--wait", os.path.join(cfg.int2lm_work,'run.job')])
