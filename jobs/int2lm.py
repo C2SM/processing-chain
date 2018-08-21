@@ -29,7 +29,7 @@ def main(starttime, hstart, hstop, cfg):
     logfile_finish = os.path.join(cfg.log_finished_dir, "int2lm")
 
 # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
-    if starttime < datetime.strpdate('2007-08-02', '%Y-%m-%d'): 
+    if starttime < datetime.strptime('2007-08-02', '%Y-%m-%d'): 
         multi_layer = ".FALSE."
     else:
         multi_layer = ".TRUE."
