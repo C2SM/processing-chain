@@ -46,11 +46,14 @@ def main(start_time, hstart, hstop, cfg):
 
     for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*.nc"))): 
         if os.path.exists(infile) and not 'c_' in infile:
+            # get path and filename for output file
             path, output_filename = os.path.split(infile)
             logging.info(output_filename)
             outfile = os.path.join(output_path, output_filename)
+            # remove any pre-existing output file
+            if os.path.exists(outfile): os.remove(outfile)
             try:
-                with nc.Dataset(infile) as inf, nc.Dataset(outfile,"w") as outf:
+                with nc.Dataset(infile, 'r') as inf, nc.Dataset(outfile, 'w') as outf:
                     # copy global attributes all at once via dictionary
                     outf.setncatts(inf.__dict__)
                     # copy dimensions
@@ -89,6 +92,7 @@ def main(start_time, hstart, hstop, cfg):
                                 outf[varname][:] = inf[varname][:,level-1,:,:]
                             else:
                                 outf[varname][:] = inf[varname][:]
+
             except:
                 logging.error("Extracting 2D data from file %s to file %s failed." % (infile,outfile))
 
