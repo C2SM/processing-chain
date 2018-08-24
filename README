@@ -7,7 +7,11 @@ $ python run_chain.py <casename> <startdate> <hstart> <hstop> [jobs]
 How to run the example case:
 $ python run_chain.py example 2015-01-01 0 24 meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo 
 
-If [jobs] are not specified, all jobs are executed.
+If [jobs] are not specified, all jobs listed above are executed.
+
+Additional jobs available:
+- extract_2d_data (can be executed after post_cosmo and creates and additional
+  output folder cosmo_output_2d/ with surface level data)
 
 Configuration of 'example' case:
   cases/example/config.py
