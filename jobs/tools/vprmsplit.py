@@ -57,7 +57,7 @@ def main(year, ipath, opath):
     lat = ifile_gee.variables['lat'][:]
     lon = ifile_gee.variables['lon'][:]
     hours = ifile_gee.variables['time'][:]
-    gee = ifile_gee.variables['GEE'][:]
+    gpp = ifile_gee.variables['GEE'][:]
     resp = ifile_resp.variables['RESP'][:]
     ifile_gee.close()
     ifile_resp.close()
@@ -65,9 +65,6 @@ def main(year, ipath, opath):
     # Get grid spacing of VPRM grid
     dx = lat[1] - lat[0]
     dy = lon[1] - lon[0]
-
-    # Compute GPP
-    gpp = gee - resp
 
     # Change fluxes from umol m-2 s-1 to kg m-2 s-1 for GPP
     gpp *= 1e-9 * m_co2
