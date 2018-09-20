@@ -35,11 +35,9 @@ meteo_prefix = "laf"
 meteo_inc = 1
 
 # output
-#output_root = '/scratch/snx3000/%s/processing_chain/output/%s' % (user, casename)
 output_root = os.environ['SCRATCH'] + "/processing_chain/output/" + casename
 
 # working root
-#work_root = '/scratch/snx3000/%s/processing_chain' % user
 work_root = os.environ['SCRATCH'] + "/processing_chain"
 log_dir = os.path.join(work_root, 'logs')
 
