@@ -180,7 +180,7 @@ restart_step = 24
 reference_dir = os.path.join(input_root, "reference_output")
 # If the output file that gets compared to the reference is not at the location
 # that post_cosmo copied it to, give the path to it here. Else leave it 'None'
-output_dir = None
+output_dir = reference_dir
 # variables_to_check is a dict() with a tuple() of filenames as key and a list
 # of variables-names as value. The tuple consists of the filenames of the two
 # files to check, the list contains the variable-names that are compared.
