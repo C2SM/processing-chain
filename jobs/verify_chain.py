@@ -29,40 +29,36 @@ def import_datasets(ref_path, run_path):
         raise
     return ref_data, run_data
 
-def compare_vals(dataset1, dataset2, vars):
+
+def compare_vals(dataset1, dataset2, variables):
     print(dataset1['T'][0,10,10,10])
     print(dataset2['T'][0,10,10,10])
+
 
 def main(start_time, hstart, hstop, cfg):
     print("Verification!")
 
+    for (ref_file, run_file), variables in cfg.values_to_check.items():
     # reference file location
-    reference_file_name = "reference_lffd2015010200.nc"
-    reference_file_path = os.path.join(cfg.reference_dir, reference_file_name)
+    ref_file_path = os.path.join(cfg.reference_dir, ref_file)
 
     # run data location
     if cfg.ouput_file_path is None:
         # Standard output location
-        run_file_name = "lffd2015010200.nc"
         run_file_path = os.path.join(cfg.output_root,
                                      starttime.strftime('%Y%m%d%H') +
                                      "_" + str(int(hstart)) + "_" +
                                      str(int(hstop)),
                                      "cosmo_output",
-                                     run_file_name)
+                                     run_file)
     else:
-        run_file_path = cfg.output_file_path
+        # User-provided output location
+        run_file_path = os.path.join(cfg.ouput_dir, run_file)
 
     # read data
-    ref_data, run_data = import_datasets(reference_file_path, run_file_path)
+    ref_data, run_data = import_datasets(ref_file_path, run_file_path)
 
     #compare data
-    compare_vals(ref_data, run_data, [])
+    compare_vals(ref_data, run_data, variables)
 
     print("Done")
-
-
-    
-
-
-
