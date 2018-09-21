@@ -175,3 +175,6 @@ cosmo_np_tot = cosmo_np_x * cosmo_np_y + cosmo_np_io
 
 # Restart 
 restart_step = 24
+
+## Verification
+reference_dir = os.path.join(input_root, "reference_output")
