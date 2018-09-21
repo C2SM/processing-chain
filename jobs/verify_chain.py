@@ -37,12 +37,10 @@ def compare_vals(dataset1, dataset2, variables):
         print("Comparing " + var)
         print(dataset1[var][0,0,0,0])
         print(dataset2[var][0,0,0,0])
-        # if we use xarray: something like xr.apply_ufunc(isclose, dataset1[var], dataset2[var])
         if not allclose(dataset1[var], dataset2[var]):
             print("cosmo-ouput is not equal for " + var)
             # log some stuff
             break
-        
 
 
 def main(starttime, hstart, hstop, cfg):
@@ -66,7 +64,6 @@ def main(starttime, hstart, hstop, cfg):
             run_file_path = os.path.join(cfg.output_dir, run_file)
 
         # read data
-        print("Reading data from files at:" + str(ref_file_path) + ", " + str(run_file_path))
         ref_data, run_data = import_datasets(ref_file_path, run_file_path)
 
         #compare data
