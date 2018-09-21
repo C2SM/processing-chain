@@ -39,26 +39,26 @@ def main(start_time, hstart, hstop, cfg):
     print("Verification!")
 
     for (ref_file, run_file), variables in cfg.values_to_check.items():
-    # reference file location
-    ref_file_path = os.path.join(cfg.reference_dir, ref_file)
+        # reference file location
+        ref_file_path = os.path.join(cfg.reference_dir, ref_file)
 
-    # run data location
-    if cfg.ouput_file_path is None:
-        # Standard output location
-        run_file_path = os.path.join(cfg.output_root,
-                                     starttime.strftime('%Y%m%d%H') +
-                                     "_" + str(int(hstart)) + "_" +
-                                     str(int(hstop)),
-                                     "cosmo_output",
-                                     run_file)
-    else:
-        # User-provided output location
-        run_file_path = os.path.join(cfg.ouput_dir, run_file)
+        # run data location
+        if cfg.ouput_file_path is None:
+            # Standard output location
+            run_file_path = os.path.join(cfg.output_root,
+                                         starttime.strftime('%Y%m%d%H') +
+                                         "_" + str(int(hstart)) + "_" +
+                                         str(int(hstop)),
+                                         "cosmo_output",
+                                         run_file)
+        else:
+            # User-provided output location
+            run_file_path = os.path.join(cfg.ouput_dir, run_file)
 
-    # read data
-    ref_data, run_data = import_datasets(ref_file_path, run_file_path)
+        # read data
+        ref_data, run_data = import_datasets(ref_file_path, run_file_path)
 
-    #compare data
-    compare_vals(ref_data, run_data, variables)
+        #compare data
+        compare_vals(ref_data, run_data, variables)
 
     print("Done")
