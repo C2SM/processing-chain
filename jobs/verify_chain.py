@@ -9,21 +9,23 @@
 import os
 import logging
 import netCDF4 as nc
+from numpy import allclose
 
-def import_to_netCDF4(filename, mode='r'):
+def import_data(filename, mode='r'):
     return nc.Dataset(filename, mode)
+
 
 def import_datasets(ref_path, run_path):
     """
     Read the reference and run datasets
     """
     try:
-        ref_data = import_to_netCDF4(ref_path)
+        ref_data = import_data(ref_path)
     except:
         logging.error("Reading reference data failed")
         raise
     try:
-        run_data = import_to_netCDF4(run_path)
+        run_data = import_data(run_path)
     except:
         logging.error("Reading run data failed")
         raise
@@ -31,8 +33,13 @@ def import_datasets(ref_path, run_path):
 
 
 def compare_vals(dataset1, dataset2, variables):
-    print(dataset1['T'][0,10,10,10])
-    print(dataset2['T'][0,10,10,10])
+    for var in variables:
+        # if we use xarray: something like xr.apply_ufunc(isclose, dataset1[var], dataset2[var])
+        if not allclose(dataset1[var], dataset2[var]):
+            print("cosmo-ouput is not equal for " + var)
+            # log some stuff
+            break
+        
 
 
 def main(starttime, hstart, hstop, cfg):
