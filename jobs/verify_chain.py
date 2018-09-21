@@ -43,7 +43,7 @@ def main(start_time, hstart, hstop, cfg):
         ref_file_path = os.path.join(cfg.reference_dir, ref_file)
 
         # run data location
-        if cfg.ouput_file_path is None:
+        if cfg.ouput_dir is None:
             # Standard output location
             run_file_path = os.path.join(cfg.output_root,
                                          starttime.strftime('%Y%m%d%H') +
