@@ -35,6 +35,8 @@ def import_datasets(ref_path, run_path):
 def compare_vals(dataset1, dataset2, variables):
     for var in variables:
         print("Comparing " + var)
+        print(dataset1[var][0,0,0,0])
+        print(dataset2[var][0,0,0,0])
         # if we use xarray: something like xr.apply_ufunc(isclose, dataset1[var], dataset2[var])
         if not allclose(dataset1[var], dataset2[var]):
             print("cosmo-ouput is not equal for " + var)
