@@ -35,7 +35,7 @@ def compare_vals(dataset1, dataset2, variables):
     print(dataset2['T'][0,10,10,10])
 
 
-def main(start_time, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg):
     print("Verification!")
 
     for (ref_file, run_file), variables in cfg.values_to_check.items():
