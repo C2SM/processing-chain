@@ -66,6 +66,7 @@ def main(starttime, hstart, hstop, cfg):
             run_file_path = os.path.join(cfg.output_dir, run_file)
 
         # read data
+        print("Reading data from files at:" + str(ref_file_path) + ", " + str(run_file_path))
         ref_data, run_data = import_datasets(ref_file_path, run_file_path)
 
         #compare data
