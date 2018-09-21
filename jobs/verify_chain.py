@@ -43,7 +43,7 @@ def main(start_time, hstart, hstop, cfg):
         ref_file_path = os.path.join(cfg.reference_dir, ref_file)
 
         # run data location
-        if cfg.ouput_dir is None:
+        if cfg.output_dir is None:
             # Standard output location
             run_file_path = os.path.join(cfg.output_root,
                                          starttime.strftime('%Y%m%d%H') +
@@ -53,7 +53,7 @@ def main(start_time, hstart, hstop, cfg):
                                          run_file)
         else:
             # User-provided output location
-            run_file_path = os.path.join(cfg.ouput_dir, run_file)
+            run_file_path = os.path.join(cfg.output_dir, run_file)
 
         # read data
         ref_data, run_data = import_datasets(ref_file_path, run_file_path)
