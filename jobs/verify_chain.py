@@ -33,20 +33,16 @@ def import_datasets(ref_path, run_path):
 
 
 def compare_vals(dataset1, dataset2, variables):
+    found_discrepancy = False
     for var in variables:
-        # only for easy debugging
-        print("Comparing " + var)
-        print(dataset1[var][0,0,0,0])
-        print(dataset2[var][0,0,0,0])
-        
-        # what should happen on error:
-        #   -raise exception -> mail to user, incomplete test
-        #   -logging.error -> i think it prints to out and continues
-        #   -finish comparing, just write to logfile -> how to notify user?
         if not allclose(dataset1[var], dataset2[var]):
-            logging.error("cosmo-ouput is not equal for " + var)
-            break
-        logging.info(var + ": Passed")
+            logging.info(var + ": Failed!")
+            found_discrepancy = True
+        else:
+            logging.info(var + ": Passed")
+    if found_discrepancy:
+        print("\033[91m" + "Some output fields don't match!\n" + "\033[0m" +
+              "Check logfiles for details")
 
 
 def main(starttime, hstart, hstop, cfg):
