@@ -186,5 +186,5 @@ output_dir = None
 # files to check, the list contains the variable-names that are compared.
 # The verify_chain job will look for the files in the reference_dir (first tuple
 # element) and the ouput_dir (second tuple element)
-values_to_check = {("reference_lffd2015010200.nc","rlffd2015010200.nc") :
+values_to_check = {("reference_lffd2015010200.nc","lffd2015010200.nc") :
                       ['T', 'U', 'V', 'CO2_A']}
