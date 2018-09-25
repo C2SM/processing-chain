@@ -16,20 +16,23 @@ import jobs
 from jobs import tools
 
 
-# try to load config file
-try:
-    fn = os.path.join('cases',sys.argv[1],'config')
-    sys.path.append(os.path.dirname(fn))
-    cfg = importlib.import_module(os.path.basename(fn))
-except IndexError:
-    print('ERROR: no config file provided!')
-    sys.exit(1)
-except ImportError:
-    print('ERROR: failed to import config module "%s"!' % fn)
-    sys.exit(1)
+def load_config_file():
+    # try to load config file
+    try:
+        fn = os.path.join('cases',sys.argv[1],'config')
+        sys.path.append(os.path.dirname(fn))
+        cfg = importlib.import_module(os.path.basename(fn))
+    except IndexError:
+        print('ERROR: no config file provided!')
+        sys.exit(1)
+    except ImportError:
+        print('ERROR: failed to import config module "%s"!' % fn)
+        sys.exit(1)
+
+    return cfg
 
 
-def run_chain(work_root, start_time, hstart=0.0, hstop=24.0, step=24.0,
+def run_chain(work_root, start_time, cfg, hstart=0.0, hstop=24.0, step=24.0,
               job_names=None):
     """\
     Run complete chain ignoring already finished jobs.
@@ -165,7 +168,7 @@ def run_chain(work_root, start_time, hstart=0.0, hstop=24.0, step=24.0,
                 raise RuntimeError(subject)
 
 
-def restart_runs(start, work_root, hstart=0, hstop=239, job_names=None):
+def restart_runs(start, work_root, cfg, hstart=0, hstop=239, job_names=None):
 
     end = start + timedelta(hours=hstop) 
     step = hstop # in hours (has to be multiple of 3)
@@ -183,20 +186,20 @@ def restart_runs(start, work_root, hstart=0, hstop=239, job_names=None):
         hstop = hstart + step
 
         try:
-          run_chain(work_root, start, hstart, hstop, step,
+          run_chain(work_root, start, cfg, hstart, hstop, step,
                     job_names=job_names)
         except RuntimeError:
             sys.exit(1)
 
 
 if __name__ == '__main__':
-    # TODO: use argparse
+    cfg = load_config_file()
     start_time = datetime.strptime(sys.argv[2], '%Y-%m-%d')
     hstart = int(sys.argv[3])
     hstop = int(sys.argv[4])
     job_names = sys.argv[5:]
 
-    restart_runs(start_time, cfg.work_root, hstart=hstart, hstop=hstop,
+    restart_runs(start_time, cfg.work_root, cfg, hstart=hstart, hstop=hstop,
                  job_names=job_names)
     
     print('>>> finished chain for good or bad! <<<')
