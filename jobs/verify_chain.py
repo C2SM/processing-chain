@@ -32,7 +32,7 @@ def import_datasets(ref_path, run_path):
     return ref_data, run_data
 
 
-def compare_vals(dataset1, dataset2, variables):
+def datasets_equal(dataset1, dataset2, variables):
     found_discrepancy = False
     for var in variables:
         if not allclose(dataset1[var], dataset2[var]):
@@ -40,9 +40,7 @@ def compare_vals(dataset1, dataset2, variables):
             found_discrepancy = True
         else:
             logging.info(var + ": Passed")
-    if found_discrepancy:
-        print("\033[91m" + "Some output fields don't match!\n" + "\033[0m" +
-              "Check logfiles for details")
+    return not found_discrepancy
 
 
 def main(starttime, hstart, hstop, cfg):
@@ -73,6 +71,11 @@ def main(starttime, hstart, hstop, cfg):
         ref_data, run_data = import_datasets(ref_file_path, run_file_path)
 
         #compare data
-        compare_vals(ref_data, run_data, variables)
+        identical = datasets_equal(ref_data, run_data, variables)
+        if not identical:
+            print("\033[91m" + "Some output fields don't match the reference!\n"
+                  + "\033[0m" + "Check logfiles for details")
+        else:
+            print("Verification successful, output and reference agree")
 
     logging.info("Finished verification")
