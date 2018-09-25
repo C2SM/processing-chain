@@ -311,7 +311,7 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
 
         try:
           run_chain(work_root, cfg, start, hstart, hstop,
-                    job_names=job_names, step)
+                    job_names, step)
         except RuntimeError:
             sys.exit(1)
 
@@ -323,13 +323,6 @@ if __name__ == '__main__':
     hstart = int(parser.hstart)
     hstop = int(parser.hstop)
     job_names = parser.job_list
-    
-    print("Casename: {}".format(parser.casename))
-    print("start_time: {}".format(start_time))
-    print("hstart: {}".format(hstart))
-    print("hstop: {}".format(hstop))
-    print("job_names: {}".format(job_names))
-    sys.exit(0)
     
     restart_runs(cfg.work_root, cfg, start_time, hstart=hstart, hstop=hstop,
                  job_names=job_names)

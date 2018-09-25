@@ -178,9 +178,13 @@ restart_step = 24
 
 ## Verification
 reference_dir = os.path.join(input_root, "reference_output")
+
 # If the output file that gets compared to the reference is not at the location
 # that post_cosmo copied it to, give the path to it here. Else leave it 'None'
-output_dir = None
+output_dir = none
+# Use this if the post_cosmo job is not executed
+# output_dir = os.environ['SCRATCH'] + "/processing_chain/example/2015010100_0_24/cosmo/output"
+
 # variables_to_check is a dict() with a tuple() of filenames as key and a list
 # of variables-names as value. The tuple consists of the filenames of the two
 # files to check, the list contains the variable-names that are compared.
