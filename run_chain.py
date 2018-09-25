@@ -16,10 +16,29 @@ import jobs
 from jobs import tools
 
 
-def load_config_file():
-    # try to load config file
+def load_config_file(casename):
+    """Load the config file.
+    
+    Looks for the config file in cases/casename/config.py and then imports it
+    as a module. This lets the config file contain python statements which are
+    evaluated on import.
+    Access variables declared in the config-file (myval = 9) with cfg.myval
+    Add new variables with::
+    
+        setattr(cfg, 'myval', 9)
+        
+    Parameters
+    ----------
+    casename : str
+        Name of the folder in cases/ where the configuration files are stored
+        
+    Returns
+    -------
+    config-object
+        Object with all variables as fields
+    """
     try:
-        fn = os.path.join('cases',sys.argv[1],'config')
+        fn = os.path.join('cases',casename,'config')
         sys.path.append(os.path.dirname(fn))
         cfg = importlib.import_module(os.path.basename(fn))
     except IndexError:
@@ -32,10 +51,39 @@ def load_config_file():
     return cfg
 
 
-def run_chain(work_root, start_time, cfg, hstart=0.0, hstop=24.0, step=24.0,
+def run_chain(work_root, cfg, start_time, hstart=0.0, hstop=24.0, step=24.0,
               job_names=None):
-    """\
-    Run complete chain ignoring already finished jobs.
+    """Run chain ignoring already finished jobs
+    
+    Sets configuration values derived from user-provided ones, for example the
+    folder-structure inside the working directory.
+    Sets up the logging module used by the jobs.
+    Creates directories for each job.
+    Decides which jobs to run and then runs them; first it checks wether the
+    job was already executed or is currently running (depending on the logging
+    file of the job). Then if the job has to be run, it calls the main()-
+    function of the job.
+    
+    Parameters
+    ----------
+    work_root : str
+        The path to the directory in which the chain writes files during
+        execution (typically scratch)
+    cfg : config-object
+        Object holding all user-configuration parameters as fields
+    start_time : datetime-object
+        The starttime of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the startdate (start param)
+    hstop : int
+        Length of simulation (in hours)
+    job_names : list of str
+        List of the names of jobs to execute on every timeslice.
+        Jobs are .py files in the jobs/ directory with a main() function
+        that will be called from run_chain().
+        
+        If the list is empty, the default procedure will be executed:
+        meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo
     """
     # ini date and forecast time (ignore meteo times)
     inidate = int((start_time - datetime(1970,1,1)).total_seconds())
@@ -168,7 +216,33 @@ def run_chain(work_root, start_time, cfg, hstart=0.0, hstop=24.0, step=24.0,
                 raise RuntimeError(subject)
 
 
-def restart_runs(start, work_root, cfg, hstart=0, hstop=239, job_names=None):
+def restart_runs(work_root, cfg, start, hstart=0, hstop=239, job_names=None):
+    """Starts the subchains in the specified intervals
+    
+    Slices the total runtime of the chain according to cfg.restart_step.
+    Calls run_chain() for each step
+    
+    Parameters
+    ----------
+    work_root : str
+        The path to the directory in which the chain writes files during
+        execution (typically scratch)
+    cfg : config-object
+        Object holding all user-configuration parameters as fields
+    start : datetime-object
+        The startdate
+    hstart : int
+        Offset (in hours) of the actual start from the startdate (start param)
+    hstop : int
+        Length of simulation (in hours)
+    job_names : list of str
+        List of the names of jobs to execute on every timeslice.
+        Jobs are .py files in the jobs/ directory with a main() function
+        that will be called from run_chain().
+        
+        If the list is empty, the default procedure will be executed:
+        meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo
+    """
 
     end = start + timedelta(hours=hstop) 
     step = hstop # in hours (has to be multiple of 3)
@@ -186,20 +260,28 @@ def restart_runs(start, work_root, cfg, hstart=0, hstop=239, job_names=None):
         hstop = hstart + step
 
         try:
-          run_chain(work_root, start, cfg, hstart, hstop, step,
+          run_chain(work_root, cfg, start, hstart, hstop, step,
                     job_names=job_names)
         except RuntimeError:
             sys.exit(1)
 
 
 if __name__ == '__main__':
-    cfg = load_config_file()
+    parser = parse_arguments()
+    cfg = load_config_file(casename=sys.argv[1])
     start_time = datetime.strptime(sys.argv[2], '%Y-%m-%d')
     hstart = int(sys.argv[3])
     hstop = int(sys.argv[4])
     job_names = sys.argv[5:]
-
-    restart_runs(start_time, cfg.work_root, cfg, hstart=hstart, hstop=hstop,
+    
+    #print("Casename: {}".format(sys.argv[1]))
+    #print("start_time: {}".format(start_time))
+    #print("hstart: {}".format(hstart))
+    #print("hstop: {}".format(hstop))
+    #print("job_names: {}".format(job_names))
+    #sys.exit(0)
+    
+    restart_runs(cfg.work_root, cfg, start_time, hstart=hstart, hstop=hstop,
                  job_names=job_names)
     
     print('>>> finished chain for good or bad! <<<')
