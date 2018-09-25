@@ -11,9 +11,66 @@ import subprocess
 import sys
 import time
 import shutil
+import argparse
 
 import jobs
 from jobs import tools
+
+
+def parse_arguments():
+    """Parse the command line arguments given to this script
+    
+    Returns
+    -------
+    Namespace-object
+        Access the value for an argument by::
+            
+            args = parse_arguments()
+            args.myval
+    """
+    parser = argparse.ArgumentParser(description="Run the processing chain.")
+    
+    parser.add_argument("casename",
+                        type=str,
+                        help="Identifier of the run. The config-files for this "
+                             "run are assumed to be in cases/casename/")
+                             
+    parser.add_argument("startdate",
+                        type=str,
+                        help="Startdate of the run in the format yyyy-mm-dd")
+    
+    parser.add_argument("hstart",
+                        type=int,
+                        help="Time on the startdate when the simulation"
+                             "starts. If this is zero, the simulation starts "
+                             "at midnight of the startdate.")
+                             
+    parser.add_argument("hstop",
+                        type=int,
+                        help="Length of the simulation in hours. The "
+                             "simulation runs until startdate + hstart + "
+                             "hstop. Depending on your config.py settings, "
+                             "processing-chain will split up the simulation "
+                             "and perform several restarts before reaching the "
+                             "stopping-time.")
+
+    default_jobs = ["meteo", "icbc", "emissions", "biofluxes", "int2lm",
+                    "post_int2lm", "cosmo", "post_cosmo"]
+    parser.add_argument("-j", "--jobs",
+                        nargs='*',
+                        dest="job_list",
+                        help="List of job-names to be executed. A job is a .py-"
+                             "file in jobs/ with a main()-function which "
+                             "handles one aspect of the processing chain, for "
+                             "example copying meteo-input data or launching a "
+                             "job for int2lm. "
+                             "Jobs are executed in the order in which they are "
+                             "given here. "
+                             "If no jobs are given, the default that will be "
+                             "executed is: {}".format(default_jobs),
+                        default=default_jobs)
+
+    return parser.parse_args()
 
 
 def load_config_file(casename):
@@ -35,8 +92,9 @@ def load_config_file(casename):
     Returns
     -------
     config-object
-        Object with all variables as fields
+        Object with all variables as attributes
     """
+    print(casename)
     try:
         fn = os.path.join('cases',casename,'config')
         sys.path.append(os.path.dirname(fn))
@@ -51,8 +109,7 @@ def load_config_file(casename):
     return cfg
 
 
-def run_chain(work_root, cfg, start_time, hstart=0.0, hstop=24.0, step=24.0,
-              job_names=None):
+def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
     """Run chain ignoring already finished jobs
     
     Sets configuration values derived from user-provided ones, for example the
@@ -143,13 +200,6 @@ def run_chain(work_root, cfg, start_time, hstart=0.0, hstop=24.0, step=24.0,
         os.makedirs(log_finished_dir)
 
     # run jobs (if required)
-    if job_names == [] or job_names is None:
-        job_names = [
-            'meteo', 'icbc', 'emissions', 'biofluxes',
-            'int2lm', 'post_int2lm',
-            'cosmo', 'post_cosmo'
-        ]
-
     for job in job_names:
 
         # mapping of scripts in jobs with their arguments
@@ -185,7 +235,7 @@ def run_chain(work_root, cfg, start_time, hstart=0.0, hstop=24.0, step=24.0,
                 tools.change_logfile(logfile)
 
                 # Launch the job
-                to_call = getattr(jobs,job)                
+                to_call = getattr(jobs,job)
                 to_call.main(start_time,hstart,hstop,cfg)
                 
                 shutil.copy(logfile, logfile_finish)
@@ -216,7 +266,7 @@ def run_chain(work_root, cfg, start_time, hstart=0.0, hstop=24.0, step=24.0,
                 raise RuntimeError(subject)
 
 
-def restart_runs(work_root, cfg, start, hstart=0, hstop=239, job_names=None):
+def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
     """Starts the subchains in the specified intervals
     
     Slices the total runtime of the chain according to cfg.restart_step.
@@ -260,26 +310,26 @@ def restart_runs(work_root, cfg, start, hstart=0, hstop=239, job_names=None):
         hstop = hstart + step
 
         try:
-          run_chain(work_root, cfg, start, hstart, hstop, step,
-                    job_names=job_names)
+          run_chain(work_root, cfg, start, hstart, hstop,
+                    job_names=job_names, step)
         except RuntimeError:
             sys.exit(1)
 
 
 if __name__ == '__main__':
     parser = parse_arguments()
-    cfg = load_config_file(casename=sys.argv[1])
-    start_time = datetime.strptime(sys.argv[2], '%Y-%m-%d')
-    hstart = int(sys.argv[3])
-    hstop = int(sys.argv[4])
-    job_names = sys.argv[5:]
+    cfg = load_config_file(casename=parser.casename)
+    start_time = datetime.strptime(parser.startdate, '%Y-%m-%d')
+    hstart = int(parser.hstart)
+    hstop = int(parser.hstop)
+    job_names = parser.job_list
     
-    #print("Casename: {}".format(sys.argv[1]))
-    #print("start_time: {}".format(start_time))
-    #print("hstart: {}".format(hstart))
-    #print("hstop: {}".format(hstop))
-    #print("job_names: {}".format(job_names))
-    #sys.exit(0)
+    print("Casename: {}".format(parser.casename))
+    print("start_time: {}".format(start_time))
+    print("hstart: {}".format(hstart))
+    print("hstop: {}".format(hstop))
+    print("job_names: {}".format(job_names))
+    sys.exit(0)
     
     restart_runs(cfg.work_root, cfg, start_time, hstart=hstart, hstop=hstop,
                  job_names=job_names)
