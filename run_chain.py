@@ -18,7 +18,7 @@ from jobs import tools
 
 
 def parse_arguments():
-    """Parse the command line arguments given to this script
+    """Parse the command line arguments given to this script,
     
     Returns
     -------
@@ -76,10 +76,10 @@ def parse_arguments():
 def load_config_file(casename):
     """Load the config file.
     
-    Looks for the config file in cases/casename/config.py and then imports it
-    as a module. This lets the config file contain python statements which are
-    evaluated on import.
-    Access variables declared in the config-file (myval = 9) with cfg.myval
+    Looks for the config file in ``cases/casename/config.py`` and then imports
+    it as a module. This lets the config file contain python statements which
+    are evaluated on import.
+    Access variables declared in the config-file (``myval = 9``) with ``cfg.myval``
     Add new variables with::
     
         setattr(cfg, 'myval', 9)
@@ -110,7 +110,7 @@ def load_config_file(casename):
 
 
 def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
-    """Run chain ignoring already finished jobs
+    """Run chain ignoring already finished jobs.
     
     Sets configuration values derived from user-provided ones, for example the
     folder-structure inside the working directory.
@@ -127,7 +127,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
         The path to the directory in which the chain writes files during
         execution (typically scratch)
     cfg : config-object
-        Object holding all user-configuration parameters as fields
+        Object holding all user-configuration parameters as attributes
     start_time : datetime-object
         The starttime of the simulation
     hstart : int
@@ -136,11 +136,11 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
         Length of simulation (in hours)
     job_names : list of str
         List of the names of jobs to execute on every timeslice.
-        Jobs are .py files in the jobs/ directory with a main() function
-        that will be called from run_chain().
+        Jobs are ``.py`` files in the ``jobs/`` directory with a ``main()``
+        function that will be called from ``run_chain()``.
         
         If the list is empty, the default procedure will be executed:
-        meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo
+        ``meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo``
     """
     # ini date and forecast time (ignore meteo times)
     inidate = int((start_time - datetime(1970,1,1)).total_seconds())
@@ -267,10 +267,10 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
 
 
 def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
-    """Starts the subchains in the specified intervals
+    """Starts the subchains in the specified intervals.
     
-    Slices the total runtime of the chain according to cfg.restart_step.
-    Calls run_chain() for each step
+    Slices the total runtime of the chain according to ``cfg.restart_step``.
+    Calls ``run_chain()`` for each step
     
     Parameters
     ----------
@@ -278,7 +278,7 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
         The path to the directory in which the chain writes files during
         execution (typically scratch)
     cfg : config-object
-        Object holding all user-configuration parameters as fields
+        Object holding all user-configuration parameters as attributes
     start : datetime-object
         The startdate
     hstart : int
