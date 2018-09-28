@@ -181,7 +181,7 @@ reference_dir = os.path.join(input_root, "reference_output")
 
 # If the output file that gets compared to the reference is not at the location
 # that post_cosmo copied it to, give the path to it here. Else leave it 'None'
-output_dir = none
+output_dir = None
 # Use this if the post_cosmo job is not executed
 # output_dir = os.environ['SCRATCH'] + "/processing_chain/example/2015010100_0_24/cosmo/output"
 
