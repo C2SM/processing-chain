@@ -26,9 +26,10 @@ def main(starttime,hstart,hstop,cfg):
     """Copy emission files to the **int2lm** input directory.
 
     Copy emission files from project folder (``cfg.emissions_dir``) to
-    **int2lm** input folder on scratch (``cfg.int2lm_input/emissions``). 
+    **int2lm** input folder on scratch (``cfg.int2lm_input/emissions``).
+
     Converts the the netCDF-variable-names from ``string`` to ``char``
-    (presumably for some fortran-related reason).
+    (necessary for **int2lm**).
     
     Parameters
     ----------	
@@ -64,5 +65,5 @@ def main(starttime,hstart,hstop,cfg):
             logging.error("Copying emission data file failed")
             raise
 
-        # convert grid_mapping_name from string (NF90_STRING) to char (NF90_CHAR)
+        # convert grid_mapping_name from string (NF90_STRING) to char (NF90_CHAR) (needed for int2lm to work)
         tools.string2char.main(scratch_path)
