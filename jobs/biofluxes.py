@@ -22,9 +22,21 @@ import shutil
 from . import tools
 
 def main(starttime, hstart, hstop, cfg):
-    """
-    Copy biofluxes files from project folder (cfg.vprm_dir) to INT2LM input folder
-    on scratch (cfg.int2lm_input/vprm)
+    """Prepare the biofluxes-files for the simulation.
+
+    Copy biofluxes files from project folder (``cfg.vprm_dir``) to int2lm input
+    folder on scratch (``cfg.int2lm_input/vprm``)
+
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
     """
 
     scratch_path = os.path.join(cfg.int2lm_input,'vprm')

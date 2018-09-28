@@ -44,6 +44,35 @@ def datasets_equal(dataset1, dataset2, variables):
 
 
 def main(starttime, hstart, hstop, cfg):
+    """Compare outputs of the chain to a reference.
+
+    Looks for the reference-file in ``cfg.reference_dir``.
+    
+    Looks for the output file in ``cfg.output_dir`` (if not ``None``), else it
+    goes to the output directory created by the **COSMO**-job.
+    
+    In the dict ``cfg.values_to_check``, the user specifies the names of the
+    files to be compared as keys, and the variables to compare as a list.
+
+    To compare the temperatures of the last output of the example case, the
+    following variables should be added to the ``config.py`` file: ::
+
+        reference_dir = os.path.join(input_root, "reference_output")
+        output_dir = None
+        values_to_check = {("reference_lffd2015010200.nc","lffd2015010200.nc") :
+              ['T']}
+
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
+    """
     logging.info("Started verification")
     for (ref_file, run_file), variables in cfg.values_to_check.items():
         logging.info("Comparing " + str(variables))

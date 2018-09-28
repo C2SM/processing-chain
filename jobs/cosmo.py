@@ -26,8 +26,36 @@ import subprocess
 
 
 def main(starttime, hstart, hstop, cfg):
-    """
-    Setup the namelist for a COSMO tracer run and submit the job to the queue
+    """Setup the namelists for a **COSMO** tracer run and submit the job to
+    the queue
+
+    Decide if the soil model should be TERRA or TERRA multi-layer depending on
+    ``startdate`` of the simulation.
+    
+    Create necessary directory structure to run **COSMO** (run, output and
+    restart directories, defined in ``cfg.cosmo_work``, ``cfg.cosmo_output``
+    and ``cfg.cosmo_restart_out``).
+    
+    Copy the **COSMO**-executable from 
+    ``cfg.cosmo_bin`` to ``cfg.cosmo_work/cosmo``.
+    
+    Convert the tracer-csv-file to a **COSMO**-namelist file.
+    
+    Format the **COSMO**-namelist-templates (``AF,ORG,IO,DYN,PHY,DIA,ASS``)
+    using the information in ``cfg``.
+    Format the runscript-template and submit the job.
+    
+    
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
     """
     logfile=os.path.join(cfg.log_working_dir,"cosmo")
     logfile_finish=os.path.join(cfg.log_finished_dir,"cosmo")

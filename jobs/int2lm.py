@@ -22,8 +22,36 @@ from datetime import datetime
 
 
 def main(starttime, hstart, hstop, cfg):
-    """
-    Setup the namelist for int2lm and submit the job to the queue
+    """Setup the namelist for **int2lm** and submit the job to the queue.
+
+    Decide if the soil model should be TERRA or TERRA multi-layer depending on
+    ``startdate`` of the simulation.
+    
+    Create necessary directory structure to run **int2lm** (run and output
+    directories, defined in ``cfg.int2lm`` and ``cfg.int2lm_output``).
+    
+    Copy the **int2lm**-executable from ``cfg.int2lm_bin`` to 
+    ``cfg.int2lm_work/int2lm``.
+    
+    Copy the extpar-file from ``cfg.extpar_dir/cfg.extpar_file`` to
+    ``cfg.int2lm_run/extpar``.
+    
+    Convert the tracer-csv-files to a **int2lm**-namelist file.
+    
+    Format the **int2lm**-namelist-template using the information in ``cfg``.
+    
+    Format the runscript-template and submit the job.
+ 
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
     """
     logfile = os.path.join(cfg.log_working_dir, "int2lm")
     logfile_finish = os.path.join(cfg.log_finished_dir, "int2lm")

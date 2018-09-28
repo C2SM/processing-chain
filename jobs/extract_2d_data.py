@@ -14,8 +14,19 @@ from . import tools
 
 def main(start_time, hstart, hstop, cfg):
     """
-    Extracts 2D and surface data from COSMO output directory to a new file
-    (cosmo_output_2d)
+    Extracts 2D and surface data from **COSMO** output directory to a new file
+    (``cosmo_output_2d``)
+    
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
     """
 
     cosmo_output = cfg.cosmo_output

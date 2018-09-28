@@ -23,10 +23,23 @@ from . import tools
 #from tools import mozart2int2lm
 
 def main(starttime,hstart,hstop,cfg):
-    """
-    Copy CAMS or CarbonTracker files from project folder to INT2LM input folder
-    on scratch (cfg.int2lm_input/icbc)
-    If needed, launch cams4int2cosmo or ctnoaa4int2cosmo to adapt the files to int2lm
+    """Copy and if necessary process CAMS & CarbonTracker files for **int2lm**
+
+    Copy CAMS or CarbonTracker files from project folder to int2lm input folder
+    on scratch (``cfg.int2lm_input/icbc``).
+    If needed, launch ``cams4int2cosmo`` or ``ctnoaa4int2cosmo`` to adapt the
+    files to **int2lm**.
+    
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
     """
 
     inv_to_process = []

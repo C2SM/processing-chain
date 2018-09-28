@@ -25,9 +25,22 @@ from . import tools
 
 
 def main(starttime, hstart, hstop, cfg):
-    """
-    Copy meteo files from project folder (cfg.meteo_dir) to INT2LM input folder
-    on scratch (cfg.int2lm_input/meteo)
+    """Copy meteo files to **int2lm** input
+
+    Create necessary directory ``cfg.int2lm_input/meteo``. Copy meteo files
+    from project directory (``cfg.meteo_dir``) to int2lm input folder on scratch
+    (``cfg.int2lm_input/meteo``).
+    
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
     """
     logging.info('COSMO analysis data for IC/BC')
 

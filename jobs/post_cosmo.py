@@ -16,6 +16,28 @@ from . import tools
 
 
 def main(starttime, hstart, hstop, cfg):
+    """Copy the output of a **COSMO**-run to a user-defined position.
+
+    Write a runscript to copy all files (**COSMO** settings & output,
+    **int2lm** settings, logfiles) from ``cfg.cosmo_work``,
+    ``cfg.cosmo_output``, ``cfg.int2lm_work``, ``cfg.log_finished_dir`` to
+    ``cfg.output_root/...`` .
+    
+    Use the xfer-queue.
+    
+    Submit the job.
+    
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
+    """
     logfile=os.path.join(cfg.log_working_dir,"post_cosmo")
     cosmo_work = cfg.cosmo_work
     cosmo_output = cfg.cosmo_output

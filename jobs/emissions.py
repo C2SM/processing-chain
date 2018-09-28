@@ -23,9 +23,23 @@ import shutil
 from . import tools
 
 def main(starttime,hstart,hstop,cfg):
-    """
-    Copy emission files from project folder (cfg.emissions_dir) to INT2LM input folder
-    on scratch (cfg.int2lm_input/emissions)
+    """Copy emission files to the **int2lm** input directory.
+
+    Copy emission files from project folder (``cfg.emissions_dir``) to
+    **int2lm** input folder on scratch (``cfg.int2lm_input/emissions``). 
+    Converts the the netCDF-variable-names from ``string`` to ``char``
+    (presumably for some fortran-related reason).
+    
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
     """
 
     try:
