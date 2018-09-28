@@ -6,15 +6,17 @@
 Welcome to Processing Chain's documentation!
 ============================================
 
+Some general info goes here
+
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Contents:
 
-    test
+    runchain
+    jobs
+    tools
 
 Indices and tables
 ==================
 
-* :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

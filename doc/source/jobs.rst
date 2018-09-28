@@ -4,7 +4,7 @@ Jobs
 The following jobs are available for use in the processing chain.
 
 There is some ordering to the jobs, but you have to find out for yourself?
-I think it generally goes like
+I think it generally goes like:
 
 1.  biofluxes | icbc | meteo | emissions
 2.  int2lm
