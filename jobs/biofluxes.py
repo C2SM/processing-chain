@@ -38,6 +38,7 @@ def main(starttime, hstart, hstop, cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
+    tools.check_target(cfg, 'COSMO')
 
     scratch_path = os.path.join(cfg.int2lm_input,'vprm')
 

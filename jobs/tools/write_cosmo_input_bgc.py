@@ -66,9 +66,3 @@ if __name__ == '__main__':
     input_filename = sys.argv[1]   # csv file with tracers
     output_filename = sys.argv[2]  # filename (INPUT_TRCR) read by COSMO
     main(input_filename, output_filename)
-
-
-
-
-
-

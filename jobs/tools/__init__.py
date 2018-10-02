@@ -11,6 +11,7 @@ from . import string2char
 from . import vprmsplit
 from . import write_int2lm_input_art
 from . import write_cosmo_input_bgc
+from .check_target import check_target
 
 def iter_hours(starttime, hstart, hstop, step=1):
 
@@ -42,6 +43,3 @@ def change_logfile(filename):
         log.handlers = [fileh]      # set the new handler
     else:
         logging.basicConfig(filename=filename,level=logging.INFO)
-
-    
-

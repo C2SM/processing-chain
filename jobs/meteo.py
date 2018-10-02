@@ -42,6 +42,7 @@ def main(starttime, hstart, hstop, cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
+    tools.check_target(cfg, 'COSMO')
     logging.info('COSMO analysis data for IC/BC')
 
     scratch_path = os.path.join(cfg.int2lm_input, 'meteo')
