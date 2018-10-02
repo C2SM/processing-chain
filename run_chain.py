@@ -109,6 +109,27 @@ def load_config_file(casename):
     return cfg
 
 
+def set_simulation_type(cfg):
+    """Detects if the chain targets cosmo or cosmoart
+    
+    Checks if a target was provided in the config-object. If no target is 
+    provided, sets the target to cosmo in the config-object.
+
+    Parameters
+    ----------
+    cfg : config-object
+    """
+    default = 'cosmo'
+    possible = [ default, 'cosmoart' ]
+
+    target = getattr(cfg, 'target', default)
+
+    if not target in possible:
+        raise ValueError("The target of the chain "
+                         "must be one of {}".format(possible))
+    setattr(cfg, 'target', target)
+
+
 def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
     """Run chain ignoring already finished jobs.
     
@@ -323,6 +344,7 @@ if __name__ == '__main__':
     hstart = int(parser.hstart)
     hstop = int(parser.hstop)
     job_names = parser.job_list
+    set_simulation_type(cfg)
     
     restart_runs(cfg.work_root, cfg, start_time, hstart=hstart, hstop=hstop,
                  job_names=job_names)
