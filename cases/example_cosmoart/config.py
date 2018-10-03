@@ -41,11 +41,17 @@ output_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain/output/" + cas
 work_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain"
 log_dir = os.path.join(work_root, 'logs')
 
-
 # anthropogenic emissions pre-processed for mother and nested domain
 emissions_dir = os.path.join(input_root, 'emissions_coarse')
 emis_gridname = "CO2_CO_NOX_Berlin-coarse_"
- 
+
+# ifs_hres_bc files
+ifs_hres_dir = os.path.join(input_root, 'ifs_hres_bc')
+ifs_hres_inc = 3  # increment between timesteps
+ifs_basename = "eas"
+
+# photolysis-rate file
+photo_rate_file = os.path.join(input_root, 'art_photolysis', 'papa_data.p')
 
 # CAMS for CO2, CO and NOX initial and boundary conditions
 
@@ -103,7 +109,7 @@ int2lm_extpar_file = "external_parameter_empa.cosmo14.nc"
 int2lm_bin = os.path.join(input_root,"executables/int2lm")
 
 # COSMO
-cosmo_bin=  os.path.join(input_root,"executables/cosmo") 
+cosmo_bin = os.path.join(input_root,"executables/cosmo") 
 
 # Case specific settings (int2lm and cosmo namelists and runscripts)
 
@@ -139,7 +145,7 @@ elif compute_queue=="debug":
     cosmo_walltime="00:30:00"
     cosmo_np_x=1
     cosmo_np_y=1
-else: 
+else:
     logging.error("Unknown queue name: %s" % compute_queue)
     sys.exit(1)
 
