@@ -28,8 +28,8 @@ def main(starttime,hstart,hstop,cfg):
     Copy emission files from project folder (``cfg.emissions_dir``) to
     **int2lm** input folder on scratch (``cfg.int2lm_input/emissions``).
 
-    Converts the the netCDF-variable-names from ``string`` to ``char``
-    (necessary for **int2lm**).
+    If ``cfg.target```is ``cosmo``, converts the the netCDF-variable-names 
+    from ``string`` to ``char`` (necessary for **int2lm**).
     
     Parameters
     ----------	
