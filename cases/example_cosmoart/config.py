@@ -46,7 +46,7 @@ emissions_dir = os.path.join(input_root, 'emissions_mother_MACC')
 emis_gridname = "macc_"
 
 # ifs_hres_bc files
-ifs_hres_dir = os.path.join(input_root, 'ifs_hres_bc')
+ifs_hres_dir = os.path.join(input_root, 'ifs-hres-bc')
 ifs_hres_inc = 3  # increment between timesteps
 ifs_basename = "eas"
 
@@ -65,42 +65,15 @@ obs_nudging_prefixes = ['cdfin_amdar', 'cdfin_buoy', 'cdfin_pilot_p',
                         'cdfin_wprof']
 obs_nudging_date_format = "-%Y%m%d%H%M%S"
 
-# CAMS for CO2, CO and NOX initial and boundary conditions
 
+# ICBC
 # if the data is already preprocessed and just need to be copied, 
-# - cams_dir_orig is not used
-# - cams_dir_proc is where your data to be copied is
-# - cams_parameters should have one element per type of file you need to copy. It should have:
-#       - "suffix" : files are called cams_dir_proc/suffix_date.nc
-#       - "inc" : increment between icbc data 
-cams_dir_orig = os.path.join(input_root, 'icbc') #Input directory
-cams_dir_proc = os.path.join(input_root, 'icbc', 'processed') #Output directory
-
-
-# If the data is not yet preprocessed and needs to run cams4int2cosmo
-# cams_parameters should have one element per type of file you need to output. It should have:
-# - species : the list of species to put in said file (within CO2, CO, CH4, NOX)
-# - inc : the increment between timesteps
-# - prefix1 : the input file prefix (cams_dir_orig/prefix1_date.nc)
-# - prefix2 : the input surface pressure file prefix (cams_dir_orig/prefix2_date.nc)
-# - lev : the number of levels (137 or 60)
-# - suffix : for the output file (cams_dir_proc/suffix_date.nc)
-cams_parameters = [{
-    "suffix" : "cams_co2",
-    "inc" : 3
-     # "species" :["CO2","CO","CH4"],     
-     # "prefix1":"cams_gf39",
-     # "prefix2":"sfc_gf39",
-     # "lev":137,
-},
-    {"suffix":"cams_nox",
-     "inc" : 3,
-     # "species" :["NOX"],     
-     # "prefix1":"cams_0001",
-     # "prefix2":"sfc_0001",
-     # "lev":60,
-     }]
-
+# - mozart_file_orig is not used
+# - mozart_dir_proc is where your data to be copied is
+mozart_file_orig = os.path.join(input_root, 'icbc', 'mozart4geos5_20150203-20150221.nc')
+mozart_dir_proc = os.path.join(input_root, 'icbc', 'processed')
+mozart_inc = 6 # increment between timesteps, not sure if this can be changed even
+mozart_prefix = 'mozart'
 
 # chain root (TODO: remove)
 chain_src_dir = os.getcwd()

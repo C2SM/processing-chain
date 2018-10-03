@@ -43,23 +43,46 @@ def main(starttime,hstart,hstop,cfg):
     """
 
     inv_to_process = []
-    try:
-        CAMS = dict(fullname= "CAMS",nickname="cams",executable="cams4int2cosmo",indir = cfg.cams_dir_orig, outdir = cfg.cams_dir_proc, param=cfg.cams_parameters)
-        inv_to_process.append(CAMS)
-    except AttributeError:
-        pass
-    try:
-        CT = dict(fullname="CarbonTracker",nickname="ct",executable="ctnoaa4int2cosmo",indir = cfg.ct_dir_orig, outdir = cfg.ct_dir_proc,param=cfg.ct_parameters)
-        inv_to_process.append(CT)
-    except AttributeError:
-        pass
-
+    if cfg.target.lower() == "cosmo":
+        try:
+            CAMS = dict(fullname = "CAMS",
+                        nickname = "cams",
+                        executable = "cams4int2cosmo",
+                        indir = cfg.cams_dir_orig,
+                        outdir = cfg.cams_dir_proc,
+                        param = cfg.cams_parameters)
+            inv_to_process.append(CAMS)
+        except AttributeError:
+            pass
+        try:
+            CT = dict(fullname = "CarbonTracker",
+                      nickname = "ct",
+                      executable = "ctnoaa4int2cosmo",
+                      indir = cfg.ct_dir_orig,
+                      outdir = cfg.ct_dir_proc,
+                      param = cfg.ct_parameters)
+            inv_to_process.append(CT)
+        except AttributeError:
+            pass
+    elif cfg.target.lower() == "cosmoart":
+        try:
+            MOZART = dict(fullname = 'MOZART',
+                          nickname = 'mozart',
+                          executable = 'mozart2int2lm',
+                          indir = cfg.mozart_file_orig,
+                          outdir = cfg.mozart_dir_proc,
+                          param = [{'inc' : cfg.mozart_inc,
+                                    'suffix' : cfg.mozart_prefix}])
+            inv_to_process.append(MOZART)
+        except AttributeError:
+            pass
+    
     # TO DO 
     #MOZART = dict(fullname="MOZART", nickname="mozart",executable="cams4int2cosmo")
         
     logging.info("Processing " + ", ".join([i["fullname"] for i in inv_to_process])+" data")
 
-    scratch_path = os.path.join(cfg.int2lm_input,'icbc') #cfg.int2lm_input, 'icbc')
+    scratch_path = os.path.join(cfg.int2lm_input,'icbc')
     try:
         os.makedirs(scratch_path, exist_ok=True)
     except (OSError, PermissionError):
@@ -72,7 +95,7 @@ def main(starttime,hstart,hstop,cfg):
         
         for p in inv["param"]:
             inc = p["inc"]
-            for time in tools.iter_hours(starttime, hstart, hstop,inc):
+            for time in tools.iter_hours(starttime, hstart, hstop, inc):
                 logging.info(time)
 
                 filename = os.path.join(inv["outdir"],p["suffix"]+"_"+time.strftime("%Y%m%d%H")+".nc")

@@ -11,6 +11,7 @@ from . import string2char
 from . import vprmsplit
 from . import write_int2lm_input_art
 from . import write_cosmo_input_bgc
+from . import mozart2int2lm
 from .check_target import check_target
 
 def iter_hours(starttime, hstart, hstop, step=1):
