@@ -42,8 +42,8 @@ work_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain"
 log_dir = os.path.join(work_root, 'logs')
 
 # anthropogenic emissions pre-processed for mother and nested domain
-emissions_dir = os.path.join(input_root, 'emissions_coarse')
-emis_gridname = "CO2_CO_NOX_Berlin-coarse_"
+emissions_dir = os.path.join(input_root, 'emissions_mother_MACC')
+emis_gridname = "macc_"
 
 # ifs_hres_bc files
 ifs_hres_dir = os.path.join(input_root, 'ifs_hres_bc')
@@ -52,6 +52,18 @@ ifs_basename = "eas"
 
 # photolysis-rate file
 photo_rate_file = os.path.join(input_root, 'art_photolysis', 'papa_data.p')
+
+# obs_nudging files
+obs_nudging_dir = os.path.join(input_root, 'obs_nudging')
+# nudging-filename: obs_nudging_prefix +
+#                   sim_date.strftime(obs_nudging_date_format) +
+#                   (sim_date + timedelta(days=1).strftime(obs_nudging_date_format)
+# Example: obs_nudging temp for simulation on 4.2.15:
+#          cdfin_temp-20150204000000-20150205000000
+obs_nudging_prefixes = ['cdfin_amdar', 'cdfin_buoy', 'cdfin_pilot_p',
+                        'cdfin_ship', 'cdfin_synop', 'cdfin_temp',
+                        'cdfin_wprof']
+obs_nudging_date_format = "-%Y%m%d%H%M%S"
 
 # CAMS for CO2, CO and NOX initial and boundary conditions
 
