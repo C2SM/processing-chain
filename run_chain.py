@@ -194,6 +194,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
 
     # COSMO
     setattr(cfg, 'cosmo_base', os.path.join(chain_root, 'cosmo'))
+    setattr(cfg, 'cosmo_input', os.path.join(chain_root, 'cosmo', 'input'))
     setattr(cfg, 'cosmo_work', os.path.join(chain_root, 'cosmo', 'run'))
     setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
 
