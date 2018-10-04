@@ -23,7 +23,7 @@ from . import tools
 #from tools import mozart2int2lm
 
 def main(starttime,hstart,hstop,cfg):
-    """Copy and if necessary process CAMS & CarbonTracker files for **int2lm**
+    """Copy and if necessary process CAMS & CarbonTracker or Mozart files for **int2lm**
 
     Copy CAMS or CarbonTracker files from project folder to int2lm input folder
     on scratch (``cfg.int2lm_input/icbc``).
