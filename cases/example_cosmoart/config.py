@@ -46,7 +46,7 @@ emissions_dir = os.path.join(input_root, 'emissions_mother_MACC')
 emis_gridname = "macc_"
 
 # ifs_hres_bc files
-ifs_hres_dir = os.path.join(input_root, 'ifs-hres-bc')
+ifs_hres_dir = os.path.join(input_root, 'ifs_hres_bc')
 ifs_hres_inc = 3  # increment between timesteps
 ifs_basename = "eas"
 
@@ -90,8 +90,10 @@ meteo_spinup = 0        # time in hours the model is integrated before transport
 
 # INT2LM
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
-int2lm_extpar_file = "external_parameter_empa.cosmo14.nc"
+int2lm_extpar_file = "external_parameter_empa_cosmo14.nc"
 int2lm_bin = os.path.join(input_root,"executables/int2lm")
+
+int2lm_libgrib_dir = os.path.join(input_root, 'libgrib_api')
 
 # COSMO
 cosmo_bin = os.path.join(input_root,"executables/cosmo") 
