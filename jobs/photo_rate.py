@@ -25,6 +25,12 @@ def main(starttime,hstart,hstop,cfg):
         Object holding all user-configuration parameters as attributes
     """
     tools.check_target(cfg, 'cosmoart')
+    
+    logging.info("Copying photolysis-rate file from {} to {}"
+                 .format(cfg.photo_rate_file,
+                         os.path.join(cfg.cosmo_input,
+                                      "art_photolysis",
+                                      "papa_data.p")))
 
     try:
         os.makedirs(os.path.join(cfg.cosmo_input,"art_photolysis"), exist_ok=True)
@@ -44,3 +50,5 @@ def main(starttime,hstart,hstop,cfg):
     except (PermissionError, OSError):
         logging.error("Copying emission data file failed")
         raise
+
+    logging.info("Finished")

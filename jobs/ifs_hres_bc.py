@@ -8,7 +8,7 @@ import shutil
 from . import tools
 
 def main(starttime, hstart, hstop, cfg):
-    """Copy ifs_hres files to the **int2lm** input directory.
+    """Copy ifs_hres_bc files to the **int2lm** input directory.
 
     Copy ifs_hres files from project folder (``cfg.ifs_hres_dir``) to
     **int2lm** input folder on scratch (``cfg.int2lm_input/ifs_hres_bc``).
@@ -26,6 +26,10 @@ def main(starttime, hstart, hstop, cfg):
     """
     tools.check_target(cfg, 'cosmoart')
 
+    logging.info("Copying ifs_hres_bc files from {} to {}"
+                 .format(cfg.ifs_hres_dir,
+                         os.path.join(cfg.int2lm_input,"ifs_hres_bc")))
+
     try:
         os.makedirs(os.path.join(cfg.int2lm_input,"ifs_hres_bc"), exist_ok=True)
     except (OSError, PermissionError):
@@ -37,7 +41,7 @@ def main(starttime, hstart, hstop, cfg):
         src_file = os.path.join(cfg.ifs_hres_dir,
                                 time.strftime(cfg.ifs_basename+'%Y%m%d%H'))
         dest_path = os.path.join(cfg.int2lm_input,
-                                    time.strftime('ifs_hres_bc/eas%Y%m%d%H'))
+                                 time.strftime('ifs_hres_bc/eas%Y%m%d%H'))
         try:
             shutil.copy(src_file, dest_path)
         except FileNotFoundError:
@@ -48,3 +52,6 @@ def main(starttime, hstart, hstop, cfg):
         except (PermissionError, OSError):
             logging.error("Copying emission data file failed")
             raise
+        logging.info("Copied {}".format(time.strftime('ifs_hres_bc/eas%Y%m%d%H')))
+
+    logging.info("Finished")
