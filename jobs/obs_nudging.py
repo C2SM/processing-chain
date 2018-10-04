@@ -58,7 +58,7 @@ def main(starttime,hstart,hstop,cfg):
                 dest_path = os.path.join(dest_dir, "{}.{}".format(prefix, count))
 
             try:
-                shutil.copy(src_path dest_path)
+                shutil.copy(src_path, dest_path)
             except FileNotFoundError:
                 logging.error("Emission input file not found at {}, or output"
                               " directory doesn't exist to copy {}"
