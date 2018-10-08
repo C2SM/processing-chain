@@ -96,7 +96,7 @@ int2lm_bin = os.path.join(input_root,"executables/int2lm")
 int2lm_libgrib_dir = os.path.join(input_root, 'libgrib_api')
 
 # COSMO
-cosmo_bin = os.path.join(input_root,"executables/cosmo") 
+cosmo_bin = os.path.join(input_root,"executables/cosmoart") 
 
 # Case specific settings (int2lm and cosmo namelists and runscripts)
 
@@ -147,14 +147,14 @@ reference_dir = os.path.join(input_root, "reference_output")
 
 # If the output file that gets compared to the reference is not at the location
 # that post_cosmo copied it to, give the path to it here. Else leave it 'None'
-output_dir = None
+# output_dir = None
 # Use this if the post_cosmo job is not executed
-# output_dir = os.environ['SCRATCH'] + "/processing_chain/example/2015010100_0_24/cosmo/output"
+output_dir = os.environ['SCRATCH'] + "/cosmoart_processing_chain/example_cosmoart/2015020400_0_3/cosmo/output"
 
 # variables_to_check is a dict() with a tuple() of filenames as key and a list
 # of variables-names as value. The tuple consists of the filenames of the two
 # files to check, the list contains the variable-names that are compared.
 # The verify_chain job will look for the files in the reference_dir (first tuple
 # element) and the ouput_dir (second tuple element)
-values_to_check = {("reference_lffd2015010200.nc","lffd2015010200.nc") :
+values_to_check = {("reference_lffd2015020400c.nc","lffd2015020400c.nc") :
                       ['T', 'U', 'V', 'CO2_A']}
