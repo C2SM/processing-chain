@@ -11,6 +11,8 @@ from . import tools
 def main(starttime,hstart,hstop,cfg):
     """Copy and rename the obs_nudging files to the **COSMO** input directory.
 
+    Only necessary for **COSMOART** simulations.
+
     In the folder ``cfg.obs_nudging_dir``, the files are saved in the format
     ``{prefix}-YYYYMMDD000000-YYYYMMDD000000``. **COSMO** expects files in the 
     format ``{prefix}x``, where ```x`` is ``[nothing], .2, .3, .4, ...``. This 

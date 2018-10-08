@@ -23,9 +23,7 @@ def main(starttime, hstart, hstop, cfg):
     ``cfg.cosmo_output``, ``cfg.int2lm_work``, ``cfg.log_finished_dir`` to
     ``cfg.output_root/...`` .
     
-    Use the xfer-queue.
-    
-    Submit the job.
+    Submit the job to the xfer-queue.
     
     Parameters
     ----------	

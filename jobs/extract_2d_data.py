@@ -13,9 +13,8 @@ from . import tools
 
 
 def main(start_time, hstart, hstop, cfg):
-    """
-    Extracts 2D and surface data from **COSMO** output directory to a new file
-    (``cosmo_output_2d``)
+    """Extracts 2D and surface data from **COSMO** output directory to a new
+    file (``cosmo_output_2d``)
     
     Parameters
     ----------	

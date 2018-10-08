@@ -23,6 +23,8 @@ from datetime import datetime
 
 def main(starttime, hstart, hstop, cfg):
     """Setup the namelist for **int2lm** and submit the job to the queue.
+
+    Necessary for both **COSMO** and **COSMOART** simulations.
  
     Decide if the soil model should be TERRA or TERRA multi-layer depending on
     ``startdate`` of the simulation.
@@ -36,7 +38,10 @@ def main(starttime, hstart, hstop, cfg):
     Copy the extpar-file from ``cfg.extpar_dir/cfg.extpar_file`` to
     ``cfg.int2lm_run/extpar``.
 
-    Convert the tracer-csv-files to a **int2lm**-namelist file.
+    **COSMOART**: Copy the ``libgrib_api`` files to
+    ``cfg.int2lm_work/libgrib_api``.
+
+    **COSMO**: Convert the tracer-csv-files into a **int2lm**-namelist file.
 
     Format the **int2lm**-namelist-template using the information in ``cfg``.
 
@@ -63,7 +68,7 @@ def main(starttime, hstart, hstop, cfg):
         multi_layer = ".TRUE."
     setattr(cfg, "multi_layer", multi_layer)
 
-# Create int2lm directory
+    # Create int2lm directory
     try:
         os.makedirs(cfg.int2lm_work, exist_ok=True)
     except (OSError, PermissionError):
@@ -76,7 +81,7 @@ def main(starttime, hstart, hstop, cfg):
         logging.error("Creating int2lm_output folder failed")
         raise
 
-# copy int2lm executable
+    # copy int2lm executable
     try:
         # 'int2lm' file name or directory
         shutil.copy(cfg.int2lm_bin, os.path.join(cfg.int2lm_work, 'int2lm'))

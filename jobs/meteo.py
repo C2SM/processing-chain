@@ -25,7 +25,9 @@ from . import tools
 
 
 def main(starttime, hstart, hstop, cfg):
-    """Copy meteo files to **int2lm** input
+    """Copy meteo files to **int2lm** input.
+
+    Only necessary for **COSMO** simulations.
 
     Create necessary directory ``cfg.int2lm_input/meteo``. Copy meteo files
     from project directory (``cfg.meteo_dir``) to int2lm input folder on scratch

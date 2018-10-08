@@ -25,12 +25,14 @@ from . import tools
 def main(starttime,hstart,hstop,cfg):
     """Copy emission files to the **int2lm** input directory.
 
+    Necessary for both **COSMO** and **COSMOART** simulations.
+
     Copy emission files from project folder (``cfg.emissions_dir``) to
     **int2lm** input folder on scratch (``cfg.int2lm_input/emissions``).
 
-    If ``cfg.target```is ``cosmo``, converts the the netCDF-variable-names 
+    For **COSMO** simulations, converts the the netCDF-variable-names 
     from ``string`` to ``char`` (necessary for **int2lm**).
-    
+
     Parameters
     ----------	
     start_time : datetime-object

@@ -10,6 +10,8 @@ from . import tools
 def main(starttime, hstart, hstop, cfg):
     """Copy ifs_hres_bc files to the **int2lm** input directory.
 
+    Only necessary for **COSMOART** simulations.
+
     Copy ifs_hres files from project folder (``cfg.ifs_hres_dir``) to
     **int2lm** input folder on scratch (``cfg.int2lm_input/ifs_hres_bc``).
 

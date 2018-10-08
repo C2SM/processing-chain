@@ -23,12 +23,16 @@ from . import tools
 #from tools import mozart2int2lm
 
 def main(starttime,hstart,hstop,cfg):
-    """Copy and if necessary process CAMS & CarbonTracker or Mozart files for **int2lm**
+    """Copy and if necessary process CAMS & CarbonTracker or Mozart
+    files for **int2lm**
 
-    Copy CAMS or CarbonTracker files from project folder to int2lm input folder
-    on scratch (``cfg.int2lm_input/icbc``).
-    If needed, launch ``cams4int2cosmo`` or ``ctnoaa4int2cosmo`` to adapt the
-    files to **int2lm**.
+    Necessary for both **COSMO** and **COSMOART** simulations.
+
+    Copy CAMS (**COSMO**) or CarbonTracker (**COSMO**) or Mozart (**COSMOART**)
+    files from project folder to int2lm input folder on scratch
+    (``cfg.int2lm_input/icbc``).
+    If needed, launch ``cams4int2cosmo``, ``ctnoaa4int2cosmo`` or
+    ``mozart2int2lm`` to adapt the files to **int2lm**.
     
     Parameters
     ----------	
@@ -119,4 +123,3 @@ def main(starttime,hstart,hstop,cfg):
                     raise
 
                 logging.info("OK")
-

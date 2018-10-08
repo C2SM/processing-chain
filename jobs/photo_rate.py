@@ -10,6 +10,8 @@ from . import tools
 def main(starttime,hstart,hstop,cfg):
     """Copy photolysis-rate file to the **COSMO** input directory.
 
+    Only necessary for **COSMOART** simulations.
+
     Copy the photolysis-rate file from the project (``cfg.photo_rate_file``) to
     the **COSMO** input folder on scratch (``cfg.cosmo_input/art_photolysis``).
 

@@ -24,8 +24,10 @@ from . import tools
 def main(starttime, hstart, hstop, cfg):
     """Prepare the biofluxes-files for the simulation.
 
+    Only necessary for **COSMO** simulations.
+
     Copy biofluxes files from project folder (``cfg.vprm_dir``) to int2lm input
-    folder on scratch (``cfg.int2lm_input/vprm``)
+    folder on scratch (``cfg.int2lm_input/vprm``).
 
     Parameters
     ----------	

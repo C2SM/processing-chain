@@ -19,7 +19,9 @@ from . import tools
 
 def main(start_time, hstart, hstop, cfg):
     """Combine multiple **int2lm** tracer-output files into a single one for
-    **COSMO**
+    **COSMO**.
+
+    Only necessary for **COSMO** simulations.
 
     **int2lm** puts tracers into different netCDF files. Combine the files
     specified in ``cfg.post_int2lm_species`` into a single netCDF file for

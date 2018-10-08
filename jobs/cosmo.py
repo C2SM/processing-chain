@@ -29,6 +29,8 @@ def main(starttime, hstart, hstop, cfg):
     """Setup the namelists for a **COSMO** tracer run and submit the job to
     the queue
 
+    Necessary for both **COSMO** and **COSMOART** simulations.
+
     Decide if the soil model should be TERRA or TERRA multi-layer depending on
     ``startdate`` of the simulation.
     
@@ -41,8 +43,11 @@ def main(starttime, hstart, hstop, cfg):
     
     Convert the tracer-csv-file to a **COSMO**-namelist file.
     
-    Format the **COSMO**-namelist-templates (``AF,ORG,IO,DYN,PHY,DIA,ASS``)
+    Format the **COSMO**-namelist-templates
+    (**COSMO**: ``AF,ORG,IO,DYN,PHY,DIA,ASS``,
+    **COSMOART**: ``ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY``)
     using the information in ``cfg``.
+
     Format the runscript-template and submit the job.
     
     
@@ -112,7 +117,7 @@ def main(starttime, hstart, hstop, cfg):
 
     # Prepare namelist and submit job
     if cfg.target.lower() == 'cosmo':
-        namelist_names = ["AF","ORG","IO","DYN","PHY","DIA","ASS"]
+        namelist_names = ['AF','ORG','IO','DYN','PHY','DIA','ASS']
     elif cfg.target.lower() == 'cosmoart':
         namelist_names = ['ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO', 'ORG', 'PHY']
     for section in namelist_names:
