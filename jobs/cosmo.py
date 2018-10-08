@@ -88,10 +88,11 @@ def main(starttime, hstart, hstop, cfg):
         logging.error("Creating cosmo_restart_out folder failed")
         raise
     
-# copy cosmo.exe
+# copy cosmo executable
+    execname = cfg.target.lower()
     try:
         # 'cosmo' file name or directory
-        shutil.copy(cfg.cosmo_bin, os.path.join(cfg.cosmo_work,'cosmo'))
+        shutil.copy(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, execname))
     except FileNotFoundError:
         logging.error("cosmo_bin not found")
         raise
@@ -101,15 +102,20 @@ def main(starttime, hstart, hstop, cfg):
 
     # Write INPUT_BGC from csv file
     # csv file with tracer definitions 
-    tracer_csvfile = os.path.join(cfg.casename,'cosmo_tracers.csv')
+    if cfg.target.lower() == 'cosmo':
+        tracer_csvfile = os.path.join(cfg.casename,'cosmo_tracers.csv')
 
-    tracer_filename = os.path.join(cfg.chain_src_dir,'cases',tracer_csvfile)
-    input_bgc_filename = os.path.join(cfg.cosmo_work,'INPUT_BGC')
+        tracer_filename = os.path.join(cfg.chain_src_dir,'cases',tracer_csvfile)
+        input_bgc_filename = os.path.join(cfg.cosmo_work,'INPUT_BGC')
 
-    tools.write_cosmo_input_bgc.main(tracer_filename,input_bgc_filename)
+        tools.write_cosmo_input_bgc.main(tracer_filename,input_bgc_filename)
 
     # Prepare namelist and submit job
-    for section in ["AF","ORG","IO","DYN","PHY","DIA","ASS"]:
+    if cfg.target.lower() == 'cosmo':
+        namelist_names = ["AF","ORG","IO","DYN","PHY","DIA","ASS"]
+    elif cfg.target.lower() == 'cosmoart':
+        namelist_names = ['ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO', 'ORG', 'PHY']
+    for section in namelist_names:
         with open(cfg.cosmo_namelist+section+".cfg") as input_file:
             to_write = input_file.read();
 
@@ -133,4 +139,3 @@ def main(starttime, hstart, hstop, cfg):
         )
 
     subprocess.call(["sbatch", "--wait", os.path.join(cfg.cosmo_work,'run.job')])
-
