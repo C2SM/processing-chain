@@ -3,7 +3,7 @@
 Script
 ======
 
-This is the main script of the processing chain. It reads the users input from
+This is the main script of the processing chain. It reads the user's input from
 the command line and from the ``config.py`` file. Then it will start the
 processing chain.
 
