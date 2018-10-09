@@ -42,9 +42,15 @@ def group2text(group):
 
 
 def main(csv_filename, namelist_filename):
-    """\
-    Convert a table (csv file) to namelist file (INPUT_BGC)
-    read by COSMO
+    """Convert a table (``.csv`` file) to namelist file (``INPUT_BGC``)
+    read by **COSMO**
+    
+    Parameters
+    ----------
+    csv_filename : str
+        Path to the source csv-file
+    namelist_filename : str
+        Path to the namelist file that will be created
     """
     with open(csv_filename, 'r') as csv_file:
 
