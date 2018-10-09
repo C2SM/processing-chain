@@ -9,7 +9,7 @@
 import os
 import logging
 import netCDF4 as nc
-from numpy import allclose
+from tools import comp_nc
 
 def import_data(filename, mode='r'):
     return nc.Dataset(filename, mode)
@@ -33,14 +33,9 @@ def import_datasets(ref_path, run_path):
 
 
 def datasets_equal(dataset1, dataset2, variables):
-    found_discrepancy = False
-    for var in variables:
-        if not allclose(dataset1[var], dataset2[var]):
-            logging.info(var + ": Failed!")
-            found_discrepancy = True
-        else:
-            logging.info(var + ": Passed")
-    return not found_discrepancy
+    """Use comp_nc.datasets_equal to compare the datasets.
+    """
+    comp_nc.datasets_equal(dataset1, dataset2, variables, verbose=True)
 
 
 def main(starttime, hstart, hstop, cfg):
@@ -100,11 +95,6 @@ def main(starttime, hstart, hstop, cfg):
         ref_data, run_data = import_datasets(ref_file_path, run_file_path)
 
         #compare data
-        identical = datasets_equal(ref_data, run_data, variables)
-        if not identical:
-            print("\033[91m" + "Some output fields don't match the reference!\n"
-                  + "\033[0m" + "Check logfiles for details")
-        else:
-            print("Verification successful, output and reference agree")
+        datasets_equal(ref_data, run_data, variables)
 
     logging.info("Finished verification")
