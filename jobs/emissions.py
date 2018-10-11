@@ -45,11 +45,8 @@ def main(starttime,hstart,hstop,cfg):
         Object holding all user-configuration parameters as attributes
     """
 
-    try:
-        os.makedirs(os.path.join(cfg.int2lm_input,"emissions"), exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating emissions input dir failed")
-        raise
+    tools.create_dir(os.path.join(cfg.int2lm_input, "emissions"),
+                     "emissions input")
 
     for time in tools.iter_hours(starttime, hstart, hstop):
         logging.info(time)

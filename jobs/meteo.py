@@ -48,13 +48,8 @@ def main(starttime, hstart, hstop, cfg):
     logging.info('COSMO analysis data for IC/BC')
 
     scratch_path = os.path.join(cfg.int2lm_input, 'meteo')
-
-    try:
-        os.makedirs(scratch_path, exist_ok=True)
-        os.makedirs(cfg.meteo_dir, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating meteo input folder failed")
-        raise
+    tools.create_dir(scratch_path, "meteo input")
+    tools.create_dir(cfg.meteo_dir, "meteo source")
 
     for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
         logging.info(time)

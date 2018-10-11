@@ -34,11 +34,8 @@ def main(starttime,hstart,hstop,cfg):
                                       "art_photolysis",
                                       "papa_data.p")))
 
-    try:
-        os.makedirs(os.path.join(cfg.cosmo_input,"art_photolysis"), exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating photolysis rate input dir failed")
-        raise
+    tools.create_dir(os.path.join(cfg.cosmo_input, "art_photolysis"),
+                     "photolysis rate input")
 
     src_file = cfg.photo_rate_file
     dest_path = os.path.join(cfg.cosmo_input, 'art_photolysis', 'papa_data.p')

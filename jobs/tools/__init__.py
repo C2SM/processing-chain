@@ -5,6 +5,7 @@
 from datetime import datetime, timedelta
 import subprocess
 import logging
+import os
 from . import cams4int2cosmo
 from . import ctnoaa4int2cosmo
 from . import string2char
@@ -45,3 +46,30 @@ def change_logfile(filename):
         log.handlers = [fileh]      # set the new handler
     else:
         logging.basicConfig(filename=filename,level=logging.INFO)
+
+
+def create_dir(path, readable_name):
+    """Create a directory at path, log failure using readable_name
+    
+    Use ``os.makedirs(path, exist_ok=True)`` to create all necessary 
+    directories for ``path`` to point to a valid directory. Do nothing if the
+    directory at ``path`` already exists.
+    
+    If the directory can not be created, log an error-message logged and raise
+    the exception.
+    
+    Parameters
+    ----------
+    path : str
+        Path of the directory to be created
+    readable_name : str
+        Name of the directory used in the logging messsage
+    """
+    try:
+        os.makedirs(path)
+    except Exception as ex:
+        logging.error(
+            "Creating {} directory at path {} failed with {}".format(
+                readable_name, path, type(ex).__name__))
+        raise
+   
