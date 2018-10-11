@@ -66,7 +66,7 @@ def create_dir(path, readable_name):
         Name of the directory used in the logging messsage
     """
     try:
-        os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
     except Exception as ex:
         logging.error(
             "Creating {} directory at path {} failed with {}".format(
