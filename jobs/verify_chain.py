@@ -9,7 +9,7 @@
 import os
 import logging
 import netCDF4 as nc
-from tools import comp_nc
+from . import tools
 
 def import_data(filename, mode='r'):
     return nc.Dataset(filename, mode)
@@ -35,7 +35,8 @@ def import_datasets(ref_path, run_path):
 def datasets_equal(dataset1, dataset2, variables):
     """Use comp_nc.datasets_equal to compare the datasets.
     """
-    comp_nc.datasets_equal(dataset1, dataset2, variables, verbose=True)
+    # TODO: Use datasets_equal from amrs package?
+    tools.comp_nc.datasets_equal(dataset1, dataset2, variables, verbose=True)
 
 
 def main(starttime, hstart, hstop, cfg):
