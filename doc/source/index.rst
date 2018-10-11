@@ -12,6 +12,14 @@ The user can decide which tasks the script should execute. These jobs are
 described in :ref:`jobs-section`. Some common functionality and data-conversion
 functionality is described in :ref:`tools-section`.
 
+.. toctree::
+    :maxdepth: 1
+    :caption: Contents:
+
+    runchain
+    jobs
+    tools
+
 File structure
 --------------
 
@@ -50,14 +58,7 @@ The processing chain has to be run on Piz Daint. Depending on whether you target
 
     module load daint-mc
     module load netcdf-python
-    
-.. toctree::
-    :maxdepth: 1
-    :caption: Contents:
 
-    runchain
-    jobs
-    tools
 
 Indices and tables
 ==================
