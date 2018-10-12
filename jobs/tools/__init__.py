@@ -67,9 +67,9 @@ def create_dir(path, readable_name):
     """
     try:
         os.makedirs(path, exist_ok=True)
-    except Exception as ex:
+    except (OSError, Exception) as e:
         logging.error(
             "Creating {} directory at path {} failed with {}".format(
-                readable_name, path, type(ex).__name__))
+                readable_name, path, type(e).__name__))
         raise
    
