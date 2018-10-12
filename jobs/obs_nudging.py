@@ -33,16 +33,11 @@ def main(starttime,hstart,hstop,cfg):
     tools.check_target(cfg, 'cosmoart')
 
     dest_dir = os.path.join(cfg.cosmo_input,"obs_nudging")
+    tools.create_dir(dest_dir, "obs nudging input")
 
     logging.info("Copying obs_nudging files from {} to {}"
                  .format(cfg.obs_nudging_dir,
                          dest_dir))
-
-    try:
-        os.makedirs(dest_dir, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating obs nudging input dir failed")
-        raise
 
     count = 0  # running index for COSMOART
     for time in tools.iter_hours(starttime, hstart, hstop, step=24):

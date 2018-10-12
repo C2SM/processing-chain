@@ -43,12 +43,8 @@ def main(start_time, hstart, hstop, cfg):
 =====================================================""" %date.strftime("%s")
     
     logging.info(to_print)
-
-    try:
-        os.makedirs(output_path, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating output folder failed")
-        raise
+    
+    tools.create_dir(output_path, "output")
 
     if cfg.compute_host!="daint":
         logging.error("The copy script is supposed to be run on daint only, not on %s" %cfg.compute_host)
