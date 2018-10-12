@@ -220,8 +220,8 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
         # if chain_root already exists ask user if he wants to continue
         while True:
             inp = input("Target directory of processing chain already exists. "
-                        "Continue? (y/n)")
-            if inp.lower() == 'y':
+                        "Continue? ([y]/n)")
+            if inp.lower() == 'y' or inp == '':
                 break
             elif inp.lower() == 'n':
                 sys.exit()
