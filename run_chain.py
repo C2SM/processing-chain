@@ -18,7 +18,7 @@ from jobs import tools
 
 
 def parse_arguments():
-    """Parse the command line arguments given to this script,
+    """Parse the command line arguments given to this script
     
     Returns
     -------
@@ -94,7 +94,6 @@ def load_config_file(casename):
     config-object
         Object with all variables as attributes
     """
-    print(casename)
     try:
         fn = os.path.join('cases',casename,'config')
         sys.path.append(os.path.dirname(fn))
@@ -357,6 +356,9 @@ if __name__ == '__main__':
     hstop = int(parser.hstop)
     job_names = parser.job_list
     set_simulation_type(cfg)
+
+    print("Starting chain for case {}, using {}".format(parser.casename,
+                                                        cfg.target))
     
     restart_runs(cfg.work_root, cfg, start_time, hstart=hstart, hstop=hstop,
                  job_names=job_names)
