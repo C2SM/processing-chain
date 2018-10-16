@@ -64,6 +64,8 @@ def main(starttime,hstart,hstop,cfg):
             logging.error("Copying emission data file failed")
             raise
 
-        # convert grid_mapping_name from string (NF90_STRING) to char (NF90_CHAR) (needed for int2lm to work)
-    if cfg.target == 'COSMO':
-        tools.string2char.main(scratch_path)
+        # convert grid_mapping_name from string (NF90_STRING) to char
+        # (NF90_CHAR) (needed for int2lm to work)
+        if cfg.target.lower() == 'cosmo':
+            print("Doing conversion")
+            tools.string2char.main(scratch_path)
