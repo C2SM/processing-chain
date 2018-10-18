@@ -150,7 +150,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     start_time : datetime-object
-        The starttime of the simulation
+        The startdate of the simulation
     hstart : int
         Offset (in hours) of the actual start from the startdate (start param)
     hstop : int
