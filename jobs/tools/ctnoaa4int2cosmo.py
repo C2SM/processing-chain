@@ -14,9 +14,9 @@ half_b=(1,0.99401945,0.97966272,0.95182151,0.90788388,0.84737492,0.77159661,0.68
 def main(date,indir,outdir,param):
     """Process all CarbonTracker files of a single date to a format
     compatible with int2lm
-    
-    Parameters:
-    -----------
+
+    Parameters
+    ----------
     date : str
         date in format YYYYMMDD.
     indir : str
