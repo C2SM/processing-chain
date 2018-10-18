@@ -17,7 +17,38 @@ from .check_target import check_target
 from . import comp_nc
 
 def iter_hours(starttime, hstart, hstop, step=1):
+    """Return a generator that yields datetime-objects from 
+    ``starttime + hstart`` up to (and possibly including) ``starttime + hstop`` 
+    in ``step``-increments.
+    
+    If no ```step`` is given, the stepsize is 1 hour
 
+    Parameters
+    ----------
+    starttime : datetime-object
+        The start-date if the iteration
+    hstart : int
+        Offset (in hours) from the starttime where the iteration starts
+    hstop : int
+        Offset (in hours) from the starttime where the iteration stops
+    step : int, optional
+        Stepsize, defaults to 1
+        
+    Yields
+    ------
+    datetime-object
+        The next timepoint in the iteration
+        
+    Examples
+    --------
+    If ``(hstop - hstart) / step`` is not an integer, the last timepoint will
+    be before ``starttime + hstop``.
+    
+    >>> import datetime.datetime.strptime
+    >>> [t.hour for t in iter_hours(strptime("20150101", "%Y%m%d"), 10, 15, 2)]
+    [10, 12, 14]
+    """
+    assert hstop > hstart, "Start has to be before stop (hstop > hstart)"
     current = starttime + timedelta(hours=hstart)
     stoptime = starttime + timedelta(hours=hstop)
 
@@ -26,6 +57,8 @@ def iter_hours(starttime, hstart, hstop, step=1):
         current += timedelta(hours=step)
 
 def iter_times(start, end, step):
+    """Is this needed?
+    """
     current = start
     while current < end:
         yield current
