@@ -346,7 +346,7 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
                   cfg = cfg,
                   start_time = start,
                   hstart = sub_hstart,
-                  hstart = sub_hstop,
+                  hstop = sub_hstop,
                   job_names = job_names,
                   step = cfg.restart_step)
 
