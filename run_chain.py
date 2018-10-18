@@ -79,7 +79,8 @@ def load_config_file(casename):
     Looks for the config file in ``cases/casename/config.py`` and then imports
     it as a module. This lets the config file contain python statements which
     are evaluated on import.
-    Access variables declared in the config-file (``myval = 9``) with ``cfg.myval``
+    Access variables declared in the config-file (``myval = 9``) with
+    ``cfg.myval``.
     Add new variables with::
     
         setattr(cfg, 'myval', 9)
@@ -341,7 +342,13 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
 
         print("Starting run with starttime {}".format(time))
 
-        run_chain(work_root, cfg, start, hstart, hstop, job_names, step)
+        run_chain(work_root = work_root,
+                  cfg = cfg,
+                  start_time = start,
+                  hstart = sub_hstart,
+                  hstart = sub_hstop,
+                  job_names = job_names,
+                  step = cfg.restart_step)
 
 
 if __name__ == '__main__':
