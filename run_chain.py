@@ -325,27 +325,23 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
         If the list is empty, the default procedure will be executed:
         meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo
     """
-
-    end = start + timedelta(hours=hstop) 
-    step = hstop # in hours (has to be multiple of 3)
-
     # run restarts
-    for time in tools.iter_times(start + timedelta(hours=hstart), end,
-                                 timedelta(hours=cfg.restart_step)
-                                ):
-        print(time)
-        if cfg.restart_step > hstop:
-            step = hstop
-        else:
-            step = cfg.restart_step
-        hstart = (time - start).total_seconds() / 3600.0
-        hstop = hstart + step
+    for time in tools.iter_hours(start, hstart, hstop, cfg.restart_step):
+        sub_hstart = (time - start).total_seconds() / 3600.0
+        runtime = min(cfg.restart_step, hstop - sub_hstart)
+        if runtime == 0:
+            # don't start simuation with 0 runtime
+            continue
+        sub_hstop = sub_hstart + runtime
 
-        try:
-          run_chain(work_root, cfg, start, hstart, hstop,
-                    job_names, step)
-        except RuntimeError:
-            sys.exit(1)
+        assert runtime/3. == runtime//3., ("Make sure that the runtime of the "
+                                           "restart runs is a multiple "
+                                           "of 3, also in the last (possibly "
+                                           "shortened) restart step.")
+
+        print("Starting run with starttime {}".format(time))
+
+        run_chain(work_root, cfg, start, hstart, hstop, job_names, step)
 
 
 if __name__ == '__main__':
