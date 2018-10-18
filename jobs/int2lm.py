@@ -69,17 +69,8 @@ def main(starttime, hstart, hstop, cfg):
     setattr(cfg, "multi_layer", multi_layer)
 
     # Create int2lm directory
-    try:
-        os.makedirs(cfg.int2lm_work, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating int2lm_work folder failed")
-        raise
-  
-    try:
-        os.makedirs(cfg.int2lm_output, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating int2lm_output folder failed")
-        raise
+    tools.create_dir(cfg.int2lm_work, "int2lm_work")
+    tools.create_dir(cfg.int2lm_output, "int2lm_output")
 
     # copy int2lm executable
     try:

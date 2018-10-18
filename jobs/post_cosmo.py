@@ -61,11 +61,7 @@ def main(starttime, hstart, hstop, cfg):
     logging.info(to_print)
     logging.info("Copy output, run directoy and logfiles to output path")
 
-    try:
-        os.makedirs(copy_path, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating output folder failed")
-        raise
+    tools.create_dir(copy_path, "output")
 
     if cfg.compute_host!="daint":
         logging.error("The copy script is supposed to be run on daint only, not on %s" %cfg.compute_host)

@@ -75,23 +75,11 @@ def main(starttime, hstart, hstop, cfg):
     setattr(cfg,"multi_layer",multi_layer)
 
 # create directory
-    try:
-        os.makedirs(cfg.cosmo_work, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating cosmo_work folder failed")
-        raise
-  
-    try:
-        os.makedirs(cfg.cosmo_output, exist_ok=True)   #output_root not used in cfg
-    except (OSError, PermissionError):
-        logging.error("Creating cosmo_output folder failed")
-        raise
-
-    try:
-        os.makedirs(cfg.cosmo_restart_out, exist_ok=True)   #can't find this root in cfg. Use a temporary name here.
-    except (OSError, PermissionError):
-        logging.error("Creating cosmo_restart_out folder failed")
-        raise
+    tools.create_dir(cfg.cosmo_work, "cosmo_work")
+    # muq: output_root not used in cfg
+    tools.create_dir(cfg.cosmo_output, "cosmo_output")
+    # muq: can't find this root in cfg. Use a temporary name here.
+    tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
     
 # copy cosmo executable
     execname = cfg.target.lower()

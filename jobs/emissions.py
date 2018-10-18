@@ -45,11 +45,8 @@ def main(starttime,hstart,hstop,cfg):
         Object holding all user-configuration parameters as attributes
     """
 
-    try:
-        os.makedirs(os.path.join(cfg.int2lm_input,"emissions"), exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating emissions input dir failed")
-        raise
+    tools.create_dir(os.path.join(cfg.int2lm_input, "emissions"),
+                     "emissions input")
 
     for time in tools.iter_hours(starttime, hstart, hstop):
         logging.info(time)
@@ -67,6 +64,8 @@ def main(starttime,hstart,hstop,cfg):
             logging.error("Copying emission data file failed")
             raise
 
-        # convert grid_mapping_name from string (NF90_STRING) to char (NF90_CHAR) (needed for int2lm to work)
-    if cfg.target == 'COSMO':
-        tools.string2char.main(scratch_path)
+        # convert grid_mapping_name from string (NF90_STRING) to char
+        # (NF90_CHAR) (needed for int2lm to work)
+        if cfg.target.lower() == 'cosmo':
+            print("Doing conversion")
+            tools.string2char.main(scratch_path)

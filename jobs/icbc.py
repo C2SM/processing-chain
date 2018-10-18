@@ -87,11 +87,7 @@ def main(starttime,hstart,hstop,cfg):
     logging.info("Processing " + ", ".join([i["fullname"] for i in inv_to_process])+" data")
 
     scratch_path = os.path.join(cfg.int2lm_input,'icbc')
-    try:
-        os.makedirs(scratch_path, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating icbc input folder failed")
-        raise
+    tools.create_dir(scratch_path, "icbc input")
 
     for inv in inv_to_process:
         logging.info(inv["fullname"]+" files")

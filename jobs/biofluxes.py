@@ -44,11 +44,7 @@ def main(starttime, hstart, hstop, cfg):
 
     scratch_path = os.path.join(cfg.int2lm_input,'vprm')
 
-    try:
-        os.makedirs(scratch_path, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating biofluxes input dir failed")
-        raise
+    tools.create_dir(scratch_path, "biofluxes input")
 
     for time in tools.iter_hours(starttime, hstart, hstop):
         logging.info(time)

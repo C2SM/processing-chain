@@ -18,7 +18,7 @@ from jobs import tools
 
 
 def parse_arguments():
-    """Parse the command line arguments given to this script,
+    """Parse the command line arguments given to this script
     
     Returns
     -------
@@ -94,7 +94,6 @@ def load_config_file(casename):
     config-object
         Object with all variables as attributes
     """
-    print(casename)
     try:
         fn = os.path.join('cases',casename,'config')
         sys.path.append(os.path.dirname(fn))
@@ -216,10 +215,21 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
     setattr(cfg, 'log_finished_dir', log_finished_dir)
 
     # create working dirs
-    if not os.path.exists(chain_root):
-        os.makedirs(chain_root)
-        os.makedirs(log_working_dir)
-        os.makedirs(log_finished_dir)
+    if os.path.exists(chain_root):
+        # if chain_root already exists ask user if he wants to continue
+        while True:
+            inp = input("Target directory of processing chain already exists. "
+                        "Continue? ([y]/n)")
+            if inp.lower() == 'y' or inp == '':
+                break
+            elif inp.lower() == 'n':
+                sys.exit()
+            else:
+                print("Please enter y/n")
+
+    tools.create_dir(chain_root, "chain_root")
+    tools.create_dir(log_working_dir, "log_working")
+    tools.create_dir(log_finished_dir, "log_finished")
 
     # run jobs (if required)
     for job in job_names:
@@ -346,6 +356,9 @@ if __name__ == '__main__':
     hstop = int(parser.hstop)
     job_names = parser.job_list
     set_simulation_type(cfg)
+
+    print("Starting chain for case {}, using {}".format(parser.casename,
+                                                        cfg.target))
     
     restart_runs(cfg.work_root, cfg, start_time, hstart=hstart, hstop=hstop,
                  job_names=job_names)
