@@ -16,6 +16,7 @@ from . import mozart2int2lm
 from .check_target import check_target
 from . import comp_nc
 
+
 def iter_hours(starttime, hstart, hstop, step=1):
     """Return a generator that yields datetime-objects from 
     ``starttime + hstart`` up to (and possibly including) ``starttime + hstop`` 
@@ -41,12 +42,16 @@ def iter_hours(starttime, hstart, hstop, step=1):
         
     Examples
     --------
-    If ``(hstop - hstart) / step`` is not an integer, the last timepoint will
-    be before ``starttime + hstop``.
-    
+    If the timeperiod is divisible by the step, the last timepoint will be
+    exactly ``starttime + hstop``. If not, the last timepoint will be before
+    that.
+
     >>> import datetime.datetime.strptime
-    >>> [t.hour for t in iter_hours(strptime("20150101", "%Y%m%d"), 10, 15, 2)]
+    >>> date = strptime("20150101", "%Y%m%d")
+    >>> [t.hour for t in iter_hours(date, 10, 14, 2)]
     [10, 12, 14]
+    >>> [t.hour for t in iter_hours(date, 9, 16, 3)]
+    [9, 12, 15]
     """
     assert hstop > hstart, "Start has to be before stop (hstop > hstart)"
     current = starttime + timedelta(hours=hstart)
@@ -56,20 +61,30 @@ def iter_hours(starttime, hstart, hstop, step=1):
         yield current
         current += timedelta(hours=step)
 
-def iter_times(start, end, step):
-    """Is this needed?
-    """
-    current = start
-    while current < end:
-        yield current
-        current += step
 
 def send_mail(address, subject, message=''):
+    """Send an email to adress.
+
+    Start a subprocess that sends an email using the linux ``mail```-
+    command.
+
+    Parameters
+    ----------
+    address : str
+        Adress to which the email is sent
+    subject : str
+        Subject of the message
+    message : str, optional
+        Body of the message, default is empty
+    """
     p = subprocess.Popen(['mail', '-s', '"%s"' % subject, address], stdin=subprocess.PIPE)
     p.stdin.write(message.encode('utf-8'))
     p.stdin.close()
 
+
 def change_logfile(filename):
+    """Change the path of the logfile used by the logging module
+    """
     fileh = logging.FileHandler(filename, 'a')
     # log_format = logging.Formatter('%(levelname)s:%(message)s')
     # fileh.setFormatter(log_format)
