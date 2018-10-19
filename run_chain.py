@@ -135,8 +135,11 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
     
     Sets configuration values derived from user-provided ones, for example the
     folder-structure inside the working directory.
+
     Sets up the logging module used by the jobs.
+
     Creates directories for each job.
+
     Decides which jobs to run and then runs them; first it checks wether the
     job was already executed or is currently running (depending on the logging
     file of the job). Then if the job has to be run, it calls the main()-
