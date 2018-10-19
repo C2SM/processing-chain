@@ -338,11 +338,6 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
             continue
         sub_hstop = sub_hstart + runtime
 
-        assert runtime/3. == runtime//3., ("Make sure that the runtime of the "
-                                           "restart runs is a multiple "
-                                           "of 3, also in the last (possibly "
-                                           "shortened) restart step.")
-
         print("Starting run with starttime {}".format(time))
 
         run_chain(work_root = work_root,
