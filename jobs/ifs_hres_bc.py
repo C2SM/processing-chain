@@ -32,7 +32,7 @@ def main(starttime, hstart, hstop, cfg):
                  .format(cfg.ifs_hres_dir,
                          os.path.join(cfg.int2lm_input,"ifs_hres_bc")))
 
-    tools.create_dir(os.path.join(cdg.int2lm_input, "ifs_hres_bc"),
+    tools.create_dir(os.path.join(cfg.int2lm_input, "ifs_hres_bc"),
                      "ifs hres input")
 
     for time in tools.iter_hours(starttime, hstart, hstop, cfg.ifs_hres_inc):

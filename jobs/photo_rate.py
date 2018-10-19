@@ -38,7 +38,7 @@ def main(starttime,hstart,hstop,cfg):
                      "photolysis rate input")
 
     src_file = cfg.photo_rate_file
-    dest_path = os.path.join(cfg.cosmo_input, 'art_photolysis', 'papa_data.p')
+    dest_path = os.path.join(cfg.cosmo_input, 'art_photolysis', 'papa_data.d')
     try:
         shutil.copy(src_file, dest_path)
     except FileNotFoundError:
