@@ -153,7 +153,7 @@ def main(date, inpath, outpath, param):
          ``cams_CO2_YYYYMMDD00.nc`` to ``cams_CO2_YYYYMMDD21.nc``
 
     Parameters
-    -----------
+    ----------
     date : str
         date in format YYYYMMDD
     inpath : str
