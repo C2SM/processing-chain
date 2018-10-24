@@ -26,20 +26,20 @@ File structure
 The file-structure of this package is as follows::
 
     + README
-    + run_script.py        // main script
+    + run_script.py           # main script
     + jobs/
-    |    + *.py            // jobs-files
-    |    + tools/          // tools-files
-    + cases/               // examples
-    |    + example/        // example COSMO
-    |    |    + config.py  // user-configuration
-    |    |    + *.cfg      // int2lm/cosmo namelists and batch-job templates
-    |    + example_cosmoart/
+    |    + *.py               # jobs-files
+    |    \ tools/             # tools-files
+    + cases/                  # examples
+    |    + example/           # example COSMO
+    |    |    + config.py     # user-configuration
+    |    |    \ *.cfg         # templates for namelists & batch-jobs
+    |    \ example_cosmoart/
     |         + config.py
-    |         + *.cfg
-    + doc/
-         + source/         // .rst documentation files
-         + Makefile        // Makefile for generating html, latex or txt docs
+    |         \ *.cfg
+    \ doc/
+         + source/            # *.rst documentation files
+         \ Makefile           # Makefile for generating docs
 
 .. _requirements-section:
 
