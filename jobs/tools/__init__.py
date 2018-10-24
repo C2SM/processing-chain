@@ -83,7 +83,12 @@ def send_mail(address, subject, message=''):
 
 
 def change_logfile(filename):
-    """Change the path of the logfile used by the logging module
+    """Change the path of the logfile used by the logging module.
+
+    Parameters
+    ----------
+    filename : str
+        Path to the new logfile
     """
     fileh = logging.FileHandler(filename, 'a')
     # log_format = logging.Formatter('%(levelname)s:%(message)s')
@@ -97,7 +102,7 @@ def change_logfile(filename):
 
 
 def create_dir(path, readable_name):
-    """Create a directory at path, log failure using readable_name
+    """Create a directory at path, log failure using readable_name.
     
     Use ``os.makedirs(path, exist_ok=True)`` to create all necessary 
     directories for ``path`` to point to a valid directory. Do nothing if the
@@ -120,4 +125,23 @@ def create_dir(path, readable_name):
             "Creating {} directory at path {} failed with {}".format(
                 readable_name, path, type(e).__name__))
         raise
+
    
+def check_target(cfg, target='COSMO'):
+    """Check that the target specified in cfg matched the prescribed target.
+
+    Check that cfg.target == target. If not, raises a value-error.
+    Ignores capitalization of the strings
+
+    Parameters
+    ----------
+    cfg : config-object
+
+    target : str
+        Prescribed target
+    """
+    #don't care about capitalization
+    if not cfg.target.lower() == target.lower():
+        raise ValueError("The target specified in the configuration file is {}"
+                         ", but the job only applies to {}.".format(cfg.target,
+                                                                    target))
