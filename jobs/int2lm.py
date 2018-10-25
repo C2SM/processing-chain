@@ -106,5 +106,8 @@ def main(starttime, hstart, hstop, cfg):
             ini_hour = cfg.inidate_int2lm_yyyymmddhh[8:],
             logfile=logfile, logfile_finish = logfile_finish))
 
-    subprocess.call(["sbatch", "--wait",
-                     os.path.join(cfg.int2lm_work, "run.job")])
+    exitcode = subprocess.call(["sbatch", "--wait", 
+                                os.path.join(cfg.int2lm_work,'run.job')])
+    if exitcode != 0:
+        raise RuntimeError
+
