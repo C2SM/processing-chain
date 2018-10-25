@@ -202,7 +202,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
     setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
 
     job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh, 
-                                    hstart - step, hstop - step)
+                                    hstart - cfg.restart_step, hstart)
     chain_root_last_run = os.path.join(work_root, cfg.casename,
                                        job_id_last_run)
     setattr(cfg, 'cosmo_restart_in', os.path.join(chain_root_last_run,
