@@ -16,6 +16,7 @@ from . import mozart2int2lm
 from .check_target import check_target
 from . import comp_nc
 
+
 def iter_hours(starttime, hstart, hstop, step=1):
     """Return a generator that yields datetime-objects from 
     ``starttime + hstart`` up to (and possibly including) ``starttime + hstop`` 
@@ -41,12 +42,16 @@ def iter_hours(starttime, hstart, hstop, step=1):
         
     Examples
     --------
-    If ``(hstop - hstart) / step`` is not an integer, the last timepoint will
-    be before ``starttime + hstop``.
-    
+    If the timeperiod is divisible by the step, the last timepoint will be
+    exactly ``starttime + hstop``. If not, the last timepoint will be before
+    that.
+
     >>> import datetime.datetime.strptime
-    >>> [t.hour for t in iter_hours(strptime("20150101", "%Y%m%d"), 10, 15, 2)]
+    >>> date = strptime("20150101", "%Y%m%d")
+    >>> [t.hour for t in iter_hours(date, 10, 14, 2)]
     [10, 12, 14]
+    >>> [t.hour for t in iter_hours(date, 9, 16, 3)]
+    [9, 12, 15]
     """
     assert hstop > hstart, "Start has to be before stop (hstop > hstart)"
     current = starttime + timedelta(hours=hstart)
@@ -56,20 +61,35 @@ def iter_hours(starttime, hstart, hstop, step=1):
         yield current
         current += timedelta(hours=step)
 
-def iter_times(start, end, step):
-    """Is this needed?
-    """
-    current = start
-    while current < end:
-        yield current
-        current += step
 
 def send_mail(address, subject, message=''):
+    """Send an email to adress.
+
+    Start a subprocess that sends an email using the linux ``mail```-
+    command.
+
+    Parameters
+    ----------
+    address : str
+        Adress to which the email is sent
+    subject : str
+        Subject of the message
+    message : str, optional
+        Body of the message, default is empty
+    """
     p = subprocess.Popen(['mail', '-s', '"%s"' % subject, address], stdin=subprocess.PIPE)
     p.stdin.write(message.encode('utf-8'))
     p.stdin.close()
 
+
 def change_logfile(filename):
+    """Change the path of the logfile used by the logging module.
+
+    Parameters
+    ----------
+    filename : str
+        Path to the new logfile
+    """
     fileh = logging.FileHandler(filename, 'a')
     # log_format = logging.Formatter('%(levelname)s:%(message)s')
     # fileh.setFormatter(log_format)
@@ -82,7 +102,7 @@ def change_logfile(filename):
 
 
 def create_dir(path, readable_name):
-    """Create a directory at path, log failure using readable_name
+    """Create a directory at path, log failure using readable_name.
     
     Use ``os.makedirs(path, exist_ok=True)`` to create all necessary 
     directories for ``path`` to point to a valid directory. Do nothing if the
@@ -105,4 +125,23 @@ def create_dir(path, readable_name):
             "Creating {} directory at path {} failed with {}".format(
                 readable_name, path, type(e).__name__))
         raise
+
    
+def check_target(cfg, target='COSMO'):
+    """Check that the target specified in cfg matched the prescribed target.
+
+    Check that cfg.target == target. If not, raises a value-error.
+    Ignores capitalization of the strings
+
+    Parameters
+    ----------
+    cfg : config-object
+
+    target : str
+        Prescribed target
+    """
+    #don't care about capitalization
+    if not cfg.target.lower() == target.lower():
+        raise ValueError("The target specified in the configuration file is {}"
+                         ", but the job only applies to {}.".format(cfg.target,
+                                                                    target))

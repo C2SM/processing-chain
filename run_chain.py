@@ -79,7 +79,8 @@ def load_config_file(casename):
     Looks for the config file in ``cases/casename/config.py`` and then imports
     it as a module. This lets the config file contain python statements which
     are evaluated on import.
-    Access variables declared in the config-file (``myval = 9``) with ``cfg.myval``
+    Access variables declared in the config-file (``myval = 9``) with
+    ``cfg.myval``.
     Add new variables with::
     
         setattr(cfg, 'myval', 9)
@@ -129,13 +130,16 @@ def set_simulation_type(cfg):
     setattr(cfg, 'target', target)
 
 
-def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
+def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
     """Run chain ignoring already finished jobs.
     
     Sets configuration values derived from user-provided ones, for example the
     folder-structure inside the working directory.
+
     Sets up the logging module used by the jobs.
+
     Creates directories for each job.
+
     Decides which jobs to run and then runs them; first it checks wether the
     job was already executed or is currently running (depending on the logging
     file of the job). Then if the job has to be run, it calls the main()-
@@ -198,7 +202,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
     setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
 
     job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh, 
-                                    hstart - step, hstop - step)
+                                    hstart - cfg.restart_step, hstart)
     chain_root_last_run = os.path.join(work_root, cfg.casename,
                                        job_id_last_run)
     setattr(cfg, 'cosmo_restart_in', os.path.join(chain_root_last_run,
@@ -325,27 +329,23 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
         If the list is empty, the default procedure will be executed:
         meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo
     """
-
-    end = start + timedelta(hours=hstop) 
-    step = hstop # in hours (has to be multiple of 3)
-
     # run restarts
-    for time in tools.iter_times(start + timedelta(hours=hstart), end,
-                                 timedelta(hours=cfg.restart_step)
-                                ):
-        print(time)
-        if cfg.restart_step > hstop:
-            step = hstop
-        else:
-            step = cfg.restart_step
-        hstart = (time - start).total_seconds() / 3600.0
-        hstop = hstart + step
+    for time in tools.iter_hours(start, hstart, hstop, cfg.restart_step):
+        sub_hstart = (time - start).total_seconds() / 3600.0
+        runtime = min(cfg.restart_step, hstop - sub_hstart)
+        if runtime == 0:
+            # don't start simuation with 0 runtime
+            continue
+        sub_hstop = sub_hstart + runtime
 
-        try:
-          run_chain(work_root, cfg, start, hstart, hstop,
-                    job_names, step)
-        except RuntimeError:
-            sys.exit(1)
+        print("Starting run with starttime {}".format(time))
+
+        run_chain(work_root = work_root,
+                  cfg = cfg,
+                  start_time = start,
+                  hstart = sub_hstart,
+                  hstop = sub_hstop,
+                  job_names = job_names)
 
 
 if __name__ == '__main__':
