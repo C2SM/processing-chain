@@ -130,7 +130,7 @@ def set_simulation_type(cfg):
     setattr(cfg, 'target', target)
 
 
-def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, step=24.0):
+def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
     """Run chain ignoring already finished jobs.
     
     Sets configuration values derived from user-provided ones, for example the
@@ -345,8 +345,7 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
                   start_time = start,
                   hstart = sub_hstart,
                   hstop = sub_hstop,
-                  job_names = job_names,
-                  step = cfg.restart_step)
+                  job_names = job_names)
 
 
 if __name__ == '__main__':
