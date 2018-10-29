@@ -58,7 +58,8 @@ The processing chain has to be run on Piz Daint. Depending on whether you target
 
     module load daint-mc
     module load netcdf-python
-
+    
+Additionally, the `amrs <https://gitlab.empa.ch/abt503/apps/amrs>`_-package has to be installed.
 
 Indices and tables
 ==================
