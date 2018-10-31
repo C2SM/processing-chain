@@ -130,7 +130,7 @@ post_int2lm_species = ["CO2_BG"]#,"CO_BG","CH4_BG","NOX_BG"]
 
 
 # COSMO
-cosmo_bin=  os.path.join(input_root,"executables/cosmo_2018_10_12") 
+cosmo_bin=  os.path.join(input_root,"executables/cosmo_20181029") 
 
 # Case specific settings (int2lm and cosmo namelists and runscripts)
 
