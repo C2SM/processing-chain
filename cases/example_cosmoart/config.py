@@ -20,7 +20,7 @@ mail_address = {
 not_config = list(locals().keys())
 
 compute_host = 'daint'
-compute_queue = 'debug' #'debug' #'normal'
+compute_queue = 'normal'
 compute_account = 'em05' #'pr04'
 
 # Controls which flavour of cosmo is used to do the simulation. Has to be either 'comso' or 'cosmoart'
@@ -110,34 +110,40 @@ cosmo_runjob = '%s/cases/%s/cosmo_runjob.cfg' % (chain_src_dir,casename)
 
 ## INT2LM
 if compute_queue=="normal":
-    int2lm_walltime="01:00:00"
+    int2lm_walltime="00:30:00"
 elif compute_queue=="debug":
     int2lm_walltime="00:30:00"
 else: 
     logging.error("Unset queue name: %s" % compute_queue)
     sys.exit(1)
 
-int2lm_nodes = 2
-int2lm_ntasks_per_node = 12 
-int2lm_np_x = 8
-int2lm_np_y = 3
+int2lm_nodes = 4
+int2lm_ntasks_per_node = 36 
+int2lm_np_x = 12
+int2lm_np_y = 12
 int2lm_np_tot = int2lm_np_x * int2lm_np_y
 
 ## COSMO 
 if compute_queue=="normal":
-    cosmo_walltime="01:00:00"
-    cosmo_np_x=6
-    cosmo_np_y=5
+    cosmo_walltime="01:30:00"
+    cosmo_np_x=12
+    cosmo_np_y=12
 elif compute_queue=="debug":
-    cosmo_walltime="00:30:00"
-    cosmo_np_x=1
-    cosmo_np_y=1
+    cosmo_walltime="01:00:00"
+    cosmo_np_x=12
+    cosmo_np_y=12
 else:
     logging.error("Unknown queue name: %s" % compute_queue)
     sys.exit(1)
 
 cosmo_np_io = 0
 cosmo_np_tot = cosmo_np_x * cosmo_np_y + cosmo_np_io     
+
+assert cosmo_np_tot//36 == cosmo_np_tot/36, ("n-tasks-per node is fixed at 36. "
+                                             "The number of processes has there"
+                                             "fore be divisible by 36 to get "
+                                             "nodes at full capacity")
+cosmo_n_nodes = cosmo_np_tot // 36
 
 # Restart 
 restart_step = 24
@@ -149,12 +155,11 @@ reference_dir = os.path.join(input_root, "reference_output")
 # that post_cosmo copied it to, give the path to it here. Else leave it 'None'
 # output_dir = None
 # Use this if the post_cosmo job is not executed
-output_dir = os.environ['SCRATCH'] + "/cosmoart_processing_chain/example_cosmoart/2015020400_0_3/cosmo/output"
+output_dir = os.environ['SCRATCH'] + "/cosmoart_processing_chain/example_cosmoart/2015020400_0_24/cosmo/output"
 
 # variables_to_check is a dict() with a tuple() of filenames as key and a list
 # of variables-names as value. The tuple consists of the filenames of the two
 # files to check, the list contains the variable-names that are compared.
 # The verify_chain job will look for the files in the reference_dir (first tuple
 # element) and the ouput_dir (second tuple element)
-values_to_check = {("reference_lffd2015020400c.nc","lffd2015020400c.nc") :
-                      ['T', 'U', 'V', 'CO2_A']}
+values_to_check = {("reference_lffd2015020500.nc","lffd2015020500.nc") : None}
