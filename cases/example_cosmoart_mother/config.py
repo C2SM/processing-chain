@@ -42,7 +42,7 @@ work_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain"
 log_dir = os.path.join(work_root, 'logs')
 
 # anthropogenic emissions pre-processed for mother and nested domain
-emissions_dir = os.path.join(input_root, 'emissions_mother_MACC')
+emissions_dir = os.path.join(input_root, 'emissions', 'emissions_mother_MACC')
 emis_gridname = "macc_"
 
 # ifs_hres_bc files
