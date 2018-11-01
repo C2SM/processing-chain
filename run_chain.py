@@ -216,6 +216,20 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
         # no restarts in cosmoart
         setattr(cfg, 'restart_step', hstop - hstart)
 
+    # if nested run: use output of mother-simulation
+    if cfg.target == "cosmoart":
+        if not os.path.isdir(cfg.ifs_hres_dir):
+            # if ifs_hres_dir doesn't point to a directory,
+            # it is the name of the mother run
+            mother_name = cfg.ifs_hres_dir
+            cfg.ifs_hres_dir = os.path.join(work_root,
+                                            mother_name,
+                                            job_id,
+                                            'cosmo',
+                                            'output')
+            cfg.ifs_hres_inc = 1
+            cfg.ifs_basename = 'lffd'
+
     # logging
     log_working_dir = os.path.join(chain_root, 'checkpoints', 'working')
     log_finished_dir = os.path.join(chain_root, 'checkpoints', 'finished')
