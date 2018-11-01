@@ -38,7 +38,7 @@ def main(starttime, hstart, hstop, cfg):
     for time in tools.iter_hours(starttime, hstart, hstop, cfg.ifs_hres_inc):
         logging.info(time)
         src_file = os.path.join(cfg.ifs_hres_dir,
-                                time.strftime(cfg.ifs_basename+'%Y%m%d%H'))
+                                time.strftime(cfg.ifs_basename+'%Y%m%d%H'+'.nc'))
         dest_path = os.path.join(cfg.int2lm_input,
                                  time.strftime('ifs_hres_bc/eas%Y%m%d%H'))
         try:
