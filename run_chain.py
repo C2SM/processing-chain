@@ -127,7 +127,7 @@ def set_simulation_type(cfg):
     if not target in possible:
         raise ValueError("The target of the chain "
                          "must be one of {}".format(possible))
-    setattr(cfg, 'target', target)
+    setattr(cfg, 'target', target.lower())
 
 
 def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
@@ -211,6 +211,10 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
     setattr(cfg, 'cosmo_restart_out', os.path.join(chain_root, 
                                                   'cosmo', 'restart')
            )
+
+    if cfg.target == "cosmoart":
+        # no restarts in cosmoart
+        setattr(cfg, 'restart_step', hstop - hstart)
 
     # logging
     log_working_dir = os.path.join(chain_root, 'checkpoints', 'working')
