@@ -21,7 +21,7 @@ not_config = list(locals().keys())
 
 compute_host = 'daint'
 compute_queue = 'normal'
-compute_account = 'em05' #'pr04'
+compute_account = 'em05'
 
 # Controls which flavour of cosmo is used to do the simulation. Has to be either 'comso' or 'cosmoart'
 # If omitted, will default to 'cosmo'
@@ -41,14 +41,12 @@ output_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain/output/" + cas
 work_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain"
 log_dir = os.path.join(work_root, 'logs')
 
-# anthropogenic emissions pre-processed for mother and nested domain
-emissions_dir = os.path.join(input_root, 'emissions_mother_MACC')
+# preprocessed anthropogenic emissions
+emissions_dir = os.path.join(input_root, 'emissions', 'emissions_nest_MACC_noSwiss')
 emis_gridname = "macc_"
 
-# ifs_hres_bc files
-ifs_hres_dir = os.path.join(input_root, 'ifs_hres_bc')
-ifs_hres_inc = 3  # increment between timesteps
-ifs_basename = "eas"
+# ifs_hres_bc files (either path to intput dir or name of mother run)
+ifs_hres_dir = "example_cosmoart_mother"
 
 # photolysis-rate file
 photo_rate_file = os.path.join(input_root, 'art_photolysis', 'papa_data.p')
@@ -67,13 +65,9 @@ obs_nudging_date_format = "-%Y%m%d%H%M%S"
 
 
 # ICBC
-# if the data is already preprocessed and just need to be copied, 
-# - mozart_file_orig is not used
-# - mozart_dir_proc is where your data to be copied is
-mozart_file_orig = os.path.join(input_root, 'icbc', 'mozart4geos5_20150203-20150221.nc')
-mozart_dir_proc = os.path.join(input_root, 'icbc', 'processed')
-mozart_inc = 6 # increment between timesteps, not sure if this can be changed even
-mozart_prefix = 'mozart'
+swissmu_dir = os.path.join(input_root, 'icbc', 'emissions_nest_ch')
+swissmu_inc = 1  # hours between files
+swissmu_prefix = 'swiss_mu_fine'
 
 # chain root (TODO: remove)
 chain_src_dir = os.getcwd()
@@ -90,7 +84,7 @@ meteo_spinup = 0        # time in hours the model is integrated before transport
 
 # INT2LM
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
-int2lm_extpar_file = "external_parameter_empa_cosmo14.nc"
+int2lm_extpar_file = "Europe_0.02x0.02.nc"
 int2lm_bin = os.path.join(input_root,"executables/int2lm")
 
 int2lm_libgrib_dir = os.path.join(input_root, 'libgrib_api')
@@ -112,7 +106,7 @@ cosmo_runjob = '%s/cases/%s/cosmo_runjob.cfg' % (chain_src_dir,casename)
 if compute_queue=="normal":
     int2lm_walltime="00:30:00"
 elif compute_queue=="debug":
-    int2lm_walltime="00:30:00"
+    int2lm_walltime="00:15:00"
 else: 
     logging.error("Unset queue name: %s" % compute_queue)
     sys.exit(1)
