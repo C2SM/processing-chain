@@ -80,6 +80,21 @@ def main(starttime,hstart,hstop,cfg):
             inv_to_process.append(MOZART)
         except AttributeError:
             pass
+        try:
+            # SWISS_MU_FINE-data doesn't have to be preprocessed,
+            # save an "error-message" instead of an executable
+            SWISS_MU_FINE = dict(fullname = 'SWISS_MU_FINE',
+                                 nickname = 'swiss_mu_fine',
+                                 executable = ("Swiss mu fine data doesn't have"
+                                               "to be processed, but wasn't "
+                                               "found at cfg.swissmu_dir"),
+                                 indir = None,
+                                 outdir = cfg.swissmu_dir,
+                                 param = [{'inc' : cfg.swissmu_inc,
+                                           'suffix' : cfg.swissmu_prefix}])
+            inv_to_process.append(SWISS_MU_FINE)
+        except AttributeError:
+            pass
     
     # TO DO 
     #MOZART = dict(fullname="MOZART", nickname="mozart",executable="cams4int2cosmo")
@@ -101,8 +116,8 @@ def main(starttime,hstart,hstop,cfg):
                 filename = os.path.join(inv["outdir"],p["suffix"]+"_"+time.strftime("%Y%m%d%H")+".nc")
                 if not os.path.exists(filename):
                     logging.info(filename)
-                    try:    
-                        to_call = getattr(tools,inv["executable"])
+                    try:
+                        to_call = getattr(tools, inv["executable"])
                         to_call.main(time,inv["indir"],inv["outdir"],p)
                     except:
                         logging.error("Preprocessing "+inv["fullname"] + " data failed")
