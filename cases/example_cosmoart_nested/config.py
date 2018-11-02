@@ -119,7 +119,7 @@ int2lm_np_tot = int2lm_np_x * int2lm_np_y
 
 ## COSMO 
 if compute_queue=="normal":
-    cosmo_walltime="01:30:00"
+    cosmo_walltime="02:00:00"
     cosmo_np_x=12
     cosmo_np_y=12
 elif compute_queue=="debug":
