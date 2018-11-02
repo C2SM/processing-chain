@@ -5,6 +5,8 @@ import os
 import logging
 import shutil
 
+from datetime import timedelta
+
 from . import tools
 
 def main(starttime, hstart, hstop, cfg):
@@ -35,12 +37,32 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(os.path.join(cfg.int2lm_input, "ifs_hres_bc"),
                      "ifs hres input")
 
+    # If this is a nested run, the meteo data comes from cosmo & we need
+    # to also copy the *c.nc file
+    dest_string = "ifs_hres_bc/{}%Y%m%d%H".format(cfg.ifs_basename)
+    if cfg.ifs_basename == 'lffd':
+        time = starttime + timedelta(hours=hstart)
+        src_file = os.path.join(cfg.ifs_hres_dir,
+                                time.strftime(cfg.ifs_basename+'%Y%m%d%H'+'c.nc'))
+        dest_path = os.path.join(cfg.int2lm_input, "ifs_hres_bc")
+        try:
+            shutil.copy(src_file, dest_path)
+        except FileNotFoundError:
+            logging.error("Emission input file not found at {}, or output"
+                          " directory doesn't exist to copy {}"
+                          .format(src_file, dest_path))
+            raise
+        except (PermissionError, OSError):
+            logging.error("Copying emission data file failed")
+            raise
+        logging.info("Copied constant-param file {}".format(time.strftime('ifs_hres_bc/eas%Y%m%d%Hc')))
+        
+
     for time in tools.iter_hours(starttime, hstart, hstop, cfg.ifs_hres_inc):
         logging.info(time)
         src_file = os.path.join(cfg.ifs_hres_dir,
                                 time.strftime(cfg.ifs_basename+'%Y%m%d%H'+'.nc'))
-        dest_path = os.path.join(cfg.int2lm_input,
-                                 time.strftime('ifs_hres_bc/eas%Y%m%d%H'))
+        dest_path = os.path.join(cfg.int2lm_input, "ifs_hres_bc")
         try:
             shutil.copy(src_file, dest_path)
         except FileNotFoundError:
