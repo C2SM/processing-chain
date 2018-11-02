@@ -73,15 +73,6 @@ swissmu_prefix = 'swiss_mu_fine'
 chain_src_dir = os.getcwd()
 tools_dir = os.path.join(chain_src_dir, 'jobs/tools')
 
-# some constants for scripts
-del_tmp_timeout = 120   # timeout in days after which temporary files 
-                        # like restarts (last forecast hour of day - 1) are removed
-                        # by "purgetmp"
-
-meteo_spinup = 0        # time in hours the model is integrated before transport simulation 
-                        # is started (i.e. spinupstart = inidate - meteospinup)
-                        # NOTE: has to be multiple of meteo increment (e.g 3hrs for IFS)
-
 # INT2LM
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = "Europe_0.02x0.02.nc"
