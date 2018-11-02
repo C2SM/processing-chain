@@ -23,62 +23,65 @@ def parse_arguments():
     Returns
     -------
     Namespace-object
-        Access the value for an argument by::
-            
-            args = parse_arguments()
-            args.myval
     """
     parser = argparse.ArgumentParser(description="Run the processing chain.")
-    
-    parser.add_argument("casename",
-                        type=str,
-                        help="Identifier of the run. The config-files for this "
-                             "run are assumed to be in cases/casename/")
-                             
-    parser.add_argument("startdate",
-                        type=str,
-                        help="Startdate of the run in the format yyyy-mm-dd")
-    
-    parser.add_argument("hstart",
-                        type=int,
-                        help="Time on the startdate when the simulation"
-                             "starts. If this is zero, the simulation starts "
-                             "at midnight of the startdate.")
-                             
-    parser.add_argument("hstop",
-                        type=int,
-                        help="Length of the simulation in hours. The "
-                             "simulation runs until startdate + hstart + "
-                             "hstop. Depending on your config.py settings, "
-                             "processing-chain will split up the simulation "
-                             "and perform several restarts before reaching the "
-                             "stopping-time.")
+
+    parser.add_argument("casenames",
+                        nargs='+',
+                        help="List of identifiers for the runs. "
+                        "The config-files for each run is assumed "
+                        "to be in cases/<casename>/. The runs are executed "
+                        "sequentially in the order they're given here.")
+
+    times_help = ("Triplet of {date hstart hstop} | "
+                  "date: Startdate of the run in the format "
+                  "yyyy-mm-dd | "
+                  "hstart: Time on the startdate when the "
+                  "simulation starts. If this is zero, the "
+                  "simulation starts at midnight of the +startdate. | "
+                  "hstop: Length of the simulation in hours. The "
+                  "simulation runs until startdate + hstart + "
+                  "hstop. Depending on your config.py settings, "
+                  "processing-chain will split up the simulation "
+                  "and perform several restarts before reaching the "
+                  "stopping-time.")
+    parser.add_argument("times",
+                        nargs=3,
+                        help=times_help)
 
     default_jobs = ["meteo", "icbc", "emissions", "biofluxes", "int2lm",
                     "post_int2lm", "cosmo", "post_cosmo"]
+    jobs_help = ("List of job-names to be executed. A job is a .py-"
+                 "file in jobs/ with a main()-function which "
+                 "handles one aspect of the processing chain, for "
+                 "example copying meteo-input data or launching a "
+                 "job for int2lm. "
+                 "Jobs are executed in the order in which they are "
+                 "given here. "
+                 "If no jobs are given, the default that will be "
+                 "executed is: {}".format(default_jobs))
     parser.add_argument("-j", "--jobs",
                         nargs='*',
                         dest="job_list",
-                        help="List of job-names to be executed. A job is a .py-"
-                             "file in jobs/ with a main()-function which "
-                             "handles one aspect of the processing chain, for "
-                             "example copying meteo-input data or launching a "
-                             "job for int2lm. "
-                             "Jobs are executed in the order in which they are "
-                             "given here. "
-                             "If no jobs are given, the default that will be "
-                             "executed is: {}".format(default_jobs),
+                        help=jobs_help,
                         default=default_jobs)
+    
+    args = parser.parse_args()
+    args.startdate = args.times[0]
+    args.hstart = int(args.times[1])
+    args.hstop = int(args.times[2])
+    return args
 
-    return parser.parse_args()
-
-
-def load_config_file(casename):
+def load_config_file(casename, cfg):
     """Load the config file.
     
     Looks for the config file in ``cases/casename/config.py`` and then imports
     it as a module. This lets the config file contain python statements which
     are evaluated on import.
+
+    If this is not the first config-file to be imported by run_chain.py, the
+    module has to be reloaded to overwrite the values of the old case.
+
     Access variables declared in the config-file (``myval = 9``) with
     ``cfg.myval``.
     Add new variables with::
@@ -89,6 +92,9 @@ def load_config_file(casename):
     ----------
     casename : str
         Name of the folder in cases/ where the configuration files are stored
+    cfg : module or None
+        If cfg is None, the module is freshly imported. If it is a module
+        object, that module is reloaded.
         
     Returns
     -------
@@ -98,7 +104,14 @@ def load_config_file(casename):
     try:
         fn = os.path.join('cases',casename,'config')
         sys.path.append(os.path.dirname(fn))
-        cfg = importlib.import_module(os.path.basename(fn))
+
+        if cfg is None:
+            cfg = importlib.import_module(os.path.basename(fn))
+        else:
+            cfg = importlib.reload(cfg)
+
+        # so that a different cfg-file can be imported later
+        sys.path.pop()
     except IndexError:
         print('ERROR: no config file provided!')
         sys.exit(1)
@@ -367,18 +380,35 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
 
 
 if __name__ == '__main__':
-    parser = parse_arguments()
-    cfg = load_config_file(casename=parser.casename)
-    start_time = datetime.strptime(parser.startdate, '%Y-%m-%d')
-    hstart = int(parser.hstart)
-    hstop = int(parser.hstop)
-    job_names = parser.job_list
-    set_simulation_type(cfg)
+    args = parse_arguments()
 
-    print("Starting chain for case {}, using {}".format(parser.casename,
-                                                        cfg.target))
-    
-    restart_runs(cfg.work_root, cfg, start_time, hstart=hstart, hstop=hstop,
-                 job_names=job_names)
-    
+    # 'empty' config object to be overwritten by load_config_file
+    cfg = None
+    for casename in args.casenames:
+        cfg = load_config_file(casename=casename, cfg=cfg)
+        start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
+        job_names = args.job_list
+        set_simulation_type(cfg)
+
+        print("Starting chain for case {}, using {}".format(casename,
+                                                            cfg.target))
+
+        if cfg.target.lower() == 'cosmo':
+            restart_runs(work_root = cfg.work_root,
+                         cfg = cfg,
+                         start = start_time,
+                         hstart = args.hstart,
+                         hstop = args.hstop,
+                         job_names = args.job_list)
+        elif cfg.target.lower() == 'cosmoart':
+            # cosmoart can't do restarts
+            run_chain(   work_root = cfg.work_root,
+                         cfg = cfg,
+                         start_time = start_time,
+                         hstart = args.hstart,
+                         hstop = args.hstop,
+                         job_names = args.job_list)
+        else:
+            raise RuntimeError("Unknown target: {}".format(cfg.target))
+
     print('>>> finished chain for good or bad! <<<')
