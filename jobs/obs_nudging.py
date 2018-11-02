@@ -19,6 +19,8 @@ def main(starttime,hstart,hstop,cfg):
     job handles this filename-change and copies them to the **COSMO** input 
     folder on scratch (``cfg.cosmo_input/obs_nudging``).
 
+    Also copies the blacklist-file blklsttmp used by the nested run.
+
     Parameters
     ----------	
     start_time : datetime-object
@@ -65,3 +67,15 @@ def main(starttime,hstart,hstop,cfg):
                 logging.error("Copying emission data file failed")
                 raise
             logging.info("Copied file {} to {}".format(src_filename, dest_path))
+
+    try:
+        shutil.copy(os.path.join(cfg.obs_nudging_dir, 'blklsttmp'), dest_dir)
+    except FileNotFoundError:
+        logging.error("Blacklist file not found at {}, or output"
+                      " directory doesn't exist to copy {}"
+                      .format(src_file, dest_dir))
+        raise
+    except (PermissionError, OSError):
+        logging.error("Copying emission data file failed")
+        raise
+    logging.info("Copied blacklist-file to {}".format(dest_dir))
