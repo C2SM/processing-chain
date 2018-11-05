@@ -37,9 +37,13 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(os.path.join(cfg.int2lm_input, "ifs_hres_bc"),
                      "ifs hres input")
 
+    source_string = cfg.ifs_basename + "%Y%m%d%H"
+    if cfg.ifs_basename == 'lffd':
+        source_string += '.nc'
+    dest_string = "ifs_hres_bc/{}%Y%m%d%H".format(cfg.ifs_basename)
+
     # If this is a nested run, the meteo data comes from cosmo & we need
     # to also copy the *c.nc file
-    dest_string = "ifs_hres_bc/{}%Y%m%d%H".format(cfg.ifs_basename)
     if cfg.ifs_basename == 'lffd':
         time = starttime + timedelta(hours=hstart)
         src_file = os.path.join(cfg.ifs_hres_dir,
@@ -61,7 +65,7 @@ def main(starttime, hstart, hstop, cfg):
     for time in tools.iter_hours(starttime, hstart, hstop, cfg.ifs_hres_inc):
         logging.info(time)
         src_file = os.path.join(cfg.ifs_hres_dir,
-                                time.strftime(cfg.ifs_basename+'%Y%m%d%H'+'.nc'))
+                                time.strftime(source_string))
         dest_path = os.path.join(cfg.int2lm_input, "ifs_hres_bc")
         try:
             shutil.copy(src_file, dest_path)

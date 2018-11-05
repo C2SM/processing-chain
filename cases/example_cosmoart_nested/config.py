@@ -73,15 +73,6 @@ swissmu_prefix = 'swiss_mu_fine'
 chain_src_dir = os.getcwd()
 tools_dir = os.path.join(chain_src_dir, 'jobs/tools')
 
-# some constants for scripts
-del_tmp_timeout = 120   # timeout in days after which temporary files 
-                        # like restarts (last forecast hour of day - 1) are removed
-                        # by "purgetmp"
-
-meteo_spinup = 0        # time in hours the model is integrated before transport simulation 
-                        # is started (i.e. spinupstart = inidate - meteospinup)
-                        # NOTE: has to be multiple of meteo increment (e.g 3hrs for IFS)
-
 # INT2LM
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = "Europe_0.02x0.02.nc"
@@ -149,11 +140,12 @@ reference_dir = os.path.join(input_root, "reference_output")
 # that post_cosmo copied it to, give the path to it here. Else leave it 'None'
 # output_dir = None
 # Use this if the post_cosmo job is not executed
-output_dir = os.environ['SCRATCH'] + "/cosmoart_processing_chain/example_cosmoart/2015020400_0_24/cosmo/output"
+output_dir = os.environ['SCRATCH'] + ("/cosmoart_processing_chain/"
+    "example_cosmoart_nested/2015020400_0_12/cosmo/output")
 
 # variables_to_check is a dict() with a tuple() of filenames as key and a list
 # of variables-names as value. The tuple consists of the filenames of the two
 # files to check, the list contains the variable-names that are compared.
 # The verify_chain job will look for the files in the reference_dir (first tuple
 # element) and the ouput_dir (second tuple element)
-values_to_check = {("reference_lffd2015020500.nc","lffd2015020500.nc") : None}
+values_to_check = {("reference_nested_lffd2015020412.nc","lffd2015020412.nc") : None}
