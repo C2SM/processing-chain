@@ -84,6 +84,7 @@ def load_config_file(casename, cfg):
 
     Access variables declared in the config-file (``myval = 9``) with
     ``cfg.myval``.
+
     Add new variables with::
     
         setattr(cfg, 'myval', 9)
