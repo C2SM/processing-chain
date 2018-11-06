@@ -142,7 +142,7 @@ int2lm_np_tot = int2lm_np_x * int2lm_np_y
 
 ## COSMO 
 if compute_queue=="normal":
-    cosmo_walltime="18:00:00"
+    cosmo_walltime="24:00:00"
     cosmo_np_x=6
     cosmo_np_y=5
 elif compute_queue=="debug":
@@ -157,4 +157,4 @@ cosmo_np_io = 1
 cosmo_np_tot = cosmo_np_x * cosmo_np_y + cosmo_np_io     
 
 # Restart 
-restart_step = 24
+restart_step = 168
