@@ -41,60 +41,75 @@ def main(start_time, hstart, hstop, cfg):
         raise
 
     if cfg.compute_host!="daint":
-        logging.error("The copy script is supposed to be run on daint only, not on %s" %cfg.compute_host)
+        logging.error("The copy script is supposed to be run on daint only, "
+                      "not on %s" %cfg.compute_host)
         sys.exit(1)
 
     for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*.nc"))): 
         if os.path.exists(infile) and not 'c_' in infile:
-            # get path and filename for output file
+            # Get path and filename for output file
             path, output_filename = os.path.split(infile)
             logging.info(output_filename)
             outfile = os.path.join(output_path, output_filename)
-            # remove any pre-existing output file
+            # Remove any pre-existing output file
             if os.path.exists(outfile): os.remove(outfile)
             try:
-                with nc.Dataset(infile, 'r') as inf, nc.Dataset(outfile, 'w') as outf:
-                    # copy global attributes all at once via dictionary
+                with nc.Dataset(infile, 'r') as inf, \
+                     nc.Dataset(outfile, 'w') as outf:
+                    # Copy global attributes all at once via dictionary
                     outf.setncatts(inf.__dict__)
-                    # copy dimensions
+                    # Copy dimensions
                     for name, dimension in inf.dimensions.items():
-                        outf.createDimension(name, (len(dimension) if not dimension.isunlimited() else None))
-                    # new dimensions
+                        outf.createDimension(name, (len(dimension)
+                            if not dimension.isunlimited() else None))
+                    # Create new dimension level_2d
                     outf.createDimension('level_2d', 1)
-                    # get level information
+                    # Get level information
                     level = len(inf.dimensions['level'])
                     level1 = len(inf.dimensions['level1'])
-                    # copy variables
+                    # Copy variables
                     for varname in inf.variables.keys():
                         var = inf.variables[varname]
                         try:
-                            if (var.dimensions == ('time', 'level', 'rlat', 'rlon') or
-                                var.dimensions == ('time', 'level1', 'rlat', 'rlon') 
-                               ):
-                                var_dimensions = ('time', 'level_2d', 'rlat', 'rlon')
-                            elif (var.dimensions == ('time', 'level', 'srlat', 'rlon')):
-                                var_dimensions = ('time', 'level_2d', 'srlat', 'rlon')
-                            elif (var.dimensions == ('time', 'level', 'rlat', 'srlon')):
-                                var_dimensions = ('time', 'level_2d', 'rlat', 'srlon')
+                            if (var.dimensions == ('time', 'level',
+                                                   'rlat', 'rlon') or
+                                var.dimensions == ('time', 'level1',
+                                                   'rlat', 'rlon')):
+                                var_dimensions = ('time', 'level_2d',
+                                                  'rlat', 'rlon')
+                            elif (var.dimensions == ('time', 'level',
+                                                     'srlat', 'rlon')):
+                                var_dimensions = ('time', 'level_2d',
+                                                  'srlat', 'rlon')
+                            elif (var.dimensions == ('time', 'level',
+                                                     'rlat', 'srlon')):
+                                var_dimensions = ('time', 'level_2d',
+                                                  'rlat', 'srlon')
                             else:
                                 var_dimensions = var.dimensions
-                            outf.createVariable(varname, var.dtype, var_dimensions)
+
+                            outf.createVariable(varname, var.dtype,
+                                                var_dimensions)
                             for attr in var.ncattrs():
-                                outf[varname].setncattr(attr,inf[varname].getncattr(attr))
+                                outf[varname].setncattr(attr,
+                                    inf[varname].getncattr(attr))
                         except RuntimeError:
                             pass
 
                         if varname != 'rotated_pole':
-                            # check for 3D data and extract only ground level
-                            if 'level1' in var.dimensions and len(var.dimensions) == 4:
+                            # Check for 3D data and extract only ground level
+                            if 'level1' in var.dimensions and \
+                                len(var.dimensions) == 4:
                                 outf[varname][:] = inf[varname][:,level1-1,:,:]
-                            elif 'level' in var.dimensions and len(var.dimensions) == 4:
+                            elif 'level' in var.dimensions and \
+                                len(var.dimensions) == 4:
                                 outf[varname][:] = inf[varname][:,level-1,:,:]
                             else:
                                 outf[varname][:] = inf[varname][:]
 
             except:
-                logging.error("Extracting 2D data from file %s to file %s failed." % (infile,outfile))
+                logging.error("Extracting 2D data from file %s to file %s "
+                              "failed." % (infile,outfile))
 
     date = dt.datetime.today()
     to_print = """=====================================================
