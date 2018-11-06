@@ -108,7 +108,7 @@ meteo_spinup = 0        # time in hours the model is integrated before transport
 # INT2LM
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = 'extpar_empa_cosmo1_aster_opt.nc'
-int2lm_bin = '/users/mjaehn/github/int2lm/int2lm_tracer_conversion_cray'
+int2lm_bin = '/users/mjaehn/github/int2lm/int2lm_tracer_conversion'
 
 # post_int2lm
 post_int2lm_species = ['CO2_BG', 'CO_BG', 'CH4_BG']
@@ -157,4 +157,4 @@ cosmo_np_io = 1
 cosmo_np_tot = cosmo_np_x * cosmo_np_y + cosmo_np_io     
 
 # Restart 
-restart_step = 240
+restart_step = 168
