@@ -22,7 +22,7 @@ import shutil
 
 from . import tools
 
-def main(starttime,hstart,hstop,cfg):
+def main(starttime, hstart, hstop, cfg):
     """Copy emission files to the **int2lm** input directory.
 
     Necessary for both **COSMO** and **COSMOART** simulations.
@@ -44,27 +44,39 @@ def main(starttime,hstart,hstop,cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
+    target_dir = os.path.join(cfg.int2lm_input, "emissions")
+    tools.create_dir(target_dir, "emissions input")
 
-    tools.create_dir(os.path.join(cfg.int2lm_input, "emissions"),
-                     "emissions input")
+    dataset_nmbr = 0
+    while True:
+        # there may be multiple emission datasets, loop until no more
+        # are found in cfg
+        dataset_nmbr += 1
+        if dataset_nmbr == 1:
+            emis_dir = cfg.emissions_dir
+            emis_prefix = cfg.emis_gridname
+        else:
+            try:
+                emis_dir = getattr(cfg, "emissions_dir" + str(dataset_nmbr))
+                emis_prefix = getattr(cfg, "emis_gridname" + str(dataset_nmbr))
+            except AttributeError:
+                # no new dataset is found, we're done
+                break
 
-    for time in tools.iter_hours(starttime, hstart, hstop):
-        logging.info(time)
-        filename = os.path.join(cfg.emissions_dir, time.strftime(cfg.emis_gridname+'%Y%m%d%H.nc'))
-        scratch_path = os.path.join(cfg.int2lm_input, time.strftime('emissions/emis_%Y%m%d%H.nc'))
-        if not os.path.exists(filename):
-            pass
-        try:
-            shutil.copy(filename, scratch_path)
+        for time in tools.iter_hours(starttime, hstart, hstop):
+            logging.info(time)
+            filepath = os.path.join(emis_dir,
+                                    time.strftime(emis_prefix+'%Y%m%d%H.nc'))
+            try:
+                shutil.copy(filepath, target_dir)
+            except FileNotFoundError:
+                logging.error("Emission input file not found at %s, or output directory doesn't exist to copy %s" % (filepath, target_dir))
+                raise
+            except (PermissionError, OSError):
+                logging.error("Copying emission data file failed")
+                raise
 
-        except FileNotFoundError:
-            logging.error("Emission input file not found at %s, or output directory doesn't exist to copy %s" % (filename,scratch_path))
-            raise
-        except (PermissionError, OSError):
-            logging.error("Copying emission data file failed")
-            raise
-
-        # convert grid_mapping_name from string (NF90_STRING) to char
-        # (NF90_CHAR) (needed for int2lm to work)
-        if cfg.target.lower() == 'cosmo':
-            tools.string2char.main(scratch_path)
+            # convert grid_mapping_name from string (NF90_STRING) to char
+            # (NF90_CHAR) (needed for int2lm to work)
+            if cfg.target.lower() == 'cosmo':
+                tools.string2char.main(filepath)

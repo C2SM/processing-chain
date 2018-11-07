@@ -41,9 +41,15 @@ output_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain/output/" + cas
 work_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain"
 log_dir = os.path.join(work_root, 'logs')
 
-# anthropogenic emissions pre-processed for mother and nested domain
+# (possibly multiple) emissions-datasets
+# first dataset: found at emissions_dir with names {emis_gridname}YYYYMMDDHH
+# second dataset: found at emissions_dir2 with names {emis_gridname2}YYYYMMDDHH
+# n-th dataset: found at emissions_dirn with names {emis_gridnamen}YYYYMMDDHH
+# make sure to adjust int2lm_INPUT.cfg appropriately
 emissions_dir = os.path.join(input_root, 'emissions', 'emissions_mother_MACC')
 emis_gridname = "macc_"
+emissions_dir2 = "/store/empa/em05/dbrunner/bafu_mm/input/emissions_mother_ch"
+emis_gridname2 = "swiss_mu_coarse_"
 
 # ifs_hres_bc files
 ifs_hres_dir = os.path.join(input_root, 'ifs_hres_bc')

@@ -41,7 +41,11 @@ output_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain/output/" + cas
 work_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain"
 log_dir = os.path.join(work_root, 'logs')
 
-# preprocessed anthropogenic emissions
+# (possibly multiple) emissions-datasets
+# first dataset: found at emissions_dir with names {emis_gridname}YYYYMMDDHH
+# second dataset: found at emissions_dir2 with names {emis_gridname2}YYYYMMDDHH
+# n-th dataset: found at emissions_dirn with names {emis_gridnamen}YYYYMMDDHH
+# make sure to adjust int2lm_INPUT.cfg appropriately
 emissions_dir = os.path.join(input_root, 'emissions', 'emissions_nest_MACC_noSwiss')
 emis_gridname = "macc_"
 
