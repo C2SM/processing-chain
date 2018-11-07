@@ -35,10 +35,10 @@ casename = os.path.basename(os.path.dirname(path))
 input_root = '/store/empa/em05/input_cosmoart_processing_chain_example/'
 
 # output
-output_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain/output/" + casename
+output_root = os.environ['SCRATCH'] + "/processing_chain/output/" + casename
 
 # working root
-work_root = os.environ['SCRATCH'] + "/cosmoart_processing_chain"
+work_root = os.environ['SCRATCH'] + "/processing_chain"
 log_dir = os.path.join(work_root, 'logs')
 
 # (possibly multiple) emissions-datasets
