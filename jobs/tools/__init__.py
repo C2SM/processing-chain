@@ -46,8 +46,8 @@ def iter_hours(starttime, hstart, hstop, step=1):
     exactly ``starttime + hstop``. If not, the last timepoint will be before
     that.
 
-    >>> import datetime.datetime.strptime
-    >>> date = strptime("20150101", "%Y%m%d")
+    >>> import datetime
+    >>> date = datetime.datetime.strptime("20150101", "%Y%m%d")
     >>> [t.hour for t in iter_hours(date, 10, 14, 2)]
     [10, 12, 14]
     >>> [t.hour for t in iter_hours(date, 9, 16, 3)]
