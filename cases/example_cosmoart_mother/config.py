@@ -57,7 +57,7 @@ ifs_hres_inc = 3  # increment between timesteps
 ifs_basename = "eas"
 
 # photolysis-rate file
-photo_rate_file = os.path.join(input_root, 'art_photolysis', 'papa_data.p')
+photo_rate_file = os.path.join(input_root, 'art_photolysis', 'papa_data.d')
 
 # obs_nudging files
 obs_nudging_dir = os.path.join(input_root, 'obs_nudging')
