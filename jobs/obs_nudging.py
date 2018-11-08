@@ -40,6 +40,7 @@ def main(starttime,hstart,hstop,cfg):
                          dest_dir))
 
     for i, t in enumerate(tools.iter_hours(starttime, hstart, hstop, step=24)):
+        i += 1
         for prefix in cfg.obs_nudging_prefixes:
             src_filename = (prefix +
                             t.strftime(cfg.obs_nudging_date_format) +
