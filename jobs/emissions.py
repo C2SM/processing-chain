@@ -44,33 +44,40 @@ def main(starttime, hstart, hstop, cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    target_dir = os.path.join(cfg.int2lm_input, "emissions")
-    tools.create_dir(target_dir, "emissions input")
+    dest_prefix = "emis_"
 
-    dataset_nmbr = 0
-    while True:
-        # there may be multiple emission datasets, loop until no more
-        # are found in cfg
-        dataset_nmbr += 1
-        if dataset_nmbr == 1:
-            emis_dir = cfg.emissions_dir
-            emis_prefix = cfg.emis_gridname
+    if not isinstance(cfg.emissions_dir, list):
+        emis_dirs = [cfg.emissions_dir]
+    else:
+        emis_dirs = cfg.emissions_dir
+    if not isinstance(cfg.emis_gridname, list):
+        emis_prefixes = [cfg.emis_gridname]
+    else:
+        emis_prefixes = cfg.emis_gridname
+
+    assert len(emis_dirs) == len(emis_prefixes), (
+        "Different number of cfg.emissions_dir and cfg.emis_gridname")
+
+    for i, (emis_dir, emis_prefix) in enumerate(zip(emis_dirs, emis_prefixes)):
+        # create directory
+        if i == 0:
+            target_dir = os.path.join(cfg.int2lm_input,
+                                      "emissions")
+            tools.create_dir(target_dir, "emissions input")
         else:
-            try:
-                emis_dir = getattr(cfg, "emissions_dir" + str(dataset_nmbr))
-                emis_prefix = getattr(cfg, "emis_gridname" + str(dataset_nmbr))
-            except AttributeError:
-                # no new dataset is found, we're done
-                break
-
+            target_dir = os.path.join(cfg.int2lm_input,
+                                      "emissions" + str(i+1))
+            tools.create_dir(target_dir, "emissions input")
+        # copy data
         for time in tools.iter_hours(starttime, hstart, hstop):
             logging.info(time)
-            filepath = os.path.join(emis_dir,
-                                    time.strftime(emis_prefix+'%Y%m%d%H.nc'))
+            filename_ending = time.strftime('%Y%m%d%H.nc')
+            source_path = os.path.join(emis_dir, emis_prefix + filename_ending)
+            dest_path = os.path.join(target_dir, dest_prefix + filename_ending)
             try:
-                shutil.copy(filepath, target_dir)
+                shutil.copy(source_path, dest_path)
             except FileNotFoundError:
-                logging.error("Emission input file not found at %s, or output directory doesn't exist to copy %s" % (filepath, target_dir))
+                logging.error("Emission input file not found at %s, or output directory doesn't exist to copy %s" % (source_path, target_dir))
                 raise
             except (PermissionError, OSError):
                 logging.error("Copying emission data file failed")
@@ -79,4 +86,4 @@ def main(starttime, hstart, hstop, cfg):
             # convert grid_mapping_name from string (NF90_STRING) to char
             # (NF90_CHAR) (needed for int2lm to work)
             if cfg.target.lower() == 'cosmo':
-                tools.string2char.main(filepath)
+                tools.string2char.main(dest_path)
