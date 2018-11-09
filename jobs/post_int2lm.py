@@ -38,7 +38,7 @@ def main(start_time, hstart, hstop, cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    tools.check_target(cfg, 'COSMO')
+    tools.check_target(cfg, tools.Target.COSMO)
 
     int2lm_output = cfg.int2lm_output
     inidate_int2lm_yyyymmddhh = start_time.strftime('%Y%m%d%H')
