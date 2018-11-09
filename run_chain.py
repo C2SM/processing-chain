@@ -232,17 +232,17 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
 
     # if nested run: use output of mother-simulation
     if cfg.target == "cosmoart":
-        if not os.path.isdir(cfg.ifs_hres_dir):
+        if not os.path.isdir(cfg.meteo_dir):
             # if ifs_hres_dir doesn't point to a directory,
             # it is the name of the mother run
-            mother_name = cfg.ifs_hres_dir
-            cfg.ifs_hres_dir = os.path.join(work_root,
-                                            mother_name,
-                                            job_id,
-                                            'cosmo',
-                                            'output')
-            cfg.ifs_hres_inc = 1
-            cfg.ifs_basename = 'lffd'
+            mother_name = cfg.meteo_dir
+            cfg.meteo_dir = os.path.join(work_root,
+                                         mother_name,
+                                         job_id,
+                                         'cosmo',
+                                         'output')
+            cfg.meteo_inc = 1
+            cfg.meteo_prefix = 'lffd'
 
     # logging
     log_working_dir = os.path.join(chain_root, 'checkpoints', 'working')
@@ -255,7 +255,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
         # if chain_root already exists ask user if he wants to continue
         while True:
             inp = input("Target directory of processing chain already exists. "
-                        "Continue? ([y]/n)")
+                        "Continue? ([y]/n) ")
             if inp.lower() == 'y' or inp == '':
                 break
             elif inp.lower() == 'n':
@@ -388,7 +388,6 @@ if __name__ == '__main__':
     for casename in args.casenames:
         cfg = load_config_file(casename=casename, cfg=cfg)
         start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
-        job_names = args.job_list
         set_simulation_type(cfg)
 
         print("Starting chain for case {}, using {}".format(casename,

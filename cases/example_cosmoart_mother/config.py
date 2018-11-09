@@ -52,9 +52,9 @@ emissions_dir2 = "/store/empa/em05/dbrunner/bafu_mm/input/emissions_mother_ch"
 emis_gridname2 = "swiss_mu_coarse_"
 
 # ifs_hres_bc files
-ifs_hres_dir = os.path.join(input_root, 'ifs_hres_bc')
-ifs_hres_inc = 3  # increment between timesteps
-ifs_basename = "eas"
+meteo_dir = os.path.join(input_root, 'meteo')
+meteo_inc = 3  # increment between timesteps
+meteo_prefix = "eas"
 
 # photolysis-rate file
 photo_rate_file = os.path.join(input_root, 'art_photolysis', 'papa_data.d')

@@ -49,8 +49,8 @@ log_dir = os.path.join(work_root, 'logs')
 emissions_dir = os.path.join(input_root, 'emissions', 'emissions_nest_MACC_noSwiss')
 emis_gridname = "macc_"
 
-# ifs_hres_bc files (either path to intput dir or name of mother run)
-ifs_hres_dir = "example_cosmoart_mother"
+# meteo files (either path to intput dir or name of mother run)
+meteo_dir = "example_cosmoart_mother"
 
 # photolysis-rate file
 photo_rate_file = os.path.join(input_root, 'art_photolysis', 'papa_data.d')
