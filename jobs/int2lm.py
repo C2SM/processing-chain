@@ -61,7 +61,7 @@ def main(starttime, hstart, hstop, cfg):
     logfile = os.path.join(cfg.log_working_dir, "int2lm")
     logfile_finish = os.path.join(cfg.log_finished_dir, "int2lm")
 
-# Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
+    # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
     if starttime < datetime.strptime('2007-08-02', '%Y-%m-%d'): 
         multi_layer = ".FALSE."
     else:
@@ -72,31 +72,13 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(cfg.int2lm_work, "int2lm_work")
     tools.create_dir(cfg.int2lm_output, "int2lm_output")
 
-    # copy int2lm executable
-    try:
-        # 'int2lm' file name or directory
-        shutil.copy(cfg.int2lm_bin, os.path.join(cfg.int2lm_work, 'int2lm'))
-    except FileNotFoundError:
-        logging.error("int2lm_bin not found")
-        raise
-    except (PermissionError, OSError):
-        logging.error("Copying int2lm_bin failed")
-        raise
+    tools.copy_file(cfg.int2lm_bin, os.path.join(cfg.int2lm_work, "int2lm"))
 
     # Copy extpar file to input/extpar directory
-    try:
-        # 'int2lm' file name or directory
-        extpar_folder = os.path.join(cfg.int2lm_input,"extpar")
-        os.makedirs(extpar_folder, exist_ok=True)
-        extpar_file = os.path.join(cfg.int2lm_extpar_dir, 
-                                   cfg.int2lm_extpar_file)
-        shutil.copy(extpar_file, extpar_folder)
-    except FileNotFoundError:
-        logging.error("int2lm extpar file not found")
-        raise
-    except (PermissionError, OSError):
-        logging.error("Copying int2lm extpar file failed")
-        raise
+    extpar_folder = os.path.join(cfg.int2lm_input,"extpar")
+    extpar_file = os.path.join(cfg.int2lm_extpar_dir, cfg.int2lm_extpar_file)
+    tools.create_dir(extpar_folder, "int2lm extpar")
+    tools.copy_file(extpar_file, extpar_folder)
 
     # Copy libgrib_api
     if cfg.target.lower() == 'cosmoart':

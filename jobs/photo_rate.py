@@ -39,15 +39,7 @@ def main(starttime,hstart,hstop,cfg):
 
     src_file = cfg.photo_rate_file
     dest_path = os.path.join(cfg.cosmo_input, 'art_photolysis', 'papa_data.d')
-    try:
-        shutil.copy(src_file, dest_path)
-    except FileNotFoundError:
-        logging.error("Emission input file not found at {}, or output"
-                      " directory doesn't exist to copy {}"
-                      .format(src_file, dest_path))
-        raise
-    except (PermissionError, OSError):
-        logging.error("Copying emission data file failed")
-        raise
+
+    tools.copy_file(src_file, dest_path)
 
     logging.info("Finished")

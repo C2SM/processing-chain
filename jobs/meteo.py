@@ -59,16 +59,9 @@ def main(starttime, hstart, hstop, cfg):
         time = starttime + timedelta(hours = hstart)
         src_file = os.path.join(cfg.meteo_dir,
                                 time.strftime(source_nameformat + 'c.nc'))
-        try:
-            shutil.copy(src_file, dest_path)
-        except FileNotFoundError:
-            logging.error("Emission input file not found at {}, or output"
-                          " directory doesn't exist to copy {}"
-                          .format(src_file, dest_path))
-            raise
-        except (PermissionError, OSError):
-            logging.error("Copying emission data file failed")
-            raise
+
+        tools.copy_file(src_file, dest_path)
+
         logging.info("Copied constant-param file from {} to {}"
                      .format(src_file, dest_path))
 
@@ -86,13 +79,6 @@ def main(starttime, hstart, hstop, cfg):
             pass
 
         # copy meteo file from project folder to
-        try:
-            shutil.copy(src_file, dest_path)
-        except FileNotFoundError:
-            logging.error("Meteo input not found at %s" % src_file)
-            raise
-        except (PermissionError, OSError):
-            logging.error("Copying meteo data file failed")
-            raise
+        tools.copy_file(src_file, dest_path)
 
         logging.info("Copied file from {} to {}".format(src_file, dest_path))

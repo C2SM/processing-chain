@@ -124,13 +124,6 @@ def main(starttime,hstart,hstop,cfg):
                         raise
 
                 # copy to (temporary) run input directory
-                try:
-                    shutil.copy(filename, scratch_path)
-                except FileNotFoundError:
-                    logging.error("Processed "+inv["fullname"]+ " "+p["suffix"]+" data file not found at %s" % filename)
-                    raise
-                except (PermissionError, OSError):
-                    logging.error("Copying processed "+inv["fullname"]+" "+p["suffix"]+" data file failed")
-                    raise
+                tools.copy_file(filename, scratch_path)
 
                 logging.info("OK")

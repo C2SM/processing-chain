@@ -54,24 +54,14 @@ def main(starttime,hstart,hstop,cfg):
                 dest_path = os.path.join(dest_dir, "{}.{}".format(prefix, i))
 
             try:
-                shutil.copy(src_path, dest_path)
+                tools.copy_file(src_path, dest_path)
             except FileNotFoundError:
                 # just ignore missing nudging-data
                 logging.info("No nudging data at {}".format(src_filename))
                 continue
-            except (PermissionError, OSError):
-                logging.error("Copying nudging data file failed")
-                raise
             logging.info("Copied file {} to {}".format(src_filename, dest_path))
 
-    try:
-        shutil.copy(os.path.join(cfg.obs_nudging_dir, 'blklsttmp'), dest_dir)
-    except FileNotFoundError:
-        logging.error("Blacklist file not found at {}, or output"
-                      " directory doesn't exist to copy {}"
-                      .format(src_file, dest_dir))
-        raise
-    except (PermissionError, OSError):
-        logging.error("Copying emission data file failed")
-        raise
+
+    tools.copy_file(os.path.join(cfg.obs_nudging_dir, 'blklsttmp'), dest_dir)
+
     logging.info("Copied blacklist-file to {}".format(dest_dir))

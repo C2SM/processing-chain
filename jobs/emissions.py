@@ -74,14 +74,7 @@ def main(starttime, hstart, hstop, cfg):
             filename_ending = time.strftime('%Y%m%d%H.nc')
             source_path = os.path.join(emis_dir, emis_prefix + filename_ending)
             dest_path = os.path.join(target_dir, dest_prefix + filename_ending)
-            try:
-                shutil.copy(source_path, dest_path)
-            except FileNotFoundError:
-                logging.error("Emission input file not found at %s, or output directory doesn't exist to copy %s" % (source_path, target_dir))
-                raise
-            except (PermissionError, OSError):
-                logging.error("Copying emission data file failed")
-                raise
+            tools.copy_file(source_path, dest_path)
 
             # convert grid_mapping_name from string (NF90_STRING) to char
             # (NF90_CHAR) (needed for int2lm to work)

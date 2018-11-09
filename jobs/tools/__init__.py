@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
-from datetime import datetime, timedelta
 import subprocess
 import logging
 import os
+import shutil
+
+from datetime import datetime, timedelta
+
 from . import cams4int2cosmo
 from . import ctnoaa4int2cosmo
 from . import string2char
@@ -126,7 +128,41 @@ def create_dir(path, readable_name):
                 readable_name, path, type(e).__name__))
         raise
 
-   
+
+def copy_file(source_path, dest_path):
+    """Copy a file from source_path to dest_path
+
+    Use shutil.copy to copy the file.
+    dest_path can be either a directory or a filepath.
+    If it is a directory, the name of the file will be
+    kept, if it is a filepath the file will be renamed.
+    File permissions will be copied as well.
+
+    Provides error description to the logfiles
+
+    Parameters
+    ----------
+    source_path : str
+        Path to the file to be copied
+    dest_path : str
+        Path to the destination directory or destination file
+    """
+    try:
+        shutil.copy(source_path, dest_path)
+    except FileNotFoundError:
+        logging.error("Source-file not found at {} OR "
+                      "target-directory {} doesn't exist."
+                      .format(source_path, dest_path))
+        raise
+    except PermissionError:
+        logging.error("Copying file from {} to {} failed due to"
+                      "a permission error.".format(source_path, dest_path))
+    except (OSError, Exception) as e:
+        logging.error("Copying {} to {} failed with {}". format(
+                      source_path, dest_path, type(e).__name__))
+        raise
+
+
 def check_target(cfg, target='COSMO'):
     """Check that the target specified in cfg matched the prescribed target.
 

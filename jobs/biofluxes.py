@@ -55,7 +55,8 @@ def main(starttime, hstart, hstop, cfg):
             if not (os.path.isfile(filename)):
                 logging.error("File %s not found. Consider using the vprmsplit.py script prior",filename)
                 #tools.vprmsplit.main(time.strftime("%Y%m%d%H"),cfg.vprm_dir_orig,cfg.vprm_dir_proc,cfg)
-            shutil.copy(filename, scratch_path)
+
+            tools.copy_file(filename, scratch_path)
 
             if not os.path.isfile(filename_sc):
                 loggig.error("Splitting or copying of GPP or/and RA files to scratch failed.")

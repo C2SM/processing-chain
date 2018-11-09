@@ -67,31 +67,23 @@ def main(starttime, hstart, hstop, cfg):
 
     logging.info('Setup the namelist for a COSMO tracer run and submit the job to the queue')
 
-# change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
+    # change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
     if int(starttime.strftime("%Y%m%d%H")) < 2007080200:   #input starttime as a number
         multi_layer=".FALSE."
     else:
         multi_layer=".TRUE."
     setattr(cfg,"multi_layer",multi_layer)
 
-# create directory
+    # create directory
     tools.create_dir(cfg.cosmo_work, "cosmo_work")
     # muq: output_root not used in cfg
     tools.create_dir(cfg.cosmo_output, "cosmo_output")
     # muq: can't find this root in cfg. Use a temporary name here.
     tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
     
-# copy cosmo executable
+    # copy cosmo executable
     execname = cfg.target.lower()
-    try:
-        # 'cosmo' file name or directory
-        shutil.copy(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, execname))
-    except FileNotFoundError:
-        logging.error("cosmo_bin not found")
-        raise
-    except (PermissionError, OSError):
-        logging.error("Copying cosmo_bin failed")
-        raise
+    tools.copy_file(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, execname))
 
     # Write INPUT_BGC from csv file
     # csv file with tracer definitions 
