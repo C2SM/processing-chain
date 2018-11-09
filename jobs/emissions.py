@@ -78,5 +78,5 @@ def main(starttime, hstart, hstop, cfg):
 
             # convert grid_mapping_name from string (NF90_STRING) to char
             # (NF90_CHAR) (needed for int2lm to work)
-            if cfg.target.lower() == 'cosmo':
+            if cfg.target is tools.Target.COSMO:
                 tools.string2char.main(dest_path)

@@ -45,9 +45,8 @@ def main(starttime,hstart,hstop,cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-
     inv_to_process = []
-    if cfg.target.lower() == "cosmo":
+    if cfg.target is tools.Target.COSMO:
         try:
             CAMS = dict(fullname = "CAMS",
                         nickname = "cams",
@@ -68,7 +67,7 @@ def main(starttime,hstart,hstop,cfg):
             inv_to_process.append(CT)
         except AttributeError:
             pass
-    elif cfg.target.lower() == "cosmoart":
+    elif cfg.target is tools.Target.COSMOART:
         try:
             MOZART = dict(fullname = 'MOZART',
                           nickname = 'mozart',
@@ -95,7 +94,10 @@ def main(starttime,hstart,hstop,cfg):
             inv_to_process.append(SWISS_MU_FINE)
         except AttributeError:
             pass
-    
+    else:
+        # Unknown target
+        raise RuntimeError("Unknown target: {}".format(cfg.target))
+
     # TO DO 
     #MOZART = dict(fullname="MOZART", nickname="mozart",executable="cams4int2cosmo")
         

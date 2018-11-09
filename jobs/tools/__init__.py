@@ -7,6 +7,7 @@ import os
 import shutil
 
 from datetime import datetime, timedelta
+from enum import Enum, auto
 
 from . import cams4int2cosmo
 from . import ctnoaa4int2cosmo
@@ -163,21 +164,26 @@ def copy_file(source_path, dest_path):
         raise
 
 
-def check_target(cfg, target='COSMO'):
+class Target(Enum):
+    COSMO = auto()
+    COSMOART = auto()
+
+str_to_enum = {'cosmo': Target.COSMO, 'cosmoart': Target.COSMOART}
+
+
+def check_target(cfg, target=Target.COSMO):
     """Check that the target specified in cfg matched the prescribed target.
 
-    Check that cfg.target == target. If not, raises a value-error.
-    Ignores capitalization of the strings
+    Check that cfg.target == target. If not, raises a RuntimeError.
 
     Parameters
     ----------
     cfg : config-object
 
-    target : str
+    target : Target enum
         Prescribed target
     """
-    #don't care about capitalization
-    if not cfg.target.lower() == target.lower():
-        raise ValueError("The target specified in the configuration file is {}"
-                         ", but the job only applies to {}.".format(cfg.target,
-                                                                    target))
+    if not cfg.target is target:
+        raise RuntimeError("The target specified in the configuration file "
+                           "is {}, but the job only applies to {}."
+                           .format(cfg.target.name, target.name))

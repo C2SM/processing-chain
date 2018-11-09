@@ -81,7 +81,7 @@ def main(starttime, hstart, hstop, cfg):
     tools.copy_file(extpar_file, extpar_folder)
 
     # Copy libgrib_api
-    if cfg.target.lower() == 'cosmoart':
+    if cfg.target is tools.Target.COSMOART:
         try:
             shutil.copytree(src=cfg.int2lm_libgrib_dir,
                             dst=os.path.join(cfg.int2lm_work, 'libgrib_api'),
@@ -94,7 +94,7 @@ def main(starttime, hstart, hstop, cfg):
             raise
 
     # Write INPUT_ART from csv file
-    if cfg.target.lower() == 'cosmo':
+    if cfg.target is tools.Target.COSMO:
         # csv file with tracer definitions 
         tracer_csvfile = os.path.join(cfg.casename,'int2lm_tracers.csv')
         # csv file with tracer datasets

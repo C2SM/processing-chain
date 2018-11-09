@@ -82,12 +82,12 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
     
     # copy cosmo executable
-    execname = cfg.target.lower()
+    execname = cfg.target.name.lower()
     tools.copy_file(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, execname))
 
     # Write INPUT_BGC from csv file
     # csv file with tracer definitions 
-    if cfg.target.lower() == 'cosmo':
+    if cfg.target is tools.Target.COSMO:
         tracer_csvfile = os.path.join(cfg.casename,'cosmo_tracers.csv')
 
         tracer_filename = os.path.join(cfg.chain_src_dir,'cases',tracer_csvfile)
@@ -96,9 +96,9 @@ def main(starttime, hstart, hstop, cfg):
         tools.write_cosmo_input_bgc.main(tracer_filename,input_bgc_filename)
 
     # Prepare namelist and submit job
-    if cfg.target.lower() == 'cosmo':
+    if cfg.target is tools.Target.COSMO:
         namelist_names = ['AF','ORG','IO','DYN','PHY','DIA','ASS']
-    elif cfg.target.lower() == 'cosmoart':
+    elif cfg.target is tools.Target.COSMOART:
         namelist_names = ['ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO', 'ORG', 'PHY']
     for section in namelist_names:
         with open(cfg.cosmo_namelist+section+".cfg") as input_file:

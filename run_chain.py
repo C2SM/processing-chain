@@ -124,24 +124,30 @@ def load_config_file(casename, cfg):
 
 
 def set_simulation_type(cfg):
-    """Detects if the chain targets cosmo or cosmoart
+    """Detect if the chain targets cosmo or cosmoart
     
-    Checks if a target was provided in the config-object. If no target is 
-    provided, sets the target to cosmo in the config-object.
+    Check if a target was provided in the config-object. If no target is 
+    provided, set the target to cosmo in the config-object.
+
+    Raise a RuntimeError if a unsupported target is given in cfg.
+
+    Translates the target from string to enum.
 
     Parameters
     ----------
     cfg : config-object
     """
     default = 'cosmo'
-    possible = [ default, 'cosmoart' ]
 
-    target = getattr(cfg, 'target', default)
+    target_str = getattr(cfg, 'target', default)
 
-    if not target in possible:
-        raise ValueError("The target of the chain "
-                         "must be one of {}".format(possible))
-    setattr(cfg, 'target', target.lower())
+    try:
+        target_enum = tools.str_to_enum[target_str.lower()]
+    except KeyError:
+        raise ValueError("The target of the chain must be one of {}"
+                         .format(list(tools.str_to_enum.keys())))
+
+    setattr(cfg, 'target', target_enum)
 
 
 def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
@@ -226,13 +232,12 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
                                                   'cosmo', 'restart')
            )
 
-    if cfg.target == "cosmoart":
+    if cfg.target is tools.Target.COSMOART:
         # no restarts in cosmoart
         setattr(cfg, 'restart_step', hstop - hstart)
 
     # if nested run: use output of mother-simulation
-    if cfg.target == "cosmoart":
-        if not os.path.isdir(cfg.meteo_dir):
+    if cfg.target is tools.Target.COSMOART and not os.path.isdir(cfg.meteo_dir):
             # if ifs_hres_dir doesn't point to a directory,
             # it is the name of the mother run
             mother_name = cfg.meteo_dir
@@ -391,16 +396,16 @@ if __name__ == '__main__':
         set_simulation_type(cfg)
 
         print("Starting chain for case {}, using {}".format(casename,
-                                                            cfg.target))
+                                                            cfg.target.name))
 
-        if cfg.target.lower() == 'cosmo':
+        if cfg.target is tools.Target.COSMO:
             restart_runs(work_root = cfg.work_root,
                          cfg = cfg,
                          start = start_time,
                          hstart = args.hstart,
                          hstop = args.hstop,
                          job_names = args.job_list)
-        elif cfg.target.lower() == 'cosmoart':
+        elif cfg.target is tools.Target.COSMOART:
             # cosmoart can't do restarts
             run_chain(   work_root = cfg.work_root,
                          cfg = cfg,
