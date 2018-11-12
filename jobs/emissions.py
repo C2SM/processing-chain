@@ -33,6 +33,13 @@ def main(starttime, hstart, hstop, cfg):
     For **COSMO** simulations, converts the the netCDF-variable-names 
     from ``string`` to ``char`` (necessary for **int2lm**).
 
+    If there are multiple emission-datasets (cfg.emissions_dir is a list of
+    paths), they are copied as follows::
+
+        cfg.emissions_dir[0]/cfg.emis_gridname[0]YYYYMMDD.nc -> int2lm_input/emissions/emis_YYYYMMDD.nc
+        cfg.emissions_dir[1]/cfg.emis_gridname[1]YYYYMMDD.nc -> int2lm_input/emissions2/emis_YYYYMMDD.nc
+        cfg.emissions_dir[2]/cfg.emis_gridname[2]YYYYMMDD.nc -> int2lm_input/emissions3/emis_YYYYMMDD.nc
+
     Parameters
     ----------	
     start_time : datetime-object
