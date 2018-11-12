@@ -18,7 +18,7 @@ on the result of others, the order indicated here as to be respected:
 
 The same for **COSMOART**:
 
-1. :func:`jobs.emissions.main` | :func:`jobs.ifs_hres_bc.main` |
+1. :func:`jobs.emissions.main` | :func:`jobs.meteo.main` |
    :func:`jobs.photo_rate.main` | :func:`jobs.obs_nudging.main` |
    :func:`jobs.icbc.main`
 2. :func:`jobs.int2lm.main`
@@ -46,7 +46,6 @@ List of available jobs
 * :func:`jobs.emissions.main`
 * :func:`jobs.extract_2d_data.main`
 * :func:`jobs.icbc.main`
-* :func:`jobs.ifs_hres_bc.main`
 * :func:`jobs.int2lm.main`
 * :func:`jobs.meteo.main`
 * :func:`jobs.obs_nudging.main`
@@ -74,10 +73,6 @@ List of available jobs
 -------------------------------------------
 
 .. autofunction:: jobs.icbc.main
-
--------------------------------------------
-
-.. autofunction:: jobs.ifs_hres_bc.main
 
 -------------------------------------------
 

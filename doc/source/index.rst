@@ -17,13 +17,14 @@ functionality is described in :ref:`tools-section`.
     :caption: Contents:
 
     runchain
+    config
     jobs
     tools
 
 File structure
 --------------
 
-The file-structure of this package is as follows::
+::
 
     + README
     + run_script.py           # main script
@@ -34,7 +35,10 @@ The file-structure of this package is as follows::
     |    + example/           # example COSMO
     |    |    + config.py     # user-configuration
     |    |    \ *.cfg         # templates for namelists & batch-jobs
-    |    \ example_cosmoart/
+    |    + example_cosmoart_mother/
+    |    |    + config.py
+    |    |    \ *.cfg
+    |    \ example_cosmoart_nested/
     |         + config.py
     |         \ *.cfg
     \ doc/
