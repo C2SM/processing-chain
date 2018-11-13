@@ -78,9 +78,10 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(cfg.cosmo_work, "cosmo_work")
     # muq: output_root not used in cfg
     tools.create_dir(cfg.cosmo_output, "cosmo_output")
-    # muq: can't find this root in cfg. Use a temporary name here.
-    tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
-    
+    if not cfg.target is tools.Target.COSMOART:
+        # cosmoart can't do restarts
+        tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
+
     # copy cosmo executable
     execname = cfg.target.name.lower()
     tools.copy_file(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, execname))

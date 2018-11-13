@@ -221,16 +221,15 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
     setattr(cfg, 'cosmo_work', os.path.join(chain_root, 'cosmo', 'run'))
     setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
 
-    job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh, 
-                                    hstart - cfg.restart_step, hstart)
-    chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                       job_id_last_run)
-    setattr(cfg, 'cosmo_restart_in', os.path.join(chain_root_last_run,
-                                                 'cosmo', 'restart')
-           )
-    setattr(cfg, 'cosmo_restart_out', os.path.join(chain_root, 
-                                                  'cosmo', 'restart')
-           )
+    if not cfg.target is tools.Target.COSMOART:
+        job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh, 
+                                        hstart - cfg.restart_step, hstart)
+        chain_root_last_run = os.path.join(work_root, cfg.casename,
+                                           job_id_last_run)
+        setattr(cfg, 'cosmo_restart_in', os.path.join(chain_root_last_run,
+                                                      'cosmo', 'restart'))
+        setattr(cfg, 'cosmo_restart_out', os.path.join(chain_root, 
+                                                       'cosmo', 'restart'))
 
     if cfg.target is tools.Target.COSMOART:
         # no restarts in cosmoart

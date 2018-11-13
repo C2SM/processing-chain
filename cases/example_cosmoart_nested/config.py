@@ -1,6 +1,7 @@
 import os
-import types
 
+
+# ORGANIZATIONAL ============================================================= #
 
 user = os.environ['USER']
 mail_address = {
@@ -14,16 +15,12 @@ mail_address = {
     'ochsnerd' : 'david.ochsner@empa.ch',
 }[user]
 
-
-# Everything defined before is not written to os.environ
-# and thus not available to bash scripts.
-not_config = list(locals().keys())
-
 compute_host = 'daint'
 compute_queue = 'normal'
 compute_account = 'em05'
 
-# Controls which flavour of cosmo is used to do the simulation. Has to be either 'comso' or 'cosmoart'
+# Controls which flavor of cosmo is used to do the simulation.
+# Has to be either 'cosmo' or 'cosmoart'
 # If omitted, will default to 'cosmo'
 target = 'cosmoart'
 
@@ -31,16 +28,22 @@ target = 'cosmoart'
 path = os.path.realpath(__file__)
 casename = os.path.basename(os.path.dirname(path)) 
 
-# input root
+# Root directory of the sourcecode of the chain (where run_chain.py is)
+chain_src_dir = os.getcwd()
+# Root directory of the input data (for convenience, not used outside this file)
 input_root = '/store/empa/em05/input_cosmoart_processing_chain_example/'
-
-# output
-output_root = os.environ['SCRATCH'] + "/processing_chain/output/" + casename
-
-# working root
+# Root directory of the working space of the chain
 work_root = os.environ['SCRATCH'] + "/processing_chain"
-log_dir = os.path.join(work_root, 'logs')
 
+
+# INPUT ====================================================================== #
+
+# METEO ---------------------------------------------------------------------- #
+# meteo files (either path to intput dir or name of mother run)
+meteo_dir = "example_cosmoart_mother"
+
+
+# EMISSIONS ------------------------------------------------------------------ #
 # (possibly multiple) emissions-datasets
 # for multiple datasets: emissions_dir & emis_gridname should be lists with 
 # corresponding path/prefix
@@ -49,18 +52,18 @@ emissions_dir = os.path.join(input_root,
                              'emissions_nest_MACC_noSwiss')
 emis_gridname = "macc_"
 
-# meteo files (either path to intput dir or name of mother run)
-meteo_dir = "example_cosmoart_mother"
 
-# photolysis-rate file
+# PHOTO_RATE ----------------------------------------------------------------- #
 photo_rate_file = os.path.join(input_root, 'art_photolysis', 'papa_data.d')
 
-# obs_nudging files
+
+# OBS_NUDGING ---------------------------------------------------------------- #
 obs_nudging_dir = os.path.join(input_root, 'obs_nudging')
 # nudging-filename: obs_nudging_prefix +
 #                   sim_date.strftime(obs_nudging_date_format) +
-#                   (sim_date + timedelta(days=1).strftime(obs_nudging_date_format)
-# Example: obs_nudging temp for simulation on 4.2.15:
+#                   (sim_date + timedelta(days=1)
+#                   .strftime(obs_nudging_date_format)
+# Example: obs_nudging temp for simulation on 04.02.2015:
 #          cdfin_temp-20150204000000-20150205000000
 obs_nudging_prefixes = ['cdfin_amdar', 'cdfin_buoy', 'cdfin_pilot_p',
                         'cdfin_ship', 'cdfin_synop', 'cdfin_temp',
@@ -68,63 +71,50 @@ obs_nudging_prefixes = ['cdfin_amdar', 'cdfin_buoy', 'cdfin_pilot_p',
 obs_nudging_date_format = "-%Y%m%d%H%M%S"
 
 
-# ICBC
+# ICBC ----------------------------------------------------------------------- #
 swissmu_dir = os.path.join(input_root, 'icbc', 'emissions_nest_ch')
 swissmu_inc = 1  # hours between files
 swissmu_prefix = 'swiss_mu_fine'
 
-# chain root (TODO: remove)
-chain_src_dir = os.getcwd()
-tools_dir = os.path.join(chain_src_dir, 'jobs/tools')
 
-# INT2LM
+# SIMULATION ================================================================= #
+
+# INT2LM --------------------------------------------------------------------- #
+# Extpar file
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = "Europe_0.02x0.02.nc"
+# Executable
 int2lm_bin = os.path.join(input_root,"executables/int2lm")
 
 int2lm_libgrib_dir = os.path.join(input_root, 'libgrib_api')
 
-# COSMO
-cosmo_bin = os.path.join(input_root,"executables/cosmoart") 
-
-# Case specific settings (int2lm and cosmo namelists and runscripts)
-
+# Namelist and slurm runscript templates
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT.cfg' % (chain_src_dir,casename)
 int2lm_runjob = '%s/cases/%s/int2lm_runjob.cfg' % (chain_src_dir,casename)
-cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir,casename)
-cosmo_runjob = '%s/cases/%s/cosmo_runjob.cfg' % (chain_src_dir,casename)
 
+int2lm_walltime="00:30:00"
 
-# Walltimes and domain decomposition
-
-## INT2LM
-if compute_queue=="normal":
-    int2lm_walltime="00:30:00"
-elif compute_queue=="debug":
-    int2lm_walltime="00:15:00"
-else: 
-    logging.error("Unset queue name: %s" % compute_queue)
-    sys.exit(1)
-
+# Domain decomposition
 int2lm_nodes = 4
-int2lm_ntasks_per_node = 36 
+int2lm_ntasks_per_node = 36
 int2lm_np_x = 12
 int2lm_np_y = 12
 int2lm_np_tot = int2lm_np_x * int2lm_np_y
 
-## COSMO 
-if compute_queue=="normal":
-    cosmo_walltime="02:00:00"
-    cosmo_np_x=12
-    cosmo_np_y=12
-elif compute_queue=="debug":
-    cosmo_walltime="01:00:00"
-    cosmo_np_x=12
-    cosmo_np_y=12
-else:
-    logging.error("Unknown queue name: %s" % compute_queue)
-    sys.exit(1)
 
+# COSMO ---------------------------------------------------------------------- #
+# Executable
+cosmo_bin = os.path.join(input_root,"executables/cosmoart") 
+
+# Namelists and slurm runscript templates
+cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir,casename)
+cosmo_runjob = '%s/cases/%s/cosmo_runjob.cfg' % (chain_src_dir,casename)
+
+cosmo_walltime="01:30:00"
+
+# Domain decomposition
+cosmo_np_x=12
+cosmo_np_y=12
 cosmo_np_io = 0
 cosmo_np_tot = cosmo_np_x * cosmo_np_y + cosmo_np_io     
 
@@ -134,10 +124,15 @@ assert cosmo_np_tot//36 == cosmo_np_tot/36, ("n-tasks-per node is fixed at 36. "
                                              "nodes at full capacity")
 cosmo_n_nodes = cosmo_np_tot // 36
 
-# Restart 
-restart_step = 24
 
-## Verification
+# POSTPROCESSING ============================================================= #
+
+# POST_COSMO ----------------------------------------------------------------- #
+# Root directory where the output of the chain is copied to
+output_root = os.environ['SCRATCH'] + "/processing_chain/output/" + casename
+
+
+# VERIFY_CHAIN --------------------------------------------------------------- #
 reference_dir = os.path.join(input_root, "reference_output")
 
 # If the output file that gets compared to the reference is not at the location
