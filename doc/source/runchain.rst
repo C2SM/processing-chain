@@ -19,9 +19,13 @@ with the following command: ::
 there is a ``config.py``-file specifying the configurations, as well as templates
 for the necessary **int2lm** and **COSMO** namelist-files.
 
-If you don't supply a joblist, the default joblist will be executed; ``meteo``
-``icbc`` ``emissions`` ``biofluxes`` ``int2lm`` ``post_int2lm cosmo``
-``post_cosmo``.
+If you don't supply a joblist, the default joblist will be executed.
+
+For **COSMO**, that is ``meteo`` ``icbc`` ``emissions`` ``biofluxes`` ``int2lm``
+``post_int2lm`` ``cosmo`` ``post_cosmo``,
+
+while for **COSMOART** it is ``meteo`` ``icbc`` ``emissions`` ``obs_nudging``
+``photo_rate`` ``int2lm`` ``cosmo`` ``post_cosmo``.
 
 To run the **COSMO** example case, run::
 
@@ -29,7 +33,7 @@ To run the **COSMO** example case, run::
 
 To run the **COSMOART** example case, run::
 
-    $ python run_chain.py example_cosmoart 2015-02-04 0 24 -j emissions ifs_hres_bc photo_rate obs_nudging icbc int2lm cosmo
+    $ python run_chain.py example_cosmoart_mother example_cosmoart_nested 2015-02-04 0 12 -j meteo icbc emissions obs_nudging photo_rate int2lm cosmo post_cosmo
 
         
 What it does
