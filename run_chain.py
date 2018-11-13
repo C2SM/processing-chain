@@ -17,6 +17,14 @@ import jobs
 from jobs import tools
 
 
+default_jobs = {
+    tools.Target.COSMO: ["meteo", "icbc", "emissions", "biofluxes", "int2lm",
+                         "post_int2lm", "cosmo", "post_cosmo"],
+    tools.Target.COSMOART: ["meteo", "icbc", "emissions", "obs_nudging",
+                            "photo_rate", "int2lm", "cosmo", "post_cosmo"]
+}
+
+
 def parse_arguments():
     """Parse the command line arguments given to this script
     
@@ -49,8 +57,6 @@ def parse_arguments():
                         nargs=3,
                         help=times_help)
 
-    default_jobs = ["meteo", "icbc", "emissions", "biofluxes", "int2lm",
-                    "post_int2lm", "cosmo", "post_cosmo"]
     jobs_help = ("List of job-names to be executed. A job is a .py-"
                  "file in jobs/ with a main()-function which "
                  "handles one aspect of the processing chain, for "
@@ -59,12 +65,14 @@ def parse_arguments():
                  "Jobs are executed in the order in which they are "
                  "given here. "
                  "If no jobs are given, the default that will be "
-                 "executed is: {}".format(default_jobs))
+                 "executed is: COSMO: {} | COSMOART : {}"
+                 .format(default_jobs[tools.Target.COSMO],
+                         default_jobs[tools.Target.COSMOART]))
     parser.add_argument("-j", "--jobs",
                         nargs='*',
                         dest="job_list",
                         help=jobs_help,
-                        default=default_jobs)
+                        default=None)
     
     args = parser.parse_args()
     args.startdate = args.times[0]
@@ -393,6 +401,8 @@ if __name__ == '__main__':
         cfg = load_config_file(casename=casename, cfg=cfg)
         start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
         set_simulation_type(cfg)
+        if args.job_list is None:
+            args.job_list = default_jobs[cfg.target]
 
         print("Starting chain for case {}, using {}".format(casename,
                                                             cfg.target.name))
