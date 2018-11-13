@@ -124,7 +124,7 @@ def main(starttime, hstart, hstop, cfg):
             logfile=logfile, logfile_finish=logfile_finish)
         )
 
-   exitcode =  subprocess.call(["sbatch", "--wait",
+    exitcode =  subprocess.call(["sbatch", "--wait",
                                 os.path.join(cfg.cosmo_work,'run.job')])
-   if exitcode != 0:
+    if exitcode != 0:
        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
