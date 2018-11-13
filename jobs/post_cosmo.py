@@ -108,7 +108,9 @@ def main(starttime, hstart, hstop, cfg):
     with open(runscript_path, "w") as script:
         script.write(runscript_content)
 
-    call(["sbatch","--wait" ,runscript_path])
+    exitcode = call(["sbatch","--wait" ,runscript_path])
+    if exitcode != 0:
+       raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
 
     logging.info(logfile_header_template()
                  .format("ENDS",

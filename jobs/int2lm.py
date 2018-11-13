@@ -128,5 +128,7 @@ def main(starttime, hstart, hstop, cfg):
             logfile=logfile, logfile_finish = logfile_finish))
 
     # Submit job
-    subprocess.call(["sbatch", "--wait",
-                     os.path.join(cfg.int2lm_work, "run.job")])
+    exitcode = subprocess.call(["sbatch", "--wait",
+                                os.path.join(cfg.int2lm_work, "run.job")])
+    if exitcode != 0:
+       raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
