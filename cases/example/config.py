@@ -17,7 +17,7 @@ mail_address = {
 
 compute_host = 'daint'
 compute_queue = 'debug' #'debug' #'normal'
-compute_account = 'em05' #'pr04'
+compute_account = 's862' #'pr04'
 
 # case name = pathname in cases/
 path = os.path.realpath(__file__)
