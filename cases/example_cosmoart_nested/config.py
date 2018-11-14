@@ -47,10 +47,13 @@ meteo_dir = "example_cosmoart_mother"
 # (possibly multiple) emissions-datasets
 # for multiple datasets: emissions_dir & emis_gridname should be lists with 
 # corresponding path/prefix
-emissions_dir = os.path.join(input_root,
-                             'emissions',
-                             'emissions_nest_MACC_noSwiss')
-emis_gridname = "macc_"
+emissions_dir = [os.path.join(input_root,
+                              'emissions',
+                              'emissions_nest_MACC_noSwiss'),
+                 os.path.join(input_root,
+                              'emissions',
+                              'emissions_nest_ch')]
+emis_gridname = ["macc_", "swiss_mu_fine_"]
 
 
 # PHOTO_RATE ----------------------------------------------------------------- #
@@ -69,12 +72,6 @@ obs_nudging_prefixes = ['cdfin_amdar', 'cdfin_buoy', 'cdfin_pilot_p',
                         'cdfin_ship', 'cdfin_synop', 'cdfin_temp',
                         'cdfin_wprof']
 obs_nudging_date_format = "-%Y%m%d%H%M%S"
-
-
-# ICBC ----------------------------------------------------------------------- #
-swissmu_dir = os.path.join(input_root, 'icbc', 'emissions_nest_ch')
-swissmu_inc = 1  # hours between files
-swissmu_prefix = 'swiss_mu_fine'
 
 
 # SIMULATION ================================================================= #

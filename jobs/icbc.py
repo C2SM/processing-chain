@@ -79,21 +79,6 @@ def main(starttime,hstart,hstop,cfg):
             inv_to_process.append(MOZART)
         except AttributeError:
             pass
-        try:
-            # SWISS_MU_FINE-data doesn't have to be preprocessed,
-            # save an "error-message" instead of an executable
-            SWISS_MU_FINE = dict(fullname = 'SWISS_MU_FINE',
-                                 nickname = 'swiss_mu_fine',
-                                 executable = ("Swiss mu fine data doesn't have"
-                                               "to be processed, but wasn't "
-                                               "found at cfg.swissmu_dir"),
-                                 indir = None,
-                                 outdir = cfg.swissmu_dir,
-                                 param = [{'inc' : cfg.swissmu_inc,
-                                           'suffix' : cfg.swissmu_prefix}])
-            inv_to_process.append(SWISS_MU_FINE)
-        except AttributeError:
-            pass
     else:
         # Unknown target
         raise RuntimeError("Unknown target: {}".format(cfg.target))
