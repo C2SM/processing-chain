@@ -73,11 +73,21 @@ def parse_arguments():
                         dest="job_list",
                         help=jobs_help,
                         default=None)
-    
+
+    force_help = ("Force the processing chain to redo all jobs, even"
+                  " if they have been started already or were finished"
+                  " previously. WARNING: Only logfiles get deleted,"
+                  " other effects of a given job (copied files etc.)"
+                  " are simply overwritten. This may cause errors.")
+    parser.add_argument("-f", "--force",
+                        action='store_true',
+                        help=force_help)
+
     args = parser.parse_args()
     args.startdate = args.times[0]
     args.hstart = int(args.times[1])
     args.hstop = int(args.times[2])
+
     return args
 
 def load_config_file(casename, cfg):
@@ -158,7 +168,7 @@ def set_simulation_type(cfg):
     setattr(cfg, 'target', target_enum)
 
 
-def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
+def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     """Run chain ignoring already finished jobs.
     
     Sets configuration values derived from user-provided ones, for example the
@@ -171,7 +181,8 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
     Decides which jobs to run and then runs them; first it checks wether the
     job was already executed or is currently running (depending on the logging
     file of the job). Then if the job has to be run, it calls the main()-
-    function of the job.
+    function of the job. If force is True, the logging-file of the job will
+    be deleted (if it exists) and the job will be executed regardless.
     
     Parameters
     ----------
@@ -190,9 +201,8 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
         List of the names of jobs to execute on every timeslice.
         Jobs are ``.py`` files in the ``jobs/`` directory with a ``main()``
         function that will be called from ``run_chain()``.
-        
-        If the list is empty, the default procedure will be executed:
-        ``meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo``
+    force : bool
+        If True will do job regardless of completion status
     """
     # ini date and forecast time (ignore meteo times)
     inidate = int((start_time - datetime(1970,1,1)).total_seconds())
@@ -263,7 +273,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
     setattr(cfg, 'log_finished_dir', log_finished_dir)
 
     # create working dirs
-    if os.path.exists(chain_root):
+    if os.path.exists(chain_root) and not force:
         # if chain_root already exists ask user if he wants to continue
         while True:
             inp = input("Target directory of processing chain already exists. "
@@ -291,23 +301,29 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
         skip = False
 
         # if exists job is currently worked on or has been finished
-        if os.path.exists( os.path.join(log_working_dir, job) ):
-
-            while True:
-                if os.path.exists( os.path.join(log_finished_dir, job) ):
-                    print('Skip "%s" for chain "%s"' % (job, job_id))
-                    skip = True
-                    break
-                else:
-                    print('Wait for "%s" of chain "%s"' % (job, job_id))
-                    sys.stdout.flush()
-                    for _ in range(3000):
-                        time.sleep(0.1)
+        if os.path.exists(os.path.join(log_working_dir, job)):
+            if not force:
+                while True:
+                    if os.path.exists( os.path.join(log_finished_dir, job) ):
+                        print('Skip "%s" for chain "%s"' % (job, job_id))
+                        skip = True
+                        break
+                    else:
+                        print('Wait for "%s" of chain "%s"' % (job, job_id))
+                        sys.stdout.flush()
+                        for _ in range(3000):
+                            time.sleep(0.1)
+            else:
+                os.remove(os.path.join(log_working_dir, job))
+                try:
+                    os.remove(os.path.join(log_finished_dir, job))
+                except FileNotFoundError:
+                    pass
 
         if not skip:
             print('Process "%s" for chain "%s"' % (job, job_id))
             sys.stdout.flush()
-            
+
             try:
                 # Change the log file
                 logfile=os.path.join(cfg.log_working_dir,job)
@@ -346,7 +362,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names):
                 raise RuntimeError(subject)
 
 
-def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
+def restart_runs(work_root, cfg, start, hstart, hstop, job_names, force):
     """Starts the subchains in the specified intervals.
     
     Slices the total runtime of the chain according to ``cfg.restart_step``.
@@ -369,9 +385,8 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
         List of the names of jobs to execute on every timeslice.
         Jobs are .py files in the jobs/ directory with a main() function
         that will be called from run_chain().
-        
-        If the list is empty, the default procedure will be executed:
-        meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo
+    force : bool
+        If True will do job regardless of completion status
     """
     # run restarts
     for time in tools.iter_hours(start, hstart, hstop, cfg.restart_step):
@@ -389,7 +404,8 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names):
                   start_time = start,
                   hstart = sub_hstart,
                   hstop = sub_hstop,
-                  job_names = job_names)
+                  job_names = job_names,
+                  force = force)
 
 
 if __name__ == '__main__':
@@ -413,7 +429,8 @@ if __name__ == '__main__':
                          start = start_time,
                          hstart = args.hstart,
                          hstop = args.hstop,
-                         job_names = args.job_list)
+                         job_names = args.job_list,
+                         force = args.force)
         elif cfg.target is tools.Target.COSMOART:
             # cosmoart can't do restarts
             run_chain(   work_root = cfg.work_root,
@@ -421,7 +438,8 @@ if __name__ == '__main__':
                          start_time = start_time,
                          hstart = args.hstart,
                          hstop = args.hstop,
-                         job_names = args.job_list)
+                         job_names = args.job_list,
+                         force = args.force)
         else:
             raise RuntimeError("Unknown target: {}".format(cfg.target))
 

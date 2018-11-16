@@ -82,9 +82,15 @@ def main(starttime, hstart, hstop, cfg):
 
     # Copy libgrib_api
     if cfg.target is tools.Target.COSMOART:
+        dest = os.path.join(cfg.int2lm_work, 'libgrib_api')
+        try:
+            # delete so no error when forcing this job
+            shutil.rmtree(dest)
+        except FileNotFoundError:
+            pass
         try:
             shutil.copytree(src=cfg.int2lm_libgrib_dir,
-                            dst=os.path.join(cfg.int2lm_work, 'libgrib_api'),
+                            dst=dest,
                             symlinks=True)
         except FileNotFoundError:
             logging.error("libgrib_api directory not found")
