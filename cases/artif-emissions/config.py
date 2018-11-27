@@ -108,7 +108,7 @@ meteo_spinup = 0        # time in hours the model is integrated before transport
 # INT2LM
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = 'extpar_empa_cosmo1_aster_opt.nc'
-int2lm_bin = '/users/mjaehn/github/int2lm/int2lm_tracer_conversion_cray'
+int2lm_bin = '/users/mjaehn/github/int2lm/int2lm_tracer_conversion'
 
 # post_int2lm
 post_int2lm_species = [ 'BRM00', 'BRM01', 'BRM02', 'BRM03', 'BRM04', 'BRM05', 'BRM06', 'BRM07', 'BRM08', 'BRM09', 'BRM10', 'BRM11', 'BRM12', 'BRM13', 'BRM14', 'BRM15', 'BRM16', 'BRM17', 'BRM18', 'BRM19', 'BRM20', 'BRM21', 'BRM22', 'BRM23', 'ZUE00', 'ZUE01', 'ZUE02', 'ZUE03', 'ZUE04', 'ZUE05', 'ZUE06', 'ZUE07', 'ZUE08', 'ZUE09', 'ZUE10', 'ZUE11', 'ZUE12', 'ZUE13', 'ZUE14', 'ZUE15', 'ZUE16', 'ZUE17', 'ZUE18', 'ZUE19', 'ZUE20', 'ZUE21', 'ZUE22', 'ZUE23', 'LUG00', 'LUG01', 'LUG02', 'LUG03', 'LUG04', 'LUG05', 'LUG06', 'LUG07', 'LUG08', 'LUG09', 'LUG10', 'LUG11', 'LUG12', 'LUG13', 'LUG14', 'LUG15', 'LUG16', 'LUG17', 'LUG18', 'LUG19', 'LUG20', 'LUG21', 'LUG22', 'LUG23' ]
