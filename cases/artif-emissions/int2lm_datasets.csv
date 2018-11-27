@@ -1,0 +1,3 @@
+,ie_tot,je_tot,ke_tot,startlon_tot,startlat_tot,dlon,dlat,pollat,pollon,polgam,ninc,hinc,lconst_in_time,lconserve_mass,cvertdist,ydirin,ylfn_prefix,yvertical_axis_type,yvertical_method,yvarlist,yinterp_type,ngrid_refine,ycombine_action
+#,,,,,,,,,,,,,,,,,,,,,,,
+,904,604,7,-4.94,-3.20,0.01,0.01,43,-170,0,,1,.FALSE.,.FALSE.,,../input/emissions/,emis_,geometric,D,"CO2_A_E, CO_A_E, CH4_A_E",N,,
