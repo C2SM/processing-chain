@@ -91,6 +91,19 @@ cams_parameters = [
 #     'suffix':'ct'}]
 
 
+# OBS_NUDGING ---------------------------------------------------------------- #
+obs_nudging_dir = os.path.join(input_root, 'obs_nudging')
+# nudging-filename: obs_nudging_prefix +
+#                   sim_date.strftime(obs_nudging_date_format) +
+#                   (sim_date + timedelta(days=1)
+#                   .strftime(obs_nudging_date_format)
+# Example: obs_nudging temp for simulation on 04.02.2015:
+#          cdfin_temp-20150204000000-20150205000000
+obs_nudging_prefixes = ['cdfin_amdar', 'cdfin_buoy', 'cdfin_pilot_p',
+                                'cdfin_ship', 'cdfin_synop', 'cdfin_temp',
+                                                        'cdfin_wprof']
+obs_nudging_date_format = "-%Y%m%d%H%M%S"
+
 
 # chain root
 chain_src_dir = os.getcwd()
