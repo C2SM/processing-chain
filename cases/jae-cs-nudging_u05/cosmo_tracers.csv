@@ -1,0 +1,12 @@
+,yshort_name,igribparam,igribtable,itype_emiss,itype_flux,yunits,ystandard_name,ylong_name,ytype_adv,ytype_diff,ytype_turbmix,ytype_passconv,ytype_ini,ytype_lbc,ytype_bbc,ytype_relax,ytype_damp,ytype_clip,ldecay,lifetime
+#,,,,,,,,,,,,,,,,,,,,
+,CO2_BG,10,13,0,0,kg kg-1,time-varying_CO2_mass_fraction_at_lateral_boundary,time-varying_CO2_mass_fraction_at_lateral_boundary,on,off,1D,on,file,file,zero_flux,full,on,off,.FALSE.,0
+,CO2_A,11,13,1,0,kg kg-1,CO2_mass_fraction_of_time-varying_emissions,CO2_mass_fraction_of_time-varying_emissions,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0
+,CO2_GPP,12,13,0,1,kg kg-1,CO2_mass_fraction_of_time-varying_surface_flux_from_gross_photosynthetic_production,CO2_mass_fraction_of_time-varying_surface_flux_from_gross_photosynthetic_production,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0
+,CO2_RA,13,13,0,1,kg kg-1,CO2_mass_fraction_of_time-varying_surface_flux_from_respiration,CO2_mass_fraction_of_time-varying_surface_flux_from_respiration,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0
+#,,,,,,,,,,,,,,,,,,,,
+,CO_BG,20,13,0,0,kg kg-1,mass_fraction_of_carbon_monoxide_in_air_background,mass fraction of CO total from outside model domain,on,off,1D,on,file,file,zero_flux,full,on,off,.FALSE.,0
+,CO_A,21,13,1,0,kg kg-1,mass_fraction_of_carbon_monoxide_in_air_anthropogenic,mass fraction of anthropogenic CO,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0
+#,,,,,,,,,,,,,,,,,,,,
+,CH4_BG,30,13,0,0,kg kg-1,mass_fraction_of_methane_in_air_background,mass fraction of CH4 total from outside model domain,on,off,1D,on,file,file,zero_flux,full,on,off,.FALSE.,0
+,CH4_A,31,13,1,0,kg kg-1,mass_fraction_of_methane_in_air_anthropogenic,mass fraction of anthropogenic CH4,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0
