@@ -74,8 +74,8 @@ def parse_arguments():
                         help=jobs_help,
                         default=None)
 
-    force_help = ("Force the processing chain to redo all jobs, even"
-                  " if they have been started already or were finished"
+    force_help = ("Force the processing chain to redo all specified jobs,"
+                  " even if they have been started already or were finished"
                   " previously. WARNING: Only logfiles get deleted,"
                   " other effects of a given job (copied files etc.)"
                   " are simply overwritten. This may cause errors.")
