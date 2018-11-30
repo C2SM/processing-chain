@@ -90,6 +90,7 @@ def parse_arguments():
 
     return args
 
+
 def load_config_file(casename, cfg):
     """Load the config file.
     
@@ -120,23 +121,29 @@ def load_config_file(casename, cfg):
     config-object
         Object with all variables as attributes
     """
-    try:
-        fn = os.path.join('cases',casename,'config')
-        sys.path.append(os.path.dirname(fn))
 
+    cfg_path = os.path.join('cases', casename, 'config')
+
+    if not os.path.exists(os.path.dirname(cfg_path)):
+        all_cases = [path.name for path in os.scandir('cases') if path.is_dir]
+        closest_name = min([(tools.levenshtein(casename, name), name)
+                            for name in all_cases], key=lambda x: x[0])[1]
+        raise FileNotFoundError("Case-directory '{}' not found, did you "
+                                "mean '{}'?".format(casename, closest_name))
+
+    sys.path.append(os.path.dirname(cfg_path))
+
+    try:
         if cfg is None:
-            cfg = importlib.import_module(os.path.basename(fn))
+            cfg = importlib.import_module(os.path.basename(cfg_path))
         else:
             cfg = importlib.reload(cfg)
+    except ModuleNotFoundError:
+        raise FileNotFoundError("No file 'config.py' in " +
+                                os.path.dirname(cfg_path))
 
         # so that a different cfg-file can be imported later
         sys.path.pop()
-    except IndexError:
-        print('ERROR: no config file provided!')
-        sys.exit(1)
-    except ImportError:
-        print('ERROR: failed to import config module "%s"!' % fn)
-        sys.exit(1)
 
     return cfg
 
