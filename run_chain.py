@@ -121,7 +121,6 @@ def load_config_file(casename, cfg):
     config-object
         Object with all variables as attributes
     """
-
     cfg_path = os.path.join('cases', casename, 'config')
 
     if not os.path.exists(os.path.dirname(cfg_path)):
@@ -142,8 +141,8 @@ def load_config_file(casename, cfg):
         raise FileNotFoundError("No file 'config.py' in " +
                                 os.path.dirname(cfg_path))
 
-        # so that a different cfg-file can be imported later
-        sys.path.pop()
+    # so that a different cfg-file can be imported later
+    sys.path.pop()
 
     return cfg
 
