@@ -9,41 +9,46 @@
 import os
 import logging
 import netCDF4 as nc
-from numpy import allclose
 
-def import_data(filename, mode='r'):
-    return nc.Dataset(filename, mode)
+from amrs.nc.compare import datasets_equal
 
 
-def import_datasets(ref_path, run_path):
+def comp_data(dataset1, dataset2, variables):
+    """Use amrs.nc.datasets_equal to compare the datasets.
     """
-    Read the reference and run datasets
-    """
-    try:
-        ref_data = import_data(ref_path)
-    except:
-        logging.error("Reading reference data failed")
-        raise
-    try:
-        run_data = import_data(run_path)
-    except:
-        logging.error("Reading run data failed")
-        raise
-    return ref_data, run_data
-
-
-def datasets_equal(dataset1, dataset2, variables):
-    found_discrepancy = False
-    for var in variables:
-        if not allclose(dataset1[var], dataset2[var]):
-            logging.info(var + ": Failed!")
-            found_discrepancy = True
-        else:
-            logging.info(var + ": Passed")
-    return not found_discrepancy
+    datasets_equal(dataset1, dataset2, variables, verbose=True)
 
 
 def main(starttime, hstart, hstop, cfg):
+    """Compare outputs of the chain to a reference.
+
+    Looks for the reference-file in ``cfg.reference_dir``.
+    
+    Looks for the output file in ``cfg.output_dir`` (if not ``None``), else it
+    goes to the output directory created by the **COSMO**-job.
+    
+    In the dict ``cfg.values_to_check``, the user specifies the names of the
+    files to be compared as keys, and the variables to compare as a list.
+
+    To compare the temperatures of the last output of the example case, the
+    following variables should be added to the ``config.py`` file: ::
+
+        reference_dir = os.path.join(input_root, "reference_output")
+        output_dir = None
+        values_to_check = {("reference_lffd2015010200.nc","lffd2015010200.nc"):
+              ['T']}
+
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
+    """
     logging.info("Started verification")
     for (ref_file, run_file), variables in cfg.values_to_check.items():
         logging.info("Comparing " + str(variables))
@@ -67,15 +72,9 @@ def main(starttime, hstart, hstop, cfg):
         logging.info("Output file: " + str(run_file_path))
         logging.info("Reference file: " + str(ref_file_path))
 
-        # read data
-        ref_data, run_data = import_datasets(ref_file_path, run_file_path)
-
-        #compare data
-        identical = datasets_equal(ref_data, run_data, variables)
-        if not identical:
-            print("\033[91m" + "Some output fields don't match the reference!\n"
-                  + "\033[0m" + "Check logfiles for details")
-        else:
-            print("Verification successful, output and reference agree")
+        # compare data
+        with nc.Dataset(ref_file_path) as ref_data, nc.Dataset(
+                run_file_path) as run_data:
+            comp_data(ref_data, run_data, variables)
 
     logging.info("Finished verification")

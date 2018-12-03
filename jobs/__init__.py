@@ -12,3 +12,5 @@ from . import cosmo
 from . import post_cosmo
 from . import extract_2d_data
 from . import verify_chain
+from . import photo_rate
+from . import obs_nudging

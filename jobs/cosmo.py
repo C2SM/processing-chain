@@ -26,62 +26,82 @@ import subprocess
 
 
 def main(starttime, hstart, hstop, cfg):
-    """
-    Setup the namelist for a COSMO tracer run and submit the job to the queue
+    """Setup the namelists for a **COSMO** tracer run and submit the job to
+    the queue
+
+    Necessary for both **COSMO** and **COSMOART** simulations.
+
+    Decide if the soil model should be TERRA or TERRA multi-layer depending on
+    ``startdate`` of the simulation.
+    
+    Create necessary directory structure to run **COSMO** (run, output and
+    restart directories, defined in ``cfg.cosmo_work``, ``cfg.cosmo_output``
+    and ``cfg.cosmo_restart_out``).
+    
+    Copy the **COSMO**-executable from 
+    ``cfg.cosmo_bin`` to ``cfg.cosmo_work/cosmo``.
+    
+    Convert the tracer-csv-file to a **COSMO**-namelist file.
+    
+    Format the **COSMO**-namelist-templates
+    (**COSMO**: ``AF,ORG,IO,DYN,PHY,DIA,ASS``,
+    **COSMOART**: ``ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY``)
+    using the information in ``cfg``.
+
+    Format the runscript-template and submit the job.
+    
+    
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
     """
     logfile=os.path.join(cfg.log_working_dir,"cosmo")
     logfile_finish=os.path.join(cfg.log_finished_dir,"cosmo")
 
     logging.info('Setup the namelist for a COSMO tracer run and submit the job to the queue')
 
-# change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
+    # change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
     if int(starttime.strftime("%Y%m%d%H")) < 2007080200:   #input starttime as a number
         multi_layer=".FALSE."
     else:
         multi_layer=".TRUE."
     setattr(cfg,"multi_layer",multi_layer)
 
-# create directory
-    try:
-        os.makedirs(cfg.cosmo_work, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating cosmo_work folder failed")
-        raise
-  
-    try:
-        os.makedirs(cfg.cosmo_output, exist_ok=True)   #output_root not used in cfg
-    except (OSError, PermissionError):
-        logging.error("Creating cosmo_output folder failed")
-        raise
+    # create directory
+    tools.create_dir(cfg.cosmo_work, "cosmo_work")
+    # muq: output_root not used in cfg
+    tools.create_dir(cfg.cosmo_output, "cosmo_output")
+    if not cfg.target is tools.Target.COSMOART:
+        # cosmoart can't do restarts
+        tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
-    try:
-        os.makedirs(cfg.cosmo_restart_out, exist_ok=True)   #can't find this root in cfg. Use a temporary name here.
-    except (OSError, PermissionError):
-        logging.error("Creating cosmo_restart_out folder failed")
-        raise
-    
-# copy cosmo.exe
-    try:
-        # 'cosmo' file name or directory
-        shutil.copy(cfg.cosmo_bin, os.path.join(cfg.cosmo_work,'cosmo'))
-    except FileNotFoundError:
-        logging.error("cosmo_bin not found")
-        raise
-    except (PermissionError, OSError):
-        logging.error("Copying cosmo_bin failed")
-        raise
+    # copy cosmo executable
+    execname = cfg.target.name.lower()
+    tools.copy_file(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, execname))
 
     # Write INPUT_BGC from csv file
     # csv file with tracer definitions 
-    tracer_csvfile = os.path.join(cfg.casename,'cosmo_tracers.csv')
+    if cfg.target is tools.Target.COSMO:
+        tracer_csvfile = os.path.join(cfg.casename,'cosmo_tracers.csv')
 
-    tracer_filename = os.path.join(cfg.chain_src_dir,'cases',tracer_csvfile)
-    input_bgc_filename = os.path.join(cfg.cosmo_work,'INPUT_BGC')
+        tracer_filename = os.path.join(cfg.chain_src_dir,'cases',tracer_csvfile)
+        input_bgc_filename = os.path.join(cfg.cosmo_work,'INPUT_BGC')
 
-    tools.write_cosmo_input_bgc.main(tracer_filename,input_bgc_filename)
+        tools.write_cosmo_input_bgc.main(tracer_filename,input_bgc_filename)
 
     # Prepare namelist and submit job
-    for section in ["AF","ORG","IO","DYN","PHY","DIA","ASS"]:
+    if cfg.target is tools.Target.COSMO:
+        namelist_names = ['AF','ORG','IO','DYN','PHY','DIA','ASS']
+    elif cfg.target is tools.Target.COSMOART:
+        namelist_names = ['ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO', 'ORG', 'PHY']
+    for section in namelist_names:
         with open(cfg.cosmo_namelist+section+".cfg") as input_file:
             to_write = input_file.read();
 
@@ -104,7 +124,7 @@ def main(starttime, hstart, hstop, cfg):
             logfile=logfile, logfile_finish=logfile_finish)
         )
 
-    exitcode = subprocess.call(["sbatch", "--wait", os.path.join(cfg.cosmo_work,'run.job')])
+    exitcode =  subprocess.call(["sbatch", "--wait",
+                                os.path.join(cfg.cosmo_work,'run.job')])
     if exitcode != 0:
-        raise RuntimeError
-
+       raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
