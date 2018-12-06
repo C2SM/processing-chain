@@ -168,7 +168,12 @@ class Target(Enum):
     COSMO = auto()
     COSMOART = auto()
 
-str_to_enum = {'cosmo': Target.COSMO, 'cosmoart': Target.COSMOART}
+class Subtarget(Enum):
+    NONE = auto()
+
+str_to_enum = {'cosmo': Target.COSMO,
+               'cosmoart': Target.COSMOART,
+               'none': Subtarget.NONE}
 
 
 def check_target(cfg, target=Target.COSMO):

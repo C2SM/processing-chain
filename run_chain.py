@@ -148,30 +148,40 @@ def load_config_file(casename, cfg):
 
 
 def set_simulation_type(cfg):
-    """Detect if the chain targets cosmo or cosmoart
+    """Detect if the chain targets cosmo or cosmoart and if there is a subtarget.
     
     Check if a target was provided in the config-object. If no target is 
     provided, set the target to cosmo in the config-object.
 
-    Raise a RuntimeError if a unsupported target is given in cfg.
+    Check if a subtarget was provided in the config-object. Subtargets
+    provide a way to customize the behaviour of the processing chain
+    for different types of simulations.
 
-    Translates the target from string to enum.
+    Raise a RuntimeError if a unsupported target or subtarget is given in cfg.
+    You can add targets and subtargets in the jobs/tools/__init__.py file.
+
+    Translates the target and subtarget from string to enum.
 
     Parameters
     ----------
     cfg : config-object
     """
     default = 'cosmo'
-
     target_str = getattr(cfg, 'target', default)
-
     try:
         target_enum = tools.str_to_enum[target_str.lower()]
     except KeyError:
         raise ValueError("The target of the chain must be one of {}"
                          .format(list(tools.str_to_enum.keys())))
-
     setattr(cfg, 'target', target_enum)
+
+    subtarget_str = getattr(cfg, 'subtarget', 'none')
+    try:
+        subtarget_enum = tools.str_to_enum[subtarget_str.lower()]
+    except KeyError:
+        raise ValueError("The target of the chain must be one of {}"
+                         .format(list(tools.str_to_enum.keys())))
+    setattr(cfg.target, 'subtarget', subtarget_enum)
 
 
 def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
