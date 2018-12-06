@@ -49,8 +49,12 @@ meteo_prefix = "eas"
 # (possibly multiple) emissions-datasets
 # for multiple datasets: emissions_dir & emis_gridname should be lists with 
 # corresponding path/prefix
-emissions_dir = [os.path.join(input_root, 'emissions', 'emissions_mother_MACC'),
-                 "/store/empa/em05/dbrunner/bafu_mm/input/emissions_mother_ch"]
+emissions_dir = [os.path.join(input_root,
+                              'emissions',
+                              'emissions_mother_MACC_noSwiss'),
+                 os.path.join(input_root,
+                              'emissions',
+                              'emissions_mother_ch')]
 emis_gridname = ["macc_",
                  "swiss_mu_coarse_"]
 
@@ -79,7 +83,7 @@ obs_nudging_date_format = "-%Y%m%d%H%M%S"
 # - mozart_dir_proc is where your data to be copied is
 mozart_file_orig = os.path.join(input_root,
                                 'icbc',
-                                'mozart4geos5_20150203-20150221.nc')
+                                'mozart4geos5_20150625-20150720.nc')
 mozart_dir_proc = os.path.join(input_root, 'icbc', 'processed')
 mozart_inc = 6 # increment between timesteps, change at your own risk
 mozart_prefix = 'mozart'
