@@ -289,18 +289,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'log_finished_dir', log_finished_dir)
 
     # create working dirs
-    if os.path.exists(chain_root) and not force:
-        # if chain_root already exists ask user if he wants to continue
-        while True:
-            inp = input("Target directory of processing chain already exists. "
-                        "Continue? ([y]/n) ")
-            if inp.lower() == 'y' or inp == '':
-                break
-            elif inp.lower() == 'n':
-                sys.exit()
-            else:
-                print("Please enter y/n")
-
     tools.create_dir(chain_root, "chain_root")
     tools.create_dir(log_working_dir, "log_working")
     tools.create_dir(log_finished_dir, "log_finished")
