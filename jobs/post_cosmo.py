@@ -40,15 +40,23 @@ def runscript_header_template():
 
 
 def runscript_commands_template():
-    """Return a template for the commands in the runscript"""
+    """Return a template for the commands in the runscript.
+
+    To ensure the bash-commands have the intended behaviour, make sure to strip
+    trailing slashes from the directory names (they are added as needed in the
+    template).
+    """
     commands = list()
     
     return '\n'.join(
-        ["mkdir -p {target_dir}",
-         "cp -R {int2lm_work_src} {int2lm_work_dest}",
-         "cp -R {cosmo_work_src} {cosmo_work_dest}",
-         "cp -R {cosmo_output_src} {cosmo_output_dest}",
-         "cp -R {logs_src} {logs_dest}"])
+        ["mkdir -p {int2lm_work_dest}",
+         "cp -Raf {int2lm_work_src}/. {int2lm_work_dest}/",
+         "mkdir -p {cosmo_work_dest}",
+         "cp -Raf {cosmo_work_src}/. {cosmo_work_dest}/",
+         "mkdir -p {cosmo_output_dest}",
+         "cp -Raf {cosmo_output_src}/. {cosmo_output_dest}/",
+         "mkdir -p {logs_dest}",
+         "cp -Raf {logs_src}/. {logs_dest}/"])
 
 
 def main(starttime, hstart, hstop, cfg):
@@ -87,23 +95,21 @@ def main(starttime, hstart, hstop, cfg):
                  .format("STARTS",
                          str(datetime.datetime.today())))
 
-    tools.create_dir(copy_path, "output")
-
     runscript_content = "#!/bin/bash\n"
     runscript_content += runscript_header_template().format(
         compute_account = cfg.compute_account,
         logfile = logfile,
         cosmo_work = cfg.cosmo_work)
     runscript_content += runscript_commands_template().format(
-        target_dir = copy_path,
-        int2lm_work_src = cfg.int2lm_work,
-        int2lm_work_dest = os.path.join(copy_path, "int2lm_run"),
-        cosmo_work_src = cfg.cosmo_work,
-        cosmo_work_dest = os.path.join(copy_path, "cosmo_run"),
-        cosmo_output_src = cfg.cosmo_output,
-        cosmo_output_dest = os.path.join(copy_path, "cosmo_output"),
-        logs_src = cfg.log_finished_dir,
-        logs_dest = os.path.join(copy_path, "logs"),)
+        target_dir = copy_path.rstrip('/'),
+        int2lm_work_src = cfg.int2lm_work.rstrip('/'),
+        int2lm_work_dest = os.path.join(copy_path, "int2lm_run").rstrip('/'),
+        cosmo_work_src = cfg.cosmo_work.rstrip('/'),
+        cosmo_work_dest = os.path.join(copy_path, "cosmo_run").rstrip('/'),
+        cosmo_output_src = cfg.cosmo_output.rstrip('/'),
+        cosmo_output_dest = os.path.join(copy_path, "cosmo_output").rstrip('/'),
+        logs_src = cfg.log_finished_dir.rstrip('/'),
+        logs_dest = os.path.join(copy_path, "logs").rstrip('/'))
 
     with open(runscript_path, "w") as script:
         script.write(runscript_content)
