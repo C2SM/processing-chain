@@ -93,6 +93,7 @@ def main(starttime,hstart,hstop,cfg):
 
     for inv in inv_to_process:
         logging.info(inv["fullname"]+" files")
+        tools.create_dir(inv["outdir"], "processed " + inv["fullname"])
         #process_inv(starttime,hstart,hstop,increment,inv,cfg)
         
         for p in inv["param"]:
