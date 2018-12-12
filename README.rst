@@ -8,7 +8,7 @@ Command line help::
 Run examples::
 
    $ python run_chain.py example 2015-01-01 0 24
-   $ python run_chain.py example_cosmoart_mother example_cosmoart_nested 2015-02-04 0 12
+   $ python run_chain.py example_cosmoart_mother example_cosmoart_nested 2015-06-26 0 12
 
 Requirements: amrs_
     
