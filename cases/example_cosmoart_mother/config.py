@@ -83,7 +83,7 @@ obs_nudging_date_format = "-%Y%m%d%H%M%S"
 # - mozart_dir_proc is where your data to be copied is
 mozart_file_orig = os.path.join(input_root,
                                 'icbc',
-                                'mozart4geos5_20150625-20150720.nc')
+                                'mozart4geos5_20150625-20150720_Europe.nc')
 mozart_dir_proc = os.path.join(input_root, 'icbc', 'processed')
 mozart_inc = 6 # increment between timesteps, change at your own risk
 mozart_prefix = 'mozart'
