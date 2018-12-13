@@ -1,0 +1,10 @@
+**Name**,**Desciption**,**Used in**
+photo_rate_file, Path to the photolysis-rate file, :func:`jobs.photo_rate.main`
+mozart_file_orig, Path to input-file for mozart-files, :func:`jobs.icbc.main`
+mozart_dir_proc, "Path to the processed mozart-files. Processed mozart-files are stored here, if there are files found here then ``file_dir_orig`` is not used", :func:`jobs.icbc.main`
+mozart_inc, Increment in hours between mozart-files, :func:`jobs.icbc.main`
+mozart_prefix, Prefix of the mozart-files, :func:`jobs.icbc.main`
+swissmu_dir, "Path to the directory containing icbc-files for nested runs", :func:`jobs.icbc.main`
+swissmu_prefix, Prefix of the swissmu-files, :func:`jobs.icbc.main`
+swissmu_inc, Increment in hours between swissmu-files, :func:`jobs.icbc.main`
+int2lm_libgrib_dir, Path to the libgrib-directory used by the int2lm-executable, :func:`jobs.int2lm.main`

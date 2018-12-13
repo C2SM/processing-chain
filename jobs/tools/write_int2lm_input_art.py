@@ -42,9 +42,18 @@ def read_file(filename):
 
 
 def main(trcr_filename, set_filename, nml_filename, hstart=0):
-    """\
-    trcr_filename : csv file with tracer definitions
-    set_filename   : csv file with tracer datasets
+    """Write the INPUT_ART namelist file for int2lm from ``.csv`` files
+    
+    Parameters
+    ----------
+    trcr_filename : str
+        csv file with tracer definitions
+    set_filename : str
+        csv file with tracer datasets
+    nml_filename : str
+        output filename (INPUT_ART)
+    hstart : int
+        meteorology spin up in hours
     """
     # art tracers
     if trcr_filename is None:

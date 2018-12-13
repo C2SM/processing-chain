@@ -1,43 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Prepare CAMS CO2, CO and NOx boundary conditions for int2lm/int2cosmo
-# for the project SMARTCARB.
-# The CAMS data consists of 
-#   - CO2 and CO fields of experiment gf39, class RD (approx. 15 km resolution, 137 levels)
-#     https://atmosphere.copernicus.eu/change-log-gf39
-#   - NO and NO2 from the CAMS operational product, exp 0001, class MC (60 km resolution)
-#     
-#
-# The data sets are retrieved as individual 3-hourly files from the MARS archive at ECMWF
-# with names
-#  cams_0001_2015010500.nc   for NO and NO2
-#  sfc_0001_2015010500.nc    for log of surface pressure
-#  cams_gf39_2015010500.nc   for CO and CO2
-#  sfc_gf39_2015010500.nc    for log of surface pressure
-#
-# The path to the directory of the CAMS data can optionally be supplied, 
-# otherwise the script should be invoked in the directory of the CAMS data.
-#
-# The script generates 8 individual 3-hourly IC/BC files 
-#   cams_nox_yyyymmddhh.nc
-#   cams_co2_yyyymmddhh.nc
-#
-# Usage: cams4int2cosmo.sh date [-i inpath -o outpath]
-#      date : in format YYYYMMDD
-#      -i inpath  : path of original CAMS files (default is current path)
-#      -o outpath : path where output files should be generated (default is current path)
-#
-# Output: 
-#      cams_NOX_YYYYMMDD00.nc to cams_NOX_YYYYMMDD21.nc
-#      cams_CO2_YYYYMMDD00.nc to cams_CO2_YYYYMMDD21.nc
-#
 # Author: Dominik Brunner (DB), Empa, Switzerland
 #       DB, 15 May 2017: first implementation on daint.cscs.ch
 #       DB, 06 Jun 2017: modified to add surface pressure fields
 #       hjm, 22 Jun 2018: Translated to Python
-
-
 ######################
 ## Problems:
 ## - when comparing to the "processed2" icbc form Gerrit, PSURF is slightly different
@@ -148,7 +115,53 @@ b_half_60=[0.0000000000e+00, 0.0000000000e+00, 0.0000000000e+00, 0.0000000000e+0
 
 
 
-def main(date,inpath,outpath,param):
+def main(date, inpath, outpath, param):
+    """Prepare CAMS CO2, CO and NOx boundary conditions for 
+    **int2lm/int2cosmo** for the project SMARTCARB.
+
+    The CAMS data consists of
+    
+    -   CO2 and CO fields of experiment gf39, class RD (approx. 15 km 
+        resolution, 137 levels). See
+        https://atmosphere.copernicus.eu/change-log-gf39
+    -   NO and NO2 from the CAMS operational product, exp 0001, class MC
+        (60 km resolution)
+
+    The data sets are retrieved as individual 3-hourly files from the MARS
+    archive at ECMWF with names::
+    
+        cams_0001_2015010500.nc   # for NO and NO2
+        sfc_0001_2015010500.nc    # for log of surface pressure
+        cams_gf39_2015010500.nc   # for CO and CO2
+        sfc_gf39_2015010500.nc    # for log of surface pressure
+
+    The path to the directory of the CAMS data can optionally be supplied, 
+    otherwise the script should be invoked in the directory of the CAMS data.
+
+    The script generates 8 individual 3-hourly IC/BC files::
+    
+        cams_nox_yyyymmddhh.nc
+        cams_co2_yyyymmddhh.nc
+
+    Usage::
+    
+        python cams4int2cosmo.py date [-i inpath -o outpath]
+        
+    Output:
+
+         ``cams_NOX_YYYYMMDD00.nc`` to ``cams_NOX_YYYYMMDD21.nc``
+         ``cams_CO2_YYYYMMDD00.nc`` to ``cams_CO2_YYYYMMDD21.nc``
+
+    Parameters
+    ----------
+    date : str
+        date in format YYYYMMDD
+    inpath : str
+        path of original CAMS files (default is current path)
+    outpath : str
+        path where output files should be generated (default is current path)
+    param : dict
+    """
     try:
         os.makedirs(outpath, exist_ok=True)
     except (OSError, PermissionError):

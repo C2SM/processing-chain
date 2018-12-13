@@ -22,18 +22,29 @@ import shutil
 from . import tools
 
 def main(starttime, hstart, hstop, cfg):
+    """Prepare the biofluxes-files for the simulation.
+
+    Only necessary for **COSMO** simulations.
+
+    Copy biofluxes files from project folder (``cfg.vprm_dir``) to int2lm input
+    folder on scratch (``cfg.int2lm_input/vprm``).
+
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
     """
-    Copy biofluxes files from project folder (cfg.vprm_dir) to INT2LM input folder
-    on scratch (cfg.int2lm_input/vprm)
-    """
+    tools.check_target(cfg, tools.Target.COSMO)
 
     scratch_path = os.path.join(cfg.int2lm_input,'vprm')
 
-    try:
-        os.makedirs(scratch_path, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating biofluxes input dir failed")
-        raise
+    tools.create_dir(scratch_path, "biofluxes input")
 
     for time in tools.iter_hours(starttime, hstart, hstop):
         logging.info(time)
@@ -44,7 +55,8 @@ def main(starttime, hstart, hstop, cfg):
             if not (os.path.isfile(filename)):
                 logging.error("File %s not found. Consider using the vprmsplit.py script prior",filename)
                 #tools.vprmsplit.main(time.strftime("%Y%m%d%H"),cfg.vprm_dir_orig,cfg.vprm_dir_proc,cfg)
-            shutil.copy(filename, scratch_path)
+
+            tools.copy_file(filename, scratch_path)
 
             if not os.path.isfile(filename_sc):
                 loggig.error("Splitting or copying of GPP or/and RA files to scratch failed.")

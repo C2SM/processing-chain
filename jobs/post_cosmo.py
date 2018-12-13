@@ -8,79 +8,119 @@
 import logging
 import os
 import shutil
-import datetime as dt
+import datetime
 import glob 
 from subprocess import call
 import sys
 from . import tools
 
 
+def logfile_header_template():
+    """Returns a template for the logfile-header"""
+    return (
+    "\n=====================================================\n"
+    "============== POST PROCESSING {}\n"
+    "============== {}\n"
+    "=====================================================\n\n"
+    )
+
+
+def runscript_header_template():
+    """Returns a template for the runscript-header (#SBATCH-directives)"""
+    return '\n'.join(
+        ["#SBATCH --job-name=post_cosmo",
+         "#SBATCH --nodes=1",
+         "#SBATCH --partition=xfer",
+         "#SBATCH --constraint=gpu",
+         "#SBATCH --account={compute_account}",
+         "#SBATCH --output={logfile}",
+         "#SBATCH --open-mode=append",
+         "#SBATCH --workdir={cosmo_work}",
+         ""])
+
+
+def runscript_commands_template():
+    """Return a template for the commands in the runscript.
+
+    To ensure the bash-commands have the intended behaviour, make sure to strip
+    trailing slashes from the directory names (they are added as needed in the
+    template).
+    """
+    commands = list()
+    
+    return '\n'.join(
+        ["mkdir -p {int2lm_work_dest}",
+         "cp -Raf {int2lm_work_src}/. {int2lm_work_dest}/",
+         "mkdir -p {cosmo_work_dest}",
+         "cp -Raf {cosmo_work_src}/. {cosmo_work_dest}/",
+         "mkdir -p {cosmo_output_dest}",
+         "cp -Raf {cosmo_output_src}/. {cosmo_output_dest}/",
+         "mkdir -p {logs_dest}",
+         "cp -Raf {logs_src}/. {logs_dest}/"])
+
+
 def main(starttime, hstart, hstop, cfg):
+    """Copy the output of a **COSMO**-run to a user-defined position.
+
+    Write a runscript to copy all files (**COSMO** settings & output,
+    **int2lm** settings, logfiles) from ``cfg.cosmo_work``,
+    ``cfg.cosmo_output``, ``cfg.int2lm_work``, ``cfg.log_finished_dir`` to
+    ``cfg.output_root/...`` .
+    
+    Submit the job to the xfer-queue.
+    
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
+    """
+    if cfg.compute_host!="daint":
+        logging.error("The copy script is supposed to be run on daint only,"
+                      "not on {}".format(cfg.compute_host))
+        raise RuntimeError("Wrong compute host for copy-script")
+
     logfile=os.path.join(cfg.log_working_dir,"post_cosmo")
-    cosmo_work = cfg.cosmo_work
-    cosmo_output = cfg.cosmo_output
-    int2lm_work = cfg.int2lm_work
-    log_working_dir = cfg.log_working_dir
-    log_finished_dir = cfg.log_finished_dir
-
-
-    runscript = os.path.join(cosmo_work,"cp_cosmo.job")
-    copy_path = os.path.join(cfg.output_root,starttime.strftime('%Y%m%d%H')+
+    cosmo_work_dir = cfg.cosmo_work
+    runscript_path = os.path.join(cfg.cosmo_work, "cp_cosmo.job")
+    copy_path = os.path.join(cfg.output_root, starttime.strftime('%Y%m%d%H')+
                              "_"+str(int(hstart))+"_"+str(int(hstop)))
 
+    logging.info(logfile_header_template()
+                 .format("STARTS",
+                         str(datetime.datetime.today())))
 
-    date = dt.datetime.today()
+    runscript_content = "#!/bin/bash\n"
+    runscript_content += runscript_header_template().format(
+        compute_account = cfg.compute_account,
+        logfile = logfile,
+        cosmo_work = cfg.cosmo_work)
+    runscript_content += runscript_commands_template().format(
+        target_dir = copy_path.rstrip('/'),
+        int2lm_work_src = cfg.int2lm_work.rstrip('/'),
+        int2lm_work_dest = os.path.join(copy_path, "int2lm_run").rstrip('/'),
+        cosmo_work_src = cfg.cosmo_work.rstrip('/'),
+        cosmo_work_dest = os.path.join(copy_path, "cosmo_run").rstrip('/'),
+        cosmo_output_src = cfg.cosmo_output.rstrip('/'),
+        cosmo_output_dest = os.path.join(copy_path, "cosmo_output").rstrip('/'),
+        logs_src = cfg.log_finished_dir.rstrip('/'),
+        logs_dest = os.path.join(copy_path, "logs").rstrip('/'))
 
-    to_print = """POST_COSMO
+    with open(runscript_path, "w") as script:
+        script.write(runscript_content)
 
-=====================================================
-============== POST PROCESSING BEGINS ===============
-============== StartTime: %s 
-=====================================================""" %date.strftime("%s")
-    
-    logging.info(to_print)
-    logging.info("Copy output, run directoy and logfiles to output path")
+    exitcode = call(["sbatch","--wait" ,runscript_path])
+    if exitcode != 0:
+       raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
 
-    try:
-        os.makedirs(copy_path, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating output folder failed")
-        raise
+    logging.info(logfile_header_template()
+                 .format("ENDS",
+                         str(datetime.datetime.today())))
 
-    if cfg.compute_host!="daint":
-        logging.error("The copy script is supposed to be run on daint only, not on %s" %cfg.compute_host)
-        sys.exit(1)
-
-    with open(runscript,"w") as script:        
-        to_write = [
-            "#!/bin/bash",
-            "",
-            "#SBATCH --job-name=post_cosmo",
-            "#SBATCH --nodes=1",
-            "#SBATCH --partition=xfer",
-            "#SBATCH --constraint=gpu",
-            "#SBATCH --account="+cfg.compute_account]
-
-        to_write.append("#SBATCH --output="+logfile)
-        to_write.append("#SBATCH --open-mode=append")
-        to_write.append("#SBATCH --workdir="+cosmo_work)
-        to_write.append("mkdir -p %s" % copy_path)
-        to_write.append("cp -R "+int2lm_work + " " + os.path.join(copy_path,"int2lm_run"))
-        to_write.append("cp -R "+cosmo_work + " " + os.path.join(copy_path,"cosmo_run"))
-        to_write.append("cp -R "+cosmo_output + " " + os.path.join(copy_path,"cosmo_output"))
-        to_write.append("cp -R "+log_finished_dir + " " + os.path.join(copy_path,"logs"))
-        to_write.append("cp -R "+logfile + " " + os.path.join(log_finished_dir,"post_cosmo"))
-        to_write.append("cp -R "+os.path.join(log_finished_dir,"post_cosmo") + " " + os.path.join(copy_path,"logs"))
-
-        script.write("\n".join(to_write))
-
-
-    call(["sbatch","--wait" ,runscript])
-
-    date = dt.datetime.today()
-    to_print = """=====================================================
-============== POST PROCESSING ENDS ==================
-============== EndTime: %s
-====================================================="""%date.strftime("%s")
-
-    logging.info(to_print)
+    # copy own logfile aswell
+    tools.copy_file(logfile, os.path.join(copy_path, "logs/"))

@@ -18,9 +18,27 @@ from . import tools
 
 
 def main(start_time, hstart, hstop, cfg):
+    """Combine multiple **int2lm** tracer-output files into a single one for
+    **COSMO**.
+
+    Only necessary for **COSMO** simulations.
+
+    **int2lm** puts tracers into different netCDF files. Combine the files
+    specified in ``cfg.post_int2lm_species`` into a single netCDF file for
+    **COSMO**.
+    
+    Parameters
+    ----------	
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
     """
-    Add tracer that are in different int2lm output files into one single output file for cosmo.
-    """
+    tools.check_target(cfg, tools.Target.COSMO)
 
     int2lm_output = cfg.int2lm_output
     inidate_int2lm_yyyymmddhh = start_time.strftime('%Y%m%d%H')
