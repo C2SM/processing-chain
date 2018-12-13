@@ -23,7 +23,7 @@ The same for **COSMOART**:
    :func:`jobs.icbc.main`
 2. :func:`jobs.int2lm.main`
 3. :func:`jobs.cosmo.main`
-4. :func:`jobs.emissionspost_cosmo.main` | :func:`jobs.extract_2d_data.main` |
+4. :func:`jobs.post_cosmo.main` | :func:`jobs.extract_2d_data.main` |
    :func:`jobs.verify_chain.main`
 
 Adding new jobs

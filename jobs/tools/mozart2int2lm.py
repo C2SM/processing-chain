@@ -116,7 +116,8 @@ def main(_, infile, outdir, params):
 
     Transforms 'lon' to [-180, 180) range.
 
-    Parameters:
+    Parameters
+    ----------
     _
         Ignored
     infile : str

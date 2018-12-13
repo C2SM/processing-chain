@@ -13,13 +13,13 @@ def main(starttime,hstart,hstop,cfg):
 
     In the folder ``cfg.obs_nudging_dir``, the files are saved in the format
     ``{prefix}-YYYYMMDD000000-YYYYMMDD000000``. **COSMO** expects files in the 
-    format ``{prefix}x``, where ```x`` is ``[nothing], .2, .3, .4, ...``. This 
+    format ``{prefix}x``, where ``x`` is ``[nothing], .2, .3, .4, ...``. This 
     job handles this filename-change and copies them to the **COSMO** input 
     folder on scratch (``cfg.cosmo_input/obs_nudging``).
 
     Missing observation files are ignored.
 
-    Also copies the blacklist-file blklsttmp used by the nested run.
+    Also copies the blacklist-file blklsttmp.
 
     Parameters
     ----------	
