@@ -158,6 +158,7 @@ def copy_file(source_path, dest_path):
     except PermissionError:
         logging.error("Copying file from {} to {} failed due to"
                       "a permission error.".format(source_path, dest_path))
+        raise
     except (OSError, Exception) as e:
         logging.error("Copying {} to {} failed with {}". format(
                       source_path, dest_path, type(e).__name__))
@@ -198,6 +199,8 @@ def levenshtein(s1, s2):
     """Return the levenshtein distance ("edit distance") between s1 and s2.
 
     From https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Python
+
+    Used to suggest the closest existing casename when giving a non-existent one.
 
     >>> levenshtein('car', 'cab')
     1
