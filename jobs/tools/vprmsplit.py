@@ -5,18 +5,6 @@
 Script to extract VPRM emissions for a single day
 and to convert the output into an int2lm compatible format.
 
-Input parameters:
-    year:  Year (YYYY) of data to be processed
-           The original VPRM input file (e.g., VPRM_ECMWF_*_2017.nc for 2017
-           fluxes) needs to be present in the input directory 'ipath'
-    ipath: Input path where the VPRM input file is located
-    opath: Output path where the processed data is going to be written
-
-Output:
-    The script generates individual 1-hour emission files for the specified
-    year: gpp_yyyymmddhh.nc
-          ra_yyyymmddhh.nc
-
 Authors: Dominik Brunner (brd), Empa, Switzerland
          Michael Jaehn (jae), Empa, Switzerland
 
@@ -44,6 +32,28 @@ from datetime import timedelta
 import logging
 
 def main(year, ipath, opath):
+    """
+    Script to extract VPRM emissions for a single day
+    and to convert the output into an int2lm compatible format.
+    
+    Output:
+    The script generates individual 1-hour emission files for the specified
+    year::
+
+        gpp_yyyymmddhh.nc
+        ra_yyyymmddhh.nc
+
+    Parameters
+    ----------
+    year : str
+        Year (YYYY) of data to be processed
+        The original VPRM input file (e.g., VPRM_ECMWF_*_2017.nc for 2017
+        fluxes) needs to be present in the input directory 'ipath'
+    ipath : str
+        Input path where the VPRM input file is located
+    opath : str
+        Output path where the processed data is going to be written
+    """
     m_co2 = 44.01
 
     filename_gee = ''.join([ipath, '/VPRM_ECMWF_GEE_', year[:4], '.nc'])

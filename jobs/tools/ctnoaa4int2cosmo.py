@@ -12,6 +12,20 @@ half_b=(1,0.99401945,0.97966272,0.95182151,0.90788388,0.84737492,0.77159661,0.68
 
 
 def main(date,indir,outdir,param):
+    """Process all CarbonTracker files of a single date to a format
+    compatible with int2lm
+
+    Parameters
+    ----------
+    date : str
+        date in format YYYYMMDD.
+    indir : str
+        directory of original CarbonTracker files (default is current path).
+    outdir : str
+        utput directory of processed files (default is indir/processed).
+    param : dict
+        dictionary of the parameters
+    """
     try:
         os.makedirs(outdir, exist_ok=True)
     except (OSError, PermissionError):

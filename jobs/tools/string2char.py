@@ -21,6 +21,14 @@ def string2char(nc, name, value):
 
 
 def main(filename):
+    """Convert the variable names of a netcdf-file from strings to a 
+    ``np.array`` of chars.
+    
+    Parameters
+    ----------
+    filename : str
+        Path to the netcdf-file
+    """
     with netCDF4.Dataset(filename, 'a') as nc:
         for name in nc.ncattrs():
             value = nc.getncattr(name)

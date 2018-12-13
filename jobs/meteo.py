@@ -21,45 +21,64 @@ import os
 import logging
 import shutil
 
+from datetime import timedelta
+
 from . import tools
 
 
 def main(starttime, hstart, hstop, cfg):
-    """
-    Copy meteo files from project folder (cfg.meteo_dir) to INT2LM input folder
-    on scratch (cfg.int2lm_input/meteo)
+    """Copy meteo files to **int2lm** input.
+
+    Create necessary directory ``cfg.int2lm_input/meteo``. Copy meteo files
+    from project directory (``cfg.meteo_dir/cfg.meteo_prefixYYYYMMDDHH``) to
+    int2lm input folder on scratch (``cfg.int2lm_input/meteo``).
+
+    For nested runs (meteo files are cosmo-output: ``cfg.meteo_prefix == 
+    'lffd'``), also the ``*c.nc``-file with constant parameters is copied.
+    
+    Parameters
+    ----------
+    start_time : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the start_time
+    hstop : int
+        Length of simulation (in hours)
+    cfg : config-object
+        Object holding all user-configuration parameters as attributes
     """
     logging.info('COSMO analysis data for IC/BC')
 
-    scratch_path = os.path.join(cfg.int2lm_input, 'meteo')
+    dest_path = os.path.join(cfg.int2lm_input, 'meteo')
+    tools.create_dir(dest_path, "meteo input")
 
-    try:
-        os.makedirs(scratch_path, exist_ok=True)
-        os.makedirs(cfg.meteo_dir, exist_ok=True)
-    except (OSError, PermissionError):
-        logging.error("Creating meteo input folder failed")
-        raise
+    source_nameformat = cfg.meteo_prefix + '%Y%m%d%H'
+    if cfg.meteo_prefix == 'lffd':
+        # nested runs use cosmoart-output as meteo data
+        # have to copy the *c.nc-file
+        time = starttime + timedelta(hours = hstart)
+        src_file = os.path.join(cfg.meteo_dir,
+                                time.strftime(source_nameformat + 'c.nc'))
+
+        tools.copy_file(src_file, dest_path)
+
+        logging.info("Copied constant-param file from {} to {}"
+                     .format(src_file, dest_path))
+
+        # extend nameformat with ending to match cosmo-output
+        source_nameformat += '.nc'
 
     for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-        logging.info(time)
+        src_file = os.path.join(cfg.meteo_dir,
+                                time.strftime(source_nameformat))
 
-        filename = os.path.join(cfg.meteo_dir, time.strftime(cfg.meteo_prefix+'%Y%m%d%H'))
-
-        if not os.path.exists(filename):
+        if not os.path.exists(src_file):
             # TODO: if meteo file not in cfg.meteo_dir, try copy file from
             # /store/s83/osm//LA%Y/%Y%m%d/coars/laf%Y%m%d%H on ela.cscs.ch
             # using scp (requires account with access to MeteoSwiss
             pass
 
         # copy meteo file from project folder to
-        try:
-            shutil.copy(filename, scratch_path)
-        except FileNotFoundError:
-            logging.error("Meteo input not found at %s" % filename)
-            raise
-        except (PermissionError, OSError):
-            logging.error("Copying meteo data file failed")
-            raise
-        except:
-            raise
+        tools.copy_file(src_file, dest_path)
 
+        logging.info("Copied file from {} to {}".format(src_file, dest_path))
