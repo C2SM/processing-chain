@@ -40,9 +40,17 @@ log_dir = os.path.join(work_root, 'logs')
 emissions_dir = os.path.join(input_root, 'emissions')
 emis_gridname = 'CO2_CO_CH4_Carbosense-1.0_'
 
+# total yearly anthropogenic emissions for mother and nested domain
+online_emissions_dir = os.path.join(input_root, 'online-emissions')
+online_emis_gridname = 'CO2_CO_CH4_Carbosense-1.0'
+
 # VPRM biogenic fluxes
 vprm_dir = os.path.join(input_root,'vprm','processed')
 vprm_prefix = ['gpp_', 'ra_'] 
+
+# MODIS data for online VPRM
+modis_dir = os.path.join(input_root,'modis')
+modis_filename = 'COSMO_2D_MOD09A1.006_WSA.nc'
 
 # CAMS for CO2, CO and NOX initial and boundary conditions
 cams_dir_orig = os.path.join(input_root, 'icbc') #Input directory
