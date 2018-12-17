@@ -6,7 +6,7 @@
 ,CO2_RA,13,13,0,1,kg kg-1,CO2_mass_fraction_of_time-varying_surface_flux_from_respiration,CO2_mass_fraction_of_time-varying_surface_flux_from_respiration,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0,,,,
 #,,,,,,,,,,,,,,,,,,,,,,,,
 ,CO_BG,20,13,0,0,kg kg-1,mass_fraction_of_carbon_monoxide_in_air_background,mass fraction of CO total from outside model domain,on,off,1D,on,file,file,zero_flux,full,on,off,.FALSE.,0,,,,
-,CO_A,21,13,1,0,kg kg-1,mass_fraction_of_carbon_monoxide_in_air_anthropogenic,mass fraction of anthropogenic CO,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0,,,,
+,CO_A,21,13,1,0,kg kg-1,mass_fraction_of_carbon_monoxide_in_air_anthropogenic,mass fraction of anthropogenic CO,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0,1,"'CO_02_AREA','CO_34_AREA','CO_05_AREA','CO_06_AREA','CO_07_AREA','CO_08_AREA','CO_09_AREA','CO_10_AREA'","'CO_2','CO_4','CO_5','CO_6','CO_7','CO_8','CO_9','CO_10'","'SNAP-2','SNAP-4','SNAP-5','SNAP-6','SNAP-7','SNAP-8','SNAP-9','SNAP-10'"
 #,,,,,,,,,,,,,,,,,,,,,,,,
 ,CH4_BG,30,13,0,0,kg kg-1,mass_fraction_of_methane_in_air_background,mass fraction of CH4 total from outside model domain,on,off,1D,on,file,file,zero_flux,full,on,off,.FALSE.,0,,,,
-,CH4_A,31,13,1,0,kg kg-1,mass_fraction_of_methane_in_air_anthropogenic,mass fraction of anthropogenic CH4,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0,,,,
+,CH4_A,31,13,1,0,kg kg-1,mass_fraction_of_methane_in_air_anthropogenic,mass fraction of anthropogenic CH4,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0,1,"'CH4_02_AREA','CH4_34_AREA','CH4_05_AREA','CH4_06_AREA','CH4_07_AREA','CH4_08_AREA','CH4_09_AREA','CH4_10_AREA'","'CH4_2','CH4_4','CH4_5','CH4_6','CH4_7','CH4_8','CH4_9','CH4_10'","'SNAP-2','SNAP-4','SNAP-5','SNAP-6','SNAP-7','SNAP-8','SNAP-9','SNAP-10'"

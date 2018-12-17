@@ -37,12 +37,17 @@ work_root = '/scratch/snx3000/mjaehn/Carbosense'
 log_dir = os.path.join(work_root, 'logs')
 
 # anthropogenic emissions pre-processed for mother and nested domain
-emissions_dir = os.path.join(input_root, 'emissions')
-emis_gridname = 'CO2_CO_CH4_Carbosense-1.0_'
+#emissions_dir = os.path.join(input_root, 'emissions')
+#emis_gridname = 'CO2_CO_CH4_Carbosense-1.0_'
 
 # total yearly anthropogenic emissions for mother and nested domain
-online_emissions_dir = os.path.join(input_root, 'online-emissions')
-online_emis_gridname = 'CO2_CO_CH4_Carbosense-1.0'
+oae_dir = os.path.join(input_root, 'oae')
+oae_gridded_emissions_nc = 'CO2_CO_CH4_Carbosense-1.0_2017.nc'
+oae_vertical_profiles_nc = 'vertical_profiles.nc'
+oae_hourofday_nc = 'hourofday.nc'
+oae_hourofyear_nc = 'hourofyear.nc'
+oae_dayofweek_nc = 'dayofweek.nc'
+oae_monthofyear_nc = 'monthofyear.nc'
 
 # VPRM biogenic fluxes
 vprm_dir = os.path.join(input_root,'vprm','processed')
