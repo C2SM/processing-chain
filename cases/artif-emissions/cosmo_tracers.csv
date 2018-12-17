@@ -1,4 +1,0 @@
-,yshort_name,igribparam,igribtable,itype_emiss,itype_flux,yunits,ystandard_name,ylong_name,ytype_adv,ytype_diff,ytype_turbmix,ytype_passconv,ytype_ini,ytype_lbc,ytype_bbc,ytype_relax,ytype_damp,ytype_clip,ldecay,lifetime
-#,,,,,,,,,,,,,,,,,,,,
-,CO2_A,11,13,1,0,kg kg-1,CO2_mass_fraction_of_time-varying_emissions,CO2_mass_fraction_of_time-varying_emissions,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0
-,CO2_GPP,12,13,0,1,kg kg-1,CO2_mass_fraction_of_time-varying_surface_flux_from_gross_photosynthetic_production,CO2_mass_fraction_of_time-varying_surface_flux_from_gross_photosynthetic_production,on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0
