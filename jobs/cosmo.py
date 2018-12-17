@@ -90,7 +90,7 @@ def main(starttime, hstart, hstop, cfg):
         tracer_filename = os.path.join(cfg.chain_src_dir,'cases',tracer_csvfile)
         input_bgc_filename = os.path.join(cfg.cosmo_work,'INPUT_BGC')
 
-        tools.write_cosmo_input_bgc.main(tracer_filename,input_bgc_filename)
+        tools.write_cosmo_input_bgc.main(tracer_filename,input_bgc_filename,cfg)
 
     # Prepare namelist and submit job
     if cfg.target is tools.Target.COSMO:

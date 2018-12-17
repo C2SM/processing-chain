@@ -3,6 +3,7 @@
 
 import csv
 import sys
+import os
 
 STR2INT = {
     'ytype_adv':      {'off': 0, 'on': 1},
@@ -23,7 +24,7 @@ def group2text(group):
     lines = ['&TRACER']
     for key, value in group.items():
 
-        if key == '':
+        if key == '' or value == '' or len(value) == 0:
             continue
 
         if key in STR2INT:
@@ -33,6 +34,9 @@ def group2text(group):
         if key[0] == 'y':
             value = "'%s'" % value
 
+        if key == 'ycatl' or key == 'ytpl' or key == 'yvpl':
+            value = value.replace('\'\'', '\'')
+
         lines.append('  %s = %s,' % (key, value))
     lines.append('/\n')
 
@@ -40,8 +44,7 @@ def group2text(group):
 
 
 
-
-def main(csv_filename, namelist_filename):
+def main(csv_filename, namelist_filename, cfg=None):
     """Convert a table (``.csv`` file) to namelist file (``INPUT_BGC``)
     read by **COSMO**
     
@@ -60,15 +63,34 @@ def main(csv_filename, namelist_filename):
 
         with open(namelist_filename, 'w') as nml_file:
 
-            nml_file.write(
-                '\n'.join(['&BGCCTL', '  lc_cycle = .TRUE.,', '  in_tracers = %d,' % n_tracers, '/\n'])
-            )
+            if cfg == None or (cfg.emissions_dir and not cfg.oae_dir):
+                nml_file.write(
+                    '\n'.join(['&BGCCTL',
+                               '  lc_cycle = .TRUE.,',
+                               '  in_tracers = %d,'
+                               % n_tracers, '/\n'])
+                    )
+
+            else:
+                nml_file.write(
+                    '\n'.join(['&BGCCTL',
+                               '  lc_cycle = .TRUE.,',
+                               '  in_tracers = %d,' % n_tracers,
+                               '  vertical_profile_nc = \'../input/vertical_profiles.nc\','
+                               '  hour_of_day_nc = \'../input/hourofday.nc\','
+                               '  day_of_week_nc = \'../input/dayofweek.nc\','
+                               '  month_of_year_nc = \'../input/monthofyear.nc\','
+                               '  gridded_emissions_nc = \'../input/emissions.nc\','
+                               '  iemiss_interp = 0,',
+                               '/\n'])
+                )
+
             for group in reader:
                 nml_file.write(group2text(group))
-
 
 
 if __name__ == '__main__':
     input_filename = sys.argv[1]   # csv file with tracers
     output_filename = sys.argv[2]  # filename (INPUT_TRCR) read by COSMO
     main(input_filename, output_filename)
+
