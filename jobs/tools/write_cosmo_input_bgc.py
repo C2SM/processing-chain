@@ -55,6 +55,14 @@ def main(csv_filename, namelist_filename, cfg=None):
     namelist_filename : str
         Path to the namelist file that will be created
     """
+
+    # Check if online emissions ('oae') are used
+    oae = True
+    try:
+        cfg.oae_dir
+    except NameError:
+        oae = False
+
     with open(csv_filename, 'r') as csv_file:
 
         reader = csv.DictReader(csv_file, delimiter=',')
@@ -63,7 +71,7 @@ def main(csv_filename, namelist_filename, cfg=None):
 
         with open(namelist_filename, 'w') as nml_file:
 
-            if cfg == None or (cfg.emissions_dir and not cfg.oae_dir):
+            if cfg == None or not oae:
                 nml_file.write(
                     '\n'.join(['&BGCCTL',
                                '  lc_cycle = .TRUE.,',
@@ -76,11 +84,11 @@ def main(csv_filename, namelist_filename, cfg=None):
                     '\n'.join(['&BGCCTL',
                                '  lc_cycle = .TRUE.,',
                                '  in_tracers = %d,' % n_tracers,
-                               '  vertical_profile_nc = \'../input/vertical_profiles.nc\','
-                               '  hour_of_day_nc = \'../input/hourofday.nc\','
-                               '  day_of_week_nc = \'../input/dayofweek.nc\','
-                               '  month_of_year_nc = \'../input/monthofyear.nc\','
-                               '  gridded_emissions_nc = \'../input/emissions.nc\','
+                               '  vertical_profile_nc = \'../input/oae/vertical_profiles.nc\',',
+                               '  hour_of_day_nc = \'../input/oae/hourofday.nc\',',
+                               '  day_of_week_nc = \'../input/oae/dayofweek.nc\',',
+                               '  month_of_year_nc = \'../input/oae/monthofyear.nc\',',
+                               '  gridded_emissions_nc = \'../input/oae/emissions.nc\',',
                                '  iemiss_interp = 0,',
                                '/\n'])
                 )
