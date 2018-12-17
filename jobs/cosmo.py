@@ -11,10 +11,6 @@
 # 2013-07-21 Initial release, adopted from Christoph Knote's cosmo.bash (brd)
 # 2018-07-10 Translated to Python (muq)
 
-# Not tested yet. Note the comment.
-
-### DEVELOPMENT VERSION ###
-
 import logging
 import os
 import shutil 
