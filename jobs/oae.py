@@ -40,7 +40,6 @@ def main(starttime, hstart, hstop, cfg):
     logging.info("Copying oae files from {} to {}"
                  .format(oae_dir, dest_dir))
 
-    logging.info(time)
     tools.copy_file(oae_gridded_emissions_nc,
                     os.path.join(dest_dir, dest_emissions))
     tools.copy_file(oae_vertical_profiles_nc,
