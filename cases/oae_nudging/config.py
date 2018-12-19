@@ -55,7 +55,7 @@ vprm_prefix = ['gpp_', 'ra_']
 
 # MODIS data for online VPRM
 modis_dir = os.path.join(input_root,'modis')
-modis_filename = 'COSMO_2D_MOD09A1.006_WSA.nc'
+modis_filename = 'COSMO_2D_MOD09A1.006_sur_refl.nc'
 
 # CAMS for CO2, CO and NOX initial and boundary conditions
 cams_dir_orig = os.path.join(input_root, 'icbc') #Input directory
