@@ -43,7 +43,6 @@ def group2text(group):
     return '\n'.join(lines)
 
 
-
 def main(csv_filename, namelist_filename, cfg=None):
     """Convert a table (``.csv`` file) to namelist file (``INPUT_BGC``)
     read by **COSMO**
@@ -70,7 +69,6 @@ def main(csv_filename, namelist_filename, cfg=None):
         n_tracers = len(reader)
 
         with open(namelist_filename, 'w') as nml_file:
-
             if cfg == None or not oae:
                 nml_file.write(
                     '\n'.join(['&BGCCTL',
@@ -78,7 +76,7 @@ def main(csv_filename, namelist_filename, cfg=None):
                                '  in_tracers = %d,'
                                % n_tracers, '/\n'])
                     )
-
+            # Add input files for online emissions
             else:
                 nml_file.write(
                     '\n'.join(['&BGCCTL',

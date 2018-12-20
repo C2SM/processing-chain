@@ -140,7 +140,7 @@ int2lm_bin = '/users/mjaehn/github/int2lm/int2lm_tracer_conversion'
 post_int2lm_species = ['CO2_BG', 'CO_BG', 'CH4_BG']
 
 # COSMO
-cosmo_bin = '/users/mjaehn/github/cosmo-pompa/cosmo/cosmo_smartcarb_ser_gpu'
+cosmo_bin = '/users/mjaehn/github/cosmo-pompa/cosmo/cosmo_smartcarb_oae_katie_gpu'
 
 # Case specific settings (int2lm and cosmo namelists and runscripts)
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT.cfg' % (chain_src_dir,casename)
