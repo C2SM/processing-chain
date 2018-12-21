@@ -82,11 +82,16 @@ def main(csv_filename, namelist_filename, cfg=None):
                     '\n'.join(['&BGCCTL',
                                '  lc_cycle = .TRUE.,',
                                '  in_tracers = %d,' % n_tracers,
-                               '  vertical_profile_nc = \'../input/oae/vertical_profiles.nc\',',
-                               '  hour_of_day_nc = \'../input/oae/hourofday.nc\',',
-                               '  day_of_week_nc = \'../input/oae/dayofweek.nc\',',
-                               '  month_of_year_nc = \'../input/oae/monthofyear.nc\',',
-                               '  gridded_emissions_nc = \'../input/oae/emissions.nc\',',
+                               '  vertical_profile_nc = \'' \
+                               + os.path.join(cfg.oae_dir, 'vertical_profiles.nc') + ',',
+                               '  hour_of_day_nc = \'' \
+                               + os.path.join(cfg.oae_dir, 'hourofday.nc') + ',',
+                               '  day_of_week_nc = \'' \
+                               + os.path.join(cfg.oae_dir, 'dayofweek.nc') + ',',
+                               '  month_of_year_nc = \'' \
+                               + os.path.join(cfg.oae_dir, 'monthofyear.nc') + ',',
+                               '  gridded_emissions_nc = \'' \
+                               + os.path.join(cfg.oae_dir, 'emissions.nc') + ',',
                                '  iemiss_interp = 0,',
                                '/\n'])
                 )
