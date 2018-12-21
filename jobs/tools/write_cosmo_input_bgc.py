@@ -78,20 +78,21 @@ def main(csv_filename, namelist_filename, cfg=None):
                     )
             # Add input files for online emissions
             else:
+                dest_dir = os.path.join(cfg.cosmo_input, "oae")
                 nml_file.write(
                     '\n'.join(['&BGCCTL',
                                '  lc_cycle = .TRUE.,',
                                '  in_tracers = %d,' % n_tracers,
                                '  vertical_profile_nc = \'' \
-                               + os.path.join(cfg.oae_dir, 'vertical_profiles.nc') + ',',
+                               + os.path.join(dest_dir, 'vertical_profiles.nc') + '\',',
                                '  hour_of_day_nc = \'' \
-                               + os.path.join(cfg.oae_dir, 'hourofday.nc') + ',',
+                               + os.path.join(dest_dir, 'hourofday.nc') + '\',',
                                '  day_of_week_nc = \'' \
-                               + os.path.join(cfg.oae_dir, 'dayofweek.nc') + ',',
+                               + os.path.join(dest_dir, 'dayofweek.nc') + '\',',
                                '  month_of_year_nc = \'' \
-                               + os.path.join(cfg.oae_dir, 'monthofyear.nc') + ',',
+                               + os.path.join(dest_dir, 'monthofyear.nc') + '\',',
                                '  gridded_emissions_nc = \'' \
-                               + os.path.join(cfg.oae_dir, 'emissions.nc') + ',',
+                               + os.path.join(dest_dir, 'emissions.nc') + '\',',
                                '  iemiss_interp = 0,',
                                '/\n'])
                 )

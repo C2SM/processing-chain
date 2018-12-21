@@ -1,0 +1,4 @@
+,ie_tot,je_tot,ke_tot,startlon_tot,startlat_tot,dlon,dlat,pollat,pollon,polgam,ninc,hinc,lconst_in_time,lconserve_mass,cvertdist,ydirin,ylfn_prefix,yvertical_axis_type,yvertical_method,yvarlist,yinterp_type,ngrid_refine,ycombine_action
+#,,,,,,,,,,,,,,,,,,,,,,,
+,704,604,1,-1.42,2.48,0.01,0.01,43,-170,0,,1,.FALSE.,.FALSE.,,../input/vprm/,vprm_,,,"CO2_GPP_F, CO2_RA_F",N,,A
+,121,65,100,5,48,0.125,0.125,,,,,3,.FALSE.,.FALSE.,,../input/icbc/,cams_co2_,hyb_sig_pr,I,"CO2_BG, ",L,,O
