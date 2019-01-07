@@ -56,10 +56,9 @@ def main(csv_filename, namelist_filename, cfg=None):
     """
 
     # Check if online emissions ('oae') are used
-    oae = True
-    try:
-        cfg.oae_dir
-    except NameError:
+    if hasattr(cfg, 'oae_dir'):
+        oae = True
+    else:
         oae = False
 
     with open(csv_filename, 'r') as csv_file:
