@@ -58,6 +58,9 @@ oae_monthofyear_nc = 'monthofyear.nc'
 vprm_dir = os.path.join(input_root,'vprm_smartcarb','processed')
 vprm_prefix = ["vprm_"] #could be ["gpp_", "ra_"]
 
+# MODIS data for online VPRM
+modis_dir = os.path.join(input_root,'modis')
+modis_filename = 'COSMO_2D_MOD09A1.006_sur_refl.nc'
 
 # ICBC ----------------------------------------------------------------------- #
 # CAMS for CO2, CO and NOX initial and boundary conditions
