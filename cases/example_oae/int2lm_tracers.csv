@@ -1,9 +1,3 @@
-,yshort_name,igribtable,igribparam,irank,yunits,ystandard_name,ylong_name,yfamily,ylsm,lderived,loutput,lrequired,lnested,lcompress
-,CO2_BG,243,10,3,kg kg-1,time-varying_CO2_mass_fraction_at_lateral_boundary,time-varying_CO2_mass_fraction_at_lateral_boundary,t,,.FALSE.,.TRUE.,.FALSE.,.FALSE.,.TRUE.
-,CO2_GPP_F,243,11,2,kg m-2 s-1,time-varying_CO2_surface_flux_from_gross_photosynthetic_production,time-varying_CO2_surface_flux_from_gross_photosynthetic_production,f, ,.FALSE.,.TRUE.,.FALSE.,.FALSE.,.TRUE.
-,CO2_RA_F,243,12,2,kg m-2 s-1,time-varying_CO2_surface_flux_from_respiration,time-varying_CO2_surface_flux_from_respiration,f, ,.FALSE.,.TRUE.,.FALSE.,.FALSE.,.TRUE.
-,CO2_A_E,243,15,3,kg m-2 s-1,time-varying_CO2_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,time-varying_CO2_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,e, ,.FALSE.,.TRUE.,.FALSE.,.FALSE.,.TRUE.
-#,,,,,,,,,,,,,,
-,CO_A_E,243,42,3,kg m-2 s-1,time-varying_CO_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,time-varying_CO_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,e, ,.FALSE.,.TRUE.,.FALSE.,.FALSE.,.TRUE.
-#,,,,,,,,,,,,,,
-,NOX_A_E,243,61,3,kg m-2 s-1,time-varying_NOX_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,time-varying_NOX_emissions_for_all_sources_in_domain_excl_Berlin_and_Jaenschwalde,e, ,.FALSE.,.TRUE.,.FALSE.,.FALSE.,.TRUE.
+,yshort_name,igribtable,igribparam,irank,yunits,ystandard_name,ylong_name,yfamily,ylsm,lderived,loutput,lrequired,lnested,lcompress,ldryin
+#,,,,,,,,,,,,,,,,,,,,,
+,CO2_BG,243,10,3,kg kg-1,time-varying_CO2_mass_fraction_at_lateral_boundary,time-varying CO2 mass fraction at lateral boundary,t, ,.FALSE.,.TRUE.,.FALSE.,.FALSE.,.TRUE.,.TRUE.
