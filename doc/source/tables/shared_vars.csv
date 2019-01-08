@@ -1,0 +1,43 @@
+**Name**,**Desciption**,**Used in**
+target,"**COSMO** or **COSMOART**, defaults to **COSMO** if omitted", all
+mail_address, The processing-chain sends encountered errors to this address, :func:`jobs.tools.__init__.send_mail`
+compute_host, On which infrastructure the processing chain is run. Usually 'daint', ":func:`jobs.post_cosmo.main`, :func:`jobs.extract_2d_data.main`"
+compute_queue, Either 'debug' or 'normal', ":func:`jobs.int2lm.main`, :func:`jobs.cosmo.main`"
+compute_account, Which project the simulation belongs to, ":func:`jobs.int2lm.main`, :func:`jobs.cosmo.main`"
+chain_src_dir, "Path to the root of the chain", all
+casename, "Name of the simulation, the same as the directory-name the ``config.py``-file is in", all
+input_root, "Path to zhe root of the input-direcetory tree", all
+output_root, "Path to where the results, logs and nameslists are copied to after the simulation is done", :func:`jobs.post_cosmo.main`
+work_root, "Path to where the processing chain copies the input files to and starts the simulation from", all
+emissions_dir, "Path to the input directory where the emissions-files are found. If there are multiple emissions-datasets, this is a list of paths to the directories of the datasets.", :func:`jobs.emissions.main`
+emis_gridname, "Prefix of the emissions-files. List for multiple datasets. Emission-filenames are assumed to be ``{emis_gridname}YYYYMMDD.nc``", :func:`jobs.emissions.main`
+meteo_dir, "Path to the directory where the meteo-files are found. For a nested run, this is the casename of the mother-run. In that case, ``meteo_prefix`` and ```meteo_inc`` can be omitted", :func:`jobs.meteo.main`
+meteo_prefix, "Prefix of the meteo-files. Meteo-filenames are assumed to be ``{meteo_prefix}YYMMDD``", ":func:`jobs.meteo.main`, :func:`jobs.int2lm.main`"
+meteo_inc, "Increment in hours between meteo-files", ":func:`jobs.meteo.main`"
+obs_nudging_dir, "Path to where the nudging-datasets are found", :func:`jobs.obs_nudging.main`
+obs_nudging_prefixes, "List of prefixes of nuding-files to copy", :func:`jobs.obs_nudging.main`
+obs_nudging_date_format, "Date format of the nudging-files. If the obs-nudging-file is called ``cdfin_temp-20150204000000-20150205000000``, the dateformat is ``-%Y%m%d%H%M%S``", :func:`jobs.obs_nudging.main`
+int2lm_extpar_dir, Path to the directory containing the extpar-file for int2lm, :func:`jobs.int2lm.main`
+int2lm_extpar_file, The name of the int2lm extpar-file, :func:`jobs.int2lm.main`
+int2lm_bin, Path to the int2lm executable, :func:`jobs.int2lm.main`
+int2lm_namelist, Path to the int2lm namelist-template, :func:`jobs.int2lm.main`
+int2lm_runjob, Path to the int2lm runjob-template, :func:`jobs.int2lm.main`
+int2lm_walltime, Requested time for the int2lm slurm-batchjob, :func:`jobs.int2lm.main`
+int2lm_nodes, Number of nodes for the int2lm slurm-batchjob, :func:`jobs.int2lm.main`
+int2lm_ntasks_per_node, Number of tasks per node, :func:`jobs.int2lm.main`
+int2lm_np_x, Number of processes in the x direction, :func:`jobs.int2lm.main`
+int2lm_np_y, Number of processes in the y direction, :func:`jobs.int2lm.main`
+int2lm_np_tot, Total number of processes, :func:`jobs.int2lm.main`
+cosmo_bin, Path to the cosmo(art) executable, :func:`jobs.cosmo.main`
+cosmo_namelist, "Path to the cosmo namelist-templates, ending in ``cosmo_INPUT_``. The ending, for example ``IO`` or ``ORG``, is added by the cosmo-job", :func:`jobs.cosmo.main`
+cosmo_runjob, Path to the cosmo runjob-template,
+cosmo_walltime, Requested time for the cosmo slurm-batchjob, :func:`jobs.cosmo.main`
+cosmo_nodes, Number of nodes for the cosmo slurm-batchjob, :func:`jobs.cosmo.main`
+cosmo_ntasks_per_node, Number of tasks per node, :func:`jobs.cosmo.main`
+cosmo_np_x, Number of processes in the x direction, :func:`jobs.cosmo.main`
+cosmo_np_y, Number of processes in the y direction, :func:`jobs.cosmo.main`
+cosmo_np_io, Number of processes for IO, :func:`jobs.cosmo.main`
+cosmo_np_tot, Total number of processes, :func:`jobs.cosmo.main`
+reference_dir, Path to the reference output, :func:`jobs.verify_chain.main`
+output_dir, "Path to the output of cosmo. If the :func:`jobs.post_cosmo.main` job is executed, this can be set to ``None`` and the path of the post_cosmo-job will be used", :func:`jobs.verify_chain.main`
+values_to_check, "Which files and variables are compared. This is a dict with a tuple of filenames as key. The first key element is the filename of the reference file, the second key element is the filename of the output-file of cosmo (usually ``lffdYYYYMMDDHH.nc`` and the value is a list of variables to compare between these two files)", :func:`jobs.verify_chain.main`
