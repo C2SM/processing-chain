@@ -91,13 +91,14 @@ cams_parameters = [{
      # "prefix2":"sfc_gf39",
      # "lev":137,
 },
-    {"suffix":"cams_nox",
-     "inc" : 3,
+   # {#"suffix":"cams_nox",
+     #"inc" : 3,
      # "species" :["NOX"],     
      # "prefix1":"cams_0001",
      # "prefix2":"sfc_0001",
      # "lev":60,
-     }]
+     #}
+]
 
 # CarbonTracker for CO2, CO and NOX initial and boundary conditions
 # ct_dir_orig = os.path.join(input_root, 'icbc') #Input directory
@@ -126,7 +127,7 @@ int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = "test_domain.nc"
 
 # Executable
-int2lm_bin = os.path.join(input_root,"executables/int2lm") 
+int2lm_bin = os.path.join(input_root,"executables/int2lm_tracer_conversion") 
 
 # Namelist and slurm runscript templates
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT.cfg' % (chain_src_dir,casename)
@@ -150,7 +151,7 @@ int2lm_np_tot = int2lm_np_x * int2lm_np_y
 
 
 # POST_INT2LM ---------------------------------------------------------------- #
-post_int2lm_species = ["CO2_BG"]#,"CO_BG","CH4_BG","NOX_BG"]
+post_int2lm_species = ["CO2_BG"]
 
 
 # COSMO ---------------------------------------------------------------------- #
