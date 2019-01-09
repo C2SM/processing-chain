@@ -24,7 +24,7 @@ def group2text(group):
     lines = ['&TRACER']
     for key, value in group.items():
 
-        if key == '' or value == '' or len(value) == 0:
+        if key == '' or value == '':
             continue
 
         if key in STR2INT:
