@@ -11,8 +11,6 @@
 # 2013-07-17 Initial release, based on Christoph Knotes' artbd.bash
 # 2018-06-21 Translated to Python (hjm)
 
-### DEVELOPMENT VERSION ###
-
 import os
 import shutil
 import logging
@@ -22,7 +20,8 @@ from . import tools
 #from tools import ctnoaa4int2cosmo
 #from tools import mozart2int2lm
 
-def main(starttime,hstart,hstop,cfg):
+
+def main(starttime, hstart, hstop, cfg):
     """Copy and if necessary process CAMS & CarbonTracker or Mozart
     files for **int2lm**
 
@@ -36,10 +35,10 @@ def main(starttime,hstart,hstop,cfg):
     
     Parameters
     ----------	
-    start_time : datetime-object
+    starttime : datetime-object
         The starting date of the simulation
     hstart : int
-        Offset (in hours) of the actual start from the start_time
+        Offset (in hours) of the actual start from the starttime
     hstop : int
         Length of simulation (in hours)
     cfg : config-object

@@ -13,6 +13,12 @@ def main(starttime, hstart, hstop, cfg):
 
     Parameters
     ----------	
+    starttime : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the starttime
+    hstop : int
+        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """

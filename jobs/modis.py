@@ -8,11 +8,18 @@ import shutil
 
 from . import tools
 
+
 def main(starttime, hstart, hstop, cfg):
     """Copy MODIS surface reflectance data to the **cosmo** input directory.
 
     Parameters
     ----------	
+    starttime : datetime-object
+        The starting date of the simulation
+    hstart : int
+        Offset (in hours) of the actual start from the starttime
+    hstop : int
+        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
