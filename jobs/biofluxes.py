@@ -14,12 +14,11 @@
 #            input directory (brd)
 # 2018-06-25 Translated to Python (arp)
 
-### DEVELOPMENT VERSION ###
-
 import os
 import logging
 import shutil
 from . import tools
+
 
 def main(starttime, hstart, hstop, cfg):
     """Prepare the biofluxes-files for the simulation.
@@ -31,10 +30,10 @@ def main(starttime, hstart, hstop, cfg):
 
     Parameters
     ----------	
-    start_time : datetime-object
+    starttime : datetime-object
         The starting date of the simulation
     hstart : int
-        Offset (in hours) of the actual start from the start_time
+        Offset (in hours) of the actual start from the starttime
     hstop : int
         Length of simulation (in hours)
     cfg : config-object

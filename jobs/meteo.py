@@ -15,8 +15,6 @@
 # 2017-01-15 Modified for hypatia and project SmartCarb
 # 2018-06-21 Translated to Python (kug)
 
-### DEVELOPMENT VERSION ###
-
 import os
 import logging
 import shutil
@@ -38,10 +36,10 @@ def main(starttime, hstart, hstop, cfg):
     
     Parameters
     ----------
-    start_time : datetime-object
+    starttime : datetime-object
         The starting date of the simulation
     hstart : int
-        Offset (in hours) of the actual start from the start_time
+        Offset (in hours) of the actual start from the starttime
     hstop : int
         Length of simulation (in hours)
     cfg : config-object
