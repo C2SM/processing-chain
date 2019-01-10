@@ -11,10 +11,6 @@
 # 2013-07-21 Initial release, adopted from Christoph Knote's cosmo.bash (brd)
 # 2018-07-10 Translated to Python (muq)
 
-# Not tested yet. Note the comment.
-
-### DEVELOPMENT VERSION ###
-
 import logging
 import os
 import shutil 
@@ -53,10 +49,10 @@ def main(starttime, hstart, hstop, cfg):
     
     Parameters
     ----------	
-    start_time : datetime-object
+    starttime : datetime-object
         The starting date of the simulation
     hstart : int
-        Offset (in hours) of the actual start from the start_time
+        Offset (in hours) of the actual start from the starttime
     hstop : int
         Length of simulation (in hours)
     cfg : config-object
@@ -94,7 +90,7 @@ def main(starttime, hstart, hstop, cfg):
         tracer_filename = os.path.join(cfg.chain_src_dir,'cases',tracer_csvfile)
         input_bgc_filename = os.path.join(cfg.cosmo_work,'INPUT_BGC')
 
-        tools.write_cosmo_input_bgc.main(tracer_filename,input_bgc_filename)
+        tools.write_cosmo_input_bgc.main(tracer_filename,input_bgc_filename,cfg)
 
     # Prepare namelist and submit job
     if cfg.target is tools.Target.COSMO:

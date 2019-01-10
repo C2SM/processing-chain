@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-### DEVELOPMENT VERSION ###
-
 import logging
 import os
 import shutil
@@ -12,16 +10,16 @@ import netCDF4 as nc
 from . import tools
 
 
-def main(start_time, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg):
     """Extracts 2D and surface data from **COSMO** output directory to a new
     file (``cosmo_output_2d``)
     
     Parameters
     ----------	
-    start_time : datetime-object
+    starttime : datetime-object
         The starting date of the simulation
     hstart : int
-        Offset (in hours) of the actual start from the start_time
+        Offset (in hours) of the actual start from the starttime
     hstop : int
         Length of simulation (in hours)
     cfg : config-object
@@ -29,7 +27,7 @@ def main(start_time, hstart, hstop, cfg):
     """
 
     cosmo_output = cfg.cosmo_output
-    copy_path = os.path.join(cfg.output_root, start_time.strftime('%Y%m%d%H')+
+    copy_path = os.path.join(cfg.output_root, starttime.strftime('%Y%m%d%H')+
                              "_"+str(int(hstart))+"_"+str(int(hstop)))
     output_path = os.path.join(copy_path, "cosmo_output_2d")
 
