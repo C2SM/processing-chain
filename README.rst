@@ -1,28 +1,24 @@
 COSMO processing chain
 ======================
 
-Usage:
-$ python run_chain.py <casename> <startdate> <hstart> <hstop> -j [jobs]
+Command line help::
+    
+    $ python run_chain.py -h
 
-How to run the example case:
-$ python run_chain.py example 2015-01-01 0 24 -j meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo 
+Run examples::
 
-If [jobs] is not specified, all jobs listed above are executed.
+    $ python run_chain.py example 2015-01-01 0 24
+    $ python run_chain.py example_cosmoart_mother example_cosmoart_nested 2015-06-26 0 12
+    $ python run_chain.py example_oae 2015-01-01 0 24 -j meteo icbc oae modis biofluxes int2lm post_int2lm cosmo post_cosmo
 
-For help:
-$ python run_chain.py -h
+Requirements: amrs_
+      
+Build documentation locally (make sure you have sphinx installed)::
 
-Additional jobs available:
-- extract_2d_data (can be executed after post_cosmo and creates and additional
-  output folder cosmo_output_2d/ with surface level data)
+    $ cd doc/
+    $ make html
+    $ make text
 
-Configuration of 'example' case:
-  cases/example/config.py
+If all else fails: read documentation source files at docs/source/*.rst
 
-Structure:
-- run_chain.py: main script to be called for running the chain
-- jobs: package with modules for each job
-- jobs/tools: tools for doing jobs
-- doc: documentation
-- cases/example: example case
-
+.. _amrs: https://gitlab.empa.ch/abt503/apps/amrs
