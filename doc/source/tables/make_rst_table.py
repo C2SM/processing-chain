@@ -33,16 +33,21 @@ def maketable(contents):
                                               "from previous rows".format(i))
         for j, entry in enumerate(row):
             if len(entry) > max_lengths[j]:
-                max_lengths[j] = len(entry)
+                max_lengths[j] = len(entry) + 8
 
     # assemble contents into list of lines
     lines = []
+    i = 0
     for row in contents:
         line = '| '
         for entry, length in zip(row, max_lengths):
+            # format variable name
+            if i > 0 and i % 3 == 0:
+                entry = '``' + entry + '``'
             line += str(entry)
             line += ' ' * (length - len(entry))
             line += ' | '
+            i += 1
         lines.append(line)
 
     # add in row seperator
