@@ -38,7 +38,10 @@ File structure
     |    + example_cosmoart_mother/
     |    |    + config.py
     |    |    \ *.cfg
-    |    \ example_cosmoart_nested/
+    |    + example_cosmoart_nested/
+    |    |    + config.py
+    |    |    \ *.cfg
+    |    \ example_oae/
     |         + config.py
     |         \ *.cfg
     \ doc/

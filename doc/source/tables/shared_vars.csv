@@ -1,4 +1,4 @@
-**Name**,**Desciption**,**Used in**
+**Name**,**Description**,**Used in**
 target,"**COSMO** or **COSMOART**, defaults to **COSMO** if omitted", all
 mail_address, The processing-chain sends encountered errors to this address, :func:`jobs.tools.__init__.send_mail`
 compute_host, On which infrastructure the processing chain is run. Usually 'daint', ":func:`jobs.post_cosmo.main`, :func:`jobs.extract_2d_data.main`"
