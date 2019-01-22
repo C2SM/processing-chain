@@ -24,6 +24,7 @@ Helper functions
 .. autofunction:: jobs.tools.__init__.create_dir
 .. autofunction:: jobs.tools.__init__.copy_file
 .. autofunction:: jobs.tools.__init__.check_target
+.. autofunction:: jobs.tools.__init__.levenshtein
 .. autofunction:: jobs.tools.string2char.main
 
 Other functions

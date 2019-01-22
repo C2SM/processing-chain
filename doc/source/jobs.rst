@@ -9,7 +9,9 @@ For **COSMO**, you can choose from the following jobs. As some jobs depend
 on the result of others, the order indicated here as to be respected:
 
 1.  :func:`jobs.biofluxes.main` | :func:`jobs.icbc.main` | 
-    :func:`jobs.meteo.main` | :func:`jobs.emissions.main`
+    :func:`jobs.meteo.main` | :func:`jobs.emissions.main` |
+    :func:`jobs.modis.main` | :func:`jobs.oae.main` |
+    :func:`jobs.obs_nudging.main`
 2.  :func:`jobs.int2lm.main`
 3.  :func:`jobs.post_int2lm.main`
 4.  :func:`jobs.cosmo.main`
@@ -20,10 +22,11 @@ The same for **COSMOART**:
 
 1. :func:`jobs.emissions.main` | :func:`jobs.meteo.main` |
    :func:`jobs.photo_rate.main` | :func:`jobs.obs_nudging.main` |
-   :func:`jobs.icbc.main`
+   :func:`jobs.icbc.main` | :func:`jobs.modis.main` |
+   :func:`jobs.oae.main`
 2. :func:`jobs.int2lm.main`
 3. :func:`jobs.cosmo.main`
-4. :func:`jobs.emissionspost_cosmo.main` | :func:`jobs.extract_2d_data.main` |
+4. :func:`jobs.post_cosmo.main` | :func:`jobs.extract_2d_data.main` |
    :func:`jobs.verify_chain.main`
 
 Adding new jobs
@@ -48,6 +51,8 @@ List of available jobs
 * :func:`jobs.icbc.main`
 * :func:`jobs.int2lm.main`
 * :func:`jobs.meteo.main`
+* :func:`jobs.modis.main`  
+* :func:`jobs.oae.main`
 * :func:`jobs.obs_nudging.main`
 * :func:`jobs.photo_rate.main`
 * :func:`jobs.post_cosmo.main`
@@ -81,6 +86,14 @@ List of available jobs
 -------------------------------------------
 
 .. autofunction:: jobs.meteo.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.modis.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.oae.main
 
 -------------------------------------------
 
