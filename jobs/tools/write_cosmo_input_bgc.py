@@ -55,11 +55,18 @@ def main(csv_filename, namelist_filename, cfg=None):
         Path to the namelist file that will be created
     """
 
+
     # Check if online emissions ('oae') are used
     if hasattr(cfg, 'oae_dir'):
         oae = True
     else:
         oae = False
+
+    # Check if online VPRM ('vprm') is used
+    if hasattr(cfg, 'online_vprm_dir'):
+        online_vprm = True
+    else:
+        online_vprm = False
 
     with open(csv_filename, 'r') as csv_file:
 
@@ -68,33 +75,39 @@ def main(csv_filename, namelist_filename, cfg=None):
         n_tracers = len(reader)
 
         with open(namelist_filename, 'w') as nml_file:
-            if cfg == None or not oae:
-                nml_file.write(
-                    '\n'.join(['&BGCCTL',
-                               '  lc_cycle = .TRUE.,',
-                               '  in_tracers = %d,'
-                               % n_tracers, '/\n'])
-                    )
-            # Add input files for online emissions
-            else:
-                dest_dir = os.path.join(cfg.cosmo_input, "oae")
-                nml_file.write(
-                    '\n'.join(['&BGCCTL',
-                               '  lc_cycle = .TRUE.,',
-                               '  in_tracers = %d,' % n_tracers,
-                               '  vertical_profile_nc = \'' \
-                               + os.path.join(dest_dir, 'vertical_profiles.nc') + '\',',
-                               '  hour_of_day_nc = \'' \
-                               + os.path.join(dest_dir, 'hourofday.nc') + '\',',
-                               '  day_of_week_nc = \'' \
-                               + os.path.join(dest_dir, 'dayofweek.nc') + '\',',
-                               '  month_of_year_nc = \'' \
-                               + os.path.join(dest_dir, 'monthofyear.nc') + '\',',
-                               '  gridded_emissions_nc = \'' \
-                               + os.path.join(dest_dir, 'emissions.nc') + '\',',
-                               '  iemiss_interp = 0,',
-                               '/\n'])
+            nml_file.write(
+                '\n'.join(['&BGCCTL',
+                           '  lc_cycle = .TRUE.,',
+                           '  in_tracers = %d,' % n_tracers,
+                           ''])
                 )
+            # Add input files for online emissions
+            if oae:
+                nml_file.write(
+                    '\n'.join(['  vertical_profile_nc = \'' \
+                               + '../input/oae/vertical_profiles.nc' + '\',',
+                               '  hour_of_day_nc = \'' \
+                               + '../input/oae/hourofday.nc' + '\',',
+                               '  day_of_week_nc = \'' \
+                               + '../input/oae/dayofweek.nc' + '\',',
+                               '  month_of_year_nc = \'' \
+                               + '../input/oae/monthofyear.nc' + '\',',
+                               '  gridded_emissions_nc = \'' \
+                               + '../input/oae/emissions.nc' + '\',',
+                               '  iemiss_interp = 0,',
+                               ''])
+                )
+            # Add input files for online VPRM
+            if online_vprm:
+                nml_file.write(
+                    '\n'.join(['  modis_reflectances_nc = \'' \
+                               + '../input/vprm/modis.nc' + '\',',
+                               '  veg_class_frac_nc = \'' \
+                               + '../input/vprm/vegetation.nc' + '\',',
+                               ''])
+                )
+
+            nml_file.write('/\n')
 
             for group in reader:
                 nml_file.write(group2text(group))
