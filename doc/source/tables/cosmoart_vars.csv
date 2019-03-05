@@ -1,4 +1,4 @@
-**Name**,**Desciption**,**Used in**
+**Name**,**Description**,**Used in**
 photo_rate_file, Path to the photolysis-rate file, :func:`jobs.photo_rate.main`
 mozart_file_orig, Path to input-file for mozart-files, :func:`jobs.icbc.main`
 mozart_dir_proc, "Path to the processed mozart-files. Processed mozart-files are stored here, if there are files found here then ``file_dir_orig`` is not used", :func:`jobs.icbc.main`
