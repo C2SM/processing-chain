@@ -9,10 +9,185 @@ import glob
 import netCDF4 as nc
 from . import tools
 
+import amrs
+
+
+def get_attrs(v):
+    return dict((k, v.getncattr(k)) for k in v.ncattrs())
+
+
+def create_2d_fields(input_filename, constant_filename, output_filename,
+        overwrite=True, do_levels=True):
+    """\
+    Create input data for calculating satellite swaths.
+
+    input_filename: COSMO output for a given hour.
+    constant_filename: COSMO output for constant fields
+
+    output_filename: output filename for 2d fields
+    """
+    sys.stdout.flush()
+    attrs = {
+            'DESCRIPTION':  'Vertical integrated/averaged tracer fields',
+            'DATAORIGIN':   'Tracer fields from COSMO-GHG simulations',
+            'CREATOR':      config.user_name,
+            'EMAIL':        config.user_email,
+            'AFFILIATION':  config.user_affiliation,
+            'VERSION':      '0.1',
+            'DATE CREATED': time.ctime(time.time()),
+            'STUDY':        config.study,
+    }
+
+    if not os.path.exists(input_filename):
+        print(input_filename, '...missing')
+        sys.stdout.flush()
+        return 42
+
+    if not overwrite and os.path.exists(output_filename):
+        return 42
+
+    print(input_filename, '...working')
+    sys.stdout.flush()
+
+    tracers = config.tracers.copy()
+
+    with netCDF4.Dataset(constant_filename) as nc:
+        h = nc.variables['HHL'][0]
+
+    with netCDF4.Dataset(input_filename) as nc, netCDF4.Dataset(output_filename, 'w') as out:
+        lon = nc.variables['lon'][:]
+        lat = nc.variables['lat'][:]
+        rlon = nc.variables['rlon'][:]
+        rlat = nc.variables['rlat'][:]
+
+        print(output_filename)
+        sys.stdout.flush()
+        sc.io.init_netcdf(out, rlon, rlat, lon, lat, attrs=attrs)
+
+        T = nc.variables['T'][0]
+        p = nc.variables['P'][0]
+        ps = nc.variables['PS'][0]
+
+        # specific humidity
+        q = nc.variables['QV'][0]
+
+        clct = nc.variables['CLCT'][0]
+        clct_attrs = get_attrs(nc.variables['CLCT'])
+
+        # write to netCDF 
+        sc.io.append_variable(out, 'CLCT', clct, attrs=clct_attrs)
+
+        # mass of dry air (kg/m2)
+        mair = amrs.misc.chem.calculate_mair(p, ps, h)
+
+        for tracer in tracers:
+            xm = nc.variables[tracer][0]
+            attrs = get_attrs(nc.variables[tracer])
+
+
+            if tracer.startswith('CO2_'):
+                if do_levels:
+                    ground = amrs.misc.chem.xm_to_xv(xm[-1:-15], 'CO2')
+                column = amrs.misc.chem.calculate_xco2(xm, mair, q)
+                column = column.astype('f4')
+
+                if tracer == 'CO2_BG':
+                    column2 = amrs.misc.chem.calculate_xco2(xm, mair, 0.0)
+                    column2 = column2.astype('f4')
+
+            elif tracer.startswith('NOX_'):
+                if do_levels:
+                    ground = amrs.misc.chem.xm_to_cm(xm[-1], p[-1], T[-1])
+                    ground = amrs.misc.chem.nox_to_no2(ground)
+                    ground = amrs.misc.chem.cm_to_xm(ground, p[-1], T[-1])
+                    ground = amrs.misc.chem.xm_to_xv(ground, 'NO2')
+
+                tracer = tracer.replace('NOX_', 'NO2_')
+
+                column = amrs.misc.chem.calculate_vcd(xm, p, T, h, 'NOx')
+                column = column.astype('f4')
+
+            elif tracer.startswith('CO_'):
+                if do_levels:
+                    ground = amrs.misc.chem.xm_to_xv(xm[-1], 'CO')
+                column = amrs.misc.chem.calculate_vcd(xm, p, T, h, 'CO')
+                column = column.astype('f4')
+
+            elif tracer.startswith('CH4_'):
+                if do_levels:
+                    ground = amrs.misc.chem.xm_to_xv(xm[-1], 'CH4')
+                column = amrs.misc.chem.calculate_vcd(xm, p, T, h, 'CH4')
+                column = column.astype('f4')
+            else:
+                raise ValueError('Tracers "%s" not handled.' % tracer)
+
+
+            if tracer.startswith('CO2_'):
+                attrs['standard_name'] = attrs['standard_name'].replace(
+                        'CO2_mass_fraction', 'CO2_column-averaged_dry-air_mole_fraction')
+                attrs['long_name'] = attrs['long_name'].replace(
+                        'CO2_mass_fraction', 'CO2_column-averaged_dry-air_mole_fraction')
+                attrs['units'] = 'ppm'
+
+                if tracer == 'CO2_BG':
+                    attrs2 = attrs.copy()
+                    attrs2['long_name'] = attrs2['long_name'].replace('dry-air', 'moist-air')
+                    attrs2['standard_name'] = attrs2['standard_name'].replace('dry-air', 'moist-air')
+
+            elif tracer.startswith('NO2_'):
+                attrs['standard_name'] = attrs['standard_name'].replace(
+                        'NOX_mass_fraction', 'NO2_vertical_column_density')
+                attrs['long_name'] = attrs['long_name'].replace(
+                        'NOX_mass_fraction', 'NO2_vertical_column_density')
+                attrs['units'] = 'molecules cm-2'
+
+            elif tracer.startswith('CO_'):
+                attrs['standard_name'] = attrs['standard_name'].replace(
+                        'CO_mass_fraction', 'CO_vertical_column_density')
+                attrs['long_name'] = attrs['long_name'].replace(
+                        'CO_mass_fraction', 'CO_vertical_column_density')
+                attrs['units'] = 'molecules cm-2'
+
+            elif tracer.startswith('CH4_'):
+                attrs['standard_name'] = attrs['standard_name'].replace(
+                        'CH4_mass_fraction', 'CH4_vertical_column_density')
+                attrs['long_name'] = attrs['long_name'].replace(
+                        'CH4_mass_fraction', 'CH4_vertical_column_density')
+                attrs['units'] = 'molecules cm-2'
+
+
+
+            # write ground concentrations
+            if do_levels:
+                sc.io.append_variable(
+                    out, '%s' % tracer,
+                    ground, attrs=None
+                )
+
+            # write columns
+            if tracer.startswith('CO2'):
+                sc.io.append_variable(
+                    out,
+                    'X%s' % tracer,
+                    column, attrs=attrs
+                )
+                if tracer == 'CO2_BG':
+                    sc.io.append_variable(
+                        out,
+                        'Y%s' % tracer,
+                        column2, attrs=attrs2
+                    )
+            else:
+                sc.io.append_variable(
+                    out,
+                    '%s' % tracer,
+                    column, attrs=attrs
+                )
+
 
 def main(starttime, hstart, hstop, cfg):
-    """Extracts 2D and surface data from **COSMO** output directory to a new
-    file (``cosmo_output_2d``)
+    """Extracts 2D column data and first 15 levels from **COSMO**
+    output directory to a new file (``cosmo_output_reduced``)
     
     Parameters
     ----------	
@@ -29,7 +204,7 @@ def main(starttime, hstart, hstop, cfg):
     cosmo_output = cfg.cosmo_output
     copy_path = os.path.join(cfg.output_root, starttime.strftime('%Y%m%d%H')+
                              "_"+str(int(hstart))+"_"+str(int(hstop)))
-    output_path = os.path.join(copy_path, "cosmo_output_2d")
+    output_path = os.path.join(copy_path, "cosmo_output_reduced")
 
     date = dt.datetime.today()
 
