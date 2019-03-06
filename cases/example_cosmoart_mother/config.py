@@ -95,6 +95,12 @@ mozart_prefix = 'mozart'
 # Extpar file
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = "external_parameter_empa_cosmo14.nc"
+# landuse file
+int2lm_lu_dir = os.path.join(input_root, 'extpar')
+int2lm_lu_file = 'landuse_cosmo14.nc'
+# plant functional types
+int2lm_pft_dir = os.path.join(input_root, 'extpar')
+int2lm_pft_file = 'pft_0.05_andrew.nc'
 # Executable
 int2lm_bin = os.path.join(input_root,"executables/int2lm")
 
