@@ -4,15 +4,15 @@
 
 import os
 import logging
-import shutil
 
 from . import tools
+
 
 def main(starttime, hstart, hstop, cfg):
     """Copy emission and profile files to the **cosmo** input directory.
 
     Parameters
-    ----------	
+    ----------
     starttime : datetime-object
         The starting date of the simulation
     hstart : int
@@ -40,7 +40,7 @@ def main(starttime, hstart, hstop, cfg):
     oae_hourofyear_nc = os.path.join(oae_dir, cfg.oae_hourofyear_nc)
     oae_monthofyear_nc = os.path.join(oae_dir, cfg.oae_monthofyear_nc)
 
-    dest_dir = os.path.join(cfg.cosmo_input,"oae")
+    dest_dir = os.path.join(cfg.cosmo_input, "oae")
     tools.create_dir(dest_dir, "online emissions input")
 
     logging.info("Copying oae files from {} to {}"
@@ -58,4 +58,3 @@ def main(starttime, hstart, hstop, cfg):
                     os.path.join(dest_dir, dest_hourofyear))
     tools.copy_file(oae_monthofyear_nc,
                     os.path.join(dest_dir, dest_monthofyear))
-
