@@ -80,6 +80,12 @@ obs_nudging_date_format = "-%Y%m%d%H%M%S"
 # Extpar file
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = "Europe_0.02x0.02.nc"
+# landuse file
+int2lm_lu_dir = os.path.join(input_root, 'extpar')
+int2lm_lu_file = 'landuse_cosmo2.nc'
+# plant functional types
+int2lm_pft_dir = os.path.join(input_root, 'extpar')
+int2lm_pft_file = 'pft_0.05_andrew.nc'
 # Executable
 int2lm_bin = os.path.join(input_root,"executables/int2lm")
 
