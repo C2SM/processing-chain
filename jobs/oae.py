@@ -39,7 +39,6 @@ def main(starttime, hstart, hstop, cfg):
     # Temporal profiles can be given as hourofday, dayofweek, monthofyear
     # AND/OR as hourofyear. We copy all files indicated in cfg, but make
     # sure at least one type is present
-
     hod_tps = True
     hoy_tps = True
     try:
