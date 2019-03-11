@@ -5,9 +5,7 @@ from datetime import datetime, timedelta
 
 import importlib
 import logging
-import warnings
 import os
-import subprocess
 import sys
 import time
 import shutil
@@ -27,7 +25,7 @@ default_jobs = {
 
 def parse_arguments():
     """Parse the command line arguments given to this script
-    
+
     Returns
     -------
     Namespace-object
@@ -93,7 +91,7 @@ def parse_arguments():
 
 def load_config_file(casename, cfg):
     """Load the config file.
-    
+
     Looks for the config file in ``cases/casename/config.py`` and then imports
     it as a module. This lets the config file contain python statements which
     are evaluated on import.
@@ -105,9 +103,9 @@ def load_config_file(casename, cfg):
     ``cfg.myval``.
 
     Add new variables with::
-    
+
         setattr(cfg, 'myval', 9)
-        
+
     Parameters
     ----------
     casename : str
@@ -115,7 +113,7 @@ def load_config_file(casename, cfg):
     cfg : module or None
         If cfg is None, the module is freshly imported. If it is a module
         object, that module is reloaded.
-        
+
     Returns
     -------
     config-object
@@ -149,8 +147,8 @@ def load_config_file(casename, cfg):
 
 def set_simulation_type(cfg):
     """Detect if the chain targets cosmo or cosmoart and if there is a subtarget.
-    
-    Check if a target was provided in the config-object. If no target is 
+
+    Check if a target was provided in the config-object. If no target is
     provided, set the target to cosmo in the config-object.
 
     Check if a subtarget was provided in the config-object. Subtargets
@@ -186,7 +184,7 @@ def set_simulation_type(cfg):
 
 def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     """Run chain ignoring already finished jobs.
-    
+
     Sets configuration values derived from user-provided ones, for example the
     folder-structure inside the working directory.
 
@@ -199,7 +197,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     file of the job). Then if the job has to be run, it calls the main()-
     function of the job. If force is True, the logging-file of the job will
     be deleted (if it exists) and the job will be executed regardless.
-    
+
     Parameters
     ----------
     work_root : str
@@ -238,7 +236,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'hstart_int2lm', '0')
     setattr(cfg, 'hstop_int2lm', forecasttime)
 
-    # chain 
+    # chain
     job_id = '%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
     chain_root = os.path.join(work_root, cfg.casename, job_id)
     setattr(cfg, 'chain_root', chain_root)
@@ -255,14 +253,25 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'cosmo_work', os.path.join(chain_root, 'cosmo', 'run'))
     setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
 
-    if not cfg.target is tools.Target.COSMOART:
-        job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh, 
+    # constraint (gpu or mc)
+    if hasattr(cfg, 'constraint'):
+        assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
+                                                 "gpu or mc")
+    else:
+        # set default constraint
+        if cfg.target is tools.Target.COSMOART:
+            setattr(cfg, 'constraint', 'mc')
+        else:
+            setattr(cfg, 'constraint', 'gpu')
+
+    if cfg.target is not tools.Target.COSMOART:
+        job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh,
                                         hstart - cfg.restart_step, hstart)
         chain_root_last_run = os.path.join(work_root, cfg.casename,
                                            job_id_last_run)
         setattr(cfg, 'cosmo_restart_in', os.path.join(chain_root_last_run,
                                                       'cosmo', 'restart'))
-        setattr(cfg, 'cosmo_restart_out', os.path.join(chain_root, 
+        setattr(cfg, 'cosmo_restart_out', os.path.join(chain_root,
                                                        'cosmo', 'restart'))
 
     if cfg.target is tools.Target.COSMOART:
@@ -271,16 +280,16 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
 
     # if nested run: use output of mother-simulation
     if cfg.target is tools.Target.COSMOART and not os.path.isdir(cfg.meteo_dir):
-            # if ifs_hres_dir doesn't point to a directory,
-            # it is the name of the mother run
-            mother_name = cfg.meteo_dir
-            cfg.meteo_dir = os.path.join(work_root,
-                                         mother_name,
-                                         job_id,
-                                         'cosmo',
-                                         'output')
-            cfg.meteo_inc = 1
-            cfg.meteo_prefix = 'lffd'
+        # if ifs_hres_dir doesn't point to a directory,
+        # it is the name of the mother run
+        mother_name = cfg.meteo_dir
+        cfg.meteo_dir = os.path.join(work_root,
+                                     mother_name,
+                                     job_id,
+                                     'cosmo',
+                                     'output')
+        cfg.meteo_inc = 1
+        cfg.meteo_prefix = 'lffd'
 
     # logging
     log_working_dir = os.path.join(chain_root, 'checkpoints', 'working')
