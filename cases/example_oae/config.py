@@ -21,9 +21,13 @@ compute_account = 's862' #'pr04'
 
 # case name = pathname in cases/
 path = os.path.realpath(__file__)
-casename = os.path.basename(os.path.dirname(path)) 
+casename = os.path.basename(os.path.dirname(path))
 
-# Restart 
+# Use gpu or mc version?
+constraint = 'gpu'
+constraint = 'mc'
+
+# Restart
 restart_step = 24
 
 # Root directory of the sourcecode of the chain (where run_chain.py is)
