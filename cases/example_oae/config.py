@@ -25,7 +25,7 @@ casename = os.path.basename(os.path.dirname(path))
 
 # Use gpu or mc version?
 constraint = 'gpu'
-constraint = 'mc'
+# constraint = 'mc'
 
 # Restart
 restart_step = 24
