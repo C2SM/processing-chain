@@ -202,7 +202,8 @@ def main_process(date,inpath,outpath,species,param):
     hybm=[(b_half[i]+b_half[i+1])/2. for i in range(offset,len(a_half)-1)]   
     
     to_print = ",".join([species[i]["short_name"] for i in range(len(species))])
-    logging.info('Processing ' + to_print + ' for time ' + date)
+    logging.info('Processing ' + to_print +
+                 ' for time ' + date.strftime("%Y%m%d%H"))
     
     infile=os.path.join(inpath,param["prefix1"]+"_"+date.strftime("%Y%m%d%H")+".nc")
     sfcfile=os.path.join(inpath,param["prefix2"]+"_"+date.strftime("%Y%m%d%H")+".nc")    
