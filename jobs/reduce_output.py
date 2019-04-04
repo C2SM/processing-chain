@@ -117,20 +117,21 @@ def main(starttime, hstart, hstop, cfg):
                     level = len(inf.dimensions['level'])
                     level1 = len(inf.dimensions['level1'])
 
-                    # Read meteorological variables
-                    if '_met' in infile:
-                        logging.info('Get temperature field')
-                        T = inf.variables['T'][0]
-                        logging.info('Get pressure field')
-                        p = inf.variables['P'][0]
-                        logging.info('Get surface pressure field')
-                        ps = inf.variables['PS'][0]
-                        logging.info('Get specific humidity field')
-                        q = inf.variables['QV'][0]
-                        logging.info('Calculate mass of dry air')
-                        # mass of dry air (kg/m2)
-                        mair = chem.calculate_mair(p, ps, h)
-                        logging.info('Done!')
+                    # Read meteorological variables (needed for mair and XCO2
+                    # calculations) 
+                  # if '_met' in infile:
+                  #     logging.info('Get temperature field')
+                  #     T = inf.variables['T'][0]
+                  #     logging.info('Get pressure field')
+                  #     p = inf.variables['P'][0]
+                  #     logging.info('Get surface pressure field')
+                  #     ps = inf.variables['PS'][0]
+                  #     logging.info('Get specific humidity field')
+                  #     q = inf.variables['QV'][0]
+                  #     logging.info('Calculate mass of dry air')
+                  #     # mass of dry air (kg/m2)
+                  #     mair = chem.calculate_mair(p, ps, h)
+                  #     logging.info('Done!')
 
                     # Copy variables
                     for varname in inf.variables.keys():
@@ -166,10 +167,10 @@ def main(starttime, hstart, hstop, cfg):
                             # Check for 3D data and extract only lower_levels
                             if 'level1' in var.dimensions and \
                                 len(var.dimensions) == 4:
-                                    outf[varname][:] = inf[varname][:,level1-16:level1-1,:,:]
+                                    outf[varname][:] = inf[varname][:,level1-1-15:level1-1,:,:]
                             elif 'level' in var.dimensions and \
                                 len(var.dimensions) == 4:
-                                    outf[varname][:] = inf[varname][:,level-16:level-1,:,:]
+                                    outf[varname][:] = inf[varname][:,level-1-15:level-1,:,:]
                             else:
                                 outf[varname][:] = inf[varname][:]
 
@@ -205,24 +206,24 @@ def main(starttime, hstart, hstop, cfg):
                                     'CH4_mass_fraction', 'CH4_vertical_column_density')
                             attrs['units'] = 'molecules cm-2'
 
-                        gas = None
-                        if varname.startswith('CO2_'): gas = 'CO2'
-                        if varname.startswith('CO_'): gas = 'CO'
-                        if varname.startswith('CH4_'): gas = 'CH4'
-                        if varname.startswith('NO2_'): gas = 'NO2'
+                      # gas = None
+                      # if varname.startswith('CO2_'): gas = 'CO2'
+                      # if varname.startswith('CO_'): gas = 'CO'
+                      # if varname.startswith('CH4_'): gas = 'CH4'
+                      # if varname.startswith('NO2_'): gas = 'NO2'
 
-                        if gas:
-                            # Column-averaged dry-air mole fraction (molecules/cm2)
-                            xm = inf.variables[varname][0]
-                            column = chem.calculate_camf(xm, mair, gas, q)
-                            column = column.astype('f4')
-                            append_variable(outf, 'X%s' % varname, column,
-                                            attrs=attrs)
-                            # Column-averaged moist-air mole fraction (molecules/cm2)
-                            column2 = chem.calculate_camf(xm, mair, gas, 0.0)
-                            column2 = column2.astype('f4')
-                            append_variable(outf, 'Y%s' % varname, column2,
-                                            attrs=attrs2)
+                      # if gas:
+                        #   # Column-averaged dry-air mole fraction (molecules/cm2)
+                        #   xm = inf.variables[varname][0]
+                        #   column = chem.calculate_camf(xm, mair, gas, q)
+                        #   column = column.astype('f4')
+                        #   append_variable(outf, 'X%s' % varname, column,
+                        #                   attrs=attrs)
+                        #   # Column-averaged moist-air mole fraction (molecules/cm2)
+                        #   column2 = chem.calculate_camf(xm, mair, gas, 0.0)
+                        #   column2 = column2.astype('f4')
+                        #   append_variable(outf, 'Y%s' % varname, column2,
+                        #                   attrs=attrs2)
                         #   # Vertical column densities
                         #   column = chem.calculate_vcd(xm, p, T, h, gas, top=0)
                         #   column = column.astype('f4')
