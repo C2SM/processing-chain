@@ -245,8 +245,6 @@ def main_process(date,inpath,outpath,species,param):
         outf.renameVariable("latitude","lat")
         outf.renameVariable("longitude","lon")
 
-        outf["lat"][:] = outf["lat"][::-1]
-        
         # Add the units; these must match those in $int2cosmo/src/trcr_gribtabs.f90
         for s in species:
             chem = s["name"]
