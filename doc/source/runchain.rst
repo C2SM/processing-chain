@@ -35,6 +35,10 @@ To run the **COSMOART** example case, run::
 
     $ python run_chain.py example_cosmoart_mother example_cosmoart_nested 2015-02-04 0 12 -j meteo icbc emissions obs_nudging photo_rate int2lm cosmo post_cosmo
 
+To run the **COSMO** example case with online emissions (oae), run::
+
+    $ python run_chain.py example_oae 2015-01-01 0 24 -j meteo icbc oae biofluxes int2lm post_int2lm cosmo post_cosmo
+
         
 What it does
 ------------
@@ -96,6 +100,8 @@ Functions in ``run_chain.py``
 -----------------------------
 
 .. autofunction:: run_chain.restart_runs
+
+.. autofunction:: run_chain.restart_runs_spinup
 
 .. autofunction:: run_chain.run_chain
 

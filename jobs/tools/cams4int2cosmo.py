@@ -177,6 +177,8 @@ def main(date, inpath, outpath, param):
 
     species = []
     for s in param["species"]:
+        logging.info(s)
+        logging.info(tracer2dict[s])
         try:
             species.append(tracer2dict[s])
         except KeyError:
@@ -244,6 +246,22 @@ def main_process(date,inpath,outpath,species,param):
         outf.renameDimension("longitude","lon")
         outf.renameVariable("latitude","lat")
         outf.renameVariable("longitude","lon")
+
+        # Reverse latitude for all fields so that startlat < endlat
+        for v in outf.variables:
+            dims = outf[v].dimensions
+            if 'lat' in dims:
+                lat_ind = dims.index('lat')
+                if lat_ind == 0:
+                    outf[v][:] = outf[v][::-1]
+                elif lat_ind == 1:
+                    outf[v][:] = outf[v][:,::-1]
+                elif lat_ind == 2:
+                    outf[v][:] = outf[v][:,:,::-1]
+                elif lat_ind == 3:
+                    outf[v][:] = outf[v][:,:,:,::-1]
+                elif lat_ind == 4:
+                    outf[v][:] = outf[v][:,:,:,:,::-1]
 
         # Add the units; these must match those in $int2cosmo/src/trcr_gribtabs.f90
         for s in species:

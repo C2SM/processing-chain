@@ -60,27 +60,27 @@ def main(starttime, hstart, hstop, cfg):
     logging.info("Setup the namelist for a COSMO tracer run and"
                  "submit the job to the queue")
 
-    # change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
+    # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
     if int(starttime.strftime("%Y%m%d%H")) < 2007080200:
         multi_layer = ".FALSE."
     else:
         multi_layer = ".TRUE."
     setattr(cfg, "multi_layer", multi_layer)
 
-    # create directory
+    # Create directories
     tools.create_dir(cfg.cosmo_work, "cosmo_work")
-    # muq: output_root not used in cfg
     tools.create_dir(cfg.cosmo_output, "cosmo_output")
-    if cfg.target is not tools.Target.COSMOART:
-        # cosmoart can't do restarts
+
+    # No restarts for COSMO-ART and for simulations with spinup
+    if cfg.target is not tools.Target.COSMOART and \
+       cfg.target.subtarget is not tools.Subtarget.SPINUP:
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
-    # copy cosmo executable
+    # Copy cosmo executable
     execname = cfg.target.name.lower()
     tools.copy_file(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, execname))
 
-    # Write INPUT_BGC from csv
-    # file with tracer definitions
+    # Write INPUT_BGC from csv file with tracer definitions
     if cfg.target is tools.Target.COSMO:
         tracer_csvfile = os.path.join(cfg.casename, 'cosmo_tracers.csv')
 
@@ -98,7 +98,7 @@ def main(starttime, hstart, hstop, cfg):
         namelist_names = ['ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO',
                           'ORG', 'PHY']
         if hasattr(cfg, 'oae_dir'):
-            # when doing online emissions in COSMO-ART, an additional
+            # When doing online emissions in COSMO-ART, an additional
             # namelist is required
             namelist_names += ['OAE']
 
@@ -108,10 +108,17 @@ def main(starttime, hstart, hstop, cfg):
 
         output_file = os.path.join(cfg.cosmo_work, "INPUT_" + section)
         with open(output_file, "w") as outf:
-            to_write = to_write.format(cfg=cfg,
-                                       restart_start=cfg.hstart+cfg.restart_step,
-                                       restart_stop=cfg.hstop,
-                                       restart_step=cfg.restart_step)
+            if cfg.target.subtarget is tools.Subtarget.SPINUP:
+                # no restarts
+                to_write = to_write.format(cfg=cfg,
+                                           restart_start=12,
+                                           restart_stop=0,
+                                           restart_step=12)
+            else:
+                to_write = to_write.format(cfg=cfg,
+                                           restart_start=cfg.hstart+cfg.restart_step,
+                                           restart_stop=cfg.hstop,
+                                           restart_step=cfg.restart_step)
             outf.write(to_write)
 
     # write run script (run.job)
