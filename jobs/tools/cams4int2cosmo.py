@@ -177,8 +177,10 @@ def main(date, inpath, outpath, param):
 
     species = []
     for s in param["species"]:
+        logging.info(s)
+        logging.info(tracer2dict[s])
         try:
-            s.append(tracer2dict[s])
+            species.append(tracer2dict[s])
         except KeyError:
             logging.error("Variable "+s+" is not part of the available list of variables.")
 
@@ -202,7 +204,8 @@ def main_process(date,inpath,outpath,species,param):
     hybm=[(b_half[i]+b_half[i+1])/2. for i in range(offset,len(a_half)-1)]   
     
     to_print = ",".join([species[i]["short_name"] for i in range(len(species))])
-    logging.info('Processing',to_print,'for time',date)
+    logging.info('Processing ' + to_print +
+                 ' for time ' + date.strftime("%Y%m%d%H"))
     
     infile=os.path.join(inpath,param["prefix1"]+"_"+date.strftime("%Y%m%d%H")+".nc")
     sfcfile=os.path.join(inpath,param["prefix2"]+"_"+date.strftime("%Y%m%d%H")+".nc")    
@@ -244,8 +247,22 @@ def main_process(date,inpath,outpath,species,param):
         outf.renameVariable("latitude","lat")
         outf.renameVariable("longitude","lon")
 
-        outf["lat"][:] = outf["lat"][::-1]
-        
+        # Reverse latitude for all fields so that startlat < endlat
+        for v in outf.variables:
+            dims = outf[v].dimensions
+            if 'lat' in dims:
+                lat_ind = dims.index('lat')
+                if lat_ind == 0:
+                    outf[v][:] = outf[v][::-1]
+                elif lat_ind == 1:
+                    outf[v][:] = outf[v][:,::-1]
+                elif lat_ind == 2:
+                    outf[v][:] = outf[v][:,:,::-1]
+                elif lat_ind == 3:
+                    outf[v][:] = outf[v][:,:,:,::-1]
+                elif lat_ind == 4:
+                    outf[v][:] = outf[v][:,:,:,:,::-1]
+
         # Add the units; these must match those in $int2cosmo/src/trcr_gribtabs.f90
         for s in species:
             chem = s["name"]

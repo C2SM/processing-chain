@@ -71,10 +71,10 @@ def main(starttime, hstart, hstop, cfg):
                                 time.strftime(source_nameformat))
 
         if not os.path.exists(src_file):
-            # TODO: if meteo file not in cfg.meteo_dir, try copy file from
-            # /store/s83/osm//LA%Y/%Y%m%d/coars/laf%Y%m%d%H on ela.cscs.ch
-            # using scp (requires account with access to MeteoSwiss
-            pass
+            archive = '/store/mch/msopr/owm/COSMO-7'
+            yy = time.strftime("%y")
+            path = '/'.join([archive, 'ANA' + yy])
+            src_file = os.path.join(path, time.strftime(source_nameformat))  
 
         # copy meteo file from project folder to
         tools.copy_file(src_file, dest_path)
