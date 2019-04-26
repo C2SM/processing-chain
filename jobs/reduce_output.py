@@ -93,6 +93,9 @@ def main(starttime, hstart, hstop, cfg):
             read_cfile = True
             logging.info('Successfully read constant file %s' % infile)
 
+    if not read_cfile:
+        logging.error('Constant file could not be read')
+
     for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*.nc"))): 
         if os.path.exists(infile) and read_cfile and not 'c_' in infile:
             # Get path and filename for output file
