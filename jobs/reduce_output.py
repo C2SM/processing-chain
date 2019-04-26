@@ -45,8 +45,12 @@ def append_variable(nc, name, values, attrs=None):
 
 
 def main(starttime, hstart, hstop, cfg):
-    """Extracts 2D column data and first 15 levels from **COSMO**
-    output directory to a new file (``cosmo_output_reduced``)
+    """Extracts 2D column data and a fixed number of levels from **COSMO**
+    output directory to a new netCDF file. Those files are written into 
+    a new directory ``cosmo_output_reduced``.
+
+    The number of levels is set by the configuration variable
+    ``cfg.output_levels``.
     
     Parameters
     ----------	
@@ -91,20 +95,53 @@ def main(starttime, hstart, hstop, cfg):
             with nc.Dataset(infile) as inf:
                 h = inf.variables['HHL'][0]
             read_cfile = True
+            cfile = infile
             logging.info('Successfully read constant file %s' % infile)
 
     if not read_cfile:
         logging.error('Constant file could not be read')
 
+    t = {}
+    p = {}
+    ps = {}
+    qv = {}
+    mair = {}
+
+    """Read parameters to calculate mair"""
+    logging.info('Read parameters to calculate mair')
     for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*.nc"))): 
-        if os.path.exists(infile) and read_cfile and not 'c_' in infile:
+        if os.path.exists(infile) and read_cfile and infile is not cfile:
+            time = infile.split('lffd', 1)[1][0:10]
+            with nc.Dataset(infile, 'r') as inf:
+                # Read meteorological variables (needed for mair and XCO2
+                # calculations) 
+                if 'T' in inf.variables.keys():
+                    logging.info('Get temperature field')
+                    t[time] = inf.variables['T'][0]
+                if 'P' in inf.variables.keys():
+                    logging.info('Get pressure field')
+                    p[time] = inf.variables['P'][0]
+                if 'PS' in inf.variables.keys():
+                    logging.info('Get surface pressure field')
+                    ps[time] = inf.variables['PS'][0]
+                if 'QV' in inf.variables.keys():
+                    logging.info('Get specific humidity field')
+                    qv[time] = inf.variables['QV'][0]
+                if time in t and time in p and time in ps and time in qv \
+                and not time in mair:
+                    logging.info('Calculate mass of dry air at %s' % time)
+                    mair[time] = chem.calculate_mair(p[time], ps[time], h)
+                    logging.info('Done!')
+
+    for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*.nc"))): 
+        if os.path.exists(infile) and read_cfile and infile is not cfile:
+            time = infile.split('lffd', 1)[1][0:10]
             # Get path and filename for output file
             path, output_filename = os.path.split(infile)
             outfile = os.path.join(output_path, output_filename)
             logging.info('%s -> %s' % (infile, outfile))
             # Remove any pre-existing output file
             if os.path.exists(outfile): os.remove(outfile)
-            # TODO: Write all data into one file per time step
             if 1:
                 with nc.Dataset(infile, 'r') as inf, \
                      nc.Dataset(outfile, 'w') as outf:
@@ -120,21 +157,6 @@ def main(starttime, hstart, hstop, cfg):
                     level = len(inf.dimensions['level'])
                     level1 = len(inf.dimensions['level1'])
 
-                    # Read meteorological variables (needed for mair and XCO2
-                    # calculations) 
-                  # if '_met' in infile:
-                  #     logging.info('Get temperature field')
-                  #     T = inf.variables['T'][0]
-                  #     logging.info('Get pressure field')
-                  #     p = inf.variables['P'][0]
-                  #     logging.info('Get surface pressure field')
-                  #     ps = inf.variables['PS'][0]
-                  #     logging.info('Get specific humidity field')
-                  #     q = inf.variables['QV'][0]
-                  #     logging.info('Calculate mass of dry air')
-                  #     # mass of dry air (kg/m2)
-                  #     mair = chem.calculate_mair(p, ps, h)
-                  #     logging.info('Done!')
 
                     # Copy variables
                     for varname in inf.variables.keys():
@@ -211,29 +233,24 @@ def main(starttime, hstart, hstop, cfg):
                                     'CH4_mass_fraction', 'CH4_vertical_column_density')
                             attrs['units'] = 'molecules cm-2'
 
-                      # gas = None
-                      # if varname.startswith('CO2_'): gas = 'CO2'
-                      # if varname.startswith('CO_'): gas = 'CO'
-                      # if varname.startswith('CH4_'): gas = 'CH4'
-                      # if varname.startswith('NO2_'): gas = 'NO2'
+                        gas = None
+                        if varname.startswith('CO2_'): gas = 'CO2'
+                        if varname.startswith('CO_'): gas = 'CO'
+                        if varname.startswith('CH4_'): gas = 'CH4'
+                        if varname.startswith('NO2_'): gas = 'NO2'
 
-                      # if gas:
-                        #   # Column-averaged dry-air mole fraction (molecules/cm2)
-                        #   xm = inf.variables[varname][0]
-                        #   column = chem.calculate_camf(xm, mair, gas, q)
-                        #   column = column.astype('f4')
-                        #   append_variable(outf, 'X%s' % varname, column,
-                        #                   attrs=attrs)
-                        #   # Column-averaged moist-air mole fraction (molecules/cm2)
-                        #   column2 = chem.calculate_camf(xm, mair, gas, 0.0)
-                        #   column2 = column2.astype('f4')
-                        #   append_variable(outf, 'Y%s' % varname, column2,
-                        #                   attrs=attrs2)
-                        #   # Vertical column densities
-                        #   column = chem.calculate_vcd(xm, p, T, h, gas, top=0)
-                        #   column = column.astype('f4')
-                        #   append_variable(outf, 'VCD_%s' % varname, column,
-                        #                   attrs=attrs)
+                        if gas:
+                            # Column-averaged dry-air mole fraction (molecules/cm2)
+                            xm = inf.variables[varname][0]
+                            column = chem.calculate_xgas(xm, mair[time], gas, qv[time])
+                            column = column.astype('f4')
+                            append_variable(outf, 'X%s' % varname, column,
+                                            attrs=attrs)
+                            # Column-averaged moist-air mole fraction (molecules/cm2)
+                            column2 = chem.calculate_xgas(xm, mair[time], gas, 0.0)
+                            column2 = column2.astype('f4')
+                            append_variable(outf, 'Y%s' % varname, column2,
+                                            attrs=attrs2)
 
                 logging.info('Apply compression')
                 compress.main(outfile, outfile+'.tmp', overwrite=True,
