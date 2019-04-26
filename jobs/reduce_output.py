@@ -84,7 +84,7 @@ def main(starttime, hstart, hstop, cfg):
         sys.exit(1)
 
     read_cfile = False
-    for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*c_*.nc"))): 
+    for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*[0-9]c*.nc"))): 
         if not read_cfile:
             logging.info(infile)
             # Read the first constant file and store height value
