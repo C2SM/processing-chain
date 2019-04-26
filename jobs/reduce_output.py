@@ -114,8 +114,8 @@ def main(starttime, hstart, hstop, cfg):
                     for name, dimension in inf.dimensions.items():
                         outf.createDimension(name, (len(dimension)
                             if not dimension.isunlimited() else None))
-                    # Create new dimension level15
-                    outf.createDimension('level15', 15)
+                    # Create new dimension level2
+                    outf.createDimension('level2', cfg.output_levels)
                     # Get level information
                     level = len(inf.dimensions['level'])
                     level1 = len(inf.dimensions['level1'])
@@ -145,15 +145,15 @@ def main(starttime, hstart, hstop, cfg):
                                                    'rlat', 'rlon') or
                                 var.dimensions == ('time', 'level1',
                                                    'rlat', 'rlon')):
-                                var_dimensions = ('time', 'level15',
+                                var_dimensions = ('time', 'level2',
                                                   'rlat', 'rlon')
                             elif (var.dimensions == ('time', 'level',
                                                      'srlat', 'rlon')):
-                                var_dimensions = ('time', 'level15',
+                                var_dimensions = ('time', 'level2',
                                                   'srlat', 'rlon')
                             elif (var.dimensions == ('time', 'level',
                                                      'rlat', 'srlon')):
-                                var_dimensions = ('time', 'level15',
+                                var_dimensions = ('time', 'level2',
                                                   'rlat', 'srlon')
                             else:
                                 var_dimensions = var.dimensions
@@ -170,10 +170,12 @@ def main(starttime, hstart, hstop, cfg):
                             # Check for 3D data and extract only lower_levels
                             if 'level1' in var.dimensions and \
                                 len(var.dimensions) == 4:
-                                    outf[varname][:] = inf[varname][:,level1-1-15:level1-1,:,:]
+                                    lstart = level1 - 1 - cfg.output_levels
+                                    outf[varname][:] = inf[varname][:,lstart:level1-1,:,:]
                             elif 'level' in var.dimensions and \
                                 len(var.dimensions) == 4:
-                                    outf[varname][:] = inf[varname][:,level-1-15:level-1,:,:]
+                                    lstart = level - 1 - cfg.output_levels
+                                    outf[varname][:] = inf[varname][:,lstart:level-1,:,:]
                             else:
                                 outf[varname][:] = inf[varname][:]
 
