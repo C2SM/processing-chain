@@ -94,7 +94,7 @@ def main(starttime, hstart, hstop, cfg):
             logging.info(infile)
             # Read the first constant file and store height value
             with nc.Dataset(infile) as inf:
-                h = inf.variables['HHL'][0]
+                h = np.array(inf.variables['HHL'][0])
             read_cfile = True
             cfile = infile
             logging.info('Successfully read constant file %s' % infile)
@@ -118,16 +118,16 @@ def main(starttime, hstart, hstop, cfg):
                 # calculations) 
                 if 'T' in inf.variables.keys():
                     logging.info('Get temperature field')
-                    t[dtime] = inf.variables['T'][0]
+                    t[dtime] = np.array(inf.variables['T'][0])
                 if 'P' in inf.variables.keys():
                     logging.info('Get pressure field')
-                    p[dtime] = inf.variables['P'][0]
+                    p[dtime] = np.array(inf.variables['P'][0])
                 if 'PS' in inf.variables.keys():
                     logging.info('Get surface pressure field')
-                    ps[dtime] = inf.variables['PS'][0]
+                    ps[dtime] = np.array(inf.variables['PS'][0])
                 if 'QV' in inf.variables.keys():
                     logging.info('Get specific humidity field')
-                    qv[dtime] = inf.variables['QV'][0]
+                    qv[dtime] = np.array(inf.variables['QV'][0])
                 if dtime in t and dtime in p and dtime in ps and dtime in qv \
                 and not dtime in mair:
                     logging.info('Calculate mass of dry air at %s' % dtime)
@@ -163,7 +163,7 @@ def main(starttime, hstart, hstop, cfg):
 
                     # Copy variables
                     for varname in inf.variables.keys():
-                        var = inf.variables[varname]
+                        var = np.array(inf.variables[varname])
                         attrs = get_attrs(var)
                         try:
                             if (var.dimensions == ('time', 'level',
@@ -244,7 +244,7 @@ def main(starttime, hstart, hstop, cfg):
 
                         if gas:
                             # Column-averaged dry-air mole fraction (molecules/cm2)
-                            xm = inf.variables[varname][0]
+                            xm = np.array(inf.variables[varname][0])
                             column = chem.calculate_xgas(xm, mair[dtime], gas, qv[dtime])
                             column = column.astype('f4')
                             append_variable(outf, 'X%s' % varname, column,
