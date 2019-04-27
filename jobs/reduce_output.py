@@ -9,6 +9,7 @@ import glob
 import netCDF4 as nc
 import subprocess
 import numpy as np
+import time
 
 from . import tools
 import amrs.misc.chem as chem
@@ -111,31 +112,33 @@ def main(starttime, hstart, hstop, cfg):
     logging.info('Read parameters to calculate mair')
     for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*.nc"))): 
         if os.path.exists(infile) and read_cfile and infile is not cfile:
-            time = infile.split('lffd', 1)[1][0:10]
+            dtime = infile.split('lffd', 1)[1][0:10]
             with nc.Dataset(infile, 'r') as inf:
                 # Read meteorological variables (needed for mair and XCO2
                 # calculations) 
                 if 'T' in inf.variables.keys():
                     logging.info('Get temperature field')
-                    t[time] = inf.variables['T'][0]
+                    t[dtime] = inf.variables['T'][0]
                 if 'P' in inf.variables.keys():
                     logging.info('Get pressure field')
-                    p[time] = inf.variables['P'][0]
+                    p[dtime] = inf.variables['P'][0]
                 if 'PS' in inf.variables.keys():
                     logging.info('Get surface pressure field')
-                    ps[time] = inf.variables['PS'][0]
+                    ps[dtime] = inf.variables['PS'][0]
                 if 'QV' in inf.variables.keys():
                     logging.info('Get specific humidity field')
-                    qv[time] = inf.variables['QV'][0]
-                if time in t and time in p and time in ps and time in qv \
-                and not time in mair:
-                    logging.info('Calculate mass of dry air at %s' % time)
-                    mair[time] = chem.calculate_mair(p[time], ps[time], h)
-                    logging.info('Done!')
+                    qv[dtime] = inf.variables['QV'][0]
+                if dtime in t and dtime in p and dtime in ps and dtime in qv \
+                and not dtime in mair:
+                    logging.info('Calculate mass of dry air at %s' % dtime)
+                    tstart = time.time() 
+                    mair[dtime] = chem.calculate_mair(p[dtime], ps[dtime], h)
+                    tend = time.time() 
+                    logging.info('Done! It took %.2f seconds' % (tend - tstart))
 
     for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*.nc"))): 
         if os.path.exists(infile) and read_cfile and infile is not cfile:
-            time = infile.split('lffd', 1)[1][0:10]
+            dtime = infile.split('lffd', 1)[1][0:10]
             # Get path and filename for output file
             path, output_filename = os.path.split(infile)
             outfile = os.path.join(output_path, output_filename)
@@ -242,12 +245,12 @@ def main(starttime, hstart, hstop, cfg):
                         if gas:
                             # Column-averaged dry-air mole fraction (molecules/cm2)
                             xm = inf.variables[varname][0]
-                            column = chem.calculate_xgas(xm, mair[time], gas, qv[time])
+                            column = chem.calculate_xgas(xm, mair[dtime], gas, qv[dtime])
                             column = column.astype('f4')
                             append_variable(outf, 'X%s' % varname, column,
                                             attrs=attrs)
                             # Column-averaged moist-air mole fraction (molecules/cm2)
-                            column2 = chem.calculate_xgas(xm, mair[time], gas, 0.0)
+                            column2 = chem.calculate_xgas(xm, mair[dtime], gas, 0.0)
                             column2 = column2.astype('f4')
                             append_variable(outf, 'Y%s' % varname, column2,
                                             attrs=attrs2)
