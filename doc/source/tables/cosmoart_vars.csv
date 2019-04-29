@@ -8,3 +8,7 @@ swissmu_dir, "Path to the directory containing icbc-files for nested runs", :fun
 swissmu_prefix, Prefix of the swissmu-files, :func:`jobs.icbc.main`
 swissmu_inc, Increment in hours between swissmu-files, :func:`jobs.icbc.main`
 int2lm_libgrib_dir, Path to the libgrib-directory used by the int2lm-executable, :func:`jobs.int2lm.main`
+int2lm_lu_dir, Path to the directory containing the landuse file, :func:`jobs.int2lm.main`
+int2lm_lu_file, Filename (inlcuding ending) of the landuse file, :func:`jobs.int2lm.main`
+int2lm_pft_dir, Path to the directory containing the plant functional type file, :func:`jobs.int2lm.main`
+int2lm_pft_dir, Filename (including ending) of the plant functional type file, :func:`jobs.int2lm.main`

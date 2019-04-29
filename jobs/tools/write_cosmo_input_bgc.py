@@ -4,6 +4,7 @@
 import csv
 import sys
 import os
+from .. import tools
 
 STR2INT = {
     'ytype_adv':      {'off': 0, 'on': 1},
@@ -18,8 +19,11 @@ STR2INT = {
     'ytype_clip':     {'off': 0, 'on': 1}
 }
 
+# Read initial conditions from file (= 1) in case of spinup simluation
+STR2INT_recycling = STR2INT.copy()
+STR2INT_recycling["ytype_ini"] = {'zero': 1, 'file': 1, 'user': 2}
 
-def group2text(group):
+def group2text(group, recycling=False):
 
     lines = ['&TRACER']
     for key, value in group.items():
@@ -28,7 +32,10 @@ def group2text(group):
             continue
 
         if key in STR2INT:
-            value = STR2INT[key][value]
+            if recycling:
+                value = STR2INT_recycling[key][value]
+            else:
+                value = STR2INT[key][value]
             key = 'i%s' % key[1:]
 
         if key[0] == 'y':
@@ -55,11 +62,18 @@ def main(csv_filename, namelist_filename, cfg=None):
         Path to the namelist file that will be created
     """
 
+
     # Check if online emissions ('oae') are used
     if hasattr(cfg, 'oae_dir'):
         oae = True
     else:
         oae = False
+
+    # Check if online VPRM ('vprm') is used
+    if hasattr(cfg, 'online_vprm_dir'):
+        online_vprm = True
+    else:
+        online_vprm = False
 
     with open(csv_filename, 'r') as csv_file:
 
@@ -68,36 +82,49 @@ def main(csv_filename, namelist_filename, cfg=None):
         n_tracers = len(reader)
 
         with open(namelist_filename, 'w') as nml_file:
-            if cfg == None or not oae:
-                nml_file.write(
-                    '\n'.join(['&BGCCTL',
-                               '  lc_cycle = .TRUE.,',
-                               '  in_tracers = %d,'
-                               % n_tracers, '/\n'])
-                    )
+            bgcctl_vals = ['&BGCCTL',
+                           '  lc_cycle = .TRUE.,',
+                           '  in_tracers = %d,' % n_tracers
+                           ]
             # Add input files for online emissions
-            else:
-                dest_dir = os.path.join(cfg.cosmo_input, "oae")
-                nml_file.write(
-                    '\n'.join(['&BGCCTL',
-                               '  lc_cycle = .TRUE.,',
-                               '  in_tracers = %d,' % n_tracers,
-                               '  vertical_profile_nc = \'' \
-                               + os.path.join(dest_dir, 'vertical_profiles.nc') + '\',',
+            if oae:
+                bgcctl_vals.extend(['  vertical_profile_nc = \'' \
+                               + '../input/oae/vertical_profiles.nc' + '\',',
                                '  hour_of_day_nc = \'' \
-                               + os.path.join(dest_dir, 'hourofday.nc') + '\',',
+                               + '../input/oae/hourofday.nc' + '\',',
                                '  day_of_week_nc = \'' \
-                               + os.path.join(dest_dir, 'dayofweek.nc') + '\',',
+                               + '../input/oae/dayofweek.nc' + '\',',
                                '  month_of_year_nc = \'' \
-                               + os.path.join(dest_dir, 'monthofyear.nc') + '\',',
+                               + '../input/oae/monthofyear.nc' + '\',',
                                '  gridded_emissions_nc = \'' \
-                               + os.path.join(dest_dir, 'emissions.nc') + '\',',
-                               '  iemiss_interp = 0,',
-                               '/\n'])
-                )
+                               + '../input/oae/emissions.nc' + '\',',
+                               '  iemiss_interp = 0,'
+                               ])
+            # Add input files for online VPRM
+            if online_vprm:
+                bgcctl_vals.extend(['  modis_reflectances_nc = \'' \
+                                    + '../input/vprm/modis.nc' + '\',',
+                                      '  veg_class_frac_nc = \'' \
+                                    + '../input/vprm/vegetation.nc' + '\','
+                                   ])
+            if cfg.target.subtarget is tools.Subtarget.SPINUP:
+                if cfg.first_one:
+                    bgcctl_vals.insert(len(bgcctl_vals),
+                                       '  tracer_start = 0.,')
+                else:
+                    bgcctl_vals.insert(len(bgcctl_vals),
+                                       '  tracer_start = %d.,' % cfg.spinup)
+
+            nml_file.write('\n'.join(bgcctl_vals))
+
+            nml_file.write('\n/\n')
 
             for group in reader:
-                nml_file.write(group2text(group))
+                if cfg.target.subtarget is tools.Subtarget.SPINUP \
+                and not cfg.first_one:
+                    nml_file.write(group2text(group, recycling=True))
+                else:
+                    nml_file.write(group2text(group))
 
 
 if __name__ == '__main__':

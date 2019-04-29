@@ -171,10 +171,12 @@ class Target(Enum):
 
 class Subtarget(Enum):
     NONE = auto()
+    SPINUP = auto()
 
 str_to_enum = {'cosmo': Target.COSMO,
                'cosmoart': Target.COSMOART,
-               'none': Subtarget.NONE}
+               'none': Subtarget.NONE,
+               'spinup': Subtarget.SPINUP}
 
 
 def check_target(cfg, target=Target.COSMO):

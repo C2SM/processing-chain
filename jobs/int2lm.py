@@ -73,11 +73,21 @@ def main(starttime, hstart, hstop, cfg):
     tools.copy_file(cfg.int2lm_bin, os.path.join(cfg.int2lm_work, "int2lm"))
 
     # Copy extpar file to input/extpar directory
-    extpar_folder = os.path.join(cfg.int2lm_input,"extpar")
+    extpar_dir = os.path.join(cfg.int2lm_input,"extpar")
     extpar_file = os.path.join(cfg.int2lm_extpar_dir, cfg.int2lm_extpar_file)
-    tools.create_dir(extpar_folder, "int2lm extpar")
-    tools.copy_file(extpar_file, extpar_folder)
+    tools.create_dir(extpar_dir, "int2lm extpar")
+    tools.copy_file(extpar_file, extpar_dir)
 
+    # Copy landuse and plant-functional-type files
+    if cfg.target is tools.Target.COSMOART:
+        lu_file_src = os.path.join(cfg.int2lm_lu_dir, cfg.int2lm_lu_file)
+        lu_file_dst = os.path.join(extpar_dir, 'landuse.nc')
+        tools.copy_file(lu_file_src, lu_file_dst)
+
+        pft_file_src = os.path.join(cfg.int2lm_pft_dir, cfg.int2lm_pft_file)
+        pft_file_dst = os.path.join(extpar_dir, 'pft.nc')
+        tools.copy_file(pft_file_src, pft_file_dst)
+    
     # Copy libgrib_api
     if cfg.target is tools.Target.COSMOART:
         dest = os.path.join(cfg.int2lm_work, 'libgrib_api')
