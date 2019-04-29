@@ -212,47 +212,80 @@ def main(starttime, hstart, hstop, cfg):
                             else:
                                 outf[varname][:] = inf[varname][:]
 
-                        # Attributes
-                        if varname.startswith('CO2_'):
-                            attrs['standard_name'] = attrs['standard_name'].replace(
-                                    'CO2_mass_fraction', 'CO2_column-averaged_dry-air_mole_fraction')
-                            attrs['long_name'] = attrs['long_name'].replace(
-                                    'CO2_mass_fraction', 'CO2_column-averaged_dry-air_mole_fraction')
-                            attrs['units'] = 'ppm'
-                            attrs2 = attrs.copy()
-                            attrs2['long_name'] = attrs2['long_name'].replace('dry-air', 'moist-air')
-                            attrs2['standard_name'] = attrs2['standard_name'].replace('dry-air', 'moist-air')
-
-                        elif varname.startswith('NO2_'):
-                            attrs['standard_name'] = attrs['standard_name'].replace(
-                                    'NOX_mass_fraction', 'NO2_vertical_column_density')
-                            attrs['long_name'] = attrs['long_name'].replace(
-                                    'NOX_mass_fraction', 'NO2_vertical_column_density')
-                            attrs['units'] = 'molecules cm-2'
-
-                        elif varname.startswith('CO_'):
-                            attrs['standard_name'] = attrs['standard_name'].replace(
-                                    'CO_mass_fraction', 'CO_vertical_column_density')
-                            attrs['long_name'] = attrs['long_name'].replace(
-                                    'CO_mass_fraction', 'CO_vertical_column_density')
-                            attrs['units'] = 'molecules cm-2'
-
-                        elif varname.startswith('CH4_'):
-                            attrs['standard_name'] = attrs['standard_name'].replace(
-                                    'CH4_mass_fraction', 'CH4_vertical_column_density')
-                            attrs['long_name'] = attrs['long_name'].replace(
-                                    'CH4_mass_fraction', 'CH4_vertical_column_density')
-                            attrs['units'] = 'molecules cm-2'
-
                         gas = None
-                        if varname.startswith('CO2_'): gas = 'CO2'
-                        if varname.startswith('CO_'): gas = 'CO'
-                        if varname.startswith('CH4_'): gas = 'CH4'
-                        if varname.startswith('NO2_'): gas = 'NO2'
+                        """Attributes and 'gas' flag"""
+                        if varname.startswith('CO2_'):
+                            gas = 'CO2'
+                            attrs['standard_name'] = attrs['standard_name'].replace(
+                                    'CO2_mass_fraction', 'XCO2')
+                            attrs['long_name'] = attrs['long_name'].replace(
+                                    'mass fraction',
+                                    'column-averaged dry-air mole fraction')
+                            attrs['long_name'] = attrs['long_name'].replace(
+                                    'Mass fraction',
+                                    'Column-averaged dry-air mole fraction')
+                            attrs['units'] = 'molecules cm-2'
+                            attrs2 = attrs.copy()
+                            attrs2['standard_name'] = attrs2['standard_name'].replace(
+                                                      'XCO2', 'YCO2')
+                            attrs2['long_name'] = attrs2['long_name'].replace(
+                                                  'dry-air', 'moist-air')
+                        elif varname.startswith('CO_'):
+                            gas = 'CO'
+                            attrs['standard_name'] = attrs['standard_name'].replace(
+                                    'CO_mass_fraction', 'XCO')
+                            attrs['long_name'] = attrs['long_name'].replace(
+                                    'mass fraction',
+                                    'column-averaged dry-air mole fraction')
+                            attrs['long_name'] = attrs['long_name'].replace(
+                                    'Mass fraction',
+                                    'Column-averaged dry-air mole fraction')
+                            attrs['units'] = 'molecules cm-2'
+                            attrs2 = attrs.copy()
+                            attrs2['standard_name'] = attrs2['standard_name'].replace(
+                                                      'XCO', 'YCO')
+                            attrs2['long_name'] = attrs2['long_name'].replace(
+                                                  'dry-air', 'moist-air')
+                        elif varname.startswith('CH4_'):
+                            gas = 'CH4'
+                            attrs['standard_name'] = attrs['standard_name'].replace(
+                                    'CH4_mass_fraction', 'XCH4')
+                            attrs['long_name'] = attrs['long_name'].replace(
+                                    'mass fraction',
+                                    'column-averaged dry-air mole fraction')
+                            attrs['long_name'] = attrs['long_name'].replace(
+                                    'Mass fraction',
+                                    'Column-averaged dry-air mole fraction')
+                            attrs['units'] = 'molecules cm-2'
+                            attrs2 = attrs.copy()
+                            attrs2['standard_name'] = attrs2['standard_name'].replace(
+                                                      'XCH4', 'YCH4')
+                            attrs2['long_name'] = attrs2['long_name'].replace(
+                                                  'dry-air', 'moist-air')
+                        elif varname.startswith('NO2_') or varname.startswith('NOX_'):
+                            gas = 'NO2'
+                            attrs['standard_name'] = attrs['standard_name'].replace(
+                                    'NOX', 'NO2')
+                            attrs['long_name'] = attrs['long_name'].replace(
+                                    'NOX', 'NO2')
+                            attrs['standard_name'] = attrs['standard_name'].replace(
+                                    'NO2_mass_fraction', 'XNO2')
+                            attrs['long_name'] = attrs['long_name'].replace(
+                                    'mass fraction',
+                                    'column-averaged dry-air mole fraction')
+                            attrs['long_name'] = attrs['long_name'].replace(
+                                    'Mass fraction',
+                                    'Column-averaged dry-air mole fraction')
+                            attrs['units'] = 'molecules cm-2'
+                            attrs2 = attrs.copy()
+                            attrs2['standard_name'] = attrs2['standard_name'].replace(
+                                                      'XNO2', 'YNO2')
+                            attrs2['long_name'] = attrs2['long_name'].replace(
+                                                  'dry-air', 'moist-air')
 
                         if gas:
-                            # Column-averaged dry-air mole fraction (molecules/cm2)
                             xm = np.array(inf.variables[varname][0])
+                            # Column-averaged dry-air mole fraction (molecules/cm2)
                             column = chem.calculate_xgas(xm, mair[dtime], gas, qv[dtime])
                             column = column.astype('f4')
                             append_variable(outf, 'X%s' % varname, column,
