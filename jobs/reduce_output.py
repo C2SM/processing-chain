@@ -88,19 +88,27 @@ def main(starttime, hstart, hstop, cfg):
                       "not on %s" % cfg.compute_host)
         sys.exit(1)
 
+    cfiles = []
     read_cfile = False
     for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*[0-9]c*.nc"))): 
+        cfiles.append(infile)
         if not read_cfile:
-            logging.info(infile)
             # Read the first constant file and store height value
+            logging.info(infile)
             with nc.Dataset(infile) as inf:
                 h = np.array(inf.variables['HHL'][0])
             read_cfile = True
-            cfile = infile
             logging.info('Successfully read constant file %s' % infile)
 
     if not read_cfile:
         logging.error('Constant file could not be read')
+
+    """Copy constant file directly"""
+    if os.path.exists(cfiles[0]):
+        shutil.copy(cfiles[0], output_path)  
+        logging.info('Copied constant file %s to %s.' % (cfiles[0], output_path))
+    else:
+        logging.error('Constant file could not be copied.')
 
     t = {}
     p = {}
@@ -111,7 +119,7 @@ def main(starttime, hstart, hstop, cfg):
     """Read parameters to calculate mair"""
     logging.info('Read parameters to calculate mair')
     for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*.nc"))): 
-        if os.path.exists(infile) and read_cfile and infile is not cfile:
+        if os.path.exists(infile) and read_cfile and not infile in cfiles:
             dtime = infile.split('lffd', 1)[1][0:10]
             with nc.Dataset(infile, 'r') as inf:
                 # Read meteorological variables (needed for mair and XCO2
@@ -137,7 +145,7 @@ def main(starttime, hstart, hstop, cfg):
                     logging.info('Done! It took %.2f seconds' % (tend - tstart))
 
     for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*.nc"))): 
-        if os.path.exists(infile) and read_cfile and infile is not cfile:
+        if os.path.exists(infile) and read_cfile and not infile in cfiles:
             dtime = infile.split('lffd', 1)[1][0:10]
             # Get path and filename for output file
             path, output_filename = os.path.split(infile)
@@ -163,7 +171,7 @@ def main(starttime, hstart, hstop, cfg):
 
                     # Copy variables
                     for varname in inf.variables.keys():
-                        var = np.array(inf.variables[varname])
+                        var = inf.variables[varname]
                         attrs = get_attrs(var)
                         try:
                             if (var.dimensions == ('time', 'level',
