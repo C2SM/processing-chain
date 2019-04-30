@@ -54,9 +54,6 @@ def read_lambdas(nc_dataset):
     assert lambda_var.dimensions[1] == 'nparam', (
         "Dimension ordering of 'lambda' variable incorrect")
 
-    # debug
-    print('Lambda-values for bg:\n', list(lambda_var[:, -1]))
-
     return list(lambda_var[:, -1])
 
 
