@@ -75,6 +75,12 @@ def main(csv_filename, namelist_filename, cfg=None):
     else:
         online_vprm = False
 
+    # Check if online CT ensembles is used
+    if hasattr(cfg, 'octe_lambdas'):
+        octe = True
+    else:
+        octe = False
+
     with open(csv_filename, 'r') as csv_file:
 
         reader = csv.DictReader(csv_file, delimiter=',')
@@ -107,6 +113,12 @@ def main(csv_filename, namelist_filename, cfg=None):
                                       '  veg_class_frac_nc = \'' \
                                     + '../input/vprm/vegetation.nc' + '\','
                                    ])
+            # Add input files for OCTE
+            if octe:
+                bgcctl_vals.extend([("  octe_maps_nc = "
+                                     "'../input/octe/maps.nc',"),
+                                    ("  octe_lambdas_nc = "
+                                     "'../input/octe/lambdas.nc',")])
             if cfg.target.subtarget is tools.Subtarget.SPINUP:
                 if cfg.first_one:
                     bgcctl_vals.insert(len(bgcctl_vals),
