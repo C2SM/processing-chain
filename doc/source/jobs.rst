@@ -14,8 +14,9 @@ on the result of others, the order indicated here as to be respected:
     :func:`jobs.obs_nudging.main`
 2.  :func:`jobs.int2lm.main`
 3.  :func:`jobs.post_int2lm.main`
-4.  :func:`jobs.cosmo.main`
-5.  :func:`jobs.post_cosmo.main` | :func:`jobs.reduce_output.main` |
+4.  :func:`jobs.octe.main`
+5.  :func:`jobs.cosmo.main`
+6.  :func:`jobs.post_cosmo.main` | :func:`jobs.reduce_output.main` |
     :func:`jobs.verify_chain.main`
 
 The same for **COSMOART**:
@@ -51,6 +52,7 @@ List of available jobs
 * :func:`jobs.icbc.main`
 * :func:`jobs.int2lm.main`
 * :func:`jobs.meteo.main`
+* :func:`jobs.octe.main`
 * :func:`jobs.online_vprm.main`  
 * :func:`jobs.oae.main`
 * :func:`jobs.obs_nudging.main`
@@ -90,6 +92,10 @@ List of available jobs
 -------------------------------------------
 
 .. autofunction:: jobs.online_vprm.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.octe.main
 
 -------------------------------------------
 
