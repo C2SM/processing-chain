@@ -263,13 +263,13 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met):
                         # Column-averaged dry-air mole fraction (molecules/cm2)
                         column = chem.calculate_xgas(xm, mair, gas, qv)
                         column = column.astype('f4')
-                        logging.info('X%s' % varname)
+                        logging.info('%s: X%s' % (output_filename, varname))
                         append_variable(outf, 'X%s' % varname, column,
                                         attrs=attrs)
                         # Column-averaged moist-air mole fraction (molecules/cm2)
                         column2 = chem.calculate_xgas(xm, mair, gas, 0.0)
                         column2 = column2.astype('f4')
-                        logging.info('Y%s' % varname)
+                        logging.info('%s: Y%s' % (output_filename, varname))
                         append_variable(outf, 'Y%s' % varname, column2,
                                         attrs=attrs2)
 

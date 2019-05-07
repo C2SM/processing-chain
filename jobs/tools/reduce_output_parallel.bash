@@ -11,6 +11,7 @@
 #SBATCH --time=00:30:00
 #SBATCH --constraint=mc
 #SBATCH --account=em05
+#SBATCH --mem=120GB
 
 
 #
@@ -90,11 +91,6 @@ done
 
 # make sure to wait until all jobs are finished
 wait
-
-# Now copy all plots from /scratch to /store
-echo "Copying plots from ${outdir} to ${storedir}"
-cp -r ${outdir} ${storedir}
-echo "Done!"
 
 exit 0
 

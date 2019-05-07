@@ -27,10 +27,6 @@ def main(starttime, hstart, hstop, cfg):
     The number of levels is set by the configuration variable
     ``cfg.output_levels`` (default = 20).
     
-    The step in hours for parallel output is set by
-    n = ``cfg.reduce_output_step``, which means that for every n hour of
-    output data, a new task is executed (default = 6 hours).
-    
     Important: This code only works if the tracers, for which the 
     column-averaged dry-air ('X') and moist-air ('Y') mole fractions are
     calculated, are 1.) saved in a separate output file and 2.) the output
@@ -107,6 +103,12 @@ def main(starttime, hstart, hstop, cfg):
     str_startdate = mytimes[0].strftime('%Y-%m-%d %H')
     str_enddate = mytimes[-1].strftime('%Y-%m-%d %H')
 
+    """Compute time step for parallel tasks"""
+    ncores = 36
+    total_time = mytimes[-1] - mytimes[0]
+    nout_times = int(total_time.total_seconds()//3600)
+    output_step = int(max(nout_times / ncores, 2))
+
     """Execute parallel bash script"""
     dir_path = os.path.dirname(os.path.realpath(__file__))
     tool_path = os.path.join(dir_path, 'tools')
@@ -117,7 +119,7 @@ def main(starttime, hstart, hstop, cfg):
     subprocess.call(["sbatch", '--output=' + logfile, '--open-mode=append', 
                      '--wait', bash_file, py_file, cosmo_output, output_path,
                      str_startdate, str_enddate, str(cfg.output_levels),
-                     str(cfg.reduce_output_step)]) 
+                     str(output_step)]) 
 
     date = dt.datetime.today()
     to_print = """=====================================================
