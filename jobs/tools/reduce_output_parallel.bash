@@ -3,15 +3,15 @@
 #	Will start any set of jobs in parallel from a bash script
 #
 #SBATCH --job-name=reduce_output
-#SBATCH --partition=prepost
+#SBATCH --partition=normal
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-core=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=36
-#SBATCH --time=00:30:00
+#SBATCH --time=02:00:00
 #SBATCH --constraint=mc
 #SBATCH --account=em05
-#SBATCH --mem=120GB
+##SBATCH --mem=120GB
 
 
 #
