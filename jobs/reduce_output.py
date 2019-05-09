@@ -122,6 +122,20 @@ def main(starttime, hstart, hstop, cfg):
                      str_startdate, str_enddate, str(cfg.output_levels),
                      str(output_step), csv_file]) 
 
+    """Check if all files have been processed"""
+    num_files_cosmo = len([name for name in os.listdir(cosmo_output)
+                           if os.path.isfile(os.path.join(cosmo_output, name))
+                           and name not in cfiles])
+    num_files_reduced = len([name for name in os.listdir(output_path) 
+                             if os.path.isfile(os.path.join(output_path, name))
+                             and name not in cfiles])
+    logging.info('Number of files in original output folder: %d' % num_files_cosmo)
+    logging.info('Number of files in reduced output folder:  %d' % num_files_reduced)
+
+    if num_files_cosmo != num_files_reduced:
+        logging.error('Number of files not equal!')
+        return 42
+
     date = dt.datetime.today()
     to_print = """=====================================================
 ============== POST PROCESSING ENDS ==================
