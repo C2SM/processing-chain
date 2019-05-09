@@ -17,6 +17,7 @@ from datetime import timedelta
 import glob
 import os
 import shutil
+import csv
 
 import amrs.misc.time as time
 import amrs.misc.chem as chem
@@ -25,34 +26,6 @@ import amrs.constants as constants
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-lsd = { 'U': 2,
-        'V': 2,
-        'W': 3,
-        'T': 2,
-        'P': 1,
-        'T_SO': 2,
-        'T_2M': 2,
-        'TD_2M': 2,
-        'PS': 1,
-        'CLCT': 3,
-        'CLC': 3,
-        'HPBL': 1,
-        'ALHFL_S': 2,
-        'ASHFL_S': 2,
-        'ASOB_S': 2,
-        'ATHB_S': 2,
-        'APAB_S': 2,
-        'ASWDIR_S': 2,
-        'ASWDIFD_S': 2,
-        'CO2_BG': 2, # ppm
-        'CO2_A': 2, # ppm
-        'CO2_GPP': 2, # ppm
-        'CO2_RA': 2, # ppm
-        'CO_BG': 1, # ppb
-        'CO_A': 1, # ppb
-        'CH4_BG': 1, # ppb
-        'CH4_A': 1, # ppb
-      } 
 
 def get_attrs(v):
     return dict((k, v.getncattr(k)) for k in v.ncattrs())
@@ -84,12 +57,12 @@ def append_variable(nc, name, values, attrs=None):
             var.setncattr(key, value)
 
 
-def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met):
+def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd):
     dtime = infile.split('lffd', 1)[1][0:10]
     """Get path and filename for output file"""
     path, output_filename = os.path.split(infile)
     outfile = os.path.join(output_path, output_filename)
-    try:
+    if 1:
         with nc.Dataset(infile, 'r') as inf, \
              nc.Dataset(outfile, 'w') as outf:
             # Copy global attributes all at once via dictionary
@@ -273,20 +246,20 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met):
                         append_variable(outf, 'Y%s' % varname, column2,
                                         attrs=attrs2)
 
-    except:
+    else:
         logging.error("Reduce data from file %s to file %s "
                       "failed." % (infile, outfile))
 
     return fname_met
 
 
-def main(indir, outdir, strdate_start, strdate_end, nout_levels):
+def main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile):
     """
     Script to reduce output.
     
-    Output:
+    Output: TODO
 
-    Parameters
+    Parameters (TODO)
     ----------
     opath : str
         Output path where the processed data is going to be written
@@ -334,10 +307,18 @@ def main(indir, outdir, strdate_start, strdate_end, nout_levels):
                   'QV': None,
                 }
 
+    """Translate csv file to dict"""
+    lsd = {}
+    with open(csvfile) as inf:
+        for row in csv.reader(inf, delimiter=','):
+            if not row[0].startswith('#'):
+                print(row[0])
+                lsd[row[0]] = int(row[1])
+
     """Loop over all input files and apply output reduction"""
     for infile in infiles:
         fname_met = reduce_output(infile, cfiles, h, int(nout_levels),
-                                  outdir, fname_met)
+                                  outdir, fname_met, lsd)
 
 
 if __name__ == '__main__':
@@ -346,5 +327,6 @@ if __name__ == '__main__':
     strdate_start = sys.argv[3]  
     strdate_end = sys.argv[4]  
     nout_levels = sys.argv[5]
-    main(indir, outdir, strdate_start, strdate_end, nout_levels)
+    csvfile = sys.argv[6]
+    main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile)
 

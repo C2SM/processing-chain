@@ -11,7 +11,7 @@
 #SBATCH --time=02:00:00
 #SBATCH --constraint=mc
 #SBATCH --account=em05
-##SBATCH --mem=120GB
+#SBATCH --mem=120GB
 
 
 #
@@ -75,6 +75,7 @@ input_start="$4" # "2017-10-15 00"
 input_end="$5" # "2017-10-16 12"  
 nout_levels="$6"
 hstep="$7"
+csvfile="$8"
 
 startdate=$(date -d "$input_start") || exit -1                                 
 enddate=$(date -d "$input_end")     || exit -1 
@@ -85,7 +86,7 @@ d="$startdate"
 while [ "$d" != "$enddate" ]; do                                               
   strdate_start=$(date -d "$d" +%Y%m%d%H)                                            
   strdate_end=$(date -d "${d} + ${step_end} hours" +%Y%m%d%H) 
-  run_with_lock python3.7 "$pyscript" "$indir" "$outdir" "$strdate_start" "$strdate_end" "$nout_levels"
+  run_with_lock python3.7 "$pyscript" "$indir" "$outdir" "$strdate_start" "$strdate_end" "$nout_levels" "$csvfile"
   d=$(date -d "${d} + ${hstep} hours")                                                   
 done
 

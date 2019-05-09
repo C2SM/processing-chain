@@ -114,12 +114,13 @@ def main(starttime, hstart, hstop, cfg):
     tool_path = os.path.join(dir_path, 'tools')
     bash_file = os.path.join(tool_path, 'reduce_output_parallel.bash')
     py_file = os.path.join(tool_path, 'reduce_output_start_end.py')
+    csv_file = os.path.join(tool_path, 'variables.csv')
     logfile=os.path.join(cfg.log_working_dir, 'reduce_output')
-    logging.info('Submitting job to the prepost queue...')
+    logging.info('Submitting job to the queue...')
     subprocess.call(["sbatch", '--output=' + logfile, '--open-mode=append', 
                      '--wait', bash_file, py_file, cosmo_output, output_path,
                      str_startdate, str_enddate, str(cfg.output_levels),
-                     str(output_step)]) 
+                     str(output_step), csv_file]) 
 
     date = dt.datetime.today()
     to_print = """=====================================================
