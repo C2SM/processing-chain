@@ -82,8 +82,8 @@ enddate=$(date -d "$input_end")     || exit -1
 step_end="$(($hstep - 1))"
 
 # Parallel loop (36 cores available)
-d="$startdate"                                                                 
-while [ "$d" != "$enddate" ]; do                                               
+d="$startdate"
+while [[ "$d" < "$enddate" || "$d" == "$enddate" ]]; do
   strdate_start=$(date -d "$d" +%Y%m%d%H)                                            
   strdate_end=$(date -d "${d} + ${step_end} hours" +%Y%m%d%H) 
   run_with_lock python3.7 "$pyscript" "$indir" "$outdir" "$strdate_start" "$strdate_end" "$nout_levels" "$csvfile"

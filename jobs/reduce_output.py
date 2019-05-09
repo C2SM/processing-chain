@@ -12,6 +12,7 @@ import numpy as np
 import time
 import resource
 from datetime import datetime
+import math
 
 from . import tools
 import amrs.misc.chem as chem
@@ -106,8 +107,8 @@ def main(starttime, hstart, hstop, cfg):
     """Compute time step for parallel tasks"""
     ncores = 36
     total_time = mytimes[-1] - mytimes[0]
-    nout_times = int(total_time.total_seconds()//3600)
-    output_step = int(max(nout_times / ncores, 2))
+    nout_times = int(total_time.total_seconds()//3600) + 1
+    output_step = int(max(math.ceil(nout_times / ncores), 2))
 
     """Execute parallel bash script"""
     dir_path = os.path.dirname(os.path.realpath(__file__))
