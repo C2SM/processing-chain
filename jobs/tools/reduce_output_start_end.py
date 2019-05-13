@@ -312,7 +312,6 @@ def main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile):
     with open(csvfile) as inf:
         for row in csv.reader(inf, delimiter=','):
             if not row[0].startswith('#'):
-                print(row[0])
                 lsd[row[0]] = int(row[1])
 
     """Loop over all input files and apply output reduction"""

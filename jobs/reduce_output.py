@@ -118,24 +118,32 @@ def main(starttime, hstart, hstop, cfg):
     csv_file = os.path.join(tool_path, 'variables.csv')
     logfile=os.path.join(cfg.log_working_dir, 'reduce_output')
     logging.info('Submitting job to the queue...')
-    subprocess.call(["sbatch", '--output=' + logfile, '--open-mode=append', 
-                     '--wait', bash_file, py_file, cosmo_output, output_path,
-                     str_startdate, str_enddate, str(cfg.output_levels),
-                     str(output_step), csv_file]) 
+    
+    exitcode = subprocess.call(["sbatch", '--output=' + logfile,
+                                '--open-mode=append', '--wait', bash_file,
+                                py_file, cosmo_output, output_path,
+                                str_startdate, str_enddate, 
+                                str(cfg.output_levels), str(output_step),
+                                csv_file]) 
+
+    if exitcode != 0:                                                          
+        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
 
     """Check if all files have been processed"""
-    num_files_cosmo = len([name for name in os.listdir(cosmo_output)
-                           if os.path.isfile(os.path.join(cosmo_output, name))
-                           and name not in cfiles])
-    num_files_reduced = len([name for name in os.listdir(output_path) 
-                             if os.path.isfile(os.path.join(output_path, name))
-                             and name not in cfiles])
-    logging.info('Number of files in original output folder: %d' % num_files_cosmo)
-    logging.info('Number of files in reduced output folder:  %d' % num_files_reduced)
+    cfile_names = []
+    for cfile in cfiles:
+        cfile_names.append(os.path.basename(cfile)) 
+    files_cosmo = sorted([name for name in os.listdir(cosmo_output)
+                          if os.path.isfile(os.path.join(cosmo_output, name))
+                          and name not in cfile_names])
+    files_reduced = sorted([name for name in os.listdir(output_path) 
+                            if os.path.isfile(os.path.join(output_path, name))
+                            and name not in cfile_names])
 
-    if num_files_cosmo != num_files_reduced:
-        logging.error('Number of files not equal!')
-        return 42
+    if not files_cosmo == files_reduced:
+        logging.error(set(files_cosmo).symmetric_difference(files_reduced))
+        logging.error('Reduced output files differ from original output!')
+        raise RuntimeError('Error in reduce_output job')
 
     date = dt.datetime.today()
     to_print = """=====================================================
