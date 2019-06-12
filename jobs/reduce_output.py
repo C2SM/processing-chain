@@ -124,7 +124,7 @@ def main(starttime, hstart, hstop, cfg):
                                 py_file, cosmo_output, output_path,
                                 str_startdate, str_enddate, 
                                 str(cfg.output_levels), str(output_step),
-                                csv_file,str(cfg.convert_gas)]) 
+                                csv_file, str(cfg.convert_gas)]) 
 
     if exitcode != 0:                                                          
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))

@@ -57,7 +57,8 @@ def append_variable(nc, name, values, attrs=None):
             var.setncattr(key, value)
 
 
-def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd, convert):
+def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
+                  convert):
     dtime = infile.split('lffd', 1)[1][0:10]
     """Get path and filename for output file"""
     path, output_filename = os.path.split(infile)
@@ -264,7 +265,8 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd, c
     return fname_met
 
 
-def main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile, convert_gas):
+def main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile,
+         convert_gas):
     """
     Script to reduce output.
     
@@ -339,5 +341,6 @@ if __name__ == '__main__':
     nout_levels = sys.argv[5]
     csvfile = sys.argv[6]
     convert_gas = sys.argv[7]
-    main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile, convert_gas)
+    main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile,
+         convert_gas)
 
