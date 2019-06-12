@@ -26,7 +26,7 @@ def main(starttime, hstart, hstop, cfg):
     Those files are written into a new directory ``cosmo_output_reduced``.
 
     The number of levels is set by the configuration variable
-    ``cfg.output_levels`` (default = 20).
+    ``cfg.output_levels`` (default = all levels).
     
     Important: This code only works if the tracers, for which the 
     column-averaged dry-air ('X') and moist-air ('Y') mole fractions are
@@ -124,7 +124,7 @@ def main(starttime, hstart, hstop, cfg):
                                 py_file, cosmo_output, output_path,
                                 str_startdate, str_enddate, 
                                 str(cfg.output_levels), str(output_step),
-                                csv_file]) 
+                                csv_file,str(cfg.convert_gas)]) 
 
     if exitcode != 0:                                                          
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))

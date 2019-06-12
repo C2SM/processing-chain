@@ -76,6 +76,7 @@ input_end="$5" # "2017-10-16 12"
 nout_levels="$6"
 hstep="$7"
 csvfile="$8"
+convert_gas="$9"
 
 startdate=$(date -d "$input_start") || exit -1                                 
 enddate=$(date -d "$input_end")     || exit -1 
@@ -86,7 +87,7 @@ d="$startdate"
 while [[ "$str_d" < "$input_end" || "$str_d" == "$input_end" ]]; do
   strdate_start=$(date -d "$d" +%Y%m%d%H)                                            
   strdate_end=$(date -d "${d} + ${step_end} hours" +%Y%m%d%H) 
-  run_with_lock python3.7 "$pyscript" "$indir" "$outdir" "$strdate_start" "$strdate_end" "$nout_levels" "$csvfile"
+  run_with_lock python3.7 "$pyscript" "$indir" "$outdir" "$strdate_start" "$strdate_end" "$nout_levels" "$csvfile" "$convert_gas"
   d=$(date -d "${d} + ${hstep} hours")                                                   
   str_d=$(date -d "$d" +%Y%m%d%H)
 done

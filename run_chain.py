@@ -334,7 +334,9 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
 
     # number of levels for 'reduce_output' job
     if not hasattr(cfg, 'output_levels'):
-        setattr(cfg, 'output_levels', 20)
+        setattr(cfg, 'output_levels', -1)
+    if not hasattr(cfg, 'convert_gas'):
+        setattr(cfg, 'convert_gas',True)
 
     # run jobs (if required)
     for job in job_names:
