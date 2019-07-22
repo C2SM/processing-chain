@@ -17,7 +17,7 @@ mail_address = {
 
 compute_host = 'daint'
 compute_queue = 'debug' #'debug' #'normal'
-compute_account = 's862' #'pr04'
+compute_account = 's862'
 
 # case name = pathname in cases/
 path = os.path.realpath(__file__)
@@ -46,15 +46,10 @@ meteo_prefix = "laf"
 meteo_inc = 1
 
 
-# ONLINE EMISSIONS ----------------------------------------------------------- #
-# Total yearly anthropogenic emissions
-oae_dir = os.path.join(input_root, 'oae')
-oae_gridded_emissions_nc = 'emissions.nc'
-oae_vertical_profiles_nc = 'vertical_profiles.nc'
-oae_hourofday_nc = 'hourofday.nc'
-oae_hourofyear_nc = 'hourofyear.nc'
-oae_dayofweek_nc = 'dayofweek.nc'
-oae_monthofyear_nc = 'monthofyear.nc'
+# EMISSIONS ------------------------------------------------------------------ #
+# anthropogenic emissions pre-processed for mother and nested domain
+emissions_dir = os.path.join(input_root, 'emissions_coarse')
+emis_gridname = "CO2_CO_NOX_Berlin-coarse_"
 
 
 # BIOFLUXES ------------------------------------------------------------------ #
@@ -62,9 +57,6 @@ oae_monthofyear_nc = 'monthofyear.nc'
 vprm_dir = os.path.join(input_root,'vprm_smartcarb','processed')
 vprm_prefix = ["vprm_"] #could be ["gpp_", "ra_"]
 
-# MODIS data for online VPRM
-modis_dir = os.path.join(input_root,'modis')
-modis_filename = 'COSMO_2D_MOD09A1.006_sur_refl.nc'
 
 # ICBC ----------------------------------------------------------------------- #
 # CAMS for CO2, CO and NOX initial and boundary conditions
@@ -98,14 +90,13 @@ cams_parameters = [{
      # "prefix2":"sfc_gf39",
      # "lev":137,
 },
-   # {#"suffix":"cams_nox",
-     #"inc" : 3,
+    {"suffix":"cams_nox",
+     "inc" : 3,
      # "species" :["NOX"],     
      # "prefix1":"cams_0001",
      # "prefix2":"sfc_0001",
      # "lev":60,
-     #}
-]
+     }]
 
 # CarbonTracker for CO2, CO and NOX initial and boundary conditions
 # ct_dir_orig = os.path.join(input_root, 'icbc') #Input directory
@@ -141,13 +132,7 @@ int2lm_namelist = '%s/cases/%s/int2lm_INPUT.cfg' % (chain_src_dir,casename)
 int2lm_runjob = '%s/cases/%s/int2lm_runjob.cfg' % (chain_src_dir,casename)
 
 # Walltimes
-if compute_queue=="normal":
-    int2lm_walltime="01:00:00"
-elif compute_queue=="debug":
-    int2lm_walltime="00:30:00"
-else: 
-    logging.error("Unset queue name: %s" % compute_queue)
-    sys.exit(1)
+int2lm_walltime="00:30:00"
 
 # Domain decomposition
 int2lm_nodes = 2
@@ -158,29 +143,21 @@ int2lm_np_tot = int2lm_np_x * int2lm_np_y
 
 
 # POST_INT2LM ---------------------------------------------------------------- #
-post_int2lm_species = ["CO2_BG"]
+post_int2lm_species = ["CO2_BG"]#,"CO_BG","CH4_BG","NOX_BG"]
 
 
 # COSMO ---------------------------------------------------------------------- #
 # Executable
-cosmo_bin = os.path.join(input_root,"executables/cosmo_v5.0_ghg_20190627") 
+cosmo_bin = os.path.join(input_root,"executables/cosmo_v5.6a_ghg_20190715")
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir,casename)
 cosmo_runjob = '%s/cases/%s/cosmo_runjob.cfg' % (chain_src_dir,casename)
 
 # Walltimes and domain decomposition
-if compute_queue=="normal":
-    cosmo_walltime="01:00:00"
-    cosmo_np_x=6
-    cosmo_np_y=5
-elif compute_queue=="debug":
-    cosmo_walltime="00:30:00"
-    cosmo_np_x=1
-    cosmo_np_y=1
-else: 
-    logging.error("Unknown queue name: %s" % compute_queue)
-    sys.exit(1)
+cosmo_walltime="00:30:00"
+cosmo_np_x=1
+cosmo_np_y=1
 
 cosmo_np_io = 0
 cosmo_np_tot = cosmo_np_x * cosmo_np_y + cosmo_np_io
@@ -200,7 +177,7 @@ reference_dir = os.path.join(input_root, "reference_output")
 # that post_cosmo copied it to, give the path to it here. Else leave it 'None'
 # output_dir = None
 # Use this if the post_cosmo job is not executed
-output_dir = os.environ['SCRATCH'] + ("/processing_chain/example_oae/"
+output_dir = os.environ['SCRATCH'] + ("/processing_chain/example/"
                                       "2015010100_0_24/cosmo/output")
 
 # variables_to_check is a dict() with a tuple() of filenames as key and a list
