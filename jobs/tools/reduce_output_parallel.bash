@@ -64,9 +64,10 @@ open_sem $N
 #       Setup for own script
 ##############################################
 
-module switch daint-gpu daint-mc
-module load EasyBuild-custom/cscs Anaconda3/4.4.0
-source activate amrs
+export EASYBUILD_PREFIX=/store/empa/em05/easybuild
+module load daint-gpu
+module load EasyBuild-custom/cscs
+source /store/empa/em05/pyvenv-3.6/bin/activate
 
 pyscript="$1"
 indir="$2"
