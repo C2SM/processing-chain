@@ -28,12 +28,15 @@ def main(starttime, hstart, hstop, cfg):
     The number of levels is set by the configuration variable
     ``cfg.output_levels`` (default = all levels).
     
-    Important: This code only works if the tracers, for which the 
-    column-averaged dry-air ('X') and moist-air ('Y') mole fractions are
-    calculated, are 1.) saved in a separate output file and 2.) the output
-    file appears alphabetically after the meteorological variables.
-    For example, use a GRIBOUT section suffix '_met' for standard **COSMO**
-    output, and '_trc' for tracers.
+    **Important**: If several ``GRIBOUT`` sections are used to split the output
+    data, then this code only works in case of the following:
+    The tracers, for which the column-averaged dry-air (``X``) and
+    moist-air (``Y``) mole fractions are calculated, have to be
+      1.) saved in a separate output file and
+      2.) the output file appears alphabetically **after** the meteorological
+          variables.
+    For example, use a GRIBOUT section suffix ``_met`` for standard **COSMO**
+    output, and ``_trc`` for tracers.
 
     Parameters
     ----------	
