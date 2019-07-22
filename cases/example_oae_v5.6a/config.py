@@ -17,7 +17,7 @@ mail_address = {
 
 compute_host = 'daint'
 compute_queue = 'debug' #'debug' #'normal'
-compute_account = 's862' #'pr04'
+compute_account = 's862'
 
 # case name = pathname in cases/
 path = os.path.realpath(__file__)
@@ -163,7 +163,9 @@ post_int2lm_species = ["CO2_BG"]
 
 # COSMO ---------------------------------------------------------------------- #
 # Executable
-cosmo_bin = os.path.join(input_root,"executables/cosmo_v5.0_ghg_20190627") 
+# COSMO ---------------------------------------------------------------------- #
+# Executable
+cosmo_bin=  os.path.join(input_root,"executables/cosmo_v5.6a_ghg_20190704") 
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir,casename)
