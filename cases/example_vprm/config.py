@@ -149,7 +149,7 @@ post_int2lm_species = ["CO2_BG"]
 
 # COSMO ---------------------------------------------------------------------- #
 # Executable
-cosmo_bin=  os.path.join(input_root,"executables/cosmo_vprm_20190621") 
+cosmo_bin = os.path.join(input_root,"executables/cosmo_v5.0_ghg_20190627") 
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir,casename)

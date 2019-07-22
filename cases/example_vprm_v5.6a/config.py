@@ -17,7 +17,7 @@ mail_address = {
 
 compute_host = 'daint'
 compute_queue = 'debug' #'debug' #'normal'
-compute_account = 's862' #'pr04'
+compute_account = 's862'
 
 # case name = pathname in cases/
 path = os.path.realpath(__file__)
@@ -46,25 +46,11 @@ meteo_prefix = "laf"
 meteo_inc = 1
 
 
-# ONLINE EMISSIONS ----------------------------------------------------------- #
-# Total yearly anthropogenic emissions
-oae_dir = os.path.join(input_root, 'oae')
-oae_gridded_emissions_nc = 'emissions.nc'
-oae_vertical_profiles_nc = 'vertical_profiles.nc'
-oae_hourofday_nc = 'hourofday.nc'
-oae_hourofyear_nc = 'hourofyear.nc'
-oae_dayofweek_nc = 'dayofweek.nc'
-oae_monthofyear_nc = 'monthofyear.nc'
+# MODIS and vegetation data for online VPRM
+online_vprm_dir = os.path.join(input_root, 'online_vprm')
+modis_filename = 'MODIS_sur_refl_example_vprm.nc'
+vegetation_filename = 'VPRM_VegClasses_example_vprm.nc' 
 
-
-# BIOFLUXES ------------------------------------------------------------------ #
-# VPRM biogenic fluxes
-vprm_dir = os.path.join(input_root,'vprm_smartcarb','processed')
-vprm_prefix = ["vprm_"] #could be ["gpp_", "ra_"]
-
-# MODIS data for online VPRM
-modis_dir = os.path.join(input_root,'modis')
-modis_filename = 'COSMO_2D_MOD09A1.006_sur_refl.nc'
 
 # ICBC ----------------------------------------------------------------------- #
 # CAMS for CO2, CO and NOX initial and boundary conditions
@@ -163,7 +149,7 @@ post_int2lm_species = ["CO2_BG"]
 
 # COSMO ---------------------------------------------------------------------- #
 # Executable
-cosmo_bin = os.path.join(input_root,"executables/cosmo_v5.0_ghg_20190627") 
+cosmo_bin=  os.path.join(input_root,"executables/cosmo_v5.6a_ghg_20190704") 
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir,casename)
@@ -200,7 +186,7 @@ reference_dir = os.path.join(input_root, "reference_output")
 # that post_cosmo copied it to, give the path to it here. Else leave it 'None'
 # output_dir = None
 # Use this if the post_cosmo job is not executed
-output_dir = os.environ['SCRATCH'] + ("/processing_chain/example_oae/"
+output_dir = os.environ['SCRATCH'] + ("/processing_chain/example_vprm/"
                                       "2015010100_0_24/cosmo/output")
 
 # variables_to_check is a dict() with a tuple() of filenames as key and a list
@@ -208,5 +194,5 @@ output_dir = os.environ['SCRATCH'] + ("/processing_chain/example_oae/"
 # files to check, the list contains the variable-names that are compared.
 # The verify_chain job will look for the files in the reference_dir (first tuple
 # element) and the ouput_dir (second tuple element)
-values_to_check = {("reference_lffd2015010200.nc","lffd2015010200.nc") :
-                      ['T', 'U', 'V', 'CO2_A']}
+values_to_check = {("reference_vprm_lffd2015010200.nc","lffd2015010200.nc") :
+                      ['T', 'U', 'V', 'CO2_BG', 'CO2_GPP', 'CO2_RA']}

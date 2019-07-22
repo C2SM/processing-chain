@@ -149,14 +149,12 @@ int2lm_np_tot = int2lm_np_x * int2lm_np_y
 
 
 # POST_INT2LM ---------------------------------------------------------------- #
-post_int2lm_species = ["CO2_BG"]#,"CO_BG","CH4_BG","NOX_BG"]
+post_int2lm_species = ["CO2_BG"]
 
 
 # COSMO ---------------------------------------------------------------------- #
 # Executable
-# COSMO ---------------------------------------------------------------------- #
-# Executable
-cosmo_bin=  os.path.join(input_root,"executables/cosmo_20181029") 
+cosmo_bin = os.path.join(input_root,"executables/cosmo_v5.0_ghg_20190627") 
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir,casename)
