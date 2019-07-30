@@ -34,7 +34,33 @@ def get_attrs(v):
 def str2char(s):
     return np.array(list(s), 'c')
 
+def search_met(infile,fname_met):
+    """
+    Checks which file contains the meteorology data
+    """
+    time = None
+    tocheck = []
+    print(infile)
+    for f in infile:
+        basename = os.path.split(f)[1]
+        print(basename)
+        timestr = basename.split('lffd',1)[1][:10]
+        mytime = datetime.strptime(timestr, '%Y%m%d%H')
+        if time is None:
+            time = mytime
+        if mytime == time:
+            tocheck.append(f)
 
+    for f in tocheck:
+        with nc.Dataset(f, 'r') as inf:
+            for var in ['T', 'P', 'PS', 'QV']:
+                if var in inf.variables:
+                    basename = os.path.split(f)[1]
+                    fileending = basename.split('lffd',1)[1][10:-3]
+                    fname_met[var] = fileending
+
+    return fname_met
+    
 def append_variable(nc, name, values, attrs=None):
     """\
     Append variable (name, values) to netCDF file.
@@ -120,10 +146,6 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
                 for attr in var.ncattrs():
                     outf[varname].setncattr(attr, inf[varname].getncattr(attr))
 
-                if varname == 'T' or varname == 'P' or  varname == 'PS' \
-                or varname == 'QV':
-                    fname_met[varname] = infile
-
                 gas = None
                 if varname != 'rotated_pole':
                     # Check for 3D data and extract only lower_levels
@@ -138,8 +160,8 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
 
                 outvar = outf.variables[varname]
                 if varname.startswith('CO2_'):
+                    gas = 'CO2'
                     if convert:
-                        gas = 'CO2'
                         outf[varname][:] = inf[varname][:,lstart:,:,:] * \
                                            constants.M['air'] / constants.M[gas] * 1e6
                         outvar.units = 'ppm'
@@ -160,8 +182,8 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
                     attrs2['long_name'] = attrs2['long_name'].replace(
                                           'dry-air', 'moist-air')
                 elif varname.startswith('CO_'):
+                    gas = 'CO'
                     if convert:
-                        gas = 'CO'
                         outf[varname][:] = inf[varname][:,lstart:,:,:] * \
                                            constants.M['air'] / constants.M[gas] * 1e9
                         outvar.units = 'ppb'
@@ -182,8 +204,8 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
                     attrs2['long_name'] = attrs2['long_name'].replace(
                                           'dry-air', 'moist-air')
                 elif varname.startswith('CH4_'):
+                    gas = 'CH4'
                     if convert:
-                        gas = 'CH4'
                         outf[varname][:] = inf[varname][:,lstart:,:,:] * \
                                            constants.M['air'] / constants.M[gas] * 1e9
                         outvar.units = 'ppb'
@@ -234,10 +256,11 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
                     outf[varname][:] = inf[varname][:,lstart:,:,:]
 
                 if gas:
-                    with nc.Dataset(fname_met['QV'], 'r') as inf_qv, \
-                         nc.Dataset(fname_met['T'], 'r') as inf_t, \
-                         nc.Dataset(fname_met['PS'], 'r') as inf_ps, \
-                         nc.Dataset(fname_met['P'], 'r') as inf_p:
+                    fname_met_base = os.path.split(infile)[0]+'/'+os.path.split(infile)[1][:14]
+                    with nc.Dataset(fname_met_base+fname_met['QV']+'.nc', 'r') as inf_qv, \
+                         nc.Dataset(fname_met_base+fname_met['T']+'.nc', 'r') as inf_t, \
+                         nc.Dataset(fname_met_base+fname_met['PS']+'.nc', 'r') as inf_ps, \
+                         nc.Dataset(fname_met_base+fname_met['P']+'.nc', 'r') as inf_p:
                         qv = np.array(inf_qv.variables['QV'][0])
                         t = np.array(inf_t.variables['T'][0])
                         ps = np.array(inf_ps.variables['PS'][0])
@@ -319,7 +342,8 @@ def main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile,
                   'PS': None,
                   'QV': None,
                 }
-
+    fname_met = search_met(infiles, fname_met)
+    
     """Translate csv file to dict"""
     lsd = {}
     with open(csvfile) as inf:
