@@ -286,6 +286,13 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         else:
             setattr(cfg, 'constraint', 'gpu')
 
+    # asynchronous I/O
+    if cfg.cosmo_np_io == 0:
+        setattr(cfg, 'lasync_io', '.FALSE.')
+        setattr(cfg, 'num_iope_percomm', 0)
+    else:
+        setattr(cfg, 'lasync_io', '.TRUE.')
+        setattr(cfg, 'num_iope_percomm', 1)
 
     if cfg.target.subtarget is tools.Subtarget.SPINUP:
         setattr(cfg, 'last_cosmo_output',
