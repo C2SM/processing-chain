@@ -16,7 +16,7 @@ on the result of others, the order indicated here as to be respected:
 3.  :func:`jobs.post_int2lm.main`
 4.  :func:`jobs.octe.main`
 5.  :func:`jobs.cosmo.main`
-6.  :func:`jobs.post_cosmo.main` | :func:`jobs.extract_2d_data.main` |
+6.  :func:`jobs.post_cosmo.main` | :func:`jobs.reduce_output.main` |
     :func:`jobs.verify_chain.main`
 
 The same for **COSMOART**:
@@ -27,7 +27,7 @@ The same for **COSMOART**:
    :func:`jobs.oae.main`
 2. :func:`jobs.int2lm.main`
 3. :func:`jobs.cosmo.main`
-4. :func:`jobs.post_cosmo.main` | :func:`jobs.extract_2d_data.main` |
+4. :func:`jobs.post_cosmo.main` | :func:`jobs.reduce_output.main` |
    :func:`jobs.verify_chain.main`
 
 Adding new jobs
@@ -48,7 +48,7 @@ List of available jobs
 * :func:`jobs.biofluxes.main`
 * :func:`jobs.cosmo.main`
 * :func:`jobs.emissions.main`
-* :func:`jobs.extract_2d_data.main`
+* :func:`jobs.reduce_output.main`
 * :func:`jobs.icbc.main`
 * :func:`jobs.int2lm.main`
 * :func:`jobs.meteo.main`
@@ -75,7 +75,7 @@ List of available jobs
 
 -------------------------------------------
 
-.. autofunction:: jobs.extract_2d_data.main
+.. autofunction:: jobs.reduce_output.main
 
 -------------------------------------------
 
