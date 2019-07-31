@@ -11,9 +11,9 @@
 
 ** Namelist
 
-   The namelist ~INPUT_BGC~ has to be extended with the following values:
+   The namelist ~INPUT_GHG~ has to be extended with the following values:
 
-*** Group ~BGCCTL~
+*** Group ~GHGCTL~
 
 **** Online VPRM
 
@@ -37,7 +37,7 @@
     An example namelist for two ensemble members could look like this:
 
     #+BEGIN_EXAMPLE
-    &BGCCTL
+    &GHGCTL
       lc_cycle = .TRUE.,
       in_tracers = 6,
       modis_reflectances_nc = '/path/to/modis.nc',
@@ -117,13 +117,13 @@
 
 **** Modis reflectances
 
-     Path specified in namelist ~INPUT_BGC/BGCCTL/modis_reflectances_nc~.
+     Path specified in namelist ~INPUT_GHG/GHGCTL/modis_reflectances_nc~.
 
 **** Vegetation class
 
      There are 8 vegetation classes in the VPRM model. Gridcells can contain fractional
      coverage of these classes.
-     Path specified in namelist ~INPUT_BGC/BGCCTL/veg_class_fractional_nc~.
+     Path specified in namelist ~INPUT_GHG/GHGCTL/veg_class_fractional_nc~.
 
 *** Online Ensembles
 
@@ -134,7 +134,7 @@
 
 **** Maps
 
-     Path specified in namelist ~INPUT_BGC/BGCCTL/octe_maps_nc~.
+     Path specified in namelist ~INPUT_GHG/GHGCTL/octe_maps_nc~.
      Both the regional and the pft map are defined on the 2D cosmo grid and are therefore
      in the same file. The file should contain four dimensions ~(rlat, rlon, npft, nreg)~ and
      two variables:
@@ -182,7 +182,7 @@
 
 **** Lambdas 
 
-     Path specified in namelist ~INPUT_BGC/BGCCTL/octe_lambdas_nc~.
+     Path specified in namelist ~INPUT_GHG/GHGCTL/octe_lambdas_nc~.
      Each combination of region & plant functional type has a seperate lambda value, as well as
      one value for the background.
 
@@ -214,7 +214,7 @@
      #+END_EXAMPLE
 
      To be consistent with the ~octe_maps_nc~-file, the following relation has to be true:
-     ~nparam = 2 * npft * nreg + 1~. In the ~INPUT_BGC~-namelist, there have to be ~nensembles~
+     ~nparam = 2 * npft * nreg + 1~. In the ~INPUT_GHG~-namelist, there have to be ~nensembles~
      GPP, respiration and background tracers defined. See the namelist section for more info.
 
 * Computation

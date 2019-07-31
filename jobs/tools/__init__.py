@@ -14,7 +14,7 @@ from . import ctnoaa4int2cosmo
 from . import string2char
 from . import vprmsplit
 from . import write_int2lm_input_art
-from . import write_cosmo_input_bgc
+from . import write_cosmo_input_ghg
 from . import mozart2int2lm
 from .check_target import check_target
 from . import comp_nc
