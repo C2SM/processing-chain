@@ -51,7 +51,7 @@ def group2text(group, recycling=False):
 
 
 def main(csv_filename, namelist_filename, cfg=None):
-    """Convert a table (``.csv`` file) to namelist file (``INPUT_BGC``)
+    """Convert a table (``.csv`` file) to namelist file (``INPUT_GHG``)
     read by **COSMO**
     
     Parameters
@@ -88,13 +88,12 @@ def main(csv_filename, namelist_filename, cfg=None):
         n_tracers = len(reader)
 
         with open(namelist_filename, 'w') as nml_file:
-            bgcctl_vals = ['&BGCCTL',
-                           '  lc_cycle = .TRUE.,',
+            ghgctl_vals = ['&GHGCTL',
                            '  in_tracers = %d,' % n_tracers
                            ]
             # Add input files for online emissions
             if oae:
-                bgcctl_vals.extend(['  vertical_profile_nc = \'' \
+                ghgctl_vals.extend(['  vertical_profile_nc = \'' \
                                + '../input/oae/vertical_profiles.nc' + '\',',
                                '  hour_of_day_nc = \'' \
                                + '../input/oae/hourofday.nc' + '\',',
@@ -108,26 +107,26 @@ def main(csv_filename, namelist_filename, cfg=None):
                                ])
             # Add input files for online VPRM
             if online_vprm:
-                bgcctl_vals.extend(['  modis_reflectances_nc = \'' \
+                ghgctl_vals.extend(['  modis_reflectances_nc = \'' \
                                     + '../input/vprm/modis.nc' + '\',',
                                       '  veg_class_frac_nc = \'' \
                                     + '../input/vprm/vegetation.nc' + '\','
                                    ])
             # Add input files for OCTE
             if octe:
-                bgcctl_vals.extend([("  octe_maps_nc = "
+                ghgctl_vals.extend([("  octe_maps_nc = "
                                      "'../input/octe/maps.nc',"),
                                     ("  octe_lambdas_nc = "
                                      "'../input/octe/lambdas.nc',")])
             if cfg.target.subtarget is tools.Subtarget.SPINUP:
                 if cfg.first_one:
-                    bgcctl_vals.insert(len(bgcctl_vals),
+                    ghgctl_vals.insert(len(ghgctl_vals),
                                        '  tracer_start = 0.,')
                 else:
-                    bgcctl_vals.insert(len(bgcctl_vals),
+                    ghgctl_vals.insert(len(ghgctl_vals),
                                        '  tracer_start = %d.,' % cfg.spinup)
 
-            nml_file.write('\n'.join(bgcctl_vals))
+            nml_file.write('\n'.join(ghgctl_vals))
 
             nml_file.write('\n/\n')
 

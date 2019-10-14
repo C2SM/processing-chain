@@ -80,16 +80,16 @@ def main(starttime, hstart, hstop, cfg):
     execname = cfg.target.name.lower()
     tools.copy_file(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, execname))
 
-    # Write INPUT_BGC from csv file with tracer definitions
+    # Write INPUT_GHG from csv file with tracer definitions
     if cfg.target is tools.Target.COSMO:
         tracer_csvfile = os.path.join(cfg.casename, 'cosmo_tracers.csv')
 
         tracer_filename = os.path.join(cfg.chain_src_dir,
                                        'cases', tracer_csvfile)
-        input_bgc_filename = os.path.join(cfg.cosmo_work, 'INPUT_BGC')
+        input_ghg_filename = os.path.join(cfg.cosmo_work, 'INPUT_GHG')
 
-        tools.write_cosmo_input_bgc.main(tracer_filename,
-                                         input_bgc_filename, cfg)
+        tools.write_cosmo_input_ghg.main(tracer_filename,
+                                         input_ghg_filename, cfg)
 
     # Prepare namelist and submit job
     if cfg.target is tools.Target.COSMO:
