@@ -81,6 +81,15 @@ def parse_arguments():
                         action='store_true',
                         help=force_help)
 
+    tries_help = ("Amount of tries before crashing."
+                  " Default is 1.")
+    parser.add_argument("-t", "--try",
+                        help=tries_help,
+                        dest="ntry",
+                        type=int,
+                        default=1)
+
+
     args = parser.parse_args()
     args.startdate = args.times[0]
     args.hstart = int(args.times[1])
@@ -318,6 +327,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                                      job_id,
                                      'cosmo',
                                      'output')
+
         cfg.meteo_inc = 1
         cfg.meteo_prefix = 'lffd'
 
@@ -331,6 +341,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     tools.create_dir(chain_root, "chain_root")
     tools.create_dir(log_working_dir, "log_working")
     tools.create_dir(log_finished_dir, "log_finished")
+
 
     # run jobs (if required)
     for job in job_names:
@@ -366,28 +377,35 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         if not skip:
             print('Process "%s" for chain "%s"' % (job, job_id))
             sys.stdout.flush()
+            
+            try_count = args.ntry
+            while try_count>0:
+                try_count-=1
+                try:
+                    # Change the log file
+                    logfile=os.path.join(cfg.log_working_dir,job)
+                    logfile_finish=os.path.join(cfg.log_finished_dir,job)
+                    tools.change_logfile(logfile)
 
-            try:
-                # Change the log file
-                logfile=os.path.join(cfg.log_working_dir,job)
-                logfile_finish=os.path.join(cfg.log_finished_dir,job)
-                tools.change_logfile(logfile)
+                    # Launch the job
+                    to_call = getattr(jobs,job)
+                    to_call.main(start_time,hstart,hstop,cfg)
 
-                # Launch the job
-                to_call = getattr(jobs,job)
-                to_call.main(start_time,hstart,hstop,cfg)
-                
-                shutil.copy(logfile, logfile_finish)
+                    shutil.copy(logfile, logfile_finish)
 
-                exitcode=0
-            except:
-                subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (job,
-                          job_id)
-                logging.exception(subject)
-                with open(os.path.join(log_working_dir, job)) as logfile:
-                    message = logfile.read()
-                tools.send_mail(cfg.mail_address, subject, message)
-                raise RuntimeError(subject)
+                    exitcode=0
+                    try_count=0
+                except:
+                    subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (job,
+                              job_id)
+                    logging.exception(subject)
+                    with open(os.path.join(log_working_dir, job)) as logfile:
+                        message = logfile.read()
+                    tools.send_mail(cfg.mail_address, subject, message)
+                    if try_count ==0:
+                        raise RuntimeError(subject)
+
+                    
                 
             # except AttributeError:
             #     print(job+".py not found so running the bash script instead")
