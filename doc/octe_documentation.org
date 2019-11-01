@@ -1,0 +1,268 @@
+#+TITLE: Online CarbonTracker Ensembles
+# This is an [[https://orgmode.org/][org mode]] file. To export it to LaTeX, open it in emacs and press 'Ctrl-c' 'Ctrl-e'
+# This file describes the COSMO module accompanied by the job 'octe'
+
+* INPUT
+
+  To create online CarbonTracker ensembles (OCTE), COSMO requires input as described below.
+  The processing chain has also been extended and is able to prepare simulations with OCTE.
+  The relevant jobs are ~online_vprm~ and ~octe~, see the processing chain documentation for
+  more information.
+
+** Namelist
+
+   The namelist ~INPUT_GHG~ has to be extended with the following values:
+
+*** Group ~GHGCTL~
+
+**** Online VPRM
+
+     The online VPRM module needs two variables, ~modis_reflectances~ and
+     ~veg_class_fractional_nc~. They are paths to NetCDF files, the files are
+     described later.
+
+**** Online ensembles
+
+     The OCTE module requires again two additional paths, ~octe_maps_nc~ and
+     ~octe_lambdas_nc~.
+
+*** Group ~TRACER~
+
+    For each ensemble, a GPP, respiration and BG tracer have to be defined. Their
+    naming scheme is ~{CO2_GPP|CO2_RA|CO2_BG}nnn~, where ~nnn~ counts up from ~001~ to
+    the number of ensembles. The GPP and respiration tracers should have ~itype_flux=3~
+    for the flux to be calculated online and be pertubed by the lambdas to form
+    ensemble members.
+
+    An example namelist for two ensemble members could look like this:
+
+    #+BEGIN_EXAMPLE
+    &GHGCTL
+      lc_cycle = .TRUE.,
+      in_tracers = 6,
+      modis_reflectances_nc = '/path/to/modis.nc',
+      veg_class_fractional_nc = '/path/to/vprm_map.nc',
+      octe_maps_nc = '/path/to/example_pft_reg_file.nc',
+      octe_lambda_nc = 'path/to/example_lambda_file.nc'
+    /
+    &TRACER
+      yshort_name = 'CO2_BG001',
+      igribparam = 1,
+      igribtable = 13,
+      itype_emiss = 0,
+      itype_flux = 0,
+      yunits = 'kg kg-1',
+      ystandard_name = 'time-varying_CO2_mass_fraction_at_lateral_boundary',
+      ylong_name = 'time-varying_CO2_mass_fraction_at_lateral_boundary',
+      itype_adv = 1,
+      itype_diff = 0,
+      itype_turbmix = 1,
+      itype_passconv = 1,
+      itype_ini = 1,
+      itype_lbc = 1,
+      itype_bbc = 0,
+      itype_relax = 1,
+      itype_damp = 1,
+      itype_clip = 0,
+      ldecay = .FALSE.,
+      lifetime = 0,
+    /
+    &TRACER
+      yshort_name = 'CO2_BG002',
+      igribparam = 2,
+      igribtable = 13,
+      itype_emiss = 0,
+      itype_flux = 0,
+      ...
+    /
+    &TRACER
+      yshort_name = 'CO2_GPP001',
+      igribparam = 3,
+      igribtable = 13,
+      itype_emiss = 0,
+      itype_flux = 3,
+      ...
+    /
+    &TRACER
+      yshort_name = 'CO2_GPP002',
+      igribparam = 4,
+      igribtable = 13,
+      itype_emiss = 0,
+      itype_flux = 3,
+      ...
+    /
+    &TRACER
+      yshort_name = 'CO2_RA001',
+      igribparam = 5,
+      igribtable = 13,
+      itype_emiss = 0,
+      itype_flux = 3,
+      ...
+    /
+    &TRACER
+      yshort_name = 'CO2_RA002',
+      igribparam = 6,
+      igribtable = 13,
+      itype_emiss = 0,
+      itype_flux = 3,
+      ...
+    /
+    #+END_EXAMPLE
+
+** Files
+*** Online VPRM
+
+    To calculate the GPP and respiration fluxes, the online vprm module is used. It needs
+    the following input files:
+
+**** Modis reflectances
+
+     Path specified in namelist ~INPUT_GHG/GHGCTL/modis_reflectances_nc~.
+
+**** Vegetation class
+
+     There are 8 vegetation classes in the VPRM model. Gridcells can contain fractional
+     coverage of these classes.
+     Path specified in namelist ~INPUT_GHG/GHGCTL/veg_class_fractional_nc~.
+
+*** Online Ensembles
+
+    To generate the ensembles, the fluxes provided by VPRM and the background
+    concentration are perturbed by factors ("lambdas") given by CarbonTracker.
+    For that a plant-functional-type map, a region map and a list of lambdas (per ensemble)
+    are required.
+
+**** Maps
+
+     Path specified in namelist ~INPUT_GHG/GHGCTL/octe_maps_nc~.
+     Both the regional and the pft map are defined on the 2D cosmo grid and are therefore
+     in the same file. The file should contain four dimensions ~(rlat, rlon, npft, nreg)~ and
+     two variables:
+
+     1. ~PFT~ with dimensions ~(npft, rlat, rlon)~ and type float.
+	For each gridcell, have a list of values corresponding to the fractional coverage of
+        that cell by the different pfts.
+
+     2. ~REG~ with dimensions ~(nreg, rlat, rlon)~ and type int.
+	For each gridcell, have a list of integers corresponding to the different regions.
+	Exactly one entry at each cell is expected to be 1, the others are zero.
+	This format (opposed to one integer at each cell corresponding to a region 'index') was
+        chosen because it's less prone to undetected errors (the number of regions is well defined
+        because it's a dimension of the file, 'empty' regions with no associated cells can be
+	detected easily).
+
+     An example of the maps-file could look like this:
+
+     #+BEGIN_EXAMPLE
+     netcdf example_pft_reg_file.nc {
+     dimensions:
+        npft = 10 ;
+	nreg = 9 ;
+        rlon = 406 ;
+        rlat = 189 ;
+     variables:
+        float PFT(npft, rlat, rlon) ;
+                PFT:units = "unitless" ;
+                PFT:long_name = "plant functional type
+		                 fractions for each cell" ;
+                PFT:comment = "For each cell a list with the
+                               fraction of each pft at that cell" ;
+        int REG(nreg, rlat, rlon) ;
+                REG:units = "unitless" ;
+                REG:long_name = "region for each cell" ;
+                REG:comment = "Exactly one entry is 1 for each
+                               cell, the others are zero" ;
+        
+        # more variables can be added, but are ignored by cosmo
+        float rlat(rlat) ;
+        float rlon(rlon) ;
+        string pft_names(npft) ;
+
+     #+END_EXAMPLE
+
+**** Lambdas 
+
+     Path specified in namelist ~INPUT_GHG/GHGCTL/octe_lambdas_nc~.
+     Each combination of region & plant functional type has a seperate lambda value, as well as
+     one value for the background.
+
+     They are ordered in the following way: ~Reg1_PFT1_GPP~, ~Reg1_PFT2_GPP~, ~...~,
+     ~Reg1_PFT{npft}_GPP~, ~Reg2_PFT1_GPP~, ~...~, ~Reg{nreg}_PFT{npft}_GPP~, ~Reg1_PFT1_RA~,
+     ~Reg1_PFT2_RA, ~...~, ~Reg1_PFT{npft}_RA~, ~Reg2_PFT1_RA~, ~...~,
+     ~Reg{nreg}_PFT{npft}_RA~, ~BG~.
+     The ordering of the PFT/Regions is the same as along the ~npft~/~nreg~ dimension in the
+     ~octe_maps_nc~ file.
+     The NetCDF-file containing the lambda-values should contain two dimensions
+     ~(nparam, nensembles)~ and one variable:
+
+     1. ~lambda~ with dimensions ~(nensembles, nparams)~ and type float.
+	Along the ~nparams~-dimension the lambda-values are ordered as described above.
+
+     #+BEGIN_EXAMPLE
+     netcdf example_lambda_file.nc {
+     dimensions:
+        nparam = 181 ;
+        nensembles = 21 ;
+     variables:
+        float lambda(nensembles, nparam) ;
+                lambda:units = "unitless" ;
+		lambda:comment = "order: r1p1_GPP, r1p2_GPP, ...,
+                                  r1pm_GPP, r2p1_GPP, ..., rnpm_GPP,
+				  r1p1_RA, ..., rnpm_RA, BG" ;
+     }
+
+     #+END_EXAMPLE
+
+     To be consistent with the ~octe_maps_nc~-file, the following relation has to be true:
+     ~nparam = 2 * npft * nreg + 1~. In the ~INPUT_GHG~-namelist, there have to be ~nensembles~
+     GPP, respiration and background tracers defined. See the namelist section for more info.
+
+* Computation
+
+** Respiration and gross photosynthetic product fluxes
+
+   The flux of a given field (gross photosynthetic product or respiration) at a given gridcell
+   is calculated as follows:
+   $$ \tilde{C}^{k}_{i,j}(t) = p^{k}_{i,j} \ C^{k}(\eta_{i,j}, t, ...)$$
+   where
+   - $\tilde{C}^{k}_{i,j}(t)$ is the perturbed flux
+     - of the field $k$ (either GPP or respiration),
+     - in the gridcell $(i,j)$
+     - at time $t$
+   - $p^{k}_{i,j}$ is the value of the "lambda map", the average of the relevant lambdas weighted by
+     the fraction of the pft-coverage in the cell and the region that the cell belongs to.
+   - $C_{k}(\eta_{i,j}, t, ...)$ is the unperturbed flux as calculated by the online VPRM module.
+     It depends, among other things, on
+     - $\eta_{i,j}$, the fractional coverage of the cell of the VPRM-categories,
+     - the current time $t$.
+
+   The "lambda map" is precomputed during model initialization:
+   $$ p^{k}_{i,j} = \sum_{r}^{\text{regs}} \sum_{p}^{\text{pfts}} \delta_{rs} \ 
+                                                                  \varphi_{i,j,p} \ 
+								  \lambda^{k}_{r,p} $$
+   where
+   - $r$ is one of the regions,
+   - $p$ is one of the plant functional types,
+   - $\delta$ is the Kronecker delta,
+   - $s$ is the region the gridpoint $(i,j)$ belongs to,
+   - $\varphi_{i,j,p}$ is the fractional coverage of gridpoint $(i,j)$ with the
+     plant functional type $p$,
+   - $\lambda^{k}_{r,p}$ is the lambda value of field $k$, region $r$ and pft $p$
+
+     This calculation is done on-line in COSMO. It replaces the reading-in of files.
+
+** Background concentration
+
+   The background concentration is scaled uniformly by one lambda value per ensemble:
+   $$ \tilde{C}^{BG}_{i,j,k}(t) = C^{BG}_{i,j,k}(t) \cdot \lambda^{BG}$$
+   where
+   - $\tilde{C}^{BG}_{i,j,k}(t)$ is the perturbed background field in the gridcell $(i,j,k)$ at time $t$
+   - $C^{BG}_{i,j,k}(t)$ is the unperturbed background field in the gridcell $(i,j,k)$ at time $t$
+   - $\lambda^{BG}$ is the lambda value for the background.
+
+   This scaling is done as a precomputation by the processing chain - COSMO still reads
+   one background field per ensemble as normal.
+
+   The processing chain lets int2lm process one unperturbed tracer field of the background
+   concentration called ~CO2_BG~. It then uses the corresponding lambda values from the
+   Lambdas NetCDF file to create new variables (~CO2_BGnnn~) which are then read by COSMO.

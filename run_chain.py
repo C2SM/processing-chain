@@ -295,6 +295,13 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         else:
             setattr(cfg, 'constraint', 'gpu')
 
+    # asynchronous I/O
+    if cfg.cosmo_np_io == 0:
+        setattr(cfg, 'lasync_io', '.FALSE.')
+        setattr(cfg, 'num_iope_percomm', 0)
+    else:
+        setattr(cfg, 'lasync_io', '.TRUE.')
+        setattr(cfg, 'num_iope_percomm', 1)
 
     if cfg.target.subtarget is tools.Subtarget.SPINUP:
         setattr(cfg, 'last_cosmo_output',
@@ -342,6 +349,11 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     tools.create_dir(log_working_dir, "log_working")
     tools.create_dir(log_finished_dir, "log_finished")
 
+    # number of levels and switch for unit conversion for 'reduce_output' job
+    if not hasattr(cfg, 'output_levels'):
+        setattr(cfg, 'output_levels', -1)
+    if not hasattr(cfg, 'convert_gas'):
+        setattr(cfg, 'convert_gas',True)
 
     # run jobs (if required)
     for job in job_names:

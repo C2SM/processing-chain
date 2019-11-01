@@ -11,6 +11,8 @@ vprm_prefix,"Prefix of the the bioflux-files. Filenames are assumed to be ``{vpr
 online_vprm_dir,Path to the directory containing netCDF files with pre-processed MODIS reflectance (``modis_filename``) and vegetation class fraction (``vegetation_filename``) data, :func:`jobs.online_vprm.main`
 modis_filename,Name of the pre-processed MODIS netCDF file, :func:`jobs.online_vprm.main`
 vegetation_filename,Name of the pre-processed vegetation class fraction netCDF file, :func:`jobs.online_vprm.main`
+octe_lambdas,Path to the netCDF file containing the lambda values used for generating online carbontracker ensembles, :func:`jobs.octe.main`
+octe_maps,Path to the netCDF file containing the regional and pft-type maps for generating online carbontracker ensembles, :func:`jobs.octe.main`
 cams_dir_orig,Path to input-directory for CAMS-files, :func:`jobs.icbc.main`
 cams_dir_proc,"Path to the processed CAMS-files. Processed CAMS-files are stored here, if there are files found here then ``cams_dir_orig`` is not used", :func:`jobs.icbc.main`
 cams_parameters,"Parameters for the processing of CAMS-data, more information in ``config.py`` of example case", :func:`jobs.icbc.main`
