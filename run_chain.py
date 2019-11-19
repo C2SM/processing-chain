@@ -81,7 +81,7 @@ def parse_arguments():
                         action='store_true',
                         help=force_help)
 
-    tries_help = ("Amount of tries before crashing."
+    tries_help = ("Amount of time the cosmo job is re-tried before crashing."
                   " Default is 1.")
     parser.add_argument("-t", "--try",
                         help=tries_help,
@@ -390,7 +390,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
             print('Process "%s" for chain "%s"' % (job, job_id))
             sys.stdout.flush()
             
-            try_count = args.ntry
+            try_count = 1+(args.ntry-1)*(job=='cosmo')
             while try_count>0:
                 try_count-=1
                 try:
