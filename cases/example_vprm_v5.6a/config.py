@@ -120,7 +120,7 @@ int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = "test_domain.nc"
 
 # Executable
-int2lm_bin = os.path.join(input_root,"executables/int2lm_tracer_conversion") 
+int2lm_bin = os.path.join(input_root,"executables/int2lm_ed25adc_art_fix_20191114") 
 
 # Namelist and slurm runscript templates
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT.cfg' % (chain_src_dir,casename)
@@ -149,7 +149,7 @@ post_int2lm_species = ["CO2_BG"]
 
 # COSMO ---------------------------------------------------------------------- #
 # Executable
-cosmo_bin=  os.path.join(input_root,"executables/cosmo_v5.6a_ghg_20190704") 
+cosmo_bin = os.path.join(input_root,"executables/cosmo-ghg_0e5d63b_20191112")
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir,casename)

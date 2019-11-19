@@ -35,7 +35,7 @@ def runscript_header_template():
          "#SBATCH --account={compute_account}",
          "#SBATCH --output={logfile}",
          "#SBATCH --open-mode=append",
-         "#SBATCH --workdir={cosmo_work}",
+         "#SBATCH --chdir={cosmo_work}",
          ""])
 
 
