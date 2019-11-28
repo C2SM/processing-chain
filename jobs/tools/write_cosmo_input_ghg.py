@@ -102,8 +102,7 @@ def main(csv_filename, namelist_filename, cfg=None):
                                '  month_of_year_nc = \'' \
                                + '../input/oae/monthofyear.nc' + '\',',
                                '  gridded_emissions_nc = \'' \
-                               + '../input/oae/emissions.nc' + '\',',
-                               '  iemiss_interp = 0,'
+                               + '../input/oae/emissions.nc' + '\','
                                ])
             # Add input files for online VPRM
             if online_vprm:
