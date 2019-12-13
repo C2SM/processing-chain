@@ -119,8 +119,7 @@ def main(starttime, hstart, hstop, cfg):
     
     logging.info('Submitting the copy job to the xfer queue')
 
-    wait = True
-    sbatch_wait = getattr(cfg, 'wait', wait)
+    sbatch_wait = getattr(cfg, 'wait', 'True')
 
     if sbatch_wait:
         exitcode = call(["sbatch","--wait",runscript_path])
