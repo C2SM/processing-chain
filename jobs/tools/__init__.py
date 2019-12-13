@@ -242,10 +242,10 @@ def check_cosmo_completion(cfg, waittime=3000):
     waittime : time to wait (factor of .1 second)
                Defaults to 3000 (300 seconds)
     """
-    cosmo_logfile=os.path.join(cfg.log_finished_dir,"cosmo")
+    cosmo_logfile = os.path.join(cfg.log_finished_dir,"cosmo")
     while True:
         if not os.path.exists(cosmo_logfile):
-            print('Waiting for the cosmo job to finish first')
+            print("Waiting for the cosmo job to finish first")
             sys.stdout.flush()
             for _ in range(waittime):
                 time.sleep(0.1)

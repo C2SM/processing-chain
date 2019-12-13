@@ -117,17 +117,17 @@ def main(starttime, hstart, hstop, cfg):
     with open(runscript_path, "w") as script:
         script.write(runscript_content)
     
-    logging.info('Submitting the copy job to the xfer queue')
+    logging.info("Submitting the copy job to the xfer queue")
 
-    sbatch_wait = getattr(cfg, 'wait', 'True')
+    sbatch_wait = getattr(cfg, "wait", "True")
 
     if sbatch_wait:
-        exitcode = call(["sbatch","--wait",runscript_path])
+        exitcode = call(["sbatch", "--wait", runscript_path])
     else:
-        exitcode = call(["sbatch",runscript_path])
+        exitcode = call(["sbatch", runscript_path])
         
     if exitcode != 0:
-       raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
 
     logging.info(logfile_header_template()
                  .format("ENDS",
