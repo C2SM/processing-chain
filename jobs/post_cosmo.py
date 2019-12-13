@@ -6,13 +6,12 @@
 ### DEVELOPMENT VERSION ###
 
 import logging
-import time
 import os
 import shutil
 import datetime
 import glob 
 from subprocess import call
-import sys
+
 from . import tools
 
 
@@ -112,21 +111,22 @@ def main(starttime, hstart, hstop, cfg):
         logs_src = cfg.log_finished_dir.rstrip('/'),
         logs_dest = os.path.join(copy_path, "logs").rstrip('/'))
 
+    # Wait for Cosmo to finish first
+    tools.check_cosmo_completion(cfg)
+
     with open(runscript_path, "w") as script:
         script.write(runscript_content)
-
-    # Wait for Cosmo to finish first
-    cosmo_logfile=os.path.join(cfg.log_finished_dir,"cosmo")
-    if not os.path.exists(cosmo_logfile):
-        print('Waiting for the cosmo job to finish first')
-        logging.info('Waiting for the cosmo job to finish first')
-        sys.stdout.flush()
-        for _ in range(3000):
-            time.sleep(0.1)
-
-    logging.info('Submitting the copy job to the xfer queue')
     
-    exitcode = call(["sbatch","--wait" ,runscript_path])
+    logging.info('Submitting the copy job to the xfer queue')
+
+    wait = True
+    sbatch_wait = getattr(cfg, 'wait', wait)
+
+    if sbatch_wait:
+        exitcode = call(["sbatch","--wait",runscript_path])
+    else:
+        exitcode = call(["sbatch",runscript_path])
+        
     if exitcode != 0:
        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
 
