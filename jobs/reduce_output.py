@@ -73,6 +73,9 @@ def main(starttime, hstart, hstop, cfg):
                       "not on %s" % cfg.compute_host)
         sys.exit(1)
 
+    # Wait for Cosmo to finish first
+    tools.check_cosmo_completion(cfg)
+        
     """Get list of constant files"""
     cfiles = []
     read_cfile = False

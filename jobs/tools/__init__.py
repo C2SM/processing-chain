@@ -5,6 +5,8 @@ import subprocess
 import logging
 import os
 import shutil
+import time
+import sys
 
 from datetime import datetime, timedelta
 from enum import Enum, auto
@@ -229,3 +231,26 @@ def levenshtein(s1, s2):
         previous_row = current_row
     
     return previous_row[-1]
+
+def check_cosmo_completion(cfg, waittime=3000):
+    """Check that the cosmo job is done, otherwise waits 300 seconds.
+
+    Parameters
+    ----------
+    cfg : config-object
+
+    waittime : time to wait (factor of .1 second)
+               Defaults to 3000 (300 seconds)
+    """
+    cosmo_logfile = os.path.join(cfg.log_finished_dir,"cosmo")
+    while True:
+        if not os.path.exists(cosmo_logfile):
+            print("Waiting for the cosmo job to finish first")
+            sys.stdout.flush()
+            for _ in range(waittime):
+                time.sleep(0.1)
+        else:
+            break
+                
+
+    
