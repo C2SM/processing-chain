@@ -11,16 +11,17 @@ import sys
 from datetime import datetime, timedelta
 from enum import Enum, auto
 
+
 from . import cams4int2cosmo
 from . import ctnoaa4int2cosmo
 from . import string2char
 from . import vprmsplit
 from . import write_int2lm_input_art
-from . import write_cosmo_input_ghg
+#from . import write_cosmo_input_ghg
 from . import mozart2int2lm
 from .check_target import check_target
 from . import comp_nc
-
+from . import helper
 
 def iter_hours(starttime, hstart, hstop, step=1):
     """Return a generator that yields datetime-objects from 
@@ -232,7 +233,7 @@ def levenshtein(s1, s2):
     
     return previous_row[-1]
 
-def check_cosmo_completion(cfg, waittime=3000):
+def check_cosmo_completion(log_finished_dir, waittime=3000):
     """Check that the cosmo job is done, otherwise waits 300 seconds.
 
     Parameters
@@ -242,7 +243,7 @@ def check_cosmo_completion(cfg, waittime=3000):
     waittime : time to wait (factor of .1 second)
                Defaults to 3000 (300 seconds)
     """
-    cosmo_logfile = os.path.join(cfg.log_finished_dir,"cosmo")
+    cosmo_logfile = os.path.join(log_finished_dir,"cosmo")
     while True:
         if not os.path.exists(cosmo_logfile):
             print("Waiting for the cosmo job to finish first")

@@ -23,6 +23,8 @@ import amrs.misc.time as time
 import amrs.misc.chem as chem
 import amrs.constants as constants
 
+import helper
+
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -89,201 +91,132 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
     """Get path and filename for output file"""
     path, output_filename = os.path.split(infile)
     outfile = os.path.join(output_path, output_filename)
-    if 1:
-        with nc.Dataset(infile, 'r') as inf, \
-             nc.Dataset(outfile, 'w') as outf:
-            # Copy global attributes all at once via dictionary
-            outf.setncatts(inf.__dict__)
-            # Copy dimensions
-            for name, dimension in inf.dimensions.items():
-                outf.createDimension(name, (len(dimension)
-                    if not dimension.isunlimited() else None))
+    with nc.Dataset(infile, 'r') as inf, \
+         nc.Dataset(outfile, 'w') as outf:
+        # Copy global attributes all at once via dictionary
+        outf.setncatts(inf.__dict__)
+        # Copy dimensions
+        for name, dimension in inf.dimensions.items():
+            outf.createDimension(name, (len(dimension)
+                if not dimension.isunlimited() else None))
 
-            # Get level information
-            level = len(inf.dimensions['level'])
-            level1 = len(inf.dimensions['level1'])
+        # Get level information
+        level = len(inf.dimensions['level'])
+        level1 = len(inf.dimensions['level1'])
 
-            # Create new dimension level2
-            if nout_levels == -1:
-                nout_levels = level
-            else:
-                outf.createDimension('level2', nout_levels)
+        # Create new dimension level2
+        if nout_levels == -1:
+            nout_levels = level
+        else:
+            outf.createDimension('level2', nout_levels)
 
-
-
-
-            # Copy variables
-            for varname in inf.variables.keys():
-                logging.info('%s: %s' % (output_filename, varname))
-                var = inf.variables[varname]
-                attrs = get_attrs(var)
-                if len(var.dimensions)==4:
-                    if var.dimensions[1] == 'level':
-                        var_dimensions = list(var.dimensions)
-                        var_dimensions[1] = 'level'+'2'*(nout_levels != level)
-                    elif var.dimensions[1] == 'level1':
-                        var_dimensions = list(var.dimensions)
-                        var_dimensions[1] = 'level'+'2'*(nout_levels != level) + '1'*(nout_levels == level)
-                    else:
-                        var_dimensions = var.dimensions
+        # Copy variables
+        for varname in inf.variables.keys():
+            logging.info('%s: %s' % (output_filename, varname))
+            var = inf.variables[varname]
+            attrs = get_attrs(var)
+            if len(var.dimensions)==4:
+                if var.dimensions[1] == 'level':
+                    var_dimensions = list(var.dimensions)
+                    var_dimensions[1] = 'level'+'2'*(nout_levels != level)
+                elif var.dimensions[1] == 'level1':
+                    var_dimensions = list(var.dimensions)
+                    var_dimensions[1] = 'level'+'2'*(nout_levels != level) + '1'*(nout_levels == level)
                 else:
                     var_dimensions = var.dimensions
+            else:
+                var_dimensions = var.dimensions
 
-                if len(var.dimensions) > 2:
-                    if (varname in lsd):
-                        outf.createVariable(varname, var.dtype,
-                                            var_dimensions,
-                                            zlib=True, 
-                                            least_significant_digit=lsd[varname])
-                    else:
-                        outf.createVariable(varname, var.dtype,
-                                            var_dimensions,
-                                            zlib=True)
+            if len(var.dimensions) > 2:
+                if (varname in lsd):
+                    outf.createVariable(varname, var.dtype,
+                                        var_dimensions,
+                                        zlib=True, 
+                                        least_significant_digit=lsd[varname])
                 else:
                     outf.createVariable(varname, var.dtype,
-                                        var_dimensions, zlib=True)
+                                        var_dimensions,
+                                        zlib=True)
+            else:
+                outf.createVariable(varname, var.dtype,
+                                    var_dimensions, zlib=True)
 
-                for attr in var.ncattrs():
-                    outf[varname].setncattr(attr, inf[varname].getncattr(attr))
+            for attr in var.ncattrs():
+                outf[varname].setncattr(attr, inf[varname].getncattr(attr))
 
-                gas = None
-                if varname != 'rotated_pole':
-                    # Check for 3D data and extract only lower_levels
-                    if 'level1' in var.dimensions and \
-                        len(var.dimensions) == 4:
-                            lstart = -nout_levels - (nout_levels == level)
-                    elif 'level' in var.dimensions and \
-                        len(var.dimensions) == 4:
-                            lstart = -nout_levels
-                    else:
-                        outf[varname][:] = inf[varname][:]
+            gas = None
+            if varname != 'rotated_pole':
+                # Check for 3D data and extract only lower_levels
+                if 'level1' in var.dimensions and \
+                    len(var.dimensions) == 4:
+                        lstart = -nout_levels - (nout_levels == level)
+                elif 'level' in var.dimensions and \
+                    len(var.dimensions) == 4:
+                        lstart = -nout_levels
+                else:
+                    outf[varname][:] = inf[varname][:]
 
+            if (varname.startswith('CO2_') or varname.startswith('CO_') or 
+                varname.startswith('CH4_') or varname.startswith('C14_') or 
+                varname.startswith('NOX_') or varname.startswith('NO2_')):
                 outvar = outf.variables[varname]
-                if varname.startswith('CO2_'):
-                    gas = 'CO2'
-                    if convert:
-                        outf[varname][:] = inf[varname][:,lstart:,:,:] * \
-                                           constants.M['air'] / constants.M[gas] * 1e6
-                        outvar.units = 'ppm'
-                    else:
-                        outf[varname][:] = inf[varname][:,lstart:,:,:]
-                    attrs['standard_name'] = attrs['standard_name'].replace(
-                            'CO2_mass_fraction', 'XCO2')
-                    attrs['long_name'] = attrs['long_name'].replace(
-                            'mass fraction',
-                            'column-averaged dry-air mole fraction')
-                    attrs['long_name'] = attrs['long_name'].replace(
-                            'Mass fraction',
-                            'Column-averaged dry-air mole fraction')
-                    attrs['units'] = 'molecules cm-2'
-                    attrs2 = attrs.copy()
-                    attrs2['standard_name'] = attrs2['standard_name'].replace(
-                                              'XCO2', 'YCO2')
-                    attrs2['long_name'] = attrs2['long_name'].replace(
-                                          'dry-air', 'moist-air')
-                elif varname.startswith('CO_'):
-                    gas = 'CO'
-                    if convert:
-                        outf[varname][:] = inf[varname][:,lstart:,:,:] * \
-                                           constants.M['air'] / constants.M[gas] * 1e9
-                        outvar.units = 'ppb'
-                    else:
-                        outf[varname][:] = inf[varname][:,lstart:,:,:]
-                    attrs['standard_name'] = attrs['standard_name'].replace(
-                            'CO_mass_fraction', 'XCO')
-                    attrs['long_name'] = attrs['long_name'].replace(
-                            'mass fraction',
-                            'column-averaged dry-air mole fraction')
-                    attrs['long_name'] = attrs['long_name'].replace(
-                            'Mass fraction',
-                            'Column-averaged dry-air mole fraction')
-                    attrs['units'] = 'molecules cm-2'
-                    attrs2 = attrs.copy()
-                    attrs2['standard_name'] = attrs2['standard_name'].replace(
-                                              'XCO', 'YCO')
-                    attrs2['long_name'] = attrs2['long_name'].replace(
-                                          'dry-air', 'moist-air')
-                elif varname.startswith('CH4_'):
-                    gas = 'CH4'
-                    if convert:
-                        outf[varname][:] = inf[varname][:,lstart:,:,:] * \
-                                           constants.M['air'] / constants.M[gas] * 1e9
-                        outvar.units = 'ppb'
-                    else:
-                        outf[varname][:] = inf[varname][:,lstart:,:,:]
-                    attrs['standard_name'] = attrs['standard_name'].replace(
-                            'CH4_mass_fraction', 'XCH4')
-                    attrs['long_name'] = attrs['long_name'].replace(
-                            'mass fraction',
-                            'column-averaged dry-air mole fraction')
-                    attrs['long_name'] = attrs['long_name'].replace(
-                            'Mass fraction',
-                            'Column-averaged dry-air mole fraction')
-                    attrs['units'] = 'molecules cm-2'
-                    attrs2 = attrs.copy()
-                    attrs2['standard_name'] = attrs2['standard_name'].replace(
-                                              'XCH4', 'YCH4')
-                    attrs2['long_name'] = attrs2['long_name'].replace(
-                                          'dry-air', 'moist-air')
-                elif varname.startswith('NO2_') or varname.startswith('NOX_'):
-                    if convert:
-                        gas = 'NO2'
-                        outf[varname][:] = inf[varname][:,lstart:,:,:] * \
-                                           constants.M['air'] / constants.M[gas] * 1e6
-                        outvar.units = 'ppm'
-                    else:
-                        outf[varname][:] = inf[varname][:,lstart:,:,:]
+                gas = varname.split('_')[0]
+                if gas == 'NOX':
                     attrs['standard_name'] = attrs['standard_name'].replace(
                             'NOX', 'NO2')
-                    attrs['long_name'] = attrs['long_name'].replace(
-                            'NOX', 'NO2')
-                    attrs['standard_name'] = attrs['standard_name'].replace(
-                            'NO2_mass_fraction', 'XNO2')
-                    attrs['long_name'] = attrs['long_name'].replace(
-                            'mass fraction',
-                            'column-averaged dry-air mole fraction')
-                    attrs['long_name'] = attrs['long_name'].replace(
-                            'Mass fraction',
-                            'Column-averaged dry-air mole fraction')
-                    attrs['units'] = 'molecules cm-2'
-                    attrs2 = attrs.copy()
-                    attrs2['standard_name'] = attrs2['standard_name'].replace(
-                                              'XNO2', 'YNO2')
-                    attrs2['long_name'] = attrs2['long_name'].replace(
-                                          'dry-air', 'moist-air')
-                elif varname != 'rotated_pole' and len(var.dimensions) == 4 and \
-                ('level1' in var.dimensions or 'level' in var.dimensions):
-                    outf[varname][:] = inf[varname][:,lstart:,:,:]
+                    gas = 'NO2'
+                field = inf[varname][:,lstart:,:,:] 
+                unit = attrs['units']
 
-                if gas:
-                    fname_met_base = os.path.split(infile)[0]+'/'+os.path.split(infile)[1][:14]
-                    with nc.Dataset(fname_met_base+fname_met['QV']+'.nc', 'r') as inf_qv, \
-                         nc.Dataset(fname_met_base+fname_met['T']+'.nc', 'r') as inf_t, \
-                         nc.Dataset(fname_met_base+fname_met['PS']+'.nc', 'r') as inf_ps, \
-                         nc.Dataset(fname_met_base+fname_met['P']+'.nc', 'r') as inf_p:
-                        qv = np.array(inf_qv.variables['QV'][0])
-                        t = np.array(inf_t.variables['T'][0])
-                        ps = np.array(inf_ps.variables['PS'][0])
-                        p = np.array(inf_p.variables['P'][0])
+                if convert:
+                    outvar.units = helper.common_unit(gas)
+                    if gas == 'C14':
+                        outf[varname][:] = chem.convert_unit(
+                                               field, unit, outvar.units, 45.993e-3)
+                    else:
+                        outf[varname][:] = chem.convert_unit(
+                                               field, unit, outvar.units, gas)
+                else:
+                    outvar.units = unit
+                    outf[varname][:] = field
 
-                        xm = np.array(inf.variables[varname][0])
-                        mair = chem.calculate_mair(p, ps, h)
-                        # Column-averaged dry-air mole fraction (molecules/cm2)
-                        column = chem.calculate_xgas(xm, mair, gas, qv)
-                        column = column.astype('f4')
-                        logging.info('%s: X%s' % (output_filename, varname))
-                        append_variable(outf, 'X%s' % varname, column,
-                                        attrs=attrs)
-                        # Column-averaged moist-air mole fraction (molecules/cm2)
-                        column2 = chem.calculate_xgas(xm, mair, gas, 0.0)
-                        column2 = column2.astype('f4')
-                        logging.info('%s: Y%s' % (output_filename, varname))
-                        append_variable(outf, 'Y%s' % varname, column2,
-                                        attrs=attrs2)
+                attrs['standard_name'] = attrs['standard_name'].replace(
+                        '%s_mass_fraction' % gas, 'X%s' % gas)
+                attrs['units'] = outvar.units
+                attrs2 = attrs.copy()
+                attrs2['standard_name'] = attrs2['standard_name'].replace(
+                                          'X%s' % gas, 'Y%s' % gas)
+            elif varname != 'rotated_pole' and len(var.dimensions) == 4 and \
+            ('level1' in var.dimensions or 'level' in var.dimensions):
+                outf[varname][:] = inf[varname][:,lstart:,:,:]
 
-    else:
-        logging.error("Reduce data from file %s to file %s "
-                      "failed." % (infile, outfile))
+            if gas:
+                fname_met_base = os.path.split(infile)[0]+'/'+os.path.split(infile)[1][:14]
+                with nc.Dataset(fname_met_base+fname_met['QV']+'.nc', 'r') as inf_qv, \
+                     nc.Dataset(fname_met_base+fname_met['T']+'.nc', 'r') as inf_t, \
+                     nc.Dataset(fname_met_base+fname_met['PS']+'.nc', 'r') as inf_ps, \
+                     nc.Dataset(fname_met_base+fname_met['P']+'.nc', 'r') as inf_p:
+                    qv = np.array(inf_qv.variables['QV'][0])
+                    t = np.array(inf_t.variables['T'][0])
+                    ps = np.array(inf_ps.variables['PS'][0])
+                    p = np.array(inf_p.variables['P'][0])
+
+                    xm = np.array(inf.variables[varname][0])
+                    mair = chem.calculate_mair(p, ps, h)
+
+                    # Column-averaged dry-air mole fraction
+                    column = chem.calculate_xgas(xm, mair, gas, qv)
+                    column = column.astype('f4')
+                    logging.info('%s: X%s' % (output_filename, varname))
+                    append_variable(outf, 'X%s' % varname, column,
+                                    attrs=attrs)
+
+                    # Column-averaged moist-air mole fraction
+                    column2 = chem.calculate_xgas(xm, mair, gas, 0.0)
+                    column2 = column2.astype('f4')
+                    logging.info('%s: Y%s' % (output_filename, varname))
+                    append_variable(outf, 'Y%s' % varname, column2,
+                                    attrs=attrs2)
 
     return fname_met
 
@@ -345,12 +278,9 @@ def main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile,
     fname_met = search_met(infiles, fname_met)
     
     """Translate csv file to dict"""
-    lsd = {}
-    with open(csvfile) as inf:
-        for row in csv.reader(inf, delimiter=','):
-            if not row[0].startswith('#'):
-                lsd[row[0]] = int(row[1])
-
+    variables = helper.find_variables_file(csvfile)
+    lsd = variables['lsd'].to_dict()
+    
     """Loop over all input files and apply output reduction"""
     for infile in infiles:
         fname_met = reduce_output(infile, cfiles, h, int(nout_levels),

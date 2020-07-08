@@ -14,8 +14,8 @@
 import logging
 import os
 import subprocess
+from .tools import write_cosmo_input_ghg
 from . import tools
-
 
 def main(starttime, hstart, hstop, cfg):
     """Setup the namelists for a **COSMO** tracer run and submit the job to
@@ -88,7 +88,7 @@ def main(starttime, hstart, hstop, cfg):
                                        'cases', tracer_csvfile)
         input_ghg_filename = os.path.join(cfg.cosmo_work, 'INPUT_GHG')
 
-        tools.write_cosmo_input_ghg.main(tracer_filename,
+        write_cosmo_input_ghg.main(tracer_filename,
                                          input_ghg_filename, cfg)
 
     # Prepare namelist and submit job

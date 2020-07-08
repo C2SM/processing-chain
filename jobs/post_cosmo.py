@@ -66,6 +66,9 @@ def main(starttime, hstart, hstop, cfg):
     **int2lm** settings, logfiles) from ``cfg.cosmo_work``,
     ``cfg.cosmo_output``, ``cfg.int2lm_work``, ``cfg.log_finished_dir`` to
     ``cfg.output_root/...`` .
+    If the job ``reduce_output`` has been run before ``post_cosmo``, a 
+    directory ``cfg.cosmo_output_reduced`` is created. In this case,
+    ``cfg.cosmo_output_reduced`` is copied instead of ``cfg.cosmo_output``.
     
     Submit the job to the xfer-queue.
     
@@ -100,19 +103,27 @@ def main(starttime, hstart, hstop, cfg):
         compute_account = cfg.compute_account,
         logfile = logfile,
         cosmo_work = cfg.cosmo_work)
+
+    if os.path.isdir(cfg.cosmo_output_reduced):
+        cosmo_output_src = cfg.cosmo_output_reduced.rstrip('/')
+        cosmo_output_dest = os.path.join(copy_path, "cosmo_output_reduced").rstrip('/')
+    else:
+        cosmo_output_src = cfg.cosmo_output.rstrip('/')
+        cosmo_output_dest = os.path.join(copy_path, "cosmo_output").rstrip('/')
+
     runscript_content += runscript_commands_template().format(
         target_dir = copy_path.rstrip('/'),
         int2lm_work_src = cfg.int2lm_work.rstrip('/'),
         int2lm_work_dest = os.path.join(copy_path, "int2lm_run").rstrip('/'),
         cosmo_work_src = cfg.cosmo_work.rstrip('/'),
         cosmo_work_dest = os.path.join(copy_path, "cosmo_run").rstrip('/'),
-        cosmo_output_src = cfg.cosmo_output.rstrip('/'),
-        cosmo_output_dest = os.path.join(copy_path, "cosmo_output").rstrip('/'),
+        cosmo_output_src = cosmo_output_src,
+        cosmo_output_dest = cosmo_output_dest,
         logs_src = cfg.log_finished_dir.rstrip('/'),
         logs_dest = os.path.join(copy_path, "logs").rstrip('/'))
 
     # Wait for Cosmo to finish first
-    tools.check_cosmo_completion(cfg)
+    tools.check_cosmo_completion(cfg.log_finished_dir)
 
     with open(runscript_path, "w") as script:
         script.write(runscript_content)
@@ -123,15 +134,16 @@ def main(starttime, hstart, hstop, cfg):
 
     if sbatch_wait:
         exitcode = call(["sbatch", "--wait", runscript_path])
+        logging.info(logfile_header_template()
+                     .format("ENDS",
+                             str(datetime.datetime.today())))
+
+        # copy own logfile aswell
+        tools.copy_file(logfile, os.path.join(copy_path, "logs/"))
+
     else:
         exitcode = call(["sbatch", runscript_path])
         
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
 
-    logging.info(logfile_header_template()
-                 .format("ENDS",
-                         str(datetime.datetime.today())))
-
-    # copy own logfile aswell
-    tools.copy_file(logfile, os.path.join(copy_path, "logs/"))

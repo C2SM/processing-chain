@@ -51,9 +51,7 @@ def main(starttime, hstart, hstop, cfg):
     """
 
     cosmo_output = cfg.cosmo_output
-    copy_path = os.path.join(cfg.output_root, starttime.strftime('%Y%m%d%H')+
-                             "_"+str(int(hstart))+"_"+str(int(hstop)))
-    output_path = os.path.join(copy_path, "cosmo_output_reduced")
+    output_path = cfg.cosmo_output_reduced
 
     date = dt.datetime.today()
 
@@ -74,7 +72,7 @@ def main(starttime, hstart, hstop, cfg):
         sys.exit(1)
 
     # Wait for Cosmo to finish first
-    tools.check_cosmo_completion(cfg)
+    tools.check_cosmo_completion(cfg.log_finished_dir)
         
     """Get list of constant files"""
     cfiles = []
@@ -121,7 +119,8 @@ def main(starttime, hstart, hstop, cfg):
     tool_path = os.path.join(dir_path, 'tools')
     bash_file = os.path.join(tool_path, 'reduce_output_parallel.bash')
     py_file = os.path.join(tool_path, 'reduce_output_start_end.py')
-    csv_file = os.path.join(tool_path, 'variables.csv')
+    alternate_csv_file = os.path.join(cfg.chain_src_dir,
+                                      'cases', cfg.casename, 'variables.csv')
     logfile=os.path.join(cfg.log_working_dir, 'reduce_output')
     logging.info('Submitting job to the queue...')
     
@@ -130,7 +129,7 @@ def main(starttime, hstart, hstop, cfg):
                                 py_file, cosmo_output, output_path,
                                 str_startdate, str_enddate, 
                                 str(cfg.output_levels), str(output_step),
-                                csv_file, str(cfg.convert_gas)]) 
+                                alternate_csv_file, str(cfg.convert_gas)]) 
 
     if exitcode != 0:                                                          
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
@@ -151,6 +150,11 @@ def main(starttime, hstart, hstop, cfg):
         logging.error('Reduced output files differ from original output!')
         raise RuntimeError('Error in reduce_output job')
 
+    """Check for corrupted files"""
+    for f in [os.path.join(output_path, name) for name in os.listdir(output_path)]:
+        with nc.Dataset(f) as _:
+            logging.info('File %s is not corrupted' %f)
+    
     date = dt.datetime.today()
     to_print = """=====================================================
 ============== POST PROCESSING ENDS ==================
