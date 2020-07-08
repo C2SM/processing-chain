@@ -6,7 +6,7 @@ Jobs
 The jobs described here are available for use in the processing chain.
 
 For **COSMO**, you can choose from the following jobs. As some jobs depend
-on the result of others, the order indicated here as to be respected:
+on the result of others, the order indicated here has to be respected:
 
 1.  :func:`jobs.biofluxes.main` | :func:`jobs.icbc.main` | 
     :func:`jobs.meteo.main` | :func:`jobs.emissions.main` |
@@ -16,8 +16,9 @@ on the result of others, the order indicated here as to be respected:
 3.  :func:`jobs.post_int2lm.main`
 4.  :func:`jobs.octe.main`
 5.  :func:`jobs.cosmo.main`
-6.  :func:`jobs.post_cosmo.main` | :func:`jobs.reduce_output.main` |
-    :func:`jobs.verify_chain.main`
+6.  :func:`jobs.check_output.main`
+7.  :func:`jobs.reduce_output.main` 
+8.  :func:`jobs.post_cosmo.main` | :func:`jobs.verify_chain.main`
 
 The same for **COSMOART**:
 
@@ -27,8 +28,9 @@ The same for **COSMOART**:
    :func:`jobs.oae.main`
 2. :func:`jobs.int2lm.main`
 3. :func:`jobs.cosmo.main`
-4. :func:`jobs.post_cosmo.main` | :func:`jobs.reduce_output.main` |
-   :func:`jobs.verify_chain.main`
+4. :func:`jobs.check_output.main`
+5. :func:`jobs.reduce_output.main`
+6. :func:`jobs.post_cosmo.main` | :func:`jobs.verify_chain.main`
 
 Adding new jobs
 ---------------
@@ -46,19 +48,20 @@ List of available jobs
 ----------------------
 
 * :func:`jobs.biofluxes.main`
+* :func:`jobs.check_output.main`
 * :func:`jobs.cosmo.main`
 * :func:`jobs.emissions.main`
-* :func:`jobs.reduce_output.main`
 * :func:`jobs.icbc.main`
 * :func:`jobs.int2lm.main`
 * :func:`jobs.meteo.main`
-* :func:`jobs.octe.main`
-* :func:`jobs.online_vprm.main`  
 * :func:`jobs.oae.main`
 * :func:`jobs.obs_nudging.main`
+* :func:`jobs.octe.main`
+* :func:`jobs.online_vprm.main`  
 * :func:`jobs.photo_rate.main`
 * :func:`jobs.post_cosmo.main`
 * :func:`jobs.post_int2lm.main`
+* :func:`jobs.reduce_output.main`
 * :func:`jobs.verify_chain.main`
 
 -------------------------------------------
@@ -67,15 +70,15 @@ List of available jobs
 
 -------------------------------------------
 
+.. autofunction:: jobs.check_output.main
+
+-------------------------------------------
+
 .. autofunction:: jobs.cosmo.main
 
 -------------------------------------------
 
 .. autofunction:: jobs.emissions.main
-
--------------------------------------------
-
-.. autofunction:: jobs.reduce_output.main
 
 -------------------------------------------
 
@@ -91,7 +94,11 @@ List of available jobs
 
 -------------------------------------------
 
-.. autofunction:: jobs.online_vprm.main
+.. autofunction:: jobs.oae.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.obs_nudging.main
 
 -------------------------------------------
 
@@ -99,11 +106,7 @@ List of available jobs
 
 -------------------------------------------
 
-.. autofunction:: jobs.oae.main
-
--------------------------------------------
-
-.. autofunction:: jobs.obs_nudging.main
+.. autofunction:: jobs.online_vprm.main
 
 -------------------------------------------
 
@@ -116,6 +119,10 @@ List of available jobs
 -------------------------------------------
 
 .. autofunction:: jobs.post_int2lm.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.reduce_output.main
 
 -------------------------------------------
 
