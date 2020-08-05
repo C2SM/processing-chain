@@ -20,3 +20,34 @@ def find_variables_file(alternate_csv_file):
     return variables
 
 
+def common_unit(gas):
+    """ Returns the commonly used unit of a gas. 
+
+    Parameter
+    ---------
+    gas : str
+        Name of the gas species
+
+    Returns
+    -------
+    unit : str
+        unit of the gas species
+    """
+    if gas == 'CO2':
+        unit = 'ppmv'
+    elif gas == '14CO2':
+        unit = 'ppmv'
+    elif gas == 'CO':
+        unit = 'ppbv'
+    elif gas == 'CH4':
+        unit = 'ppbv'
+    elif gas == 'NOX':
+        unit = 'ppmv'
+    elif gas == 'NO':
+        unit = 'ppmv'
+    elif gas == 'NO2':
+        unit = 'ppmv'
+    else:
+        return ValueError('Unknown gas %s' % gas)
+    
+    return unit
