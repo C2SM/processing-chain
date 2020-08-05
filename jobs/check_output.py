@@ -247,7 +247,7 @@ def plot_timeseries(cfg, units):
             varname.startswith('NOX_') or varname.startswith('NO2_')):
             gas = tracername2gas(varname)
             in_unit = units[varname]
-            out_unit = common_unit(gas)
+            out_unit = tools.helper.common_unit(gas)
             vmean = chem.convert_unit(vmean, in_unit, out_unit, gas)
             vstd = chem.convert_unit(vstd, in_unit, out_unit, gas)
             vmin = chem.convert_unit(vmin, in_unit, out_unit, gas)
@@ -501,40 +501,6 @@ def get_infiles(path):
     return infiles
 
 
-def common_unit(gas):
-    """ Returns the commonly used unit of a gas. 
-
-    Parameter
-    ---------
-    gas : str
-        Name of the gas species
-
-    Returns
-    -------
-    unit : str
-        unit of the gas species
-    """
-    if gas == 'CO2':
-        unit = 'ppmv'
-    elif gas == '14CO2':
-        unit = 'ppmv'
-    elif gas == 'CO':
-        unit = 'ppbv'
-    elif gas == 'CH4':
-        unit = 'ppbv'
-    elif gas == 'NOX':
-        unit = 'ppmv'
-    elif gas == 'NO':
-        unit = 'ppmv'
-    elif gas == 'NO2':
-        unit = 'ppmv'
-    else:
-        return ValueError('Unknown gas %s' % gas)
-    
-    return unit
-
-
-
 def plot_single_map(data, infile, output_path, varnames):
     """ Plots 2D maps of certain variables from a netCDF file.
 
@@ -596,7 +562,7 @@ def plot_single_map(data, infile, output_path, varnames):
             convert = True
             gas = tracername2gas(varname)
             in_unit = DS[varname].units
-            out_unit = common_unit(gas)
+            out_unit = tools.helper.common_unit(gas)
             field = chem.convert_unit(field, in_unit, out_unit, gas)
         else:
             out_unit = DS[varname].units

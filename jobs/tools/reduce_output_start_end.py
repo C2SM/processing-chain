@@ -36,6 +36,7 @@ def get_attrs(v):
 def str2char(s):
     return np.array(list(s), 'c')
 
+
 def search_met(infile,fname_met):
     """
     Checks which file contains the meteorology data
@@ -158,7 +159,8 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
 
             if (varname.startswith('CO2_') or varname.startswith('CO_') or 
                 varname.startswith('CH4_') or varname.startswith('C14_') or 
-                varname.startswith('NOX_') or varname.startswith('NO2_')):
+                varname.startswith('NOX_') or varname.startswith('NO2_')) and \
+                len(var.dimensions) == 4:
                 outvar = outf.variables[varname]
                 gas = varname.split('_')[0]
                 if gas == 'NOX':
