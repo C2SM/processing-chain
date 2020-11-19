@@ -62,7 +62,6 @@ def main(csv_filename, namelist_filename, cfg=None):
         Path to the namelist file that will be created
     """
 
-
     # Check if online emissions ('oae') are used
     if hasattr(cfg, 'oae_dir'):
         oae = True
@@ -80,6 +79,12 @@ def main(csv_filename, namelist_filename, cfg=None):
         octe = True
     else:
         octe = False
+
+    # Check if cut_area is used
+    if hasattr(cfg, 'lon_cut') and hasattr(cfg, 'lat_cut'):
+        cut = True
+    else:
+        cut = False
 
     with open(csv_filename, 'r') as csv_file:
 
@@ -126,7 +131,22 @@ def main(csv_filename, namelist_filename, cfg=None):
                                        '  tracer_start = %d.,' % cfg.spinup)
 
             nml_file.write('\n'.join(ghgctl_vals))
+            nml_file.write('\n/\n')
 
+            vprmctl_vals = ['&VPRMCTL',
+                           '  yvprm_table = \'europe_2018\','
+                           ]
+            if cut:
+                vprmctl_vals.extend(['  lcut_area = .TRUE.,'])
+                vprmctl_vals.extend([
+                                     '  lon_cut_start = %f,' % cfg.lon_cut[0],
+                                     '  lon_cut_end = %f,' % cfg.lon_cut[1],
+                                     '  lat_cut_start = %f,' % cfg.lat_cut[0],
+                                     '  lat_cut_end = %f,' % cfg.lat_cut[1]
+                                    ])
+            else:
+                vprmctl_vals.extend(['  lcut_area = .FALSE.,'])
+            nml_file.write('\n'.join(vprmctl_vals))
             nml_file.write('\n/\n')
 
             for group in reader:
@@ -137,8 +157,8 @@ def main(csv_filename, namelist_filename, cfg=None):
                     nml_file.write(group2text(group))
 
 
+
 if __name__ == '__main__':
     input_filename = sys.argv[1]   # csv file with tracers
     output_filename = sys.argv[2]  # filename (INPUT_TRCR) read by COSMO
     main(input_filename, output_filename)
-
