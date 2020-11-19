@@ -134,7 +134,7 @@ def main(csv_filename, namelist_filename, cfg=None):
             nml_file.write('\n/\n')
 
             vprmctl_vals = ['&VPRMCTL',
-                           '  yvprm_table = \'europe_2018\','
+                           '  yvprm_table = \'gerbig\','
                            ]
             if cut:
                 vprmctl_vals.extend(['  lcut_area = .TRUE.,'])
