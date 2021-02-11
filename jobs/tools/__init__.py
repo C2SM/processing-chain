@@ -96,7 +96,8 @@ def change_logfile(filename):
     filename : str
         Path to the new logfile
     """
-    fileh = logging.FileHandler(filename, 'a')
+
+    fileh = logging.FileHandler(filename, 'a', delay=True)
     # log_format = logging.Formatter('%(levelname)s:%(message)s')
     # fileh.setFormatter(log_format)
 
@@ -179,7 +180,8 @@ class Subtarget(Enum):
 str_to_enum = {'cosmo': Target.COSMO,
                'cosmoart': Target.COSMOART,
                'none': Subtarget.NONE,
-               'spinup': Subtarget.SPINUP}
+               'spinup': Subtarget.SPINUP,
+               }
 
 
 def check_target(cfg, target=Target.COSMO):

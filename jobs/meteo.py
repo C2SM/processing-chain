@@ -51,12 +51,12 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(dest_path, "meteo input")
 
     source_nameformat = cfg.meteo_prefix + '%Y%m%d%H'
+    starttime_real = starttime + timedelta(hours = hstart)
     if cfg.meteo_prefix == 'lffd':
         # nested runs use cosmoart-output as meteo data
         # have to copy the *c.nc-file
-        time = starttime + timedelta(hours = hstart)
         src_file = os.path.join(cfg.meteo_dir,
-                                time.strftime(source_nameformat + 'c.nc'))
+                                starttime_real.strftime(source_nameformat + 'c.nc'))
 
         tools.copy_file(src_file, dest_path)
 
@@ -66,11 +66,56 @@ def main(starttime, hstart, hstop, cfg):
         # extend nameformat with ending to match cosmo-output
         source_nameformat += '.nc'
 
-    for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-        src_file = os.path.join(cfg.meteo_dir,
-                                time.strftime(source_nameformat))
+    if cfg.meteo_prefix == 'efsf':
+        source_nameformat = cfg.meteo_prefix + '%y%m%d%H'
 
-        if not os.path.exists(src_file):
+    num_steps = 0
+    meteo_dir = cfg.meteo_dir
+    subdir = os.path.join(meteo_dir, starttime_real.strftime('%y%m%d%H'))
+    for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+        dest_path = os.path.join(cfg.int2lm_input, 'meteo')
+        src_file = os.path.join(meteo_dir, time.strftime(source_nameformat))
+
+        if cfg.meteo_prefix == 'efsf':
+            if time == starttime_real:
+                src_file = os.path.join(subdir, 'eas' + time.strftime('%Y%m%d%H'))
+                if not os.path.isfile(src_file) and hasattr(cfg, 'meteo_dir_alt'):
+                    meteo_dir = cfg.meteo_dir_alt
+                    subdir = os.path.join(meteo_dir,
+                             starttime_real.strftime('%y%m%d%H'))
+                    src_file = os.path.join(subdir, 'eas' + time.strftime('%Y%m%d%H'))
+                dest_path = os.path.join(cfg.int2lm_input, 'meteo',
+                                         cfg.meteo_prefix + '00000000')
+            else:
+                td = time - starttime_real - timedelta(hours=6*num_steps)
+                days = str(td.days).zfill(2)
+                hours = str(td.seconds//3600).zfill(2)
+                td_total = time - starttime_real 
+                days_total = str(td_total.days).zfill(2)
+                hours_total = str(td_total.seconds//3600).zfill(2)
+
+                src_file = os.path.join(subdir,
+                                        cfg.meteo_prefix + days + hours + '0000')
+                dest_path = os.path.join(cfg.int2lm_input, 'meteo',
+                                         cfg.meteo_prefix +
+                                         days_total + hours_total + '0000')
+
+                # Next time, change directory
+                checkdir = os.path.join(meteo_dir, time.strftime('%y%m%d%H'))
+                if os.path.isdir(checkdir):
+                    num_steps += 1
+                    subdir = checkdir
+                elif hasattr(cfg, 'meteo_dir_alt'):
+                    checkdir = os.path.join(cfg.meteo_dir_alt,
+                               time.strftime('%y%m%d%H'))
+                    if os.path.isdir(checkdir):
+                        num_steps += 1
+                        subdir = checkdir
+                        meteo_dir = cfg.meteo_dir_alt
+                        logging.info("Switching to other input directory from {} to {}"
+                                     .format(cfg.meteo_dir, cfg.meteo_dir_alt))
+        elif not os.path.exists(src_file):
+            # special case for MeteoSwiss COSMO-7 data
             archive = '/store/mch/msopr/owm/COSMO-7'
             yy = time.strftime("%y")
             path = '/'.join([archive, 'ANA' + yy])

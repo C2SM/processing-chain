@@ -1,5 +1,0 @@
-,yshort_name,igribparam,igribtable,itype_emiss,itype_flux,yunits,ystandard_name,ylong_name,ytype_adv,ytype_diff,ytype_turbmix,ytype_passconv,ytype_ini,ytype_lbc,ytype_bbc,ytype_relax,ytype_damp,ytype_clip,ldecay,lifetime,itype_tscale,ycatl,ytpl,yvpl
-#,,,,,,,,,,,,,,,,,,,,,,,,
-,CO2_BG,10,13,0,0,kg kg-1,time-varying_CO2_mass_fraction_at_lateral_boundary,time-varying_CO2_mass_fraction_at_lateral_boundary,on,off,1D,on,file,file,zero_flux,full,on,off,.FALSE.,0,,,,
-,CO2_GPP,11,13,0,2,kg kg-1,CO2_mass_fraction_surface_flux_gpp,Mass fraction of CO2 by gross primary production (GPP),on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0,,,,
-,CO2_RA,12,13,0,2,kg kg-1,CO2_mass_fraction_surface_flux_ra,Mass fraction of CO2 by gross respiration (RA),on,off,1D,on,zero,zero,zero_flux,full,off,off,.FALSE.,0,,,,

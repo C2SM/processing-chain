@@ -1,0 +1,220 @@
+###############################################################################
+#
+# File: GLOBAL
+# Category: LM package - namelist file for task "integ"
+#
+# Host: SUN
+# Location: $LM_NDIR/<set name>    (e.g.: <set name> = integ)
+# Permission: 440
+# Associated files: $LM_SDIR/lm_for
+#
+#
+# Description: The variables in part A) and B) of this file control the
+#              behaviour of the task "integ". In part C) it is possible to
+#              define its own variables, for later usage in other namelist
+#              files. 
+#                Any lines beginning with # are ignored. 'Predefined variables'
+#              (as defined below) can be used. 
+#
+#
+# Predefined variables:
+#     $LM_YY    year of the experiment
+#     $LM_MM    month of the experiment
+#     $LM_DD    day of the experiment
+#     $LM_ZZ    time of the experiment
+#     $LM_YYm12  year of the experiment minus 12 hours
+#     $LM_MMm12  month of the experiment minus 12 hours
+#     $LM_DDm12  day of the experiment minus 12 hours
+#     $LM_ZZm12  time of the experiment minus 12 hours
+#     $LM_DATEm12 shortcut for $LM_YY$LM_MM$LM_DD$LM_ZZ minus 12 hours
+#     $LM_YYp12  year of the experiment plus 12 hours
+#     $LM_MMp12  month of the experiment plus 12 hours
+#     $LM_DDp12  day of the experiment plus 12 hours
+#     $LM_ZZp12  time of the experiment plus 12 hours
+#     $LM_DATEp12 shortcut for $LM_YY$LM_MM$LM_DD$LM_ZZ plus 12 hours
+#
+###############################################################################
+
+
+
+
+
+# A) General
+#-----------
+#    Variables controlling the general behaviour of the task 'integ'.
+#    Variables are defined following the pattern:
+#               setenv <variable name> <variable value>
+#    E.g.:      setenv LM_NL_TEXPN A01 
+#=====================================================================
+
+# Experiments names
+setenv LM_NL_TEXPN PRL                    # For task 
+setenv LM_NL_C_TTAG 'COSMO-7 intpl'       # Legend for plots 
+setenv LM_NL_F_TTAG ''                    # Legend for plots 
+
+# Forecast range
+setenv LM_NL_HENDE_PREASSML  0
+setenv LM_NL_HENDE_F         0 
+setenv LM_NL_HENDE_C        90 
+
+# Forecast range for customers
+setenv LM_NL_HENDE_CL 24 
+
+# Timestep of input files (hours)
+setenv LM_NL_INPUT_INCR_C 1
+
+# Difference between forecast time of boundary conditions and
+# forecast time of the current task. 
+setenv LM_NL_INPUT_MINSHIFT_C 0
+
+# Reservation type (opr only) 
+setenv LM_NL_RESV_TYPE intpl
+
+# A summary of the task status is kept if the value of LM_NL_SLOG is Y ;
+# this summary is saved in file LOGinteg in directory LM_LOGDIR.
+setenv LM_NL_SLOG Y                # Y or N
+#=====================================================================
+
+
+
+# B) Development of the task
+#---------------------------
+#    Variables controlling the development of the task 'integ'.
+#    Variables are defined following the pattern:
+#               setenv <variable name> <variable value>
+#    E.g.:      setenv LM_NL_ARC Y
+#=====================================================================
+# The next variables control the execution of different modules:
+# a module can be performed [Y] or skipped [N].
+#---------------------------------------------------------------------
+setenv LM_NL_ARC N              # archive transactions
+setenv LM_NL_BUF Y              # buffer transactions
+setenv LM_NL_GETOBS N           # lm_getobs 
+setenv LM_NL_IFS2LM Y           # lm_ifs2lm
+setenv LM_NL_GME2LM N           # lm_gme2lm
+setenv LM_NL_IFS2LM_PREASSML N  # lm_ifs2lm -preassml
+setenv LM_NL_LM_C_PREASSML   N  # lm_lm_c -preassml
+setenv LM_NL_LM2LM_PREASSML  N  # lm_lm2lm -preassml
+setenv LM_NL_LM_F_PREASSML   N  # lm_lm_f -preassml
+setenv LM_NL_LM_C N             # lm_lm_c
+setenv LM_NL_LM2LM N            # lm_lm2lm
+setenv LM_NL_LM_F N             # lm_lm_f
+setenv LM_NL_LM_C_POSTFCST  N   # lm_lm_c -postfcst
+setenv LM_NL_FIELDEXTRA_C N     # lm_fieldextra
+setenv LM_NL_FIELDEXTRA_F N     # lm_fieldextra
+setenv LM_NL_PRT N              # lm_print
+setenv LM_NL_DISS N             # dissemination
+setenv LM_NL_CLIENTS N          # used for D-PHASE module (opr only)
+setenv LM_NL_SKYGUIDE N         # lm_skyguide,lm_ist (opr only)
+
+# The next variables are used to execute user specific actions at the
+# beginning and at the end of the job or task.
+# If the the variable is set to the full path of an executable file 
+# (living on LM_HOST) this file will be automatically executed by the
+# All environment variables defined by the LM package are accessible
+# to these files.
+# ATTENTION: these executable are NOT under the control of the
+#            LM package run time environment!
+#-----------------
+setenv LM_NL_BTHOOK
+setenv LM_NL_BJHOOK
+setenv LM_NL_EJHOOK
+setenv LM_NL_ETHOOK
+
+# The next variable controls housekeeping at the end of the task.
+# If the value of LM_NL_ROF is N no data are removed; if this value
+# is Y the following data are removed:
+# -> on NQS_HOST: directory LM_WDIR/LM_TAG.
+# -> on LM_HOST:  subdirectories of LMWDIR/LM_TAG defined by
+#    LM_RESOURCE, LM_PLOT*, LM_LOOPS, LM_PSANETZ, LM_GRIB.
+#    and all the preproc/model output
+# It is also possible to set the value of LM_NL_ROF to T [T; T=1,2,...]:
+# in this case the data defined above are immediately removed if the task
+# is successful, otherwise are removed after T hours.
+#----------------
+setenv LM_NL_ROF 6
+
+# Cut-off time for active jobs: after T hours [T=1,2,...] an active 
+# job is killed. If LM_NL_JOBMAXT has no value, no time limit is
+# enforced.
+#----------------
+setenv LM_NL_JOBMAXT 24
+#=====================================================================
+
+
+
+
+
+# C. User defined variables
+#--------------------------
+# You can define your own variables below. 
+# Variables are defined following the pattern:
+#           setenv <variable name> <variable value>
+# <variable name> must be capitalized and must begin with the string
+# "LM_NL_". <variable name> must be unique among all variables used
+# in namelist files.
+#=====================================================================
+# GME grid
+#---------
+setenv LM_NL_RESGME 128
+setenv LM_NL_KEGME 31
+
+# IFS grid
+#---------
+setenv LM_NL_POLPHIIFS   43.0
+setenv LM_NL_POLLAMIFS -170.0
+setenv LM_NL_IEIFS 264
+setenv LM_NL_JEIFS 223
+setenv LM_NL_KEIFS 137
+setenv LM_NL_DLAMIFS 0.1
+setenv LM_NL_DPHIIFS 0.1
+setenv LM_NL_PHILUIFS -10.7
+setenv LM_NL_LAMLUIFS -18.3
+
+# LM coarse grid
+#---------------
+setenv LM_NL_POLLATLM_C 43.0
+setenv LM_NL_POLLONLM_C -170.0
+setenv LM_NL_EXT_IE_C 601
+setenv LM_NL_EXT_JE_C 601
+setenv LM_NL_IELM_C 393
+setenv LM_NL_JELM_C 338
+setenv LM_NL_KELM_C 60
+setenv LM_NL_DLONLM_C 0.06
+setenv LM_NL_DLATLM_C 0.06
+setenv LM_NL_STARTLAT_TOT_C -9.78
+setenv LM_NL_STARTLON_TOT_C -16.32
+
+# For levels ke, ke-1, ke-2
+#--------------------------
+@ tmp_value = $LM_NL_KELM_C - 1 ; setenv LM_NL_KEM1_C $tmp_value
+@ tmp_value = $LM_NL_KELM_C - 2 ; setenv LM_NL_KEM2_C $tmp_value
+
+# For level ke+1
+#---------------
+@ tmp_value = $LM_NL_KELM_C + 1 ; setenv LM_NL_KEP1_C $tmp_value
+
+# LM fine grid
+#---------------
+setenv LM_NL_POLLATLM_F 43.0
+setenv LM_NL_POLLONLM_F -170.0
+setenv LM_NL_EXT_IE_F 701
+setenv LM_NL_EXT_JE_F 701 
+setenv LM_NL_IELM_F 520
+setenv LM_NL_JELM_F 350
+setenv LM_NL_KELM_F 60
+setenv LM_NL_DLONLM_F 0.02
+setenv LM_NL_DLATLM_F 0.02 
+setenv LM_NL_STARTLAT_TOT_F -4.0
+setenv LM_NL_STARTLON_TOT_F -5.7
+
+# For levels ke, ke-1, ke-2
+#--------------------------
+@ tmp_value = $LM_NL_KELM_F - 1 ; setenv LM_NL_KEM1_F $tmp_value
+@ tmp_value = $LM_NL_KELM_F - 2 ; setenv LM_NL_KEM2_F $tmp_value
+
+# For level ke+1
+#---------------
+@ tmp_value = $LM_NL_KELM_F + 1 ; setenv LM_NL_KEP1_F $tmp_value
+
+#=====================================================================
