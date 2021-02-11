@@ -1,3 +1,0 @@
-,yshort_name,igribtable,igribparam,irank,yunits,ystandard_name,ylong_name,yfamily,ylsm,lderived,loutput,lrequired,lnested,lcompress,ldryin
-#,,,,,,,,,,,,,,,,,,,,,
-,CO2_BG,243,10,3,kg kg-1,time-varying_CO2_mass_fraction_at_lateral_boundary,time-varying CO2 mass fraction at lateral boundary,t, ,.FALSE.,.TRUE.,.FALSE.,.FALSE.,.TRUE.,.TRUE.

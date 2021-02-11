@@ -1,3 +1,4 @@
 doc/build/
 *__pycache__/
 *.pyc
+fieldextra.diagnostic

@@ -107,19 +107,17 @@ def main(starttime, hstart, hstop, cfg):
             logging.error("Copying libgrib_api failed")
             raise
 
-    # Write INPUT_ART from csv file
-    if cfg.target is tools.Target.COSMO:
-        # csv file with tracer definitions 
-        tracer_csvfile = os.path.join(cfg.casename,'int2lm_tracers.csv')
-        # csv file with tracer datasets
-        set_csvfile = os.path.join(cfg.casename,'int2lm_datasets.csv')
-
-        tracer_filename = os.path.join(cfg.chain_src_dir, 'cases', tracer_csvfile)
-        set_filename = os.path.join(cfg.chain_src_dir, 'cases', set_csvfile) 
+    # Write INPUT_ART from csv file if present
+    tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
+                                  'int2lm_tracers.csv')
+    if os.path.isfile(tracer_csvfile) and cfg.target is tools.Target.COSMO:
+        datasets_csvfile = os.path.join(cfg.chain_src_dir, 'cases',
+                                        cfg.casename,
+                                        'int2lm_datasets.csv') 
         input_art_filename = os.path.join(cfg.int2lm_work, 'INPUT_ART')
 
-        tools.write_int2lm_input_art.main(tracer_filename, set_filename,
-                                      input_art_filename)
+        tools.write_int2lm_input_art.main(tracer_csvfile, datasets_csvfile,
+                                          input_art_filename)
 
     # Prepare namelist
     with open(cfg.int2lm_namelist) as input_file:

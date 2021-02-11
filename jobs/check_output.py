@@ -668,7 +668,7 @@ def create_animations(cfg):
     # Get variable names
     varnames = get_variable_names(df.columns.values)
 
-    map_path = maps_path(cfg)
+    map_path = os.path.join(cfg.output_root, 'check_output', 'maps')
     output_path = animations_path(cfg)
     for varname in varnames:
         infile_path =  os.path.join(map_path, varname)
@@ -760,9 +760,9 @@ module load GEOS/3.6.2-CrayGNU-19.10
 module load PROJ/4.9.3-CrayGNU-19.10
 module load ecCodes/2.12.5-CrayGNU-19.10
 
-source /store/empa/em05/pyvenv-3.6/bin/activate
+source /store/empa/em05/pyvenv-3.8/bin/activate
 
-python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain} {chain_root} {action}
+srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain} {chain_root} {action}
 """
     to_write_fmt = to_write.format(cfg=cfg,
                                casename = cfg.casename,
@@ -828,10 +828,6 @@ python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain} {cha
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
 
-    # Animations
-    logging.info('Creating animations in %s' % animations_path(cfg))
-    create_animations(cfg)
-
     # Move map plots to output directory
     src_folder = os.path.join(cfg.chain_root, 'check_output', 'maps')
     dest_folder = os.path.join(cfg.output_root, 'check_output')
@@ -844,6 +840,9 @@ python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain} {cha
             toDirectory = os.path.join(dest_folder, 'maps', varname)
             copy_tree(fromDirectory, toDirectory)
 
+    # Animations
+    logging.info('Creating animations in %s' % animations_path(cfg))
+    create_animations(cfg)
 
     date = dt.datetime.today()
     to_print = """=====================================================

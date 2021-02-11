@@ -10,14 +10,17 @@ import sys
 import time
 import shutil
 import argparse
+import csv
 
 import jobs
 from jobs import tools
 
 
 default_jobs = {
-    tools.Target.COSMO: ["meteo", "icbc", "emissions", "biofluxes", "int2lm",
-                         "post_int2lm", "cosmo", "post_cosmo"],
+    tools.Target.COSMO: ["meteo", "icbc", "emissions", "biofluxes", "oae",
+                         "online_vprm", 
+                         "int2lm", "post_int2lm",
+                         "cosmo", "post_cosmo"],
     tools.Target.COSMOART: ["meteo", "icbc", "emissions", "obs_nudging",
                             "photo_rate", "int2lm", "cosmo", "post_cosmo"]
 }
@@ -285,6 +288,24 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
     setattr(cfg, 'cosmo_output_reduced', os.path.join(chain_root, 'cosmo',
                                                       'output_reduced'))
+    # Number of tracers
+    tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
+                                  'cosmo_tracers.csv')
+    if os.path.isfile(tracer_csvfile):
+        if cfg.target is tools.Target.COSMO:
+            with open(tracer_csvfile, 'r') as csv_file:
+                reader = csv.DictReader(csv_file, delimiter=',')
+                reader = [r for r in reader if r[''] != '#']
+                setattr(cfg, 'in_tracers', len(reader))
+
+        # tracer_start namelist paramter for spinup simulation
+        if cfg.target.subtarget is tools.Subtarget.SPINUP:
+            if cfg.first_one:
+                setattr(cfg, 'tracer_start', 0)
+            else:
+                setattr(cfg, 'tracer_start', cfg.spinup)
+        else:
+            setattr(cfg, 'tracer_start', 0)
 
     # constraint (gpu or mc)
     if hasattr(cfg, 'constraint'):

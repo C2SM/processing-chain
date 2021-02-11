@@ -130,20 +130,36 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
 
             if len(var.dimensions) > 2:
                 if (varname in lsd):
-                    outf.createVariable(varname, var.dtype,
-                                        var_dimensions,
-                                        zlib=True, 
-                                        least_significant_digit=lsd[varname])
+                    if '_FillValue' in var.ncattrs():
+                        fill_value = inf[varname].getncattr('_FillValue')
+                        outf.createVariable(varname, var.dtype,
+                                            var_dimensions,
+                                            zlib=True,
+                                            fill_value=fill_value,
+                                            least_significant_digit=lsd[varname])
+                    else:
+                        outf.createVariable(varname, var.dtype,
+                                            var_dimensions,
+                                            zlib=True, 
+                                            least_significant_digit=lsd[varname])
                 else:
-                    outf.createVariable(varname, var.dtype,
-                                        var_dimensions,
-                                        zlib=True)
+                    if '_FillValue' in var.ncattrs():
+                        fill_value = inf[varname].getncattr('_FillValue')
+                        outf.createVariable(varname, var.dtype,
+                                            var_dimensions,
+                                            zlib=True,
+                                            fill_value=fill_value)
+                    else:
+                        outf.createVariable(varname, var.dtype,
+                                            var_dimensions,
+                                            zlib=True)
             else:
                 outf.createVariable(varname, var.dtype,
                                     var_dimensions, zlib=True)
 
             for attr in var.ncattrs():
-                outf[varname].setncattr(attr, inf[varname].getncattr(attr))
+                if attr != '_FillValue':
+                    outf[varname].setncattr(attr, inf[varname].getncattr(attr))
 
             gas = None
             if varname != 'rotated_pole':
