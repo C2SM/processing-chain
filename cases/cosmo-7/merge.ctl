@@ -7,9 +7,9 @@ strict_usage       = .true.
 /
 
 &GlobalResource
-dictionary           = "/users/mjaehn/github/fieldextra/resources/dictionary_cosmo.txt"
-grib_definition_path = "/users/mjaehn/github/fieldextra/resources/eccodes_definitions_cosmo",
-                       "/users/mjaehn/github/fieldextra/resources/eccodes_definitions_vendor" 
+dictionary           = "/store/empa/em05/fieldextra/resources/dictionary_cosmo.txt"
+grib_definition_path = "/store/empa/em05/fieldextra/resources/eccodes_definitions_cosmo",
+                       "/store/empa/em05/fieldextra/resources/eccodes_definitions_vendor" 
 /
 
 &GlobalSettings

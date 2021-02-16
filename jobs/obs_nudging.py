@@ -55,9 +55,7 @@ def main(starttime,hstart,hstop,cfg):
 
             try:
                 tools.copy_file(src_path, dest_path)
-            except FileNotFoundError:
-                # just ignore missing nudging-data
-                logging.info("No nudging data at {}".format(src_filename))
+            except BlockingIOError:
                 continue
             logging.info("Copied file {} to {}".format(src_filename, dest_path))
 
