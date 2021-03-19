@@ -48,6 +48,7 @@ casename = os.path.basename(os.path.dirname(path))
 #meteo_dir = '/store/empa/em05/COSMO7_BC/' # until 2020-11-11 12
 #meteo_dir = '/store/s83/osm/IFS-HRES-BC-EMPA/IFS-HRES-BC-EMPA20' # after 2020-11-11 12
 meteo_dir = '/store/s83/osm/IFS-HRES-BC-EMPA/IFS-HRES-BC-EMPA21'
+meteo_dir_alt = '/store/mch/msopr/owm/IFS-HRES-BC/IFS-HRES-BC20'
 meteo_prefix = "efsf"
 meteo_inc = 1
 
@@ -74,6 +75,7 @@ cosmo_bin = '/store/empa/em05/executables/cosmo-pompa_cosmo7_container_gnu_4d8c5
 laf_startfile = '/store/mch/msopr/owm/COSMO-7/ANA20/laf2020102212'
 fieldextra_bin = '/store/empa/em05/executables/fieldextra_gnu_opt_omp_2dced5a5_20210107' 
 fieldextra_control_file = '%s/cases/%s/merge.ctl' % (chain_src_dir, casename) 
+do_merge_at_start = True
 
 # Case specific settings (int2lm and cosmo namelists and runscripts)
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT.cfg' % (chain_src_dir, casename)
