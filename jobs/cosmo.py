@@ -74,61 +74,68 @@ def main(starttime, hstart, hstop, cfg):
 
     # If an laf* file is used for initialization,
     # copy this to to 'cosmo/input/initial/' or merge with fieldextra
-    if hasattr(cfg, 'laf_startfile'): 
-        tools.create_dir(cfg.cosmo_input, "cosmo_input")
-        ini_dir = os.path.join(cfg.cosmo_input, "initial")
-        tools.create_dir(ini_dir, "cosmo_input_initial")
-        startfiletime = datetime.strptime(cfg.laf_startfile[-10:], "%Y%m%d%H")
-        starttime_real = starttime + timedelta(hours = hstart)
-        if starttime_real > startfiletime:
+    if hasattr(cfg, 'laf_startfile'):                                          
+        tools.create_dir(cfg.cosmo_input, "cosmo_input")                       
+        ini_dir = os.path.join(cfg.cosmo_input, "initial")                     
+        tools.create_dir(ini_dir, "cosmo_input_initial")                       
+        startfiletime = datetime.strptime(cfg.laf_startfile[-10:], "%Y%m%d%H") 
+        starttime_real = starttime + timedelta(hours = hstart)                 
+        if starttime_real >= startfiletime:
             starttime_last = starttime_real - timedelta(hours=cfg.restart_step)
             job_id_last_run = starttime_last.strftime('%Y%m%d%H') + \
                               "_" + str(int(hstart)) + \
                               "_" + str(int(hstop))
-            work_root = os.path.dirname(os.path.dirname(cfg.chain_root))
-            last_output_path = os.path.join(work_root, cfg.casename,
+            work_root = os.path.dirname(os.path.dirname(cfg.chain_root))          
+            last_output_path = os.path.join(work_root, cfg.casename,           
                                             job_id_last_run, 'cosmo', 'output')
-            laf_output_refdate = starttime_real.strftime("%Y%m%d%H")
-            last_laf_filename = "laf" + laf_output_refdate
-            last_laf_startfile = os.path.join(last_output_path, last_laf_filename)
-
-            # Check if fieldextra is used
+            laf_output_refdate = starttime_real.strftime("%Y%m%d%H")           
+            last_laf_filename = "laf" + laf_output_refdate                     
+            # At the beginning, use original laf_startfile                     
+            if starttime_real == startfiletime:                                
+                last_laf_startfile = cfg.laf_startfile                         
+            else:                                                              
+                last_laf_startfile = os.path.join(last_output_path, last_laf_filename)
+                                                                               
+            # Check if fieldextra is used                                      
             if hasattr(cfg, 'fieldextra_bin') and \
-            hasattr(cfg, 'fieldextra_control_file'):
-                out_file = os.path.join(ini_dir, last_laf_filename)
-                ifs_in_file = os.path.join(cfg.int2lm_output,
-                                           last_laf_filename)
-                # Write control file for fieldextra script (merge.ctl)
-                with open(cfg.fieldextra_control_file) as input_file:
-                    to_write = input_file.read()
-
-                output_file_merge = os.path.join(ini_dir, "merge.ctl")
-                with open(output_file_merge, "w") as outf:
-                    outf.write(to_write.format(
-                        cfg=cfg,
-                        in_file=last_laf_startfile,
-                        ifs_in_file=ifs_in_file,
-                        out_file=out_file,
-                        laf_output_refdate=laf_output_refdate,
-                        )
-                    )
-                # Execute fieldextra
-                with open(logfile, "a+") as log:
-                    exitcode = subprocess.call([cfg.fieldextra_bin,
-                                                output_file_merge],
-                                                stdout=log)
-                if exitcode != 0:
-                    raise RuntimeError("Fieldextra returned exitcode {}".format(exitcode))
-            else:
-                # Just copy the existing laf file
-                tools.copy_file(last_laf_startfile, ini_dir)
-
-        elif starttime_real == startfiletime:
-            # Copy the initial laf file
-            tools.copy_file(cfg.laf_startfile, ini_dir)
-        else:
+            hasattr(cfg, 'fieldextra_control_file'):                           
+                # Check if merge should be done for initial file               
+                if not hasattr(cfg, 'do_merge_at_start'):                      
+                    setattr(cfg, 'do_merge_at_start', False)                   
+                if starttime_real == startfiletime and not cfg.do_merge_at_start:
+                    # Just copy the existing laf file                          
+                    tools.copy_file(last_laf_startfile, ini_dir)               
+                else:                                                          
+                    out_file = os.path.join(ini_dir, last_laf_filename)        
+                    ifs_in_file = os.path.join(cfg.int2lm_output,              
+                                               last_laf_filename)              
+                    # Write control file for fieldextra script (merge.ctl)        
+                    with open(cfg.fieldextra_control_file) as input_file:         
+                        to_write = input_file.read()                           
+                                                                               
+                    output_file_merge = os.path.join(ini_dir, "merge.ctl")        
+                    with open(output_file_merge, "w") as outf:                 
+                        outf.write(to_write.format(                            
+                            cfg=cfg,                                           
+                            in_file=last_laf_startfile,                        
+                            ifs_in_file=ifs_in_file,                           
+                            out_file=out_file,                                 
+                            laf_output_refdate=laf_output_refdate,             
+                            )                                                  
+                        )           
+                    # Execute fieldextra                                       
+                    with open(logfile, "a+") as log:                           
+                        exitcode = subprocess.call([cfg.fieldextra_bin,        
+                                                    output_file_merge],        
+                                                    stdout=log)                
+                    if exitcode != 0:                                          
+                        raise RuntimeError("Fieldextra returned exitcode {}".format(exitcode))
+            else:                                                              
+                # Just copy the existing laf file                              
+                tools.copy_file(last_laf_startfile, ini_dir)                   
+        else:                                                                  
             raise ValueError("Start time %s must not be smaller than in laf_starttime %s."
-                             % (str(starttime), str(startfiletime)) )
+                             % (str(starttime), str(startfiletime)) )                        
 
 
     # No restarts for COSMO-ART and for simulations with spinup
