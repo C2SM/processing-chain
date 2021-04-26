@@ -10,13 +10,13 @@ import os
 import logging
 import netCDF4 as nc
 
-from amrs.nc.compare import datasets_equal
+from . import tools
 
 
 def comp_data(dataset1, dataset2, variables):
-    """Use amrs.nc.datasets_equal to compare the datasets.
+    """Use tools.helper.datasets_equal to compare the datasets.
     """
-    datasets_equal(dataset1, dataset2, variables, verbose=True)
+    tools.helper.datasets_equal(dataset1, dataset2, variables, verbose=True)
 
 
 def main(starttime, hstart, hstop, cfg):

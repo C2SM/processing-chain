@@ -1,0 +1,3 @@
+**Name**,**Description**,**Target**
+octe_lambdas,Path to the netCDF file containing the lambda values used for generating online carbontracker ensembles, COSMO
+octe_maps,Path to the netCDF file containing the regional and pft-type maps for generating online carbontracker ensembles, COSMO

@@ -18,3 +18,5 @@ from . import obs_nudging
 from . import online_vprm
 from . import octe
 from . import check_output
+#from . import icon_meteo
+from . import icon

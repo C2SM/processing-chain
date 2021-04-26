@@ -17,12 +17,15 @@ from jobs import tools
 
 
 default_jobs = {
-    tools.Target.COSMO: ["meteo", "icbc", "emissions", "biofluxes", "oae",
-                         "online_vprm", 
-                         "int2lm", "post_int2lm",
-                         "cosmo", "post_cosmo"],
+    tools.Target.COSMO:    ["meteo", "int2lm", "cosmo", "post_cosmo"],
+    tools.Target.COSMOGHG: ["meteo", "icbc", "emissions", "biofluxes", "oae",
+                            "online_vprm", "int2lm", "post_int2lm",
+                            "cosmo", "post_cosmo"],
     tools.Target.COSMOART: ["meteo", "icbc", "emissions", "obs_nudging",
-                            "photo_rate", "int2lm", "cosmo", "post_cosmo"]
+                            "photo_rate", "int2lm", "cosmo", "post_cosmo"],
+    tools.Target.ICON:     ["meteo", "icon"],
+    tools.Target.ICONART:  ["meteo", "icbc", "icon"],
+    tools.Target.ICONOEM:  ["meteo", "icbc", "oae", "icon"]
 }
 
 
@@ -158,7 +161,7 @@ def load_config_file(casename, cfg):
 
 
 def set_simulation_type(cfg):
-    """Detect if the chain targets cosmo or cosmoart and if there is a subtarget.
+    """Detect the chain target and if there is a subtarget.
 
     Check if a target was provided in the config-object. If no target is
     provided, set the target to cosmo in the config-object.
@@ -167,7 +170,7 @@ def set_simulation_type(cfg):
     provide a way to customize the behaviour of the processing chain
     for different types of simulations.
 
-    Raise a RuntimeError if a unsupported target or subtarget is given in cfg.
+    Raise a RuntimeError if an unsupported target or subtarget is given in cfg.
     You can add targets and subtargets in the jobs/tools/__init__.py file.
 
     Translates the target and subtarget from string to enum.
@@ -288,11 +291,26 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
     setattr(cfg, 'cosmo_output_reduced', os.path.join(chain_root, 'cosmo',
                                                       'output_reduced'))
+
+    # ICON
+    setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
+    setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
+    setattr(cfg, 'icon_input_oae', os.path.join(chain_root, 'icon', 'input', 'oae'))
+    setattr(cfg, 'icon_input_icbc', os.path.join(chain_root, 'icon', 'input', 'icbc'))
+    setattr(cfg, 'icon_input_icbc_processed', os.path.join(chain_root, 'icon', 'input', 'icbc', 'processed'))
+    setattr(cfg, 'icon_input_grid', os.path.join(chain_root, 'icon', 'input', 'grid'))
+    setattr(cfg, 'icon_input_mapping', os.path.join(chain_root, 'icon', 'input', 'mapping'))
+    setattr(cfg, 'icon_input_rad', os.path.join(chain_root, 'icon', 'input', 'rad'))
+    setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
+    setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
+    setattr(cfg, 'icon_output_reduced', os.path.join(chain_root, 'icon',
+                                                      'output_reduced'))
+
     # Number of tracers
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                   'cosmo_tracers.csv')
     if os.path.isfile(tracer_csvfile):
-        if cfg.target is tools.Target.COSMO:
+        if cfg.target is tools.Target.COSMOGHG:
             with open(tracer_csvfile, 'r') as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=',')
                 reader = [r for r in reader if r[''] != '#']
@@ -319,12 +337,14 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
             setattr(cfg, 'constraint', 'gpu')
 
     # asynchronous I/O
-    if cfg.cosmo_np_io == 0:
-        setattr(cfg, 'lasync_io', '.FALSE.')
-        setattr(cfg, 'num_iope_percomm', 0)
-    else:
-        setattr(cfg, 'lasync_io', '.TRUE.')
-        setattr(cfg, 'num_iope_percomm', 1)
+    if hasattr(cfg, 'cfg.cosmo_np_io'):
+        if cfg.cosmo_np_io == 0:
+            setattr(cfg, 'lasync_io', '.FALSE.')
+            setattr(cfg, 'num_iope_percomm', 0)
+        else:
+            setattr(cfg, 'lasync_io', '.TRUE.')
+            setattr(cfg, 'num_iope_percomm', 1)
+
 
     if cfg.target.subtarget is tools.Subtarget.SPINUP:
         setattr(cfg, 'last_cosmo_output',
@@ -346,6 +366,23 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     if cfg.target is tools.Target.COSMOART:
         # no restarts in cosmoart
         setattr(cfg, 'restart_step', hstop - hstart)
+
+    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
+       cfg.target is tools.Target.ICONOEM:
+        ini_datetime_string = (start_time + timedelta(hours=hstart) 
+                              ).strftime('%Y-%m-%dT%H:00:00Z')
+        end_datetime_string = (start_time + timedelta(hours=hstart) + 
+                               timedelta(hours=hstop) 
+                              ).strftime('%Y-%m-%dT%H:00:00Z')
+        setattr(cfg, 'ini_datetime_string', ini_datetime_string)
+        setattr(cfg, 'end_datetime_string', end_datetime_string)
+        # Set restart directories
+        setattr(cfg, 'icon_restart_out', os.path.join(chain_root,
+                                                       'icon', 'restart'))
+        setattr(cfg, 'icon_restart_in', os.path.join(chain_root_last_run,
+                                                      'icon', 'restart'))
+        # TODO: Set correct restart setting
+        setattr(cfg, 'lrestart', '.FALSE.')
 
     # if nested run: use output of mother-simulation
     if cfg.target is tools.Target.COSMOART and not os.path.isdir(cfg.meteo_dir):
@@ -541,16 +578,19 @@ def restart_runs_spinup(work_root, cfg, start, hstart, hstop, job_names, force):
         if time == start:
             setattr(cfg, "first_one", True)
             setattr(cfg, "second_one", False)
+            setattr(cfg, "lrestart", '.FALSE.')
             run_time = min(cfg.restart_step, hstop - hstart)
             print('First simulation')
         elif time == start + timedelta(hours=cfg.restart_step):
             setattr(cfg, "first_one", False)
             setattr(cfg, "second_one", True)
+            setattr(cfg, "lrestart", '.TRUE.')
             run_time = min(cfg.restart_step + cfg.spinup, hstop - hstart)
             print('Second simulation')
         else:
             setattr(cfg, "first_one", False)
             setattr(cfg, "second_one", False)
+            setattr(cfg, "lrestart", '.TRUE.')
             run_time = min(cfg.restart_step + cfg.spinup, hstop - hstart)
 
         if run_time == 0:
@@ -597,7 +637,9 @@ if __name__ == '__main__':
         print("Starting chain for case {}, using {}".format(casename,
                                                             cfg.target.name))
 
-        if cfg.target is tools.Target.COSMO:
+        if cfg.target is tools.Target.COSMO or cfg.target is tools.Target.ICON or \
+           cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONOEM or \
+           cfg.target is tools.Target.COSMOGHG:
             if cfg.target.subtarget is tools.Subtarget.NONE:
                 restart_runs(work_root = cfg.work_root,
                              cfg = cfg,

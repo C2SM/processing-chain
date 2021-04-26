@@ -1,0 +1,11 @@
+**Name**,**Description**,**Target**
+icon_bin, Path to the ICON executable, ICON
+icon_runjob, Path to the ICON runjob template, ICON
+icon_namelist_master, Path to the ICON master namelist template, ICON
+icon_namelist_nwp, Path to the ICON NWP namelist template, ICON
+icon_walltime, Requested time for the ICON slurm-batchjob, ICON
+icon_np_tot, Total number of processes, ICON
+input_root_mapping, Path to the ICON dictionairy files, ICON
+map_file_ana, Name of the ICON dictionary file for analysis data, ICON
+latbc_filename, Name of the lateral boundary files (including key-words) for LAM-simulations, ICON
+inidata_filename, Name of the intial condition file, ICON

@@ -9,9 +9,10 @@ mail_address = {
     'haussaij': 'jean-matthieu.haussaire@empa.ch',
     'gkuhl':    'gerrit.kuhlmann@empa.ch',
     'isuter':   'ivo.suter@empa.ch',
+    'msteiner': 'michael.steiner@empa.ch',
 }[user]
 
-target = 'cosmo'
+target = 'cosmo-ghg'
 restart_step = 120 # 5 days
 #subtarget = 'spinup'
 #spinup = 6
@@ -72,6 +73,16 @@ cams_parameters = [{
     "species" : ["C14"],
     }
 ]
+
+# OAE ------------------------------------------------------------------------
+# Online anthropogenic emissions
+oae_dir = os.path.join(input_root, 'oae')
+oae_gridded_emissions_nc = 'emissions_tno_co2_co.nc'
+oae_vertical_profiles_nc = 'vertical_profiles.nc'
+oae_hourofday_nc = 'hourofday_winter.nc'
+oae_hourofyear_nc = 'hourofyear.nc'
+oae_dayofweek_nc = 'dayofweek.nc'
+oae_monthofyear_nc = 'monthofyear.nc'
 
 # OBS_NUDGING ---------------------------------------------------------------- 
 obs_nudging_dir = '/store/empa/em05/obs_nudging_cosmo'

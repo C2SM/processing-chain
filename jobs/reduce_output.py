@@ -15,13 +15,11 @@ from datetime import datetime
 import math
 
 from . import tools
-import amrs.misc.chem as chem
-import amrs.nc.compress as compress
-import amrs.constants as constants
 
 
 def main(starttime, hstart, hstop, cfg):
-    """Calculates 2D column data and writes them into a new netCDF file.
+    """
+    Calculates 2D column data and writes them into a new netCDF file.
     Only a fixed number of levels from **COSMO** output are considered.
     Those files are written into a new directory ``cosmo_output_reduced``.
 
@@ -32,9 +30,11 @@ def main(starttime, hstart, hstop, cfg):
     data, then this code only works in case of the following:
     The tracers, for which the column-averaged dry-air (``X``) and
     moist-air (``Y``) mole fractions are calculated, have to be
-      1.) saved in a separate output file and
-      2.) the output file appears alphabetically **after** the meteorological
-          variables.
+
+        1. saved in a separate output file and
+        2. the output file appears alphabetically **after** the meteorological
+           variables.
+
     For example, use a GRIBOUT section suffix ``_met`` for standard **COSMO**
     output, and ``_trc`` for tracers.
 
@@ -72,7 +72,7 @@ def main(starttime, hstart, hstop, cfg):
         sys.exit(1)
 
     # Wait for Cosmo to finish first
-    tools.check_cosmo_completion(cfg.log_finished_dir)
+    tools.check_job_completion(cfg.log_finished_dir,"cosmo")
         
     """Get list of constant files"""
     cfiles = []

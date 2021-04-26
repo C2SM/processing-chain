@@ -1,0 +1,3 @@
+**Name**,**Description**,**Target**
+emissions_dir," Path to the input directory where the emissions-files are found. If there are multiple emissions-datasets, this is a list of paths to the directories of the datasets.", "COSMO, COSMO-ART"
+emis_gridname, Prefix of the emissions-files. List for multiple datasets. Emission-filenames are assumed to be ``{emis_gridname}YYYYMMDD.nc``, "COSMO, COSMO-ART"

@@ -8,6 +8,7 @@ mail_address = {
     'dbrunner': 'dominik.brunner@empa.ch',
     'mjaehn':   'michael.jaehn@empa.ch',
     'shenne':   'stephan.henne@empa.ch',
+    'msteiner': 'michael.steiner@empa.ch',
 }[user]
 
 # Everything defined before is not written to os.environ
@@ -56,7 +57,7 @@ meteo_inc = 1
 output_root = '/store/empa/em05/cosmo-7/output'
 
 # working root
-work_root = '/scratch/snx3000/mjaehn/processing_chain'
+work_root = os.environ['SCRATCH'] + "/processing_chain"
 log_dir = os.path.join(work_root, 'logs')
 
 # chain root

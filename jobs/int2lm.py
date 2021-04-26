@@ -110,7 +110,7 @@ def main(starttime, hstart, hstop, cfg):
     # Write INPUT_ART from csv file if present
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                   'int2lm_tracers.csv')
-    if os.path.isfile(tracer_csvfile) and cfg.target is tools.Target.COSMO:
+    if os.path.isfile(tracer_csvfile):
         datasets_csvfile = os.path.join(cfg.chain_src_dir, 'cases',
                                         cfg.casename,
                                         'int2lm_datasets.csv') 

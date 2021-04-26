@@ -1,0 +1,12 @@
+# Third-party requirements
+cartopy==0.17.0
+f90nml
+matplotlib
+netCDF4
+numpy
+scipy
+xarray
+cdo
+Sphinx
+sphinx_rtd_theme  
+Pillow

@@ -1,0 +1,59 @@
+# Built with EasyBuild version 4.3.2 on 2021-03-17_13-16-55
+##
+# This file is an EasyBuild reciPY as per https://github.com/hpcugent/easybuild
+#
+# Copyright:: Copyright 2014-2015 The Cyprus Institute
+# Authors:: Thekla Loizou <t.loizou@cyi.ac.cy>
+# License:: MIT/GPL
+#
+##
+easyblock = 'ConfigureMake'
+
+name = 'PROJ'
+version = '4.9.3'
+
+homepage = 'http://trac.osgeo.org/proj/'
+description = """Program proj is a standard Unix filter function which converts
+geographic longitude and latitude coordinates into cartesian coordinates"""
+
+toolchain = {'name': 'CrayGNU', 'version': '20.11'}
+toolchainopts = {'pic': True, 'usempi': True}
+
+source_urls = ['http://download.osgeo.org/proj/']
+sources = [SOURCELOWER_TAR_GZ]
+
+sanity_check_paths = {
+    'files': ['bin/cs2cs', 'bin/geod', 'bin/invgeod', 'bin/invproj',
+              'bin/nad2bin', 'bin/proj'],
+    'dirs': [],
+}
+
+moduleclass = 'lib'
+
+# Build statistics
+buildstats = [{
+    "build_time": 44.27,
+    "command_line": ["--allow-loaded-modules='ddt,EasyBuild-custom,EasyBuild,xalt'", "--buildpath='/run/user/24178/easybuild/build'", "--containerpath='/store/empa/em05/easybuild/containers'", "--external-modules-metadata='/users/gkuhl/production/easybuild/cray_external_modules_metadata-20.11.cfg'", "--hide-deps='absl,ANTLR,APR,APR-util,arpack-ng,Autoconf,Automake,Autotools,backports.weakref,Bazel,binutils,Bison,bokeh,byacc,bzip2,cairo,cloudpickle,configurable-http-proxy,Coreutils,Cube,CUDA,cuDNN,cURL,DB,Doxygen,Eigen,expat,flex,FLTK,fontconfig,freetype,funcsigs,gc,GCCcore,gettext,GL2PS,GLib,glmnet,GLPK,GMP,gnuplot,go,gperf,GPGME,GraphicsMagick,groff,GTS,guile,help2man,hwloc,inputproto,IPython,JasPer,jemalloc,kbproto,Libassuan,libcerf,libdrm,libevent,libfabric,libffi,libgd,libGLU,libgpuarray,libiberty,libjpeg-turbo,libjpeg-turbo,libpciaccess,Libpgp-error,libpng,libpthread-stubs,libQGLViewer,libreadline,libsodium,libspatialindex,LibTIFF,libtool,libunistring,libunwind,libutempter,libX11,libXau,libxcb,libXdmcp,libXext,libxml2,libXrender,libxshmfence,libyaml,LLVM,LOKI,Loki,LVM2,M4,make,makeinfo,Mako,Mesa,minieigen,mock,mxml,NASM,NASM,ncurses,nettle,networkx,nodejs,nose-parameterized,numactl,OPARI2,OpenMPI,OpenPGM,parameterized,PCRE,PDT,Perl,PIL,Pillow,pixman,pkg-config,ploticus,PMIx,popt,prereq,protobuf,protobuf-core,PyGTS,PyQt,Python-bare,Python-Xlib,PyYAML,PyZMQ,Qhull,qrupdate,Qt,renderproto,runc,scikit-image,scikit-learn,SCons,SCOTCH,Serf,SIP,SQLite,SWIG,Szip,Tcl,Tk,UCX,UDUNITS,UnZip,util-linux,Werkzeug,wheel,X11,xcb-proto,xextproto,xorg-macros,xproto,xtrans,XZ,ZeroMQ,zlib,zstd'", "--hide-toolchains='CrayCCE,CrayGNU,CrayIntel,CrayPGI,GCCcore,gmvapich2,gmvolf,foss,fosscuda,gompi'", "--include-easyblocks='/users/gkuhl/production/easybuild/easyblocks/*.py'", "--installpath='/store/empa/em05/easybuild'", "--module-syntax='Tcl'", "--modules-tool='EnvironmentModulesC'", "--optarch='broadwell'", "--packagepath='/store/empa/em05/easybuild/packages'", "--prefix='/store/empa/em05/easybuild'", "--repositorypath='/store/empa/em05/easybuild/ebfiles_repo'", "--robot='/users/gkuhl/production/easybuild/easyconfigs:/apps/common/UES/easybuild/software/EasyBuild/4.3.2/easybuild/easyconfigs'", "--robot-paths='/users/gkuhl/production/easybuild/easyconfigs:'", "--sourcepath='/users/gkuhl/sources'", "--tmpdir='/run/user/24178/easybuild/tmp'", 'PROJ-4.9.3-CrayGNU-20.11.eb'],
+    "core_count": 20,
+    "cpu_arch": "x86_64",
+    "cpu_arch_name": "UNKNOWN",
+    "cpu_model": "Intel(R) Xeon(R) CPU E5-2650 v3 @ 2.30GHz",
+    "cpu_speed": 3000.0,
+    "cpu_vendor": "Intel",
+    "easybuild-easyblocks_version": "4.3.2",
+    "easybuild-framework_version": "4.3.2",
+    "gcc_version": "Using built-in specs.; COLLECT_GCC=/opt/gcc/9.3.0/bin/../snos/bin/gcc; COLLECT_LTO_WRAPPER=/opt/gcc/9.3.0/snos/libexec/gcc/x86_64-suse-linux/9.3.0/lto-wrapper; Target: x86_64-suse-linux; Configured with: ../cray-gcc-9.3.0-202003310324.b29d417121fbe/configure --prefix=/opt/gcc/9.3.0/snos --disable-nls --libdir=/opt/gcc/9.3.0/snos/lib --enable-languages=c,c++,fortran --with-gxx-include-dir=/opt/gcc/9.3.0/snos/include/g++ --with-slibdir=/opt/gcc/9.3.0/snos/lib --with-system-zlib --enable-shared --enable-__cxa_atexit --build=x86_64-suse-linux --with-ppl --with-cloog --disable-multilib; Thread model: posix; gcc version 9.3.0 20200312 (Cray Inc.) (GCC) ; ",
+    "glibc_version": "2.26",
+    "hostname": "daint105",
+    "install_size": 4240599,
+    "modules_tool": ('Environment Modules v3', '/opt/cray/pe/modules/3.2.11.4/bin/modulecmd', '3.2.11'),
+    "os_name": "UNKNOWN",
+    "os_type": "Linux",
+    "os_version": "UNKNOWN",
+    "platform_name": "x86_64-unknown-linux",
+    "python_version": "2.7.17 (default, Nov 04 2019, 16:08:54) [GCC]",
+    "system_gcc_path": "/opt/gcc/9.3.0/bin/gcc",
+    "system_python_path": "/users/gkuhl/bin/python",
+    "timestamp": 1615983414,
+    "total_memory": 257088,
+}]

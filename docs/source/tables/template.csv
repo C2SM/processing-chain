@@ -1,0 +1,2 @@
+**Name**,**Description**,**Used in**
+photo_rate_file, Path to the photolysis-rate file, :func:`jobs.photo_rate.main`

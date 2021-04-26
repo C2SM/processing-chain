@@ -58,7 +58,7 @@ def main(starttime, hstart, hstop, cfg):
     logfile = os.path.join(cfg.log_working_dir, "cosmo")
     logfile_finish = os.path.join(cfg.log_finished_dir, "cosmo")
 
-    logging.info("Setup the namelist for a COSMO tracer run and"
+    logging.info("Setup the namelist for a COSMO tracer run and "
                  "submit the job to the queue")
 
     # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
@@ -146,15 +146,15 @@ def main(starttime, hstart, hstop, cfg):
     # Copy cosmo executable
     execname = cfg.target.name.lower()
     tools.copy_file(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, execname))
+    setattr(cfg, "execname", execname)
 
     # Prepare namelist and submit job
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                   'cosmo_tracers.csv')
     if cfg.target is tools.Target.COSMO:
-        if os.path.isfile(tracer_csvfile):
-            namelist_names = ['AF', 'ORG', 'IO', 'DYN', 'GHG', 'PHY', 'DIA', 'ASS']
-        else:
-            namelist_names = ['ORG', 'IO', 'DYN', 'PHY', 'DIA', 'ASS', 'SAT']
+        namelist_names = ['ORG', 'IO', 'DYN', 'PHY', 'DIA', 'ASS', 'SAT']
+    elif cfg.target is tools.Target.COSMOGHG:
+        namelist_names = ['AF', 'ORG', 'IO', 'DYN', 'GHG', 'PHY', 'DIA', 'ASS']
     elif cfg.target is tools.Target.COSMOART:
         namelist_names = ['ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO',
                           'ORG', 'PHY']
@@ -184,7 +184,7 @@ def main(starttime, hstart, hstop, cfg):
 
     # Append INPUT_GHG namelist with tracer definitions from csv file
     if os.path.isfile(tracer_csvfile):
-        if cfg.target is tools.Target.COSMO:
+        if cfg.target is tools.Target.COSMOGHG:
             input_ghg_filename = os.path.join(cfg.cosmo_work, 'INPUT_GHG')
 
             write_cosmo_input_ghg.main(tracer_csvfile, input_ghg_filename, cfg)

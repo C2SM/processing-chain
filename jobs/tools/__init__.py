@@ -172,13 +172,21 @@ def copy_file(source_path, dest_path):
 class Target(Enum):
     COSMO = auto()
     COSMOART = auto()
+    COSMOGHG = auto()
+    ICON = auto()
+    ICONART = auto()
+    ICONOEM = auto()
 
 class Subtarget(Enum):
     NONE = auto()
     SPINUP = auto()
 
 str_to_enum = {'cosmo': Target.COSMO,
-               'cosmoart': Target.COSMOART,
+               'cosmo-art': Target.COSMOART,
+               'cosmo-ghg': Target.COSMOGHG,
+               'icon': Target.ICON,
+               'icon-art': Target.ICONART,
+               'icon-oem': Target.ICONOEM,
                'none': Subtarget.NONE,
                'spinup': Subtarget.SPINUP,
                }
@@ -235,25 +243,29 @@ def levenshtein(s1, s2):
     
     return previous_row[-1]
 
-def check_cosmo_completion(log_finished_dir, waittime=3000):
-    """Check that the cosmo job is done, otherwise waits 300 seconds.
+
+def check_job_completion(log_finished_dir, job, waittime=3000):
+    """Check that a certain job is done, otherwise waits 300 seconds.
 
     Parameters
     ----------
     cfg : config-object
 
+    log_finished_dir : directory for logfiles of finished jobs
+
+    job: string of job name, e.g. "meteo"
+
     waittime : time to wait (factor of .1 second)
                Defaults to 3000 (300 seconds)
     """
-    cosmo_logfile = os.path.join(log_finished_dir,"cosmo")
+    logfile = os.path.join(log_finished_dir,job)
     while True:
-        if not os.path.exists(cosmo_logfile):
-            print("Waiting for the cosmo job to finish first")
+        if not os.path.exists(logfile):
+            print("Waiting for the %s job to finish first" %(job))
             sys.stdout.flush()
             for _ in range(waittime):
                 time.sleep(0.1)
         else:
             break
-                
 
-    
+ 

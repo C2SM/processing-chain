@@ -1,0 +1,15 @@
+**Name**,**Description**,**Target**
+mozart_file_orig, Path to input-file for mozart-files, COSMO-ART
+mozart_dir_proc, "Path to the processed mozart-files. Processed mozart-files are stored here, if there are files found here then ``file_dir_orig`` is not used", COSMO-ART
+mozart_inc, Increment in hours between mozart-files, COSMO-ART
+mozart_prefix, Prefix of the mozart-files, COSMO-ART
+cams_dir_orig,Path to input-directory for CAMS-files, COSMO
+cams_dir_proc,"Path to the processed CAMS-files. Processed CAMS-files are stored here, if there are files found here then ``cams_dir_orig`` is not used", COSMO
+cams_parameters,"Parameters for the processing of CAMS-data, more information in ``config.py`` of example case", COSMO
+icontools_dir, Path to the icontools executables, ICON
+iconremap_bin, Name of the iconremap executable, ICON
+iconsub_bin, Name of the iconsub executable, ICON
+icontools_parameter, Dictionary containing names of the icontools runscript and namelist templates, ICON
+input_root_chem, Path to the chemical input files, ICON
+chem_prefix, Prefix of the chemical input files, ICON
+chem_nameformat, Name format of the chemical input files, ICON

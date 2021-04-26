@@ -22,10 +22,6 @@ from PIL import Image
 import matplotlib.pyplot as plt
 plt.switch_backend('Agg')
 
-
-import amrs.models.cosmo as cosmo
-import amrs.misc.chem as chem
-
 try:
     from . import tools
 except ImportError:
@@ -129,7 +125,7 @@ def animations_path(cfg):
 
 def tracername2gas(tracername):
     """ Returns the chemical symbol from the COSMO tracer name to be 
-    recognized by the amrs convert_unit() function.
+    recognized by the helper convert_unit() function.
 
     Parameters
     ----------	
@@ -139,7 +135,7 @@ def tracername2gas(tracername):
     Returns
     -------
     gas : str
-        Chemical symbol as used in amrs
+        Chemical symbol as used in helper
     """
     gas = tracername.split('_')[0]
     if gas == 'NOX':
@@ -248,10 +244,10 @@ def plot_timeseries(cfg, units):
             gas = tracername2gas(varname)
             in_unit = units[varname]
             out_unit = tools.helper.common_unit(gas)
-            vmean = chem.convert_unit(vmean, in_unit, out_unit, gas)
-            vstd = chem.convert_unit(vstd, in_unit, out_unit, gas)
-            vmin = chem.convert_unit(vmin, in_unit, out_unit, gas)
-            vmax = chem.convert_unit(vmax, in_unit, out_unit, gas)
+            vmean = tools.helper.convert_unit(vmean, in_unit, out_unit, gas)
+            vstd = tools.helper.convert_unit(vstd, in_unit, out_unit, gas)
+            vmin = tools.helper.convert_unit(vmin, in_unit, out_unit, gas)
+            vmax = tools.helper.convert_unit(vmax, in_unit, out_unit, gas)
         else:
             out_unit = units[varname]
 
@@ -537,7 +533,7 @@ def plot_single_map(data, infile, output_path, varnames):
     startlat = rlat[0] 
     endlat = rlat[-1]
 
-    domain = cosmo.Domain('COSMO', startlon, startlat,
+    domain = tools.helper.Domain('COSMO', startlon, startlat,
                           endlon, endlat, pollon=pollon, pollat=pollat)
 
     # Check for rotated pole coordinates
@@ -563,7 +559,7 @@ def plot_single_map(data, infile, output_path, varnames):
             gas = tracername2gas(varname)
             in_unit = DS[varname].units
             out_unit = tools.helper.common_unit(gas)
-            field = chem.convert_unit(field, in_unit, out_unit, gas)
+            field = tools.helper.convert_unit(field, in_unit, out_unit, gas)
         else:
             out_unit = DS[varname].units
 
@@ -571,8 +567,8 @@ def plot_single_map(data, infile, output_path, varnames):
         vmin = data[varname+"_min_ground"].min()
         vmax = data[varname+"_max_ground"].max()
         if convert:
-            vmin = chem.convert_unit(vmin, in_unit, out_unit, gas)
-            vmax = chem.convert_unit(vmax, in_unit, out_unit, gas)
+            vmin = tools.helper.convert_unit(vmin, in_unit, out_unit, gas)
+            vmax = tools.helper.convert_unit(vmax, in_unit, out_unit, gas)
 
         # Set manual min/max range in case they are equal
         if vmax == vmin:
@@ -727,7 +723,7 @@ def main(starttime, hstart, hstop, cfg):
 
 
     """Wait for Cosmo to finish first"""
-    tools.check_cosmo_completion(cfg.log_finished_dir, waittime=300) # check every 30 seconds
+    tools.check_job_completion(cfg.log_finished_dir, "cosmo", waittime=300) # check every 30 seconds
 
     # Get list of files
     logging.info('Getting list of input files')
@@ -752,15 +748,19 @@ export ECCODES_DEFINITION_PATH=/store/empa/em05/easybuild/software/ecCodes/2.12.
 module load daint-mc
 module load EasyBuild-custom
 
-module load cray-python/3.6.5.7
-module load PyExtensions/3.6.5.7-CrayGNU-19.10
-module load netcdf-python/1.4.1-CrayGNU-19.10-python3
-module load GEOS/3.6.2-CrayGNU-19.10
+module load daint-mc
+module load EasyBuild-custom
 
-module load PROJ/4.9.3-CrayGNU-19.10
-module load ecCodes/2.12.5-CrayGNU-19.10
+module load cray-python/3.8.5.0
+module load PyExtensions/python3-CrayGNU-20.11
 
-source /store/empa/em05/pyvenv-3.8/bin/activate
+module load GEOS
+module load PROJ/4.9.3-CrayGNU-20.11
+module load ecCodes
+#module load GDAL                         # FIXME: currently easybuild install is not working
+
+# source /store/empa/em05/pyvenv-3.8/bin/activate
+source ~/python/stem2/bin/activate
 
 srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain} {chain_root} {action}
 """

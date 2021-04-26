@@ -1,0 +1,19 @@
+**Name**,**Description**,**Target**
+meteo_prefix, Prefix of the meteo-files. Meteo-filenames are assumed to be ``{meteo_prefix}YYMMDD``, "COSMO, COSMO-ART"
+int2lm_extpar_dir, Path to the directory containing the extpar-file for int2lm, "COSMO, COSMO-ART"
+int2lm_extpar_file, The name of the int2lm extpar-file, "COSMO, COSMO-ART"
+int2lm_bin, Path to the int2lm executable, "COSMO, COSMO-ART"
+int2lm_namelist, Path to the int2lm namelist-template, "COSMO, COSMO-ART"
+int2lm_runjob, Path to the int2lm runjob-template, "COSMO, COSMO-ART"
+int2lm_walltime, Requested time for the int2lm slurm-batchjob, "COSMO, COSMO-ART"
+int2lm_nodes, Number of nodes for the int2lm slurm-batchjob, "COSMO, COSMO-ART"
+int2lm_ntasks_per_node, Number of tasks per node, "COSMO, COSMO-ART"
+int2lm_np_x, Number of processes in the x direction, "COSMO, COSMO-ART"
+int2lm_np_y, Number of processes in the y direction, "COSMO, COSMO-ART"
+int2lm_np_tot, Total number of processes, "COSMO, COSMO-ART"
+int2lm_libgrib_dir, Path to the libgrib-directory used by the int2lm-executable, COSMO-ART
+int2lm_lu_dir, Path to the directory containing the landuse file, COSMO-ART
+int2lm_lu_file, Filename (inlcuding ending) of the landuse file, COSMO-ART
+int2lm_pft_dir, Path to the directory containing the plant functional type file, COSMO-ART
+int2lm_pft_dir, Filename (including ending) of the plant functional type file, COSMO-ART
+post_int2lm_species, List of variables for the post_int2lm-job, COMSO

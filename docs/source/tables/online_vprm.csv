@@ -1,0 +1,4 @@
+**Name**,**Description**,**Target**
+online_vprm_dir,Path to the directory containing netCDF files with pre-processed MODIS reflectance (``modis_filename``) and vegetation class fraction (``vegetation_filename``) data, COSMO
+modis_filename,Name of the pre-processed MODIS netCDF file, COSMO
+vegetation_filename,Name of the pre-processed vegetation class fraction netCDF file, COSMO
