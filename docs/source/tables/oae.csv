@@ -1,0 +1,8 @@
+**Name**,**Description**,**Target**
+oae_dir, Path to where the online emission datasets are found, "COMSO, ICON"
+oae_gridded_emissions_nc, Name of the main emission netCDF file (online emissions), "COSMO, ICON"
+oae_vertical_profiles_nc, Name of the netCDF file for vertical profile scaling (online emissions), "COMSO, ICON"
+oae_hourofday_nc, Name of the netCDF file for 'hour of day' scaling (online emissions), "COSMO, ICON"
+oae_hourofyear_nc, Name of the netCDF file for 'hour of year' scaling (online emissions), "COSMO, ICON"
+oae_dayofweek_nc, Name of the netCDF file for 'day of week' scaling (online emissions), "COSMO, ICON"
+oae_monthofyear_nc, Name of the netCDF file for 'month of year' scaling (online emissions), "COSMO, ICON"

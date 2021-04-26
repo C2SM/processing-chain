@@ -1,0 +1,11 @@
+**Name**,**Description**,**Target**
+cosmo_bin, Path to the cosmo(art) executable, "COSMO, COSMO-ART"
+cosmo_namelist, "Path to the cosmo namelist-templates, ending in ``cosmo_INPUT_``. The ending, for example ``IO`` or ``ORG``, is added by the cosmo-job", "COSMO, COSMO-ART"
+cosmo_runjob, Path to the cosmo runjob-template, "COSMO, COSMO-ART"
+cosmo_walltime, Requested time for the cosmo slurm-batchjob, "COSMO, COSMO-ART"
+cosmo_nodes, Number of nodes for the cosmo slurm-batchjob, "COSMO, COSMO-ART"
+ntasks_per_node, Number of tasks per node, "COSMO, COSMO-ART"
+cosmo_np_x, Number of processes in the x direction, "COSMO, COSMO-ART"
+cosmo_np_y, Number of processes in the y direction, "COSMO, COSMO-ART"
+cosmo_np_io, Number of processes for IO, "COSMO, COSMO-ART"
+cosmo_np_tot, Total number of processes, "COSMO, COSMO-ART"

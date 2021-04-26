@@ -1,0 +1,3 @@
+**Name**,**Description**,**Target**
+output_levels,"Number of output levels (starting from ground level) for the ``reduce_output`` job, defaults to ``-1`` if omitted, which means that all levels are kept", "COSMO, COSMO-ART"
+convert_gas,Switch to convert the unit of trace gases to ppm or ppb. This leads to a better compression rate. Defaults to ``True`` of omitted., "COSMO, COSMO-ART"

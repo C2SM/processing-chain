@@ -1,0 +1,4 @@
+**Name**,**Description**,**Target**
+bs_nudging_dir, Path to where the nudging-datasets are found, "COSMO, COSMO-ART"
+obs_nudging_prefixes, List of prefixes of nuding-files to copy, "COMSO, COSMO-ART"
+obs_nudging_date_format, "Date format of the nudging-files. If the obs-nudging-file is called ``cdfin_temp-20150204000000-20150205000000``, the dateformat is ``-%Y%m%d%H%M%S``", "COSMO, COSMO-ART"

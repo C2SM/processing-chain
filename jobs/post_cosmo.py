@@ -129,7 +129,7 @@ def main(starttime, hstart, hstop, cfg):
         logs_dest = os.path.join(copy_path, "logs").rstrip('/'))
 
     # Wait for Cosmo to finish first
-    tools.check_cosmo_completion(cfg.log_finished_dir)
+    tools.check_job_completion(cfg.log_finished_dir,"cosmo")
 
     with open(runscript_path, "w") as script:
         script.write(runscript_content)

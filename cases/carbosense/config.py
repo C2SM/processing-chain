@@ -9,9 +9,10 @@ mail_address = {
     'haussaij': 'jean-matthieu.haussaire@empa.ch',
     'gkuhl':    'gerrit.kuhlmann@empa.ch',
     'isuter':   'ivo.suter@empa.ch',
+    'msteiner': 'michael.steiner@empa.ch',
 }[user]
 
-target = 'cosmo'
+target = 'cosmo-ghg'
 restart_step = 24 # hours
 #subtarget = 'spinup'
 #spinup = 6
@@ -49,7 +50,7 @@ exe_dir = "/store/empa/em05/executables"
 input_root = '/store/empa/em05/mjaehn/Carbosense/input'
 
 # METEO ----------------------------------------------------------------------
-meteo_dir = '/store/empa/em05/input/COSMO/cosmo7'
+meteo_dir = '/store/empa/em05' # will use '/store/mch/msopr/owm/COSMO-7' instead
 meteo_prefix = "laf"
 meteo_inc = 1
 

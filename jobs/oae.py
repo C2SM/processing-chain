@@ -9,7 +9,8 @@ from . import tools
 
 
 def main(starttime, hstart, hstop, cfg):
-    """Copy emission and profile files to the **cosmo** input directory.
+    """Copy emission and profile files to the **cosmo** or **icon** input
+    directory.
 
     Parameters
     ----------
@@ -22,13 +23,6 @@ def main(starttime, hstart, hstop, cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-
-    dest_emissions = 'emissions.nc'
-    dest_vertical_profiles = 'vertical_profiles.nc'
-    dest_dayofweek = 'dayofweek.nc'
-    dest_hourofday = 'hourofday.nc'
-    dest_hourofyear = 'hourofyear.nc'
-    dest_monthofyear = 'monthofyear.nc'
 
     oae_dir = cfg.oae_dir
     oae_gridded_emissions_nc = os.path.join(oae_dir,
@@ -56,7 +50,12 @@ def main(starttime, hstart, hstop, cfg):
         raise RuntimeError("At least one of (hod/dow/moy) or (hoy) netcdfs "
                            " have to be given for online emissions")
 
-    dest_dir = os.path.join(cfg.cosmo_input, "oae")
+    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
+       cfg.target is tools.Target.ICONOEM:
+        input_dir = cfg.icon_input
+    else:
+        input_dir = cfg.cosmo_input
+    dest_dir = os.path.join(input_dir, "oae")
     tools.create_dir(dest_dir, "online emissions input")
 
     logging.info("Copying oae files from {} to {}"
@@ -64,15 +63,25 @@ def main(starttime, hstart, hstop, cfg):
 
     if hod_tps:
         tools.copy_file(oae_gridded_emissions_nc,
-                        os.path.join(dest_dir, dest_emissions))
+                        os.path.join(dest_dir, cfg.oae_gridded_emissions_nc))
         tools.copy_file(oae_vertical_profiles_nc,
-                        os.path.join(dest_dir, dest_vertical_profiles))
+                        os.path.join(dest_dir, cfg.oae_vertical_profiles_nc))
         tools.copy_file(oae_hourofday_nc,
-                        os.path.join(dest_dir, dest_hourofday))
+                        os.path.join(dest_dir, cfg.oae_hourofday_nc))
         tools.copy_file(oae_dayofweek_nc,
-                        os.path.join(dest_dir, dest_dayofweek))
+                        os.path.join(dest_dir, cfg.oae_dayofweek_nc))
         tools.copy_file(oae_monthofyear_nc,
-                        os.path.join(dest_dir, dest_monthofyear))
+                        os.path.join(dest_dir, cfg.oae_monthofyear_nc))
     if hoy_tps:
         tools.copy_file(oae_hourofyear_nc,
-                        os.path.join(dest_dir, dest_hourofyear))
+                        os.path.join(dest_dir, cfg.oae_hourofyear_nc))
+
+    # Additional files for ICON simulations
+    if hasattr(cfg, 'oae_ens_reg_nc'):
+        tools.copy_file(os.path.join(oae_dir, cfg.oae_ens_reg_nc),
+                        os.path.join(dest_dir, cfg.oae_ens_reg_nc))
+    if hasattr(cfg, 'oae_ens_lambda_nc'):
+        tools.copy_file(os.path.join(oae_dir, cfg.oae_ens_lambda_nc),
+                        os.path.join(dest_dir, cfg.oae_ens_lambda_nc))
+
+

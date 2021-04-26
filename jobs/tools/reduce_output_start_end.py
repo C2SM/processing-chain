@@ -19,10 +19,6 @@ import os
 import shutil
 import csv
 
-import amrs.misc.time as time
-import amrs.misc.chem as chem
-import amrs.constants as constants
-
 import helper
 
 import logging
@@ -189,10 +185,10 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
                 if convert:
                     outvar.units = helper.common_unit(gas)
                     if gas == 'C14':
-                        outf[varname][:] = chem.convert_unit(
+                        outf[varname][:] = helper.convert_unit(
                                                field, unit, outvar.units, 45.993e-3)
                     else:
-                        outf[varname][:] = chem.convert_unit(
+                        outf[varname][:] = helper.convert_unit(
                                                field, unit, outvar.units, gas)
                 else:
                     outvar.units = unit
@@ -220,17 +216,17 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
                     p = np.array(inf_p.variables['P'][0])
 
                     xm = np.array(inf.variables[varname][0])
-                    mair = chem.calculate_mair(p, ps, h)
+                    mair = helper.calculate_mair(p, ps, h)
 
                     # Column-averaged dry-air mole fraction
-                    column = chem.calculate_xgas(xm, mair, gas, qv)
+                    column = helper.calculate_xgas(xm, mair, gas, qv)
                     column = column.astype('f4')
                     logging.info('%s: X%s' % (output_filename, varname))
                     append_variable(outf, 'X%s' % varname, column,
                                     attrs=attrs)
 
                     # Column-averaged moist-air mole fraction
-                    column2 = chem.calculate_xgas(xm, mair, gas, 0.0)
+                    column2 = helper.calculate_xgas(xm, mair, gas, 0.0)
                     column2 = column2.astype('f4')
                     logging.info('%s: Y%s' % (output_filename, varname))
                     append_variable(outf, 'Y%s' % varname, column2,

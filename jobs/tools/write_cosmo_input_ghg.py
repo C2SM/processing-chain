@@ -23,9 +23,13 @@ STR2INT = {
 STR2INT_recycling = STR2INT.copy()
 STR2INT_recycling["ytype_ini"] = {'zero': 1, 'file': 1, 'user': 2}
 
-def group2text(group, recycling=False):
+def group2text(group, model, recycling=False):
 
-    lines = ['&TRACER']
+    if model=="COSMO":
+        lines = ['&TRACER']
+    if model=="ICON":
+        lines = ['&ghgtracer_nml']
+
     for key, value in group.items():
 
         if key == '' or value == '':
@@ -43,8 +47,10 @@ def group2text(group, recycling=False):
 
         if key == 'ycatl' or key == 'ytpl' or key == 'yvpl':
             value = value.replace('\'\'', '\'')
-
-        lines.append('  %s = %s,' % (key, value))
+        if model=="COSMO":
+            lines.append('  %s = %s,' % (key, value))
+        if model=="ICON":
+            lines.append('  %s = %s' % (key, value))
     lines.append('/\n')
 
     return '\n'.join(lines)
@@ -62,6 +68,11 @@ def main(csv_filename, namelist_filename, cfg=None):
         Path to the namelist file that will be created
     """
 
+    #Distinguish between COSMO and ICON
+    model = "COSMO"
+    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART:
+        model = "ICON"
+
     with open(csv_filename, 'r') as csv_file:
         reader = csv.DictReader(csv_file, delimiter=',')
         reader = [r for r in reader if r[''] != '#']
@@ -71,9 +82,9 @@ def main(csv_filename, namelist_filename, cfg=None):
             for group in reader:
                 if cfg.target.subtarget is tools.Subtarget.SPINUP \
                 and not cfg.first_one:
-                    nml_file.write(group2text(group, recycling=True))
+                    nml_file.write(group2text(group, model, recycling=True))
                 else:
-                    nml_file.write(group2text(group))
+                    nml_file.write(group2text(group, model))
 
 
 if __name__ == '__main__':

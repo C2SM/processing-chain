@@ -1,0 +1,3 @@
+**Name**,**Description**,**Target**
+vprm_dir, Path to the directory containing bioflux-files, COSMO
+vprm_prefix,"Prefix of the the bioflux-files. Filenames are assumed to be ``{vprm_prefix}YYYYMMDDHH.nc``. If multiple bioflux-datasets exists, this is a list of prefixes. All files are assumed to be in ``vprm_dir``", COSMO
