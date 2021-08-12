@@ -7,8 +7,8 @@ It supports different types of simulations, including **COSMO**, **COSMO-GHG**,
 **COSMO-ART**, **ICON** and **ICON-OEM**. The chain can flexibly be adapted
 according to your needs, e.g., by creating your own case or adding new jobs.
 
-Setting up your Virtual Environment
-***********************************
+Setting up your Virtual Environment using ``pip``
+*************************************************
 
 The following steps allow you to create and use your own virtual environment
 to run the Processing Chain. It is assumed that you are in the root folder
@@ -22,10 +22,9 @@ However, these packages cannot be installed via ``pip``. Therefore, they have to
 installed using EasyBuild. For more information about the EasyBuild framework, you 
 can have a look here: https://user.cscs.ch/computing/compilation/easybuild/ ::
 
-    $ module load daint-mc
-    $ module load EasyBuild-custom
-    $ eb easybuild/GEOS-3.9.1-CrayGNU-20.11.eb -r
-    $ eb easybuild/PROJ-4.9.3-CrayGNU-20.11.eb -r
+    module load daint-gpu EasyBuild-custom
+    eb easybuild/GEOS-3.9.1-CrayGNU-20.11.eb -r
+    eb easybuild/PROJ-4.9.3-CrayGNU-20.11.eb -r
     
 2. Create the Virtual Environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
@@ -33,11 +32,11 @@ can have a look here: https://user.cscs.ch/computing/compilation/easybuild/ ::
 Now we create the virtual environment named ``venv``, which is installed into
 the folder of the same name::
 
-    $ module load cray-python/3.8.5.0
-    $ python -m venv --system-site-packages venv
-    $ source venv/bin/activate
-    $ module load GEOS/3.9.1-CrayGNU-20.11
-    $ module load PROJ/4.9.3-CrayGNU-20.11
+    module load cray-python/3.8.5.0
+    python -m venv --system-site-packages venv
+    source venv/bin/activate
+    module load GEOS/3.9.1-CrayGNU-20.11
+    module load PROJ/4.9.3-CrayGNU-20.11
 
 3. Install Requirements
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -45,7 +44,7 @@ the folder of the same name::
 The requirements.txt_ contains all packages that are needed to run the Processing Chain. 
 To install the requirements, type::
 
-    $ python -m pip install -r requirements.txt
+    python -m pip install -r requirements.txt
 
 
 Run the Chain
@@ -60,23 +59,23 @@ and activate your environment::
 To test if your environment has been successfully set,
 use the command line help to see the available arguments for the main script::
 
-    $ python run_chain.py -h
+    python run_chain.py -h
 
 To run the example cases with their standard jobs, type::
 
-    $ python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24
+    python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24
 
 or::
 
-    $ python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 12
+    python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 12
 
 or::
 
-    $ python run_chain.py icon-test 2018-01-01 0 24
+    python run_chain.py icon-test 2018-01-01 0 24
 
 or::
 
-    $ python run_chain.py icon-oem-test 2018-01-01 0 24
+    python run_chain.py icon-oem-test 2018-01-01 0 24
       
 Documentation
 *************
@@ -95,7 +94,7 @@ Credits
 
 The Processing Chain was originally developed at Empa_ by the 
 `Atmospheric Modeling and Remote Sensing`_ group. The following persons 
-contributed significantly to the initial development:
+contributed significantly to the initial development (in alphabetic order):
 
 * Pavle Arsenovic
 * Dominik Brunner
