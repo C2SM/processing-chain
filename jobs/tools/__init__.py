@@ -175,7 +175,7 @@ class Target(Enum):
     COSMOGHG = auto()
     ICON = auto()
     ICONART = auto()
-    ICONOEM = auto()
+    ICONARTOEM = auto()
 
 class Subtarget(Enum):
     NONE = auto()
@@ -186,7 +186,7 @@ str_to_enum = {'cosmo': Target.COSMO,
                'cosmo-ghg': Target.COSMOGHG,
                'icon': Target.ICON,
                'icon-art': Target.ICONART,
-               'icon-oem': Target.ICONOEM,
+               'icon-oem': Target.ICONARTOEM,
                'none': Subtarget.NONE,
                'spinup': Subtarget.SPINUP,
                }

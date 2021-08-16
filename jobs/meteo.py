@@ -85,7 +85,7 @@ def main(starttime, hstart, hstop, cfg):
     """
 
     if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
-       cfg.target is tools.Target.ICONOEM:
+       cfg.target is tools.Target.ICONARTOEM:
 
         logging.info('ICON analysis data for IC/BC')
 

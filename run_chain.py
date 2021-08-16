@@ -25,7 +25,7 @@ default_jobs = {
                             "photo_rate", "int2lm", "cosmo", "post_cosmo"],
     tools.Target.ICON:     ["meteo", "icon"],
     tools.Target.ICONART:  ["meteo", "icbc", "icon"],
-    tools.Target.ICONOEM:  ["meteo", "icbc", "oae", "icon"]
+    tools.Target.ICONARTOEM:  ["meteo", "icbc", "oae", "icon"]
 }
 
 
@@ -368,7 +368,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         setattr(cfg, 'restart_step', hstop - hstart)
 
     if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
-       cfg.target is tools.Target.ICONOEM:
+       cfg.target is tools.Target.ICONARTOEM:
         ini_datetime_string = (start_time + timedelta(hours=hstart) 
                               ).strftime('%Y-%m-%dT%H:00:00Z')
         end_datetime_string = (start_time + timedelta(hours=hstart) + 
@@ -638,7 +638,7 @@ if __name__ == '__main__':
                                                             cfg.target.name))
 
         if cfg.target is tools.Target.COSMO or cfg.target is tools.Target.ICON or \
-           cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONOEM or \
+           cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM or \
            cfg.target is tools.Target.COSMOGHG:
             if cfg.target.subtarget is tools.Subtarget.NONE:
                 restart_runs(work_root = cfg.work_root,

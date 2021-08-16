@@ -32,7 +32,7 @@ For **ICON** it is ``meteo`` ``icon``.
 
 For **ICONART** it is ``meteo`` ``icbc`` ``icon``.
 
-For **ICONOEM** it is ``meteo`` ``icbc`` ``oae`` ``icon``.
+For **ICONARTOEM** it is ``meteo`` ``icbc`` ``oae`` ``icon``.
 
 The model type can be chosen by setting the variable ``target`` in the ``config.py``-file.
 

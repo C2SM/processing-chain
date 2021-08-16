@@ -68,7 +68,7 @@ def main(starttime, hstart, hstop, cfg):
             Object holding all user-configuration parameters as attributes
     """
 
-    if cfg.target is tools.Target.ICONOEM or cfg.target is tools.Target.ICONART:
+    if cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONART:
 
         logging.info('ICON chemistry data for IC/BC')
 
