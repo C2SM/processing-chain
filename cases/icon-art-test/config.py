@@ -137,7 +137,7 @@ oae_ens_lambda_nc = 'lambdas.nc'
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin = os.path.join(exe_dir, "icon-oem-pgi-20.1.1-cpu-20210215")
+icon_bin = os.path.join(exe_dir, "icon-art_20210814")
 
 # Icontools executables
 icontools_dir = exe_dir

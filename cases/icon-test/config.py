@@ -98,7 +98,7 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin = os.path.join(exe_dir, "icon-pgi-20.1.1-cpu-20210215")
+icon_bin = os.path.join(exe_dir, "icon-pgi-20.1.1-cpu-20210816")
 
 # Icontools executables
 icontools_dir = exe_dir
