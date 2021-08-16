@@ -110,7 +110,7 @@ def main(starttime, hstart, hstop, cfg):
         out_filename      = os.path.join(cfg.icon_input_icbc,cfg.inidata_filename)
         in_grid_filename  = in_filename
         out_grid_filename = os.path.join(cfg.input_root_grid,cfg.dynamics_grid_filename)
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_namelist_remap'])) as input_file:
+        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remap'])) as input_file:
             to_write = input_file.read()
         output_nml = os.path.join(cfg.icon_work, 'icontools_remap_ic.namelist')
         with open(output_nml, "w") as outf:
@@ -122,7 +122,7 @@ def main(starttime, hstart, hstop, cfg):
             outf.write(to_write)
 
         # Write remapfields namelist
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_namelist_remapfields_ic'])) as input_file:
+        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remapfields_ic'])) as input_file:
             to_write = input_file.read()
         output_fields = os.path.join(cfg.icon_work, 'icontools_remapfields_ic.namelist')
         with open(output_fields, "w") as outf:
@@ -130,7 +130,7 @@ def main(starttime, hstart, hstop, cfg):
             outf.write(to_write)
 
         # Write run script (remap_ic.job)
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_remap_ic_runjob'])) as input_file:
+        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['remap_ic_runjob'])) as input_file:
             to_write = input_file.read()
         output_run = os.path.join(cfg.icon_work, "remap_ic.job")
         with open(output_run, "w") as outf:
@@ -156,7 +156,7 @@ def main(starttime, hstart, hstop, cfg):
         logfile_finish = os.path.join(cfg.log_finished_dir,"auxgrid")
 
         # Write iconsub namelist
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_namelist_iconsub'])) as input_file:
+        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_iconsub'])) as input_file:
             to_write = input_file.read()
         output_nml = os.path.join(cfg.icon_work, 'icontools_iconsub.namelist')
         with open(output_nml, "w") as outf:
@@ -164,7 +164,7 @@ def main(starttime, hstart, hstop, cfg):
             outf.write(to_write)
 
         # Write run script (auxgrid.job)
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_auxgrid_runjob'])) as input_file:
+        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['auxgrid_runjob'])) as input_file:
             to_write = input_file.read()
         output_run = os.path.join(cfg.icon_work, "auxgrid.job")
         with open(output_run, "w") as outf:
@@ -188,7 +188,7 @@ def main(starttime, hstart, hstop, cfg):
         logfile = os.path.join(cfg.log_working_dir, "lbc_ana")
         logfile_finish = os.path.join(cfg.log_finished_dir,"lbc_ana")
 
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_namelist_remapfields_ana_lbc'])) as input_file:
+        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remapfields_ana_lbc'])) as input_file:
             to_write = input_file.read()
         output_nml_fields = os.path.join(cfg.icon_work, 'icontools_remapfields_lbc_00.namelist')
         with open(output_nml_fields, "w") as outf:
@@ -205,7 +205,7 @@ def main(starttime, hstart, hstop, cfg):
             in_filename       = os.path.join(cfg.input_root_meteo,time.strftime(cfg.source_nameformat)+'.grb')
             out_grid_filename = os.path.join(cfg.icon_input_grid,cfg.lateral_boundary_grid)
             out_filename      = os.path.join(cfg.icon_input_icbc,time.strftime(cfg.source_nameformat))
-            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_namelist_remap'])) as input_file:
+            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remap'])) as input_file:
                 to_write = input_file.read()
             output_nml_lbc = os.path.join(cfg.icon_work, 'icontools_remap_lbc.namelist')
             with open(output_nml_lbc, "w") as outf:
@@ -217,7 +217,7 @@ def main(starttime, hstart, hstop, cfg):
                 outf.write(to_write)
 
             # Write run script (remap_lbc_00.job)
-            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_remap_ana_lbc_runjob'])) as input_file:
+            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['remap_ana_lbc_runjob'])) as input_file:
                 to_write = input_file.read()
             output_run = os.path.join(cfg.icon_work, "remap_lbc_00.job")
             with open(output_run, "w") as outf:
@@ -243,7 +243,7 @@ def main(starttime, hstart, hstop, cfg):
         logfile = os.path.join(cfg.log_working_dir, "lbc_fc")
         logfile_finish = os.path.join(cfg.log_finished_dir,"lbc_fc")
         # Write remapfields namelist
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_namelist_remapfields_fc_lbc'])) as input_file:
+        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remapfields_fc_lbc'])) as input_file:
             to_write = input_file.read()
         output_nml_fields = os.path.join(cfg.icon_work, 'icontools_remapfields_lbc.namelist')
         with open(output_nml_fields, "w") as outf:
@@ -260,7 +260,7 @@ def main(starttime, hstart, hstop, cfg):
             in_filename       = os.path.join(cfg.input_root_meteo,time.strftime(cfg.source_nameformat)+'.grb')
             out_grid_filename = os.path.join(cfg.icon_input_grid,cfg.lateral_boundary_grid)
             out_filename      = os.path.join(cfg.icon_input_icbc,time.strftime(cfg.source_nameformat))
-            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_namelist_remap'])) as input_file:
+            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remap'])) as input_file:
                 to_write = input_file.read()
             output_nml_lbc = os.path.join(cfg.icon_work, 'icontools_remap_lbc.namelist')
             with open(output_nml_lbc, "w") as outf:
@@ -272,7 +272,7 @@ def main(starttime, hstart, hstop, cfg):
                 outf.write(to_write)
 
             # Write run script (remap_lbc.job)
-            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_remap_fc_lbc_runjob'])) as input_file:
+            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['remap_fc_lbc_runjob'])) as input_file:
                 to_write = input_file.read()
             output_run = os.path.join(cfg.icon_work, "remap_lbc.job")
             with open(output_run, "w") as outf:

@@ -61,39 +61,23 @@ chem_prefix = 'cams_gqpe'
 chem_nameformat = chem_prefix + '_%Y%m%d_%H'
 
 # ICONTools ------------------------------------------------------------------
-#icontools_remap_ic_runjob               = 'icontools_remap_ic_runjob.cfg'
-#icontools_auxgrid_runjob                = 'icontools_auxgrid_runjob.cfg'
-#icontools_remap_ana_lbc_runjob          = 'icontools_remap_ana_lbc_runjob.cfg'
-#icontools_remap_fc_lbc_runjob           = 'icontools_remap_fc_lbc_runjob.cfg'
-#icontools_remap_aux_runjob              = 'icontools_remap_aux_runjob.cfg'
-#icontools_remap_chem_ic_runjob          = 'icontools_remap_chem_ic_runjob.cfg'
-#icontools_remap_chem_lbc_runjob         = 'icontools_remap_chem_lbc_runjob.cfg'
-#icontools_namelist_iconsub              = 'icontools_namelist_iconsub.cfg'
-#icontools_namelist_remapfields_ic       = 'icontools_namelist_remapfields_ic.cfg'
-#icontools_namelist_remapfields_ana_lbc  = 'icontools_namelist_remapfields_ana_lbc.cfg'
-#icontools_namelist_remapfields_fc_lbc   = 'icontools_namelist_remapfields_fc_lbc.cfg'
-#icontools_namelist_remapfields_chem_ic  = 'icontools_namelist_remapfields_chem_ic.cfg'
-#icontools_namelist_remapfields_chem_lbc = 'icontools_namelist_remapfields_chem_lbc.cfg'
-#icontools_namelist_remap                = 'icontools_namelist_remap.cfg'
-#icontools_namelist_remap_chem           = 'icontools_namelist_remap_chem.cfg'
-
-icontools_parameter = {'icontools_remap_ic_runjob': 'icontools_remap_ic_runjob.cfg',
-                       'icontools_auxgrid_runjob': 'icontools_auxgrid_runjob.cfg',
-                       'icontools_remap_ana_lbc_runjob': 'icontools_remap_ana_lbc_runjob.cfg',
-                       'icontools_remap_fc_lbc_runjob': 'icontools_remap_fc_lbc_runjob.cfg',
-                       'icontools_remap_aux_runjob': 'icontools_remap_aux_runjob.cfg',
-                       'icontools_remap_chem_ic_runjob': 'icontools_remap_chem_ic_runjob.cfg',
-                       'icontools_remap_chem_lbc_runjob': 'icontools_remap_chem_lbc_runjob.cfg',
-                       'icontools_namelist_iconsub': 'icontools_namelist_iconsub.cfg',
-                       'icontools_namelist_remapfields_ic': 'icontools_namelist_remapfields_ic.cfg',
-                       'icontools_namelist_remapfields_ana_lbc': 'icontools_namelist_remapfields_ana_lbc.cfg',
-                       'icontools_namelist_remapfields_fc_lbc': 'icontools_namelist_remapfields_fc_lbc.cfg',
-                       'icontools_namelist_remapfields_chem_ic': 'icontools_namelist_remapfields_chem_ic.cfg',
-                       'icontools_namelist_remapfields_chem_lbc': 'icontools_namelist_remapfields_chem_lbc.cfg',
-                       'icontools_namelist_remap': 'icontools_namelist_remap.cfg',
-                       'icontools_namelist_remap_chem': 'icontools_namelist_remap_chem.cfg',
-                      }
-
+icontools_parameter = {
+    'remap_ic_runjob': 'icontools_remap_ic_runjob.cfg',
+    'auxgrid_runjob': 'icontools_auxgrid_runjob.cfg',
+    'remap_ana_lbc_runjob': 'icontools_remap_ana_lbc_runjob.cfg',
+    'remap_fc_lbc_runjob': 'icontools_remap_fc_lbc_runjob.cfg',
+    'remap_aux_runjob': 'icontools_remap_aux_runjob.cfg',
+    'remap_chem_ic_runjob': 'icontools_remap_chem_ic_runjob.cfg',
+    'remap_chem_lbc_runjob': 'icontools_remap_chem_lbc_runjob.cfg',
+    'namelist_iconsub': 'icontools_namelist_iconsub.cfg',
+    'namelist_remapfields_ic': 'icontools_namelist_remapfields_ic.cfg',
+    'namelist_remapfields_ana_lbc': 'icontools_namelist_remapfields_ana_lbc.cfg',
+    'namelist_remapfields_fc_lbc': 'icontools_namelist_remapfields_fc_lbc.cfg',
+    'namelist_remapfields_chem_ic': 'icontools_namelist_remapfields_chem_ic.cfg',
+    'namelist_remapfields_chem_lbc': 'icontools_namelist_remapfields_chem_lbc.cfg',
+    'namelist_remap': 'icontools_namelist_remap.cfg',
+    'namelist_remap_chem': 'icontools_namelist_remap_chem.cfg',
+}
 
 # Input data for runscript----------------------------------------------------
 # Grid
