@@ -1,0 +1,5 @@
+,yshort_name,igribparam,igribtable,itype_emiss,itype_flux,yunits,ystandard_name,ylong_name,ytype_adv,ytype_diff,ytype_turbmix,ytype_passconv,ytype_ini,ytype_lbc,ytype_bbc,ytype_relax,ytype_damp,ytype_clip,ldecay,lifetime,itype_tscale,lbg,lensemble,ycatl,ytpl,yvpl
+#,,,,,,,,,,,,,,,,,,,,,,,,
+,CH4_BG,10,13,0,0,kg kg-1,time-varying_CH4_mass_fraction_at_lateral_boundary,time-varying_CH4_mass_fraction_at_lateral_boundary,off,off,off,off,zero,zero,zero_flux,off,off,off,.FALSE.,0,0,.TRUE.,.FALSE.,"'CH4'",,
+#,,,,,,,,,,,,,,,,,,,,,,,,
+,CH4_A,13,13,0,0,kg kg-1,CH4_mass_fraction_of_time-varying_emissions_online,CH4_mass_fraction_of_time-varying_emissions_online,off,off,off,off,zero,zero,zero_flux,off,off,off,.FALSE.,0,1,.FALSE.,.TRUE.,"'agri','CH4_J','other'","'GNFR_A','GNFR_A','GNFR_A'","'GNFR_A','GNFR_A','GNFR_A'"
