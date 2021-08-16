@@ -16,20 +16,14 @@ target = 'icon'
 restart_step = 24 # hours
 
 compute_host = 'daint'
-compute_queue = 'normal' # 'normal' / 'debug'
+compute_queue = 'debug' # 'normal' / 'debug'
 compute_account = 'em05'
-constraint = 'mc' # 'mc' / 'gpu'
+constraint = 'gpu' # 'mc' / 'gpu'
 
 if constraint == 'gpu':
     ntasks_per_node = 12
-    mpich_cuda = ('export MPICH_RDMA_ENABLED_CUDA=1\n'
-                  'export MPICH_G2G_PIPELINE=256\n'
-                  'export CRAY_CUDA_MPS=1\n'
-                  'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/nvidia/default/lib64'
-                 ) 
 elif constraint == 'mc':
     ntasks_per_node = 36
-    mpich_cuda = ''
 
 # case name = pathname in cases/
 path = os.path.realpath(__file__)
@@ -106,9 +100,7 @@ iconremap_bin = "iconremap"
 iconsub_bin   = "iconsub"
 
 # Namelists and slurm runscript templates
-icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
-icon_namelist_master = os.path.join(case_dir, 'icon_master.namelist.cfg')
-icon_namelist_nwp = os.path.join(case_dir, 'icon_NAMELIST_NWP.cfg')
+icon_runjob = os.path.join(case_dir, 'runscript.cfg')
 
 # Walltimes and domain decomposition
 if compute_queue == "normal":
@@ -116,7 +108,7 @@ if compute_queue == "normal":
     icon_np_tot = 12
 elif compute_queue == "debug":
     icon_walltime = "00:30:00"
-    icon_np_tot = 2
+    icon_np_tot = 10
 else: 
     logging.error("Unknown queue name: %s" % compute_queue)
     sys.exit(1)

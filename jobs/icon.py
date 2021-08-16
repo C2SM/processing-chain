@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Setup the namelist for an ICON tracer run and submit the job to the queue
+# Setup the namelist for an ICON run and submit the job to the queue
 #
 # result in case of success: forecast fields found in  
 #                            ${icon_output}
 #
 # Michael Jähn, February 2021
 #
-# 2021-XX-XX Initial release
+# 2021-04-26 Initial release
+# 2021-08-xx <Update description>
 
 import logging
 import os
@@ -98,31 +99,6 @@ def main(starttime, hstart, hstop, cfg):
     # Copy icon executable
     execname = 'icon.exe'
     tools.copy_file(cfg.icon_bin, os.path.join(cfg.icon_work, execname))
-
-    # Tracer file
-    tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
-                                  'icon_tracers.csv')
-
-    # Write master namelist
-    with open(cfg.icon_namelist_master) as input_file:
-        to_write = input_file.read()
-    output_file = os.path.join(cfg.icon_work, 'icon_master.namelist')
-    with open(output_file, "w") as outf:
-        to_write = to_write.format(cfg=cfg)
-        outf.write(to_write)
-
-    # Write NWP namelist
-    with open(cfg.icon_namelist_nwp) as input_file:
-        to_write = input_file.read()
-    output_file = os.path.join(cfg.icon_work, 'NAMELIST_NWP')
-    with open(output_file, "w") as outf:
-        to_write = to_write.format(cfg=cfg)
-        outf.write(to_write)
-
-    # Append NWP namelist with tracer definitions from csv file
-    if os.path.isfile(tracer_csvfile):
-        input_ghg_filename = os.path.join(cfg.icon_work, 'NAMELIST_NWP')
-        write_cosmo_input_ghg.main(tracer_csvfile, input_ghg_filename, cfg)
 
     # Write run script (run_icon.job)
     with open(cfg.icon_runjob) as input_file:
