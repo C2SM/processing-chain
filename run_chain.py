@@ -242,7 +242,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         mail_address = settings['User']['Mail']
     else:
         mail_address = None
-    print(mail_address)
 
     # ini date and forecast time (ignore meteo times)
     inidate = int((start_time - datetime(1970,1,1)).total_seconds())
@@ -482,9 +481,8 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                     subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (job,
                               job_id)
                     logging.exception(subject)
-                    with open(os.path.join(log_working_dir, job)) as logfile:
-                        message = logfile.read()
                     if mail_address:
+                        message = tools.prepare_message(os.path.join(log_working_dir, job))
                         logging.info('Sending log file to %s' % mail_address)
                         tools.send_mail(mail_address, subject, message)
                     if try_count ==0:
@@ -502,9 +500,8 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
             if exitcode != 0 or not os.path.exists(os.path.join(log_finished_dir, job)):
                 subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (job,
                           job_id)
-                with open(os.path.join(log_working_dir, job)) as logfile:
-                    message = logfile.read()
                 if mail_address:
+                    message = tools.prepare_message(os.path.join(log_working_dir, job))
                     logging.info('Sending log file to %s' % mail_address)
                     tools.send_mail(mail_address, subject, message)
                 raise RuntimeError(subject)

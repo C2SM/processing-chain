@@ -68,6 +68,29 @@ def iter_hours(starttime, hstart, hstop, step=1):
         current += timedelta(hours=step)
 
 
+def prepare_message(logfile_path):
+    """Shortens the logfile to be sent via mail if it is too long.
+
+    Parameters
+    ----------
+    logfile_path : str
+        Path of logfile
+    """
+
+    with open(logfile_path) as logfile:
+        message = logfile.read()
+    # Shorten big logfiles
+    if len(message) > 4096:
+        message = message[:2048] + \
+                  "\n\n--------------------------------------------------\n" + \
+                  "### Some lines are skipped here. Original logfile:\n" + \
+                  logfile_path + \
+                  "\n--------------------------------------------------\n\n" + \
+                  message[-2048:]
+
+    return message
+
+
 def send_mail(address, subject, message=''):
     """Send an email to adress.
 
