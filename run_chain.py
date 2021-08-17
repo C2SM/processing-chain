@@ -11,6 +11,8 @@ import time
 import shutil
 import argparse
 import csv
+import configparser
+settings = configparser.ConfigParser()
 
 import jobs
 from jobs import tools
@@ -233,6 +235,15 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     force : bool
         If True will do job regardless of completion status
     """
+    # Read global settings
+    settings_file = os.path.join(cfg.chain_src_dir, 'settings.cfg')
+    if os.path.isfile(settings_file):
+        settings.read(settings_file)
+        mail_address = settings['User']['Mail']
+    else:
+        mail_address = None
+    print(mail_address)
+
     # ini date and forecast time (ignore meteo times)
     inidate = int((start_time - datetime(1970,1,1)).total_seconds())
     inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
@@ -473,7 +484,9 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                     logging.exception(subject)
                     with open(os.path.join(log_working_dir, job)) as logfile:
                         message = logfile.read()
-                    tools.send_mail(cfg.mail_address, subject, message)
+                    if mail_address:
+                        logging.info('Sending log file to %s' % mail_address)
+                        tools.send_mail(mail_address, subject, message)
                     if try_count ==0:
                         raise RuntimeError(subject)
 
@@ -491,7 +504,9 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                           job_id)
                 with open(os.path.join(log_working_dir, job)) as logfile:
                     message = logfile.read()
-                tools.send_mail(cfg.mail_address, subject, message)
+                if mail_address:
+                    logging.info('Sending log file to %s' % mail_address)
+                    tools.send_mail(mail_address, subject, message)
                 raise RuntimeError(subject)
 
 

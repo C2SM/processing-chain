@@ -4,12 +4,6 @@ import sys
 year = sys.argv[2][0:4]
 
 user = os.environ['USER']
-mail_address = {
-    'dbrunner': 'dominik.brunner@empa.ch',
-    'mjaehn':   'michael.jaehn@empa.ch',
-    'shenne':   'stephan.henne@empa.ch',
-    'msteiner': 'michael.steiner@empa.ch',
-}[user]
 
 # Everything defined before is not written to os.environ
 # and thus not available to bash scripts.

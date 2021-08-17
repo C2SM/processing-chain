@@ -3,3 +3,4 @@ docs/build/
 *.pyc
 fieldextra.diagnostic
 venv/
+settings.cfg

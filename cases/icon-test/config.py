@@ -2,16 +2,6 @@ import os
 
 # GENERAL SETTINGS =========================================================== 
 user = os.environ['USER']
-mail_address = {
-    'dbrunner': 'dominik.brunner@empa.ch',
-    'shenne':   'stephan.henne@empa.ch',
-    'mjaehn':   'michael.jaehn@empa.ch',
-    'haussaij': 'jean-matthieu.haussaire@empa.ch',
-    'gkuhl':    'gerrit.kuhlmann@empa.ch',
-    'isuter':   'ivo.suter@empa.ch',
-    'msteiner': 'michael.steiner@empa.ch',
-}[user]
-
 target = 'icon'
 restart_step = 24 # hours
 

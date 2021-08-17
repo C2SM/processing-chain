@@ -2,20 +2,7 @@ import os
 
 
 # ORGANIZATIONAL ============================================================= #
-
 user = os.environ['USER']
-mail_address = {
-    'gkuhl':     'gerrit.kuhlmann@empa.ch',
-    'kug':       'gerrit.kuhlmann@empa.ch',
-    'dbrunner':  'dominik.brunner@empa.ch',
-    'haussaij':  'jean-matthieu.haussaire@empa.ch',
-    'mjaehn':    'michael.jaehn@empa.ch',
-    'muq':       'qing.mu@empa.ch',
-    'parsenov' : 'pavle.arsenovic@empa.ch',
-    'ochsnerd' : 'david.ochsner@empa.ch',
-    'msteiner' : 'michael.steiner@empa.ch',
-}[user]
-
 compute_host = 'daint'
 compute_queue = 'normal'
 compute_account = 'em05'
