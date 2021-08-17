@@ -1,5 +1,9 @@
 import os
 
+"""
+Configuration file for the 'icon-test' case with ICON
+"""
+
 # GENERAL SETTINGS =========================================================== 
 user = os.environ['USER']
 target = 'icon'

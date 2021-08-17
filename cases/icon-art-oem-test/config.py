@@ -1,25 +1,23 @@
 import os
 
+"""
+Configuration file for the 'icon-art-oem-test' case with ICON-ART-OEM
+"""
+
 # GENERAL SETTINGS =========================================================== 
 user = os.environ['USER']
-target = 'icon-oem'
+target = 'icon-art-oem'
 restart_step = 24 # hours
 
 compute_host = 'daint'
-compute_queue = 'normal' # 'normal' / 'debug'
+compute_queue = 'debug' # 'normal' / 'debug'
 compute_account = 'em05'
 constraint = 'mc' # 'mc' / 'gpu'
 
 if constraint == 'gpu':
     ntasks_per_node = 12
-    mpich_cuda = ('export MPICH_RDMA_ENABLED_CUDA=1\n'
-                  'export MPICH_G2G_PIPELINE=256\n'
-                  'export CRAY_CUDA_MPS=1\n'
-                  'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/nvidia/default/lib64'
-                 ) 
 elif constraint == 'mc':
     ntasks_per_node = 36
-    mpich_cuda = ''
 
 # case name = pathname in cases/
 path = os.path.realpath(__file__)
