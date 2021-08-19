@@ -94,6 +94,14 @@ inidata_filename = "ifs_init_2018010100.nc"
 output_filename = "icon-art-test"
 filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 
+# ART settings----------------------------------------------------------------
+input_root_tracers = os.path.join(input_root, 'XML')
+chemtracer_xml_filename = os.path.join(input_root_tracers, 'tracers_oh_pntsrc.xml')
+pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc.xml')
+art_input_folder = os.path.join(os.environ['SCRATCH'], user, 
+                                 'icon-kit-art/externals/art')
+
+
 
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
