@@ -1,0 +1,17 @@
+#!/bin/tcsh -x
+
+set datapath=../input/icbc
+
+foreach day (01 02)
+
+cdo selvar,GEOSP ${datapath}/ifs_201801${day}00_lbc.nc varGEOSP.nc
+
+foreach hr (03 06 09 12 15 18 21)
+
+cdo merge ${datapath}/ifs_201801${day}${hr}_lbc.nc varGEOSP.nc ${datapath}/ifs_201801${day}${hr}_lbc.nc
+
+end
+
+rm -rf varGEOSP.nc
+
+end
