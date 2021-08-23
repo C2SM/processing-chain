@@ -50,41 +50,20 @@ chem_nameformat = chem_prefix + '_%Y%m%d_%H'
 
 
 # ICONTools ------------------------------------------------------------------
-icontools_parameter = {
-    'remap_ic_runjob': 'icontools_remap_ic_runjob.cfg',
-    'auxgrid_runjob': 'icontools_auxgrid_runjob.cfg',
-    'remap_ana_lbc_runjob': 'icontools_remap_ana_lbc_runjob.cfg',
-    'remap_fc_lbc_runjob': 'icontools_remap_fc_lbc_runjob.cfg',
-    'remap_aux_runjob': 'icontools_remap_aux_runjob.cfg',
-    'remap_chem_ic_runjob': 'icontools_remap_chem_ic_runjob.cfg',
-    'remap_chem_lbc_runjob': 'icontools_remap_chem_lbc_runjob.cfg',
-    'namelist_iconsub': 'icontools_namelist_iconsub.cfg',
-    'namelist_remapfields_ic': 'icontools_namelist_remapfields_ic.cfg',
-    'namelist_remapfields_ana_lbc': 'icontools_namelist_remapfields_ana_lbc.cfg',
-    'namelist_remapfields_fc_lbc': 'icontools_namelist_remapfields_fc_lbc.cfg',
-    'namelist_remapfields_chem_ic': 'icontools_namelist_remapfields_chem_ic.cfg',
-    'namelist_remapfields_chem_lbc': 'icontools_namelist_remapfields_chem_lbc.cfg',
-    'namelist_remap': 'icontools_namelist_remap.cfg',
-    'namelist_remap_chem': 'icontools_namelist_remap_chem.cfg',
-}
+icontools_runjobs = [
+    'icontools_remap_ic_runjob.cfg',
+    'icontools_remap_00_lbc_runjob.cfg',
+    'icontools_remap_lbc_rest_runjob.cfg',
+]
 
 # Input data for runscript----------------------------------------------------
 # Grid
 input_root_grid = os.path.join(input_root, 'grids')
-radiation_grid_filename = "testcase_DOM01.parent.nc"
-dynamics_grid_filename = "testcase_DOM01.nc"
-map_file_latbc = "map_file.latbc"
-extpar_filename = "external_parameter_icon_testcase_DOM01_tiles.nc"
-#lateral_boundary_grid = "lateral_boundary.grid.nc"
-
-# Radiation
-#input_root_rad = os.path.join(input_root, 'rad')
-#cldopt_filename = 'rrtm_cldopt.nc'
-#lrtm_filename = 'rrtmg_lw.nc'
-
-# Mapping
-#input_root_mapping = os.path.join(input_root, 'mapping')
-#map_file_ana = "map_file.ana"
+radiation_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.parent.nc")
+dynamics_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.nc")
+map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
+extpar_filename = os.path.join(input_root_grid, 
+                               "external_parameter_icon_testcase_DOM01_tiles.nc")
 
 # File names -----------------------------------------------------------------
 #TODO: Generalize
@@ -109,9 +88,8 @@ art_input_folder = os.path.join(os.environ['SCRATCH'], user,
 icon_bin = os.path.join(exe_dir, "icon-art_20210814")
 
 # Icontools executables
-icontools_dir = exe_dir
-iconremap_bin = "iconremap"
-iconsub_bin   = "iconsub"
+iconremap_bin = os.path.join(exe_dir, "iconremap")
+iconsub_bin   = os.path.join(exe_dir, "iconsub")
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')

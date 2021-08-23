@@ -100,196 +100,24 @@ def main(starttime, hstart, hstop, cfg):
 
 
         #-----------------------------------------------------
-        # Remap initial conditions
+        # Write and submit runscripts 
         #-----------------------------------------------------
-        logfile = os.path.join(cfg.log_working_dir, "ic")
-        logfile_finish = os.path.join(cfg.log_finished_dir,"ic")
-
-        # Write remap_ic namelist
-        in_filename       = os.path.join(cfg.input_root_meteo,starttime.strftime(cfg.source_nameformat)+'.grb')
-        out_filename      = os.path.join(cfg.icon_input_icbc,cfg.inidata_filename)
-        in_grid_filename  = in_filename
-        out_grid_filename = os.path.join(cfg.input_root_grid,cfg.dynamics_grid_filename)
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remap'])) as input_file:
-            to_write = input_file.read()
-        output_nml = os.path.join(cfg.icon_work, 'icontools_remap_ic.namelist')
-        with open(output_nml, "w") as outf:
-            to_write = to_write.format(cfg=cfg,
-                                       in_filename=in_filename,
-                                       out_filename=out_filename,
-                                       in_grid_filename=in_grid_filename,
-                                       out_grid_filename=out_grid_filename)
-            outf.write(to_write)
-
-        # Write remapfields namelist
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remapfields_ic'])) as input_file:
-            to_write = input_file.read()
-        output_fields = os.path.join(cfg.icon_work, 'icontools_remapfields_ic.namelist')
-        with open(output_fields, "w") as outf:
-            to_write = to_write.format(cfg=cfg)
-            outf.write(to_write)
-
-        # Write run script (remap_ic.job)
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['remap_ic_runjob'])) as input_file:
-            to_write = input_file.read()
-        output_run = os.path.join(cfg.icon_work, "remap_ic.job")
-        with open(output_run, "w") as outf:
-            outf.write(to_write.format(
-                cfg=cfg,
-                logfile=logfile, logfile_finish=logfile_finish)
-            )
-        exitcode = subprocess.call(["sbatch", "--wait",
-                                    os.path.join(cfg.icon_work, 'remap_ic.job')])
-        if exitcode != 0:
-            raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-        logging.info("Remapped initial conditions with icontools")
-
-        os.remove(output_nml)
-        os.remove(output_fields)
-        os.remove(output_run)
-
-
-        #-----------------------------------------------------
-        # Create auxillary boundary grid
-        #-----------------------------------------------------
-        logfile = os.path.join(cfg.log_working_dir, "auxgrid")
-        logfile_finish = os.path.join(cfg.log_finished_dir,"auxgrid")
-
-        # Write iconsub namelist
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_iconsub'])) as input_file:
-            to_write = input_file.read()
-        output_nml = os.path.join(cfg.icon_work, 'icontools_iconsub.namelist')
-        with open(output_nml, "w") as outf:
-            to_write = to_write.format(cfg=cfg)
-            outf.write(to_write)
-
-        # Write run script (auxgrid.job)
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['auxgrid_runjob'])) as input_file:
-            to_write = input_file.read()
-        output_run = os.path.join(cfg.icon_work, "auxgrid.job")
-        with open(output_run, "w") as outf:
-            outf.write(to_write.format(
-                cfg=cfg,
-                logfile=logfile, logfile_finish=logfile_finish)
-            )
-        exitcode = subprocess.call(["sbatch", "--wait",
-                                    os.path.join(cfg.icon_work, 'auxgrid.job')])
-        if exitcode != 0:
-            raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-        logging.info("Created auxillary boundary grid with icontools")
-
-        os.remove(output_nml)
-        os.remove(output_run)
-
-
-        #-----------------------------------------------------
-        # Remap analysis LBC (at hours 00)
-        #-----------------------------------------------------
-        logfile = os.path.join(cfg.log_working_dir, "lbc_ana")
-        logfile_finish = os.path.join(cfg.log_finished_dir,"lbc_ana")
-
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remapfields_ana_lbc'])) as input_file:
-            to_write = input_file.read()
-        output_nml_fields = os.path.join(cfg.icon_work, 'icontools_remapfields_lbc_00.namelist')
-        with open(output_nml_fields, "w") as outf:
-            to_write = to_write.format(cfg=cfg)
-            outf.write(to_write)
-
-        for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-
-            if (time.hour != 0):
-                continue
-
-            # Write remap_lbc namelist
-            in_grid_filename  = os.path.join(cfg.input_root_meteo,starttime.strftime(cfg.source_nameformat)+'.grb')
-            in_filename       = os.path.join(cfg.input_root_meteo,time.strftime(cfg.source_nameformat)+'.grb')
-            out_grid_filename = os.path.join(cfg.icon_input_grid,cfg.lateral_boundary_grid)
-            out_filename      = os.path.join(cfg.icon_input_icbc,time.strftime(cfg.source_nameformat))
-            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remap'])) as input_file:
+        for runscript in cfg.icontools_runjobs: 
+            logfile = os.path.join(cfg.log_working_dir, "%s.log" % runscript)
+            logfile_finish = os.path.join(cfg.log_finished_dir, "%s.log" % runscript)
+            with open(os.path.join(cfg.case_dir,runscript)) as input_file:
                 to_write = input_file.read()
-            output_nml_lbc = os.path.join(cfg.icon_work, 'icontools_remap_lbc.namelist')
-            with open(output_nml_lbc, "w") as outf:
-                to_write = to_write.format(cfg=cfg,
-                                           in_grid_filename=in_grid_filename,
-                                           in_filename=in_filename,
-                                           out_grid_filename=out_grid_filename,
-                                           out_filename=out_filename)
-                outf.write(to_write)
-
-            # Write run script (remap_lbc_00.job)
-            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['remap_ana_lbc_runjob'])) as input_file:
-                to_write = input_file.read()
-            output_run = os.path.join(cfg.icon_work, "remap_lbc_00.job")
+            output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
             with open(output_run, "w") as outf:
                 outf.write(to_write.format(
                     cfg=cfg,
                     logfile=logfile, logfile_finish=logfile_finish)
                 )
             exitcode = subprocess.call(["sbatch", "--wait",
-                                        os.path.join(cfg.icon_work, 'remap_lbc_00.job')])
+                                        os.path.join(cfg.icon_work, "%s.job" % runscript)])
             if exitcode != 0:
                 raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-            logging.info("Remapped boundary conditions at {} with icontools".format(time))
-
-            os.remove(output_nml_lbc)
-            os.remove(output_run)
-
-        os.remove(output_nml_fields)
-
-
-        #-----------------------------------------------------
-        # Remap fc LBC (at hours other than 00)
-        #-----------------------------------------------------
-        logfile = os.path.join(cfg.log_working_dir, "lbc_fc")
-        logfile_finish = os.path.join(cfg.log_finished_dir,"lbc_fc")
-        # Write remapfields namelist
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remapfields_fc_lbc'])) as input_file:
-            to_write = input_file.read()
-        output_nml_fields = os.path.join(cfg.icon_work, 'icontools_remapfields_lbc.namelist')
-        with open(output_nml_fields, "w") as outf:
-            to_write = to_write.format(cfg=cfg)
-            outf.write(to_write)
-
-        for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-
-            if (time.hour == 0):
-                continue
-
-            # Write remap_lbc namelist
-            in_grid_filename  = os.path.join(cfg.input_root_meteo,starttime.strftime(cfg.source_nameformat)+'.grb')
-            in_filename       = os.path.join(cfg.input_root_meteo,time.strftime(cfg.source_nameformat)+'.grb')
-            out_grid_filename = os.path.join(cfg.icon_input_grid,cfg.lateral_boundary_grid)
-            out_filename      = os.path.join(cfg.icon_input_icbc,time.strftime(cfg.source_nameformat))
-            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['namelist_remap'])) as input_file:
-                to_write = input_file.read()
-            output_nml_lbc = os.path.join(cfg.icon_work, 'icontools_remap_lbc.namelist')
-            with open(output_nml_lbc, "w") as outf:
-                to_write = to_write.format(cfg=cfg,
-                                           in_grid_filename=in_grid_filename,
-                                           in_filename=in_filename,
-                                           out_grid_filename=out_grid_filename,
-                                           out_filename=out_filename)
-                outf.write(to_write)
-
-            # Write run script (remap_lbc.job)
-            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['remap_fc_lbc_runjob'])) as input_file:
-                to_write = input_file.read()
-            output_run = os.path.join(cfg.icon_work, "remap_lbc.job")
-            with open(output_run, "w") as outf:
-                outf.write(to_write.format(
-                    cfg=cfg,
-                    logfile=logfile, logfile_finish=logfile_finish)
-                )
-            exitcode = subprocess.call(["sbatch", "--wait",
-                                        os.path.join(cfg.icon_work, 'remap_lbc.job')])
-            if exitcode != 0:
-                raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-            logging.info("Remapped boundary conditions at {} with icontools".format(time))
-
-            os.remove(output_nml_lbc)
-            os.remove(output_run)
-
-        os.remove(output_nml_fields)
+            logging.info("%s successfully executed." % runscript)
 
         #-----------------------------------------------------
         # Add GEOSP to all meteo files using cdo
@@ -314,7 +142,6 @@ def main(starttime, hstart, hstop, cfg):
             logging.info("Added GEOSP to file {}".format(merged_file))
         # Delete GEOSP_file.nc
         os.remove(GEOSP_file)
-
 
 
     # If COSMO (and not ICON):
