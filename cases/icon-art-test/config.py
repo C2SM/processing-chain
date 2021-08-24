@@ -40,8 +40,9 @@ input_root = '/store/empa/em05/input_iconart_processing_chain_example/'
 input_root_icbc = os.path.join(input_root, 'icbc')
 # meteo
 input_root_meteo = '/store/empa/em05/dbrunner/icon-art/meteo'
-meteo_prefix = 'ifs'
-source_nameformat = meteo_prefix + '_%Y%m%d%H'
+meteo_prefix = 'ifs_'
+source_nameformat = meteo_prefix + '%Y%m%d%H'
+meteo_suffix = '.nc'
 meteo_inc = 3
 # cams
 input_root_chem = '/store/empa/em05/dbrunner/icon-art/icbc'
@@ -64,10 +65,11 @@ dynamics_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.nc")
 map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
 extpar_filename = os.path.join(input_root_grid, 
                                "external_parameter_icon_testcase_DOM01_tiles.nc")
+lateral_boundary_grid = os.path.join(input_root_grid, "lateral_boundary.grid.nc")
 
 # File names -----------------------------------------------------------------
 #TODO: Generalize
-latbc_filename = "ifs_201801<d><h>_lbc.nc"
+latbc_filename = "ifs_<y><m><d><h>_lbc.nc"
 inidata_filename = "ifs_init_2018010100.nc"
 
 output_filename = "icon-art-test"

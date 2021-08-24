@@ -98,12 +98,24 @@ def main(starttime, hstart, hstop, cfg):
         tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
         tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
 
+        #-----------------------------------------------------
+        # Get datafile list for LBC (each at 00 UTC)
+        #-----------------------------------------------------
+        datafile_list = []
+        for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+            meteo_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.source_nameformat))
+            if meteo_file.endswith('00'):
+                datafile_list.append(meteo_file + cfg.meteo_suffix)
+        datafile_list = ' '.join([str(v) for v in datafile_list])
+        print(datafile_list)
 
         #-----------------------------------------------------
         # Write and submit runscripts 
         #-----------------------------------------------------
         for runscript in cfg.icontools_runjobs: 
             logfile = os.path.join(cfg.log_working_dir, "%s.log" % runscript)
+            if os.path.isfile(logfile):
+                os.remove(logfile)
             logfile_finish = os.path.join(cfg.log_finished_dir, "%s.log" % runscript)
             with open(os.path.join(cfg.case_dir,runscript)) as input_file:
                 to_write = input_file.read()
@@ -111,7 +123,8 @@ def main(starttime, hstart, hstop, cfg):
             with open(output_run, "w") as outf:
                 outf.write(to_write.format(
                     cfg=cfg,
-                    logfile=logfile, logfile_finish=logfile_finish)
+                    logfile=logfile, logfile_finish=logfile_finish,
+                    datafile_list=datafile_list)
                 )
             exitcode = subprocess.call(["sbatch", "--wait",
                                         os.path.join(cfg.icon_work, "%s.job" % runscript)])
