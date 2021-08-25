@@ -99,24 +99,25 @@ def main(starttime, hstart, hstop, cfg):
         tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
 
         #-----------------------------------------------------
-        # Get datafile list for LBC (each at 00 UTC)
+        # Get datafile lists for LBC (each at 00 UTC and others)
         #-----------------------------------------------------
         datafile_list = []
+        datafile_list_rest = []
         for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
             meteo_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.source_nameformat))
             if meteo_file.endswith('00'):
                 datafile_list.append(meteo_file + cfg.meteo_suffix)
+            else:
+                datafile_list_rest.append(meteo_file + cfg.meteo_suffix)
         datafile_list = ' '.join([str(v) for v in datafile_list])
-        print(datafile_list)
+        datafile_list_rest = ' '.join([str(v) for v in datafile_list_rest])
 
         #-----------------------------------------------------
         # Write and submit runscripts 
         #-----------------------------------------------------
         for runscript in cfg.icontools_runjobs: 
-            logfile = os.path.join(cfg.log_working_dir, "%s.log" % runscript)
-            if os.path.isfile(logfile):
-                os.remove(logfile)
-            logfile_finish = os.path.join(cfg.log_finished_dir, "%s.log" % runscript)
+            logfile = os.path.join(cfg.log_working_dir, 'meteo')
+            logfile_finish = os.path.join(cfg.log_finished_dir, 'meteo')
             with open(os.path.join(cfg.case_dir,runscript)) as input_file:
                 to_write = input_file.read()
             output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
@@ -124,7 +125,9 @@ def main(starttime, hstart, hstop, cfg):
                 outf.write(to_write.format(
                     cfg=cfg,
                     logfile=logfile, logfile_finish=logfile_finish,
-                    datafile_list=datafile_list)
+                    datafile_list=datafile_list,
+                    datafile_list_rest=datafile_list_rest
+                    )
                 )
             exitcode = subprocess.call(["sbatch", "--wait",
                                         os.path.join(cfg.icon_work, "%s.job" % runscript)])
@@ -136,17 +139,16 @@ def main(starttime, hstart, hstop, cfg):
         # Add GEOSP to all meteo files using cdo
         #-----------------------------------------------------
         # First, extract GEOSP from first file
-        src_file = os.path.join(cfg.icon_input_icbc, starttime.strftime(cfg.source_nameformat))
+        src_file = os.path.join(cfg.icon_input_icbc, starttime.strftime(cfg.source_nameformat) + cfg.chem_suffix)
         GEOSP_file = os.path.join(cfg.icon_input_icbc, 'GEOSP.nc')
         # Select variable with CDO
         cdo.selvar("GEOSP",input=src_file,output=GEOSP_file)
         # Add GEOSP to all other files
         for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-            meteo_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.source_nameformat))
-            merged_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.source_nameformat)+'_lbc.nc')
+            merged_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.source_nameformat) + '_lbc.nc')
             # Merge with CDO
             if (time.hour != 0):
-                cdo.merge(input=meteo_file+' '+GEOSP_file,output=merged_file)
+                cdo.merge(input=' '.join([merged_file, GEOSP_file]), output=merged_file)
                 os.remove(meteo_file)
             # Only rename at hour 00:
             if (time.hour == 0):
