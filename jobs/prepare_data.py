@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Prepare input for meteorological initial and boundary conditions
-# by copying files from OSM archive to INT2LM input folder
-# Currently, the input files are assumed to be COSMO-7 or
-# COSMO pre-2007 analysis files.
+# Prepare initial and boundary conditions
 #
 # In case of ICON:
 # Prepare input for meteorological initial and boundary conditions
@@ -40,25 +37,19 @@ def main(starttime, hstart, hstop, cfg):
     """
     **ICON** (if ``cfg.target`` is ``tools.Target.ICON``)
 
-     Create necessary directories ``cfg.icon_input_icbc``,
-     ''cfg.icon_input_grid'' and ''cfg.icon_work''
+     Create necessary directories ``cfg.icon_input_icbc``
+     and ''cfg.icon_work''
 
      Submitting the runscript for the DWD ICON tools to remap the meteo files.
 
-     There are 4 runscripts submitted:
-       - 1x for the creation of an auxillary grid of the lateral boundary
-       - 2x for the remapping of the lateral boundary conditions:
-         - Once for the analysis fields at time 00 (containing GEOSP)
-         - Once for all other time steps (no GEOSP)
-       - 1x for the remapping of the initial conditions
+     All runscripts specified in ``cfg.icontools_runjobs`` are submitted.
 
-     The meteo files are read-in from project directory 
+     The meteo files are read-in from the original input directory 
      (``cfg.input_root_meteo``) and the remapped meteo files are
      saved in the input folder on scratch (``cfg.icon_input/icbc``).
 
      The constant variable 'GEOSP' is added to the files not containing it
      using python-cdo bindings.
-
 
     **COSMO**
 
@@ -87,7 +78,7 @@ def main(starttime, hstart, hstop, cfg):
     if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
        cfg.target is tools.Target.ICONARTOEM:
 
-        logging.info('ICON analysis data for IC/BC')
+        logging.info('ICON input data (IC/BC)')
 
         starttime_real = starttime + timedelta(hours = hstart)
 
@@ -95,8 +86,6 @@ def main(starttime, hstart, hstop, cfg):
         # Create directories
         #-----------------------------------------------------
         tools.create_dir(cfg.icon_work, "icon_work")
-        tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
-        tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
 
         #-----------------------------------------------------
         # Get datafile lists for LBC (each at 00 UTC and others)
@@ -104,7 +93,8 @@ def main(starttime, hstart, hstop, cfg):
         datafile_list = []
         datafile_list_rest = []
         for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-            meteo_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.source_nameformat))
+            meteo_file = os.path.join(cfg.icon_input_icbc,
+                                      time.strftime(cfg.meteo_nameformat))
             if meteo_file.endswith('00'):
                 datafile_list.append(meteo_file + cfg.meteo_suffix)
             else:
@@ -116,8 +106,8 @@ def main(starttime, hstart, hstop, cfg):
         # Write and submit runscripts 
         #-----------------------------------------------------
         for runscript in cfg.icontools_runjobs: 
-            logfile = os.path.join(cfg.log_working_dir, 'meteo')
-            logfile_finish = os.path.join(cfg.log_finished_dir, 'meteo')
+            logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
+            logfile_finish = os.path.join(cfg.log_finished_dir, 'prepare_data')
             with open(os.path.join(cfg.case_dir,runscript)) as input_file:
                 to_write = input_file.read()
             output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
@@ -139,13 +129,13 @@ def main(starttime, hstart, hstop, cfg):
         # Add GEOSP to all meteo files using cdo
         #-----------------------------------------------------
         # First, extract GEOSP from first file
-        src_file = os.path.join(cfg.icon_input_icbc, starttime.strftime(cfg.source_nameformat) + cfg.chem_suffix)
+        src_file = os.path.join(cfg.icon_input_icbc, starttime.strftime(cfg.meteo_nameformat) + cfg.chem_suffix)
         GEOSP_file = os.path.join(cfg.icon_input_icbc, 'GEOSP.nc')
         # Select variable with CDO
         cdo.selvar("GEOSP",input=src_file,output=GEOSP_file)
         # Add GEOSP to all other files
         for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-            merged_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.source_nameformat) + '_lbc.nc')
+            merged_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
             # Merge with CDO
             if (time.hour != 0):
                 cdo.merge(input=' '.join([merged_file, GEOSP_file]), output=merged_file)
@@ -161,7 +151,7 @@ def main(starttime, hstart, hstop, cfg):
         dest_path = os.path.join(cfg.int2lm_input, 'meteo')
         tools.create_dir(dest_path, "meteo input")
 
-        source_nameformat = cfg.meteo_prefix + '%Y%m%d%H'
+        source_nameformat = cfg.meteo_nameformat
         starttime_real = starttime + timedelta(hours = hstart)
         if cfg.meteo_prefix == 'lffd':
             # nested runs use cosmoart-output as meteo data

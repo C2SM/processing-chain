@@ -35,27 +35,29 @@ exe_dir = "/store/empa/em05/executables"
 # Case directory
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
-# PRE-PROCESSING =============================================================
+# PREPARE_DATA ---------------------------------------------------------------
 input_root = '/store/empa/em05/input_iconart_processing_chain_example/'
-# METEO -----------------------------------------------------------------------
+
 input_root_meteo = '/store/empa/em05/input_iconart_processing_chain_example/meteo'
 meteo_prefix = 'ifs_'
-source_nameformat = meteo_prefix + '%Y%m%d%H'
+meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
 meteo_inc = 3
-# ICBC ------------------------------------------------------------------------
+
 input_root_icbc = os.path.join(input_root, 'icbc')
 chem_prefix = 'cams_gqpe'
 chem_nameformat = chem_prefix + '_%Y%m%d_%H'
 chem_suffix = '.nc'
 
-
-# ICONTools ------------------------------------------------------------------
 icontools_runjobs = [
     'icontools_remap_ic_runjob.cfg',
     'icontools_remap_00_lbc_runjob.cfg',
     'icontools_remap_lbc_rest_runjob.cfg',
 ]
+
+# Icontools executables
+iconremap_bin = os.path.join(exe_dir, "iconremap")
+iconsub_bin   = os.path.join(exe_dir, "iconsub")
 
 # Input data for runscript----------------------------------------------------
 # Grid
@@ -68,9 +70,10 @@ extpar_filename = os.path.join(input_root_grid,
 lateral_boundary_grid = os.path.join(input_root_grid, "lateral_boundary.grid.nc")
 
 # File names -----------------------------------------------------------------
-#TODO: Generalize
 latbc_filename = "ifs_<y><m><d><h>_lbc.nc"
-inidata_filename = "ifs_init_2018010100.nc"
+inidata_prefix = "ifs_init_"
+inidata_nameformat = inidata_prefix + '%Y%m%d%H'
+inidata_filename_suffix = ".nc"
 
 output_filename = "icon-art-test"
 filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
@@ -83,15 +86,10 @@ art_input_folder = os.path.join(os.environ['SCRATCH'], user,
                                  'icon-kit-art/externals/art')
 
 
-
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
 icon_bin = os.path.join(exe_dir, "icon-art_20210814")
-
-# Icontools executables
-iconremap_bin = os.path.join(exe_dir, "iconremap")
-iconsub_bin   = os.path.join(exe_dir, "iconsub")
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
