@@ -19,15 +19,15 @@ from jobs import tools
 
 
 default_jobs = {
-    tools.Target.COSMO:    ["meteo", "int2lm", "cosmo", "post_cosmo"],
-    tools.Target.COSMOGHG: ["meteo", "icbc", "emissions", "biofluxes", "oae",
-                            "online_vprm", "int2lm", "post_int2lm",
-                            "cosmo", "post_cosmo"],
-    tools.Target.COSMOART: ["meteo", "icbc", "emissions", "obs_nudging",
-                            "photo_rate", "int2lm", "cosmo", "post_cosmo"],
-    tools.Target.ICON:     ["meteo", "icon"],
-    tools.Target.ICONART:  ["meteo", "icbc", "icon"],
-    tools.Target.ICONARTOEM:  ["meteo", "icbc", "oae", "icon"]
+    tools.Target.COSMO:      ["prepare_data", "int2lm", "cosmo", "post_cosmo"],
+    tools.Target.COSMOGHG:   ["prepare_data", "emissions", "biofluxes", "oae",
+                              "online_vprm", "int2lm", "post_int2lm",
+                              "cosmo", "post_cosmo"],
+    tools.Target.COSMOART:   ["prepare_data", "emissions", "obs_nudging",
+                              "photo_rate", "int2lm", "cosmo", "post_cosmo"],
+    tools.Target.ICON:       ["prepare_data", "icon"],
+    tools.Target.ICONART:    ["prepare_data", "icon"],
+    tools.Target.ICONARTOEM: ["prepare_data", "oae", "icon"]
 }
 
 
@@ -306,8 +306,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
     setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
     setattr(cfg, 'icon_input_oae', os.path.join(chain_root, 'icon', 'input', 'oae'))
-    setattr(cfg, 'icon_input_icbc', os.path.join(chain_root, 'icon', 'input', 'icbc'))
-    setattr(cfg, 'icon_input_icbc_processed', os.path.join(chain_root, 'icon', 'input', 'icbc', 'processed'))
     setattr(cfg, 'icon_input_grid', os.path.join(chain_root, 'icon', 'input', 'grid'))
     setattr(cfg, 'icon_input_mapping', os.path.join(chain_root, 'icon', 'input', 'mapping'))
     setattr(cfg, 'icon_input_rad', os.path.join(chain_root, 'icon', 'input', 'rad'))
