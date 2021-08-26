@@ -236,3 +236,71 @@ def main(starttime, hstart, hstop, cfg):
             tools.copy_file(src_file, dest_path)
 
             logging.info("Copied file from {} to {}".format(src_file, dest_path))
+
+        # Other IC/BC data
+        inv_to_process = []
+        if cfg.target is tools.Target.COSMOGHG:
+            try:
+                CAMS = dict(fullname = "CAMS",
+                            nickname = "cams",
+                            executable = "cams4int2cosmo",
+                            indir = cfg.cams_dir_orig,
+                            outdir = cfg.cams_dir_proc,
+                            param = cfg.cams_parameters)
+                inv_to_process.append(CAMS)
+            except AttributeError:
+                pass
+            try:
+                CT = dict(fullname = "CarbonTracker",
+                          nickname = "ct",
+                          executable = "ctnoaa4int2cosmo",
+                          indir = cfg.ct_dir_orig,
+                          outdir = cfg.ct_dir_proc,
+                          param = cfg.ct_parameters)
+                inv_to_process.append(CT)
+            except AttributeError:
+                pass
+        elif cfg.target is tools.Target.COSMOART:
+            try:
+                MOZART = dict(fullname = 'MOZART',
+                              nickname = 'mozart',
+                              executable = 'mozart2int2lm',
+                              indir = cfg.mozart_file_orig,
+                              outdir = cfg.mozart_dir_proc,
+                              param = [{'inc' : cfg.mozart_inc,
+                                        'suffix' : cfg.mozart_prefix}])
+                inv_to_process.append(MOZART)
+            except AttributeError:
+                pass
+        
+        if cfg.target is tools.Target.COSMOGHG or cfg.target is tools.Target.COSMOART:
+            logging.info("Processing " + ", ".join([i["fullname"] for i in inv_to_process])+" data")
+
+            scratch_path = os.path.join(cfg.int2lm_input,'icbc')
+            tools.create_dir(scratch_path, "icbc input")
+
+            for inv in inv_to_process:
+                logging.info(inv["fullname"]+" files")
+                tools.create_dir(inv["outdir"], "processed " + inv["fullname"])
+            
+                for p in inv["param"]:
+                    inc = p["inc"]
+                    for time in tools.iter_hours(starttime, hstart, hstop, inc):
+                        logging.info(time)
+
+                        filename = os.path.join(inv["outdir"],p["suffix"]+"_"+time.strftime("%Y%m%d%H")+".nc")
+                        if not os.path.exists(filename):
+                            logging.info(filename)
+                            try:
+                                to_call = getattr(tools, inv["executable"])
+                                to_call.main(time,inv["indir"],inv["outdir"],p)
+                            except:
+                                logging.error("Preprocessing "+inv["fullname"] + " data failed")
+                                raise
+
+                        # copy to (temporary) run input directory
+                        tools.copy_file(filename, scratch_path)
+
+                        logging.info("OK")
+
+

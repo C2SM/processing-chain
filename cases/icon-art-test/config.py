@@ -37,13 +37,13 @@ case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
 # PRE-PROCESSING =============================================================
 input_root = '/store/empa/em05/input_iconart_processing_chain_example/'
-# meteo
+# METEO -----------------------------------------------------------------------
 input_root_meteo = '/store/empa/em05/input_iconart_processing_chain_example/meteo'
 meteo_prefix = 'ifs_'
 source_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
 meteo_inc = 3
-# cams
+# ICBC ------------------------------------------------------------------------
 input_root_icbc = os.path.join(input_root, 'icbc')
 chem_prefix = 'cams_gqpe'
 chem_nameformat = chem_prefix + '_%Y%m%d_%H'
