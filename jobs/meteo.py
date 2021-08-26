@@ -149,11 +149,6 @@ def main(starttime, hstart, hstop, cfg):
             # Merge with CDO
             if (time.hour != 0):
                 cdo.merge(input=' '.join([merged_file, GEOSP_file]), output=merged_file)
-                os.remove(meteo_file)
-            # Only rename at hour 00:
-            if (time.hour == 0):
-                os.rename(meteo_file,merged_file)
-            # Delete old file
             logging.info("Added GEOSP to file {}".format(merged_file))
         # Delete GEOSP_file.nc
         os.remove(GEOSP_file)
