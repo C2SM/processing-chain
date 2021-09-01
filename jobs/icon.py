@@ -57,45 +57,6 @@ def main(starttime, hstart, hstop, cfg):
     logging.info("Setup the namelist for an ICON run and "
                  "submit the job to the queue")
 
-    # Create directories
-    tools.create_dir(cfg.icon_work, "icon_work")
-    tools.create_dir(cfg.icon_input_oae, "icon_input_oae")
-    tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
-    tools.create_dir(cfg.icon_input_icbc_processed, "icon_input_icbc_processed")
-    tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
-    tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping")
-    tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
-    tools.create_dir(cfg.icon_output, "icon_output")
-    tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
-
-    # Copy grid files
-    src_dir = cfg.input_root_grid
-    dest_dir = cfg.icon_input_grid
-    tools.copy_file(os.path.join(src_dir, cfg.radiation_grid_filename),
-                    os.path.join(dest_dir, cfg.radiation_grid_filename))
-    tools.copy_file(os.path.join(src_dir, cfg.dynamics_grid_filename),
-                    os.path.join(dest_dir, cfg.dynamics_grid_filename))
-    tools.copy_file(os.path.join(src_dir, cfg.map_file_latbc),
-                    os.path.join(dest_dir, cfg.map_file_latbc))
-    tools.copy_file(os.path.join(src_dir, cfg.extpar_filename),
-                    os.path.join(dest_dir, cfg.extpar_filename))
-    tools.copy_file(os.path.join(src_dir, cfg.lateral_boundary_grid),
-                    os.path.join(dest_dir, cfg.lateral_boundary_grid))
-
-    # Copy radiation files
-    src_dir = cfg.input_root_rad
-    dest_dir = cfg.icon_input_rad
-    tools.copy_file(os.path.join(src_dir, cfg.cldopt_filename),
-                    os.path.join(dest_dir, cfg.cldopt_filename))
-    tools.copy_file(os.path.join(src_dir, cfg.lrtm_filename),
-                    os.path.join(dest_dir, cfg.lrtm_filename))
-
-    # Copy mapping file
-    src_dir = cfg.input_root_mapping
-    dest_dir = cfg.icon_input_mapping
-    tools.copy_file(os.path.join(src_dir, cfg.map_file_ana),
-                    os.path.join(dest_dir, cfg.map_file_ana))
-
     # Copy icon executable
     execname = 'icon.exe'
     tools.copy_file(cfg.icon_bin, os.path.join(cfg.icon_work, execname))

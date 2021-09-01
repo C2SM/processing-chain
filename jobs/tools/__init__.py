@@ -157,7 +157,7 @@ def create_dir(path, readable_name):
         raise
 
 
-def copy_file(source_path, dest_path):
+def copy_file(source_path, dest_path, output_log=False):
     """Copy a file from source_path to dest_path
 
     Use shutil.copy to copy the file.
@@ -190,6 +190,8 @@ def copy_file(source_path, dest_path):
         logging.error("Copying {} to {} failed with {}". format(
                       source_path, dest_path, type(e).__name__))
         raise
+    logging.info("Copied {} to {}". format(
+                 source_path, dest_path))
 
 
 class Target(Enum):

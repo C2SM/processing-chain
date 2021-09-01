@@ -69,6 +69,10 @@ extpar_filename = os.path.join(input_root_grid,
                                "external_parameter_icon_testcase_DOM01_tiles.nc")
 lateral_boundary_grid = os.path.join(input_root_grid, "lateral_boundary.grid.nc")
 
+input_root_rad = os.path.join(input_root, 'rad')
+cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
+lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
+
 # File names -----------------------------------------------------------------
 latbc_filename = "ifs_<y><m><d><h>_lbc.nc"
 inidata_prefix = "ifs_init_"

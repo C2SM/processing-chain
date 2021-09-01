@@ -143,6 +143,33 @@ def main(starttime, hstart, hstop, cfg):
         # Delete GEOSP_file.nc
         os.remove(GEOSP_file)
 
+        # Create directories
+        tools.create_dir(cfg.icon_work, "icon_work")
+        #tools.create_dir(cfg.icon_input_oae, "icon_input_oae") # TODO_MJ: move to oae job
+        tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
+        tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
+        #tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping") # TODO_MJ: remove?
+        tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
+        tools.create_dir(cfg.icon_output, "icon_output")
+        #tools.create_dir(cfg.icon_restart_out, "icon_restart_out") # TOOD_MJ: remove?
+
+        # Copy grid files
+        tools.copy_file(cfg.radiation_grid_filename, cfg.radiation_grid_filename_scratch,
+                        output_log=True)
+        tools.copy_file(cfg.dynamics_grid_filename, cfg.dynamics_grid_filename_scratch,
+                        output_log=True)
+        tools.copy_file(cfg.map_file_latbc, cfg.map_file_latbc_scratch,
+                        output_log=True)
+        tools.copy_file(cfg.extpar_filename, cfg.extpar_filename_scratch,
+                        output_log=True)
+        tools.copy_file(cfg.lateral_boundary_grid, cfg.lateral_boundary_grid_scratch,
+                        output_log=True)
+
+        # Copy radiation files
+        tools.copy_file(cfg.cldopt_filename, cfg.cldopt_filename_scratch,
+                        output_log=True)
+        tools.copy_file(cfg.lrtm_filename, cfg.lrtm_filename_scratch,
+                        output_log=True)
 
     # If COSMO (and not ICON):
     else:
