@@ -73,6 +73,9 @@ input_root_rad = os.path.join(input_root, 'rad')
 cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
 lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
 
+input_root_mapping = os.path.join(input_root, 'mapping')
+map_file_ana = os.path.join(input_root_mapping, "map_file.ana")
+
 # File names -----------------------------------------------------------------
 latbc_filename = "ifs_<y><m><d><h>_lbc.nc"
 inidata_prefix = "ifs_init_"
@@ -85,7 +88,7 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 # ART settings----------------------------------------------------------------
 input_root_tracers = os.path.join(input_root, 'XML')
 chemtracer_xml_filename = os.path.join(input_root_tracers, 'tracers_oh_pntsrc.xml')
-pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc.xml')
+pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc_example.xml')
 art_input_folder = os.path.join(os.environ['SCRATCH'], user, 
                                  'icon-kit-art/externals/art')
 

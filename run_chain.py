@@ -310,6 +310,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'icon_input_grid', os.path.join(chain_root, 'icon', 'input', 'grid'))
     setattr(cfg, 'icon_input_mapping', os.path.join(chain_root, 'icon', 'input', 'mapping'))
     setattr(cfg, 'icon_input_rad', os.path.join(chain_root, 'icon', 'input', 'rad'))
+    setattr(cfg, 'icon_input_xml', os.path.join(chain_root, 'icon', 'input', 'xml'))
     setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
     setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
     setattr(cfg, 'icon_output_reduced', os.path.join(chain_root, 'icon',
@@ -328,6 +329,12 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
             os.path.join(cfg.icon_input_rad, os.path.basename(cfg.cldopt_filename)))
     setattr(cfg, 'lrtm_filename_scratch', 
             os.path.join(cfg.icon_input_rad, os.path.basename(cfg.lrtm_filename)))
+    setattr(cfg, 'map_file_ana_scratch', 
+            os.path.join(cfg.icon_input_mapping, os.path.basename(cfg.map_file_ana)))
+    setattr(cfg, 'chemtracer_xml_filename_scratch', 
+            os.path.join(cfg.icon_input_xml, os.path.basename(cfg.chemtracer_xml_filename)))
+    setattr(cfg, 'pntSrc_xml_filename_scratch', 
+            os.path.join(cfg.icon_input_xml, os.path.basename(cfg.pntSrc_xml_filename)))
 
     # Number of tracers
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,

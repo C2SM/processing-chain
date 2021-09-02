@@ -22,6 +22,7 @@
 # 2017-01-15 Modified for hypatia and project SmartCarb
 # 2018-06-21 Translated to Python (kug)
 # 2021-02-28 Modified for ICON-simulations (stem)
+# 2021-09-xx Modified for ICON-ART-simulations (mjaehn)
 
 import os
 import logging
@@ -148,10 +149,10 @@ def main(starttime, hstart, hstop, cfg):
         #tools.create_dir(cfg.icon_input_oae, "icon_input_oae") # TODO_MJ: move to oae job
         tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
         tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
-        #tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping") # TODO_MJ: remove?
+        tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping")
         tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
         tools.create_dir(cfg.icon_output, "icon_output")
-        #tools.create_dir(cfg.icon_restart_out, "icon_restart_out") # TOOD_MJ: remove?
+        tools.create_dir(cfg.icon_restart_out, "icon_restart_out") 
 
         # Copy grid files
         tools.copy_file(cfg.radiation_grid_filename, cfg.radiation_grid_filename_scratch,
@@ -170,6 +171,18 @@ def main(starttime, hstart, hstop, cfg):
                         output_log=True)
         tools.copy_file(cfg.lrtm_filename, cfg.lrtm_filename_scratch,
                         output_log=True)
+
+        # Copy mapping file
+        tools.copy_file(cfg.map_file_ana, cfg.map_file_ana_scratch,
+                        output_log=True)
+
+        # Copy tracer data in case of ART
+        if cfg.target is tools.Target.ICONART  or cfg.target is tools.Target.ICONARTOEM:
+            tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
+            tools.copy_file(cfg.chemtracer_xml_filename, cfg.chemtracer_xml_filename_scratch,
+                            output_log=True)
+            tools.copy_file(cfg.pntSrc_xml_filename, cfg.pntSrc_xml_filename_scratch,
+                            output_log=True)
 
     # If COSMO (and not ICON):
     else:
