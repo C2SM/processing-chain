@@ -61,13 +61,18 @@ def main(starttime, hstart, hstop, cfg):
     execname = 'icon.exe'
     tools.copy_file(cfg.icon_bin, os.path.join(cfg.icon_work, execname))
 
+    # Get name if initial file
+    starttime_real = starttime + timedelta(hours = hstart)                 
+    inidata_filename  = os.path.join(cfg.icon_input_icbc,
+                                     starttime_real.strftime(cfg.meteo_nameformat) + '.nc')
+
     # Write run script (run_icon.job)
     with open(cfg.icon_runjob) as input_file:
         to_write = input_file.read()
     output_file = os.path.join(cfg.icon_work, "run_icon.job")
     with open(output_file, "w") as outf:
         outf.write(to_write.format(
-            cfg=cfg,
+            cfg=cfg, inidata_filename=inidata_filename,
             logfile=logfile, logfile_finish=logfile_finish)
         )
 
