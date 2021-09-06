@@ -87,6 +87,14 @@ def main(starttime, hstart, hstop, cfg):
         # Create directories
         #-----------------------------------------------------
         tools.create_dir(cfg.icon_work, "icon_work")
+        #tools.create_dir(cfg.icon_input_oae, "icon_input_oae") # TODO_MJ: move to oae job
+        tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
+        tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
+        tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping")
+        tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
+        tools.create_dir(cfg.icon_output, "icon_output")
+        tools.create_dir(cfg.icon_restart_out, "icon_restart_out") 
+
 
         #-----------------------------------------------------
         # Get datafile lists for LBC (each at 00 UTC and others)
@@ -143,16 +151,6 @@ def main(starttime, hstart, hstop, cfg):
             logging.info("Added GEOSP to file {}".format(merged_file))
         # Delete GEOSP_file.nc
         os.remove(GEOSP_file)
-
-        # Create directories
-        tools.create_dir(cfg.icon_work, "icon_work")
-        #tools.create_dir(cfg.icon_input_oae, "icon_input_oae") # TODO_MJ: move to oae job
-        tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
-        tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
-        tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping")
-        tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
-        tools.create_dir(cfg.icon_output, "icon_output")
-        tools.create_dir(cfg.icon_restart_out, "icon_restart_out") 
 
         # Copy grid files
         tools.copy_file(cfg.radiation_grid_filename, cfg.radiation_grid_filename_scratch,
