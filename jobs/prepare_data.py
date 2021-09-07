@@ -138,7 +138,7 @@ def main(starttime, hstart, hstop, cfg):
         # Add GEOSP to all meteo files using cdo
         #-----------------------------------------------------
         # First, extract GEOSP from first file
-        src_file = os.path.join(cfg.icon_input_icbc, starttime.strftime(cfg.meteo_nameformat) + cfg.chem_suffix)
+        src_file = os.path.join(cfg.icon_input_icbc, starttime.strftime(cfg.meteo_nameformat) + '_lbc.nc')
         GEOSP_file = os.path.join(cfg.icon_input_icbc, 'GEOSP.nc')
         # Select variable with CDO
         cdo.selvar("GEOSP",input=src_file,output=GEOSP_file)
