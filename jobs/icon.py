@@ -78,6 +78,13 @@ def main(starttime, hstart, hstop, cfg):
 
     exitcode = subprocess.call(["sbatch", "--wait",
                                 os.path.join(cfg.icon_work, 'run_icon.job')])
+
+    # In case of ICON-ART, ignore the "invalid pointer" error on successful run
+    if cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONART:
+        if tools.grep("free(): invalid pointer", logfile)['success'] and \
+           tools.grep("clean-up finished", logfile)['success']:
+            exitcode = 0
+
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
 

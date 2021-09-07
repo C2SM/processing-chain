@@ -269,6 +269,30 @@ def levenshtein(s1, s2):
     return previous_row[-1]
 
 
+def grep(string, filename):
+    """Mimics the "grep" function.
+
+    Parameters
+    ----------
+    string : string to be searched for
+
+    filename: file name in which string is searched
+    """
+
+    # List of lines where string is found
+    list_line = []
+    list_iline = []
+    lo_success = False
+
+    for iline, line in enumerate(open(filename)):
+        if string in line:
+            list_line.append(line)
+            list_iline.append(iline)
+            lo_success = True
+
+    return {"success": lo_success,  "iline" : list_iline, "line" : list_line}
+
+
 def check_job_completion(log_finished_dir, job, waittime=3000):
     """Check that a certain job is done, otherwise waits 300 seconds.
 
