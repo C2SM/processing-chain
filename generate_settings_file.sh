@@ -9,6 +9,7 @@ echo
 echo "Hello ${username}!"
 echo "If you want, you can provide your email address."
 echo "This is useful to get notified when the chain fails a job."
+echo "You can leave it empty if you don't need this feature."
 echo
 
 read -p 'Email address: ' usermail

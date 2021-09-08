@@ -46,6 +46,13 @@ To install the requirements, type::
 
     python -m pip install -r requirements.txt
 
+4. Create the settings.ini File
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Run the following bash script once to register your email address::
+
+    ./generate_settings_file.sh
+
 
 Run the Chain
 *************
@@ -54,7 +61,7 @@ Once everything has been set up correctly according to the above steps,
 you just need to execute the following command to load the necessary modules
 and activate your environment::
 
-    $ source modules.env
+    source modules.env
 
 To test if your environment has been successfully set,
 use the command line help to see the available arguments for the main script::
