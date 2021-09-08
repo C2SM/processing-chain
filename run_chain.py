@@ -236,7 +236,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         If True will do job regardless of completion status
     """
     # Read global settings
-    settings_file = os.path.join(cfg.chain_src_dir, 'settings.cfg')
+    settings_file = os.path.join(cfg.chain_src_dir, 'settings.ini')
     if os.path.isfile(settings_file):
         settings.read(settings_file)
         mail_address = settings['User']['Mail']
