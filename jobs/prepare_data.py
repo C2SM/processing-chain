@@ -29,7 +29,8 @@ import logging
 import shutil
 import subprocess
 from datetime import timedelta
-from cdo import Cdo
+i#from cdo import Cdo
+import xarray
 from . import tools
 
 cdo = Cdo()
