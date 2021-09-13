@@ -29,11 +29,8 @@ import logging
 import shutil
 import subprocess
 from datetime import timedelta
-#from cdo import Cdo
 import xarray
 from . import tools
-
-#cdo = Cdo()
 
 def main(starttime, hstart, hstop, cfg):
     """
@@ -136,31 +133,28 @@ def main(starttime, hstart, hstop, cfg):
             logging.info("%s successfully executed." % runscript)
 
         #-----------------------------------------------------
-        # Add GEOSP to all meteo files using cdo
+        # Add GEOSP to all meteo files
         #-----------------------------------------------------
         # First, extract GEOSP from first file
-        src_file = os.path.join(cfg.icon_input_icbc, starttime.strftime(cfg.meteo_nameformat) + '_lbc.nc')
-#        GEOSP_file = os.path.join(cfg.icon_input_icbc, 'GEOSP.nc')
-        # Select variable with CDO
-#        cdo.selvar("GEOSP",input=src_file,output=GEOSP_file)
+        src_file = os.path.join(cfg.icon_input_icbc,
+                   starttime.strftime(cfg.meteo_nameformat) + '_lbc.nc')
         # Add GEOSP to all other files
         for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-            merged_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
-#            # Merge with CDO
+            merged_file = os.path.join(cfg.icon_input_icbc,
+                                       time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
             # Load GEOSP-dataset as ds_geosp at time 00:
             if (time.hour == 0):
                 ds1 = xarray.open_dataset(merged_file)
                 ds_geosp = ds1['GEOSP']
             # Merge GEOSP-dataset with other timesteps
             elif (time.hour != 0):
-#                cdo.merge(input=' '.join([merged_file, GEOSP_file]), output=merged_file)
+                # Change values of time dimension to current time
+                ds_geosp = ds_geosp.assign_coords(time=[time])
                 ds2 = xarray.open_dataset(merged_file)
                 dsm = xarray.merge([ds2,ds_geosp])
                 dsm.attrs = ds2.attrs
                 dsm.to_netcdf(merged_file)
-            logging.info("Added GEOSP to file {}".format(merged_file))
-#        # Delete GEOSP_file.nc
-#        os.remove(GEOSP_file)
+                logging.info("Added GEOSP to file {}".format(merged_file))
 
         # Copy grid files
         tools.copy_file(cfg.radiation_grid_filename, cfg.radiation_grid_filename_scratch,
