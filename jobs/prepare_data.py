@@ -33,7 +33,7 @@ from datetime import timedelta
 import xarray
 from . import tools
 
-cdo = Cdo()
+#cdo = Cdo()
 
 def main(starttime, hstart, hstop, cfg):
     """
