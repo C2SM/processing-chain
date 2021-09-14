@@ -146,8 +146,6 @@ def main(starttime, hstart, hstop, cfg):
                 da_geosp = ds['GEOSP']
             # Merge GEOSP-dataset with other timesteps
             elif (time.hour != 0):
-                # Create a copy of the current file
-                tools.copy_file(src_file, merged_file)
                 # Change values of time dimension to current time
                 da_geosp = da_geosp.assign_coords(time=[time])
                 # Merge GEOSP into temporary file
