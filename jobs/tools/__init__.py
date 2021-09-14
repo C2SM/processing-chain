@@ -248,7 +248,7 @@ str_to_enum = {'cosmo': Target.COSMO,
                'cosmo-ghg': Target.COSMOGHG,
                'icon': Target.ICON,
                'icon-art': Target.ICONART,
-               'icon-oem': Target.ICONARTOEM,
+               'icon-art-oem': Target.ICONARTOEM,
                'none': Subtarget.NONE,
                'spinup': Subtarget.SPINUP,
                }
