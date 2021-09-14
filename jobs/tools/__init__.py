@@ -194,6 +194,43 @@ def copy_file(source_path, dest_path, output_log=False):
                  source_path, dest_path))
 
 
+def rename_file(source_path, dest_path, output_log=False):
+    """Copy a file from source_path to dest_path
+
+    Use os.rename to rename the file.
+    dest_path can be either a directory or a filepath.
+    If it is a directory, the name of the file will be
+    kept, if it is a filepath the file will be renamed.
+    File permissions will be kept as well.
+
+    Provides error description to the logfiles
+
+    Parameters
+    ----------
+    source_path : str
+        Path to the file to be renamed
+    dest_path : str
+        Path to the destination directory or destination file
+    """
+    try:
+        os.rename(source_path, dest_path)
+    except FileNotFoundError:
+        logging.error("Source-file not found at {} OR "
+                      "target-directory {} doesn't exist."
+                      .format(source_path, dest_path))
+        raise
+    except PermissionError:
+        logging.error("Copying file from {} to {} failed due to"
+                      "a permission error.".format(source_path, dest_path))
+        raise
+    except (OSError, Exception) as e:
+        logging.error("Copying {} to {} failed with {}". format(
+                      source_path, dest_path, type(e).__name__))
+        raise
+    logging.info("Renamed {} to {}". format(
+                 source_path, dest_path))
+
+
 class Target(Enum):
     COSMO = auto()
     COSMOART = auto()

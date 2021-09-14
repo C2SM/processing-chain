@@ -135,25 +135,27 @@ def main(starttime, hstart, hstop, cfg):
         #-----------------------------------------------------
         # Add GEOSP to all meteo files
         #-----------------------------------------------------
-        # First, extract GEOSP from first file
-        src_file = os.path.join(cfg.icon_input_icbc,
-                   starttime.strftime(cfg.meteo_nameformat) + '_lbc.nc')
-        # Add GEOSP to all other files
         for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-            merged_file = os.path.join(cfg.icon_input_icbc,
+            src_file = os.path.join(cfg.icon_input_icbc,
                                        time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
+            merged_file = os.path.join(cfg.icon_input_icbc,
+                                       time.strftime(cfg.meteo_nameformat) + '_merged.nc')
+            ds = xarray.open_dataset(src_file)
             # Load GEOSP-dataset as ds_geosp at time 00:
             if (time.hour == 0):
-                ds1 = xarray.open_dataset(merged_file)
-                ds_geosp = ds1['GEOSP']
+                da_geosp = ds['GEOSP']
             # Merge GEOSP-dataset with other timesteps
             elif (time.hour != 0):
+                # Create a copy of the current file
+                tools.copy_file(src_file, merged_file)
                 # Change values of time dimension to current time
-                ds_geosp = ds_geosp.assign_coords(time=[time])
-                ds2 = xarray.open_dataset(merged_file)
-                dsm = xarray.merge([ds2,ds_geosp])
-                dsm.attrs = ds2.attrs
-                dsm.to_netcdf(merged_file)
+                da_geosp = da_geosp.assign_coords(time=[time])
+                # Merge GEOSP into temporary file
+                ds_merged = xarray.merge([ds, da_geosp])
+                ds_merged.attrs = ds.attrs
+                ds_merged.to_netcdf(merged_file)
+                # Rename file to get original file name
+                tools.rename_file(merged_file, src_file)
                 logging.info("Added GEOSP to file {}".format(merged_file))
 
         # Copy grid files
