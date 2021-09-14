@@ -1,7 +1,6 @@
 #!/bin/bash
 
 username="$(git config user.name)"
-echo ${username}
 
 # Hello world!
 echo "=== Generating settings.ini file for the Processing Chain ==="
