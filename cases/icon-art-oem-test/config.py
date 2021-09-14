@@ -1,12 +1,12 @@
 import os
 
 """
-Configuration file for the 'icon-art-oem-test' case with ICON-ART-OEM
+Configuration file for the 'icon-art-test' case with ICON-ART
 """
 
 # GENERAL SETTINGS =========================================================== 
 user = os.environ['USER']
-target = 'icon-art-oem'
+target = 'icon-art'
 restart_step = 24 # hours
 
 compute_host = 'daint'
@@ -35,86 +35,67 @@ exe_dir = "/store/empa/em05/executables"
 # Case directory
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
-# PRE-PROCESSING =============================================================
-input_root = '/store/empa/em05/input_icon_processing_chain_example/'
-input_root_icbc = os.path.join(input_root, 'icbc')
-# meteo
-input_root_meteo = '/store/empa/em05/dbrunner/icon-art/meteo'
-meteo_prefix = 'ifs'
-source_nameformat = meteo_prefix + '_%Y%m%d%H'
+# PREPARE_DATA ---------------------------------------------------------------
+input_root = '/store/empa/em05/input_iconart_processing_chain_example/'
+
+input_root_meteo = '/store/empa/em05/input_iconart_processing_chain_example/meteo'
+meteo_prefix = 'ifs_'
+meteo_nameformat = meteo_prefix + '%Y%m%d%H'
+meteo_suffix = '.grb'
 meteo_inc = 3
-# cams
-input_root_chem = '/store/empa/em05/dbrunner/icon-art/icbc'
+
+input_root_icbc = os.path.join(input_root, 'icbc')
 chem_prefix = 'cams_gqpe'
 chem_nameformat = chem_prefix + '_%Y%m%d_%H'
+chem_suffix = '.nc'
 
-# ICONTools ------------------------------------------------------------------
-icontools_parameter = {
-    'remap_ic_runjob': 'icontools_remap_ic_runjob.cfg',
-    'auxgrid_runjob': 'icontools_auxgrid_runjob.cfg',
-    'remap_ana_lbc_runjob': 'icontools_remap_ana_lbc_runjob.cfg',
-    'remap_fc_lbc_runjob': 'icontools_remap_fc_lbc_runjob.cfg',
-    'remap_aux_runjob': 'icontools_remap_aux_runjob.cfg',
-    'remap_chem_ic_runjob': 'icontools_remap_chem_ic_runjob.cfg',
-    'remap_chem_lbc_runjob': 'icontools_remap_chem_lbc_runjob.cfg',
-    'namelist_iconsub': 'icontools_namelist_iconsub.cfg',
-    'namelist_remapfields_ic': 'icontools_namelist_remapfields_ic.cfg',
-    'namelist_remapfields_ana_lbc': 'icontools_namelist_remapfields_ana_lbc.cfg',
-    'namelist_remapfields_fc_lbc': 'icontools_namelist_remapfields_fc_lbc.cfg',
-    'namelist_remapfields_chem_ic': 'icontools_namelist_remapfields_chem_ic.cfg',
-    'namelist_remapfields_chem_lbc': 'icontools_namelist_remapfields_chem_lbc.cfg',
-    'namelist_remap': 'icontools_namelist_remap.cfg',
-    'namelist_remap_chem': 'icontools_namelist_remap_chem.cfg',
-}
+icontools_runjobs = [
+    'icontools_remap_ic_runjob.cfg',
+    'icontools_remap_00_lbc_runjob.cfg',
+    'icontools_remap_lbc_rest_runjob.cfg',
+]
+
+# Icontools executables
+iconremap_bin = os.path.join(exe_dir, "iconremap")
+iconsub_bin   = os.path.join(exe_dir, "iconsub")
 
 # Input data for runscript----------------------------------------------------
 # Grid
-input_root_grid = os.path.join(input_root, 'grid')
-radiation_grid_filename = "VERIFY_DOM_DOM01.parent.nc"
-dynamics_grid_filename = "VERIFY_DOM_DOM01.nc"
-map_file_latbc = "map_file.latbc"
-extpar_filename = "external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc"
-lateral_boundary_grid = "lateral_boundary.grid.nc"
+input_root_grid = os.path.join(input_root, 'grids')
+radiation_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.parent.nc")
+dynamics_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.nc")
+map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
+extpar_filename = os.path.join(input_root_grid, 
+                               "external_parameter_icon_testcase_DOM01_tiles.nc")
+lateral_boundary_grid = os.path.join(input_root_grid, "lateral_boundary.grid.nc")
 
-# Radiation
 input_root_rad = os.path.join(input_root, 'rad')
-cldopt_filename = 'rrtm_cldopt.nc'
-lrtm_filename = 'rrtmg_lw.nc'
+cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
+lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
 
-# Mapping
 input_root_mapping = os.path.join(input_root, 'mapping')
-map_file_ana = "map_file.ana"
+map_file_ana = os.path.join(input_root_mapping, "map_file.ana")
 
 # File names -----------------------------------------------------------------
-latbc_filename = "ifs_201801<d><h>_lbc.nc"
-inidata_filename = "ifs_init_2018010100.nc"
+latbc_filename = "ifs_<y><m><d><h>_lbc.nc"
+inidata_prefix = "ifs_init_"
+inidata_nameformat = inidata_prefix + '%Y%m%d%H'
+inidata_filename_suffix = ".nc"
 
-output_filename = "NWP_LAM"
+output_filename = "icon-art-test"
 filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 
-# OAE ------------------------------------------------------------------------
-# Online anthropogenic emissions
-oae_dir = os.path.join(input_root, 'OEM')
-oae_gridded_emissions_nc = 'emissions.nc'
-oae_vertical_profiles_nc = 'vertical_profiles.nc'
-oae_hourofday_nc = 'hourofday.nc'
-oae_dayofweek_nc = 'dayofweek.nc'
-oae_monthofyear_nc = 'monthofyear.nc'
-#oae_hourofyear_nc = 'hourofyear.nc'
-oae_chem_init_nc = 'cams_gqpe_20180101_00_wet.nc'
-oae_ens_reg_nc = 'reg.nc'
-oae_ens_lambda_nc = 'lambdas.nc'
+# ART settings----------------------------------------------------------------
+input_root_tracers = os.path.join(input_root, 'XML')
+chemtracer_xml_filename = os.path.join(input_root_tracers, 'tracers_oh_pntsrc.xml')
+pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc_example.xml')
+art_input_folder = os.path.join(os.environ['SCRATCH'], 'icon-kit-art/externals/art')
 
 
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin = os.path.join(exe_dir, "icon-oem-pgi-20.1.1-cpu-20210215")
-
-# Icontools executables
-icontools_dir = exe_dir
-iconremap_bin = "iconremap"
-iconsub_bin   = "iconsub"
+icon_bin = os.path.join(exe_dir, "icon-art_20210814")
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
@@ -127,7 +108,7 @@ if compute_queue == "normal":
     icon_np_tot = 16
 elif compute_queue == "debug":
     icon_walltime = "00:30:00"
-    icon_np_tot = 2
+    icon_np_tot = 10
 else: 
     logging.error("Unknown queue name: %s" % compute_queue)
     sys.exit(1)
@@ -139,7 +120,7 @@ output_levels = 20
 
 # POST_COSMO ----------------------------------------------------------------- 
 # Root directory where the output of the chain is copied to
-output_root = os.path.join("/store/empa/em05/", user, 
+output_root = os.path.join("/scratch/snx3000", user, 
                            "processing_chain_output", casename)
 
 # VERIFY_CHAIN --------------------------------------------------------------- 
