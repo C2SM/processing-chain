@@ -95,7 +95,7 @@ art_input_folder = os.path.join(os.environ['SCRATCH'], 'icon-kit-art/externals/a
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin = os.path.join(exe_dir, "icon-art_20210814")
+icon_bin = os.path.join(exe_dir, "icon-kit-art_20211018")
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
