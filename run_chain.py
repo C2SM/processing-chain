@@ -337,24 +337,25 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
             os.path.join(cfg.icon_input_xml, os.path.basename(cfg.pntSrc_xml_filename)))
 
     # OEM
-    setattr(cfg, 'oae_gridded_emissions_nc_scratch',
-            os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_gridded_emissions_nc)))
-    setattr(cfg, 'oae_vertical_profiles_nc_scratch',
-            os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_vertical_profiles_nc)))
-    setattr(cfg, 'oae_hourofday_nc_scratch',
-            os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_hourofday_nc)))
-    setattr(cfg, 'oae_dayofweek_nc_scratch',
-            os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_dayofweek_nc)))
-    setattr(cfg, 'oae_monthofyear_nc_scratch',
-            os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_monthofyear_nc)))
-    setattr(cfg, 'oae_hourofyear_nc_scratch',
-            os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_hourofyear_nc)))
-    setattr(cfg, 'oae_chem_init_nc_scratch',
-            os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_chem_init_nc)))
-    setattr(cfg, 'oae_ens_reg_nc_scratch',
-            os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_ens_reg_nc)))
-    setattr(cfg, 'oae_ens_lambda_nc_scratch',
-            os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_ens_lambda_nc)))
+    if cfg.target is tools.Target.ICONARTOEM:
+        setattr(cfg, 'oae_gridded_emissions_nc_scratch',
+                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_gridded_emissions_nc)))
+        setattr(cfg, 'oae_vertical_profiles_nc_scratch',
+                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_vertical_profiles_nc)))
+        setattr(cfg, 'oae_hourofday_nc_scratch',
+                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_hourofday_nc)))
+        setattr(cfg, 'oae_dayofweek_nc_scratch',
+                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_dayofweek_nc)))
+        setattr(cfg, 'oae_monthofyear_nc_scratch',
+                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_monthofyear_nc)))
+        setattr(cfg, 'oae_hourofyear_nc_scratch',
+                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_hourofyear_nc)))
+        setattr(cfg, 'oae_chem_init_nc_scratch',
+                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_chem_init_nc)))
+        setattr(cfg, 'oae_ens_reg_nc_scratch',
+                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_ens_reg_nc)))
+        setattr(cfg, 'oae_ens_lambda_nc_scratch',
+                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_ens_lambda_nc)))
 
     # Number of tracers
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
