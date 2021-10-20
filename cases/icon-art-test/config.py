@@ -58,6 +58,9 @@ icontools_runjobs = [
 # Icontools executables
 iconremap_bin = os.path.join(exe_dir, "iconremap")
 iconsub_bin   = os.path.join(exe_dir, "iconsub")
+icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
+iconremap_bin = os.path.join(icontools_dir, "iconremap")
+iconsub_bin   = os.path.join(icontools_dir, "iconsub")
 
 # Input data for runscript----------------------------------------------------
 # Grid
