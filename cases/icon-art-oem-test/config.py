@@ -94,15 +94,15 @@ art_input_folder = os.path.join(os.environ['SCRATCH'], 'icon-kit-art/externals/a
 # OAE ------------------------------------------------------------------------
 # Online anthropogenic emissions
 oae_dir = os.path.join(input_root, 'OEM')
-oae_gridded_emissions_nc = 'emissions.nc'
+oae_gridded_emissions_nc = 'tno_3cat.nc'
 oae_vertical_profiles_nc = 'vertical_profiles.nc'
 oae_hourofday_nc = 'hourofday.nc'
 oae_dayofweek_nc = 'dayofweek.nc'
 oae_monthofyear_nc = 'monthofyear.nc'
-#oae_hourofyear_nc = 'hourofyear.nc'
+oae_hourofyear_nc = 'hourofyear.nc'
 oae_chem_init_nc = 'cams_gqpe_20180101_00_wet.nc'
-oae_ens_reg_nc = 'reg.nc'
-oae_ens_lambda_nc = 'lambdas.nc'
+oae_ens_reg_nc = 'regions_testcase.nc'
+oae_ens_lambda_nc = 'lambdas_testcase.nc'
 
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
