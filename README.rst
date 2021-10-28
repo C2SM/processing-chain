@@ -46,7 +46,8 @@ The requirements.txt_ contains all packages that are needed to run the Processin
 To install the requirements, type::
 
     $ python -m pip install -r requirements.txt
-
+    
+Afterwards, close and re-open your terminal, and continue with the next section.
 
 Run the Chain
 *************
