@@ -44,20 +44,26 @@ meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
 meteo_inc = 3
 
+input_root_chem = '/store/empa/em05/input_iconart_processing_chain_example/chem/'
+
 input_root_icbc = os.path.join(input_root, 'icbc')
-chem_prefix = 'cams_gqpe'
-chem_nameformat = chem_prefix + '_%Y%m%d_%H'
-chem_suffix = '.nc'
+chem_prefix = 'cams_gqpe_'
+chem_nameformat = chem_prefix + '%Y%m%d_%H'
+chem_suffix = '.grb'
+chem_inc = 3
 
 icontools_runjobs = [
     'icontools_remap_ic_runjob.cfg',
     'icontools_remap_00_lbc_runjob.cfg',
     'icontools_remap_lbc_rest_runjob.cfg',
+    'icontools_remap_ic_chem_runjob.cfg',
+    'icontools_remap_lbc_chem_runjob.cfg',
 ]
 
 # Icontools executables
 #icontools_dir = exe_dir
-icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
+#icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
+icontools_dir = '/scratch/snx3000/msteiner/spack-stages/daint/spack-stage-icontools-master-t524rnfa5sfyn4rbvarypyzwae4jg46d/spack-src/icontools'
 iconremap_bin = os.path.join(icontools_dir, "iconremap")
 iconsub_bin   = os.path.join(icontools_dir, "iconsub")
 

@@ -99,9 +99,13 @@ def main(starttime, hstart, hstop, cfg):
         #-----------------------------------------------------
         datafile_list = []
         datafile_list_rest = []
+        datafile_list_chem = []
         for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
             meteo_file = os.path.join(cfg.icon_input_icbc,
                                       time.strftime(cfg.meteo_nameformat))
+            chem_file = os.path.join(cfg.icon_input_chem,
+                                      time.strftime(cfg.chem_nameformat))
+            datafile_list_chem.append(chem_file + cfg.chem_suffix)
             if meteo_file.endswith('00'):
                 datafile_list.append(meteo_file + cfg.meteo_suffix)
             else:
@@ -123,7 +127,8 @@ def main(starttime, hstart, hstop, cfg):
                     cfg=cfg,
                     logfile=logfile, logfile_finish=logfile_finish,
                     datafile_list=datafile_list,
-                    datafile_list_rest=datafile_list_rest
+                    datafile_list_rest=datafile_list_rest,
+                    datafile_list_chem=datafile_list_chem
                     )
                 )
             exitcode = subprocess.call(["sbatch", "--wait",
@@ -155,6 +160,51 @@ def main(starttime, hstart, hstop, cfg):
                 # Rename file to get original file name
                 tools.rename_file(merged_file, src_file)
                 logging.info("Added GEOSP to file {}".format(merged_file))
+
+        #-----------------------------------------------------
+        # In cae of OEM: merge chem tracers with meteo-files
+        #-----------------------------------------------------
+        if cfg.target is tools.Target.ICONARTOEM:
+            for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+                if time==starttime:
+                    #------------
+                    # Merge IC:
+                    #------------
+                    meteo_file = os.path.join(cfg.icon_input_icbc,
+                                               time.strftime(cfg.chem_nameformat) + '.nc')
+                    chem_file = os.path.join(cfg.icon_input_icbc,
+                                               time.strftime(cfg.chem_nameformat) + '.nc')
+                    merged_file = os.path.join(cfg.icon_input_icbc,
+                                               time.strftime(cfg.chem_nameformat) + '_merged.nc')
+                    ds_meteo = xarray.open_dataset(meteo_file)
+                    ds_chem = xarray.open_dataset(chem_file)
+                    # Merge GEOSP into temporary file
+                    ds_merged = xarray.merge([ds_meteo, ds_chem])
+                    ds_merged.attrs = ds.attrs
+                    ds_merged.to_netcdf(merged_file)
+                    # Rename file to get original file name
+                    tools.rename_file(merged_file, meteo_file)
+                    logging.info("Added chemical tracer to file {}".format(merged_file))
+
+                #------------
+                # Merge LBC:
+                #------------
+                meteo_file = os.path.join(cfg.icon_input_icbc,
+                                           time.strftime(cfg.chem_nameformat) + '_lbc.nc')
+                chem_file = os.path.join(cfg.icon_input_icbc,
+                                           time.strftime(cfg.chem_nameformat) + '_lbc.nc')
+                merged_file = os.path.join(cfg.icon_input_icbc,
+                                           time.strftime(cfg.chem_nameformat) + '_merged.nc')
+                ds_meteo = xarray.open_dataset(meteo_file)
+                ds_chem = xarray.open_dataset(chem_file)
+                # Merge GEOSP into temporary file
+                ds_merged = xarray.merge([ds_meteo, ds_chem])
+                ds_merged.attrs = ds.attrs
+                ds_merged.to_netcdf(merged_file)
+                # Rename file to get original file name
+                tools.rename_file(merged_file, meteo_file)
+                logging.info("Added chemical tracer to file {}".format(merged_file))
+
 
         # Copy grid files
         tools.copy_file(cfg.radiation_grid_filename, cfg.radiation_grid_filename_scratch,

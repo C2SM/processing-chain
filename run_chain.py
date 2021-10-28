@@ -246,9 +246,11 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     # ini date and forecast time (ignore meteo times)
     inidate = int((start_time - datetime(1970,1,1)).total_seconds())
     inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
+    inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
     forecasttime = '%d' % (hstop - hstart)
     setattr(cfg, 'inidate', inidate)
     setattr(cfg, 'inidate_yyyymmddhh',inidate_yyyymmddhh)
+    setattr(cfg, 'inidate_yyyymmdd_hh',inidate_yyyymmdd_hh)
     setattr(cfg, 'hstart', hstart)
     setattr(cfg, 'hstop', hstop)
     forecasttime = '%d' % (hstop - hstart)
@@ -338,6 +340,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
 
     # OEM
     if cfg.target is tools.Target.ICONARTOEM:
+        setattr(cfg, 'icon_input_chem', os.path.join(chain_root, 'icon', 'input', 'chem'))
         setattr(cfg, 'oae_gridded_emissions_nc_scratch',
                 os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_gridded_emissions_nc)))
         setattr(cfg, 'oae_vertical_profiles_nc_scratch',
