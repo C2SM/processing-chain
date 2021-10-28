@@ -91,7 +91,7 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 input_root_tracers = os.path.join(input_root, 'XML')
 chemtracer_xml_filename = os.path.join(input_root_tracers, 'tracers_oh_pntsrc.xml')
 pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc_example.xml')
-art_input_folder = os.path.join(os.environ['SCRATCH'], 'icon-kit-art/externals/art')
+art_input_folder = os.path.join(input_root, 'ART')
 
 # OAE ------------------------------------------------------------------------
 # Online anthropogenic emissions
