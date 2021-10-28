@@ -342,14 +342,26 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                 os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_gridded_emissions_nc)))
         setattr(cfg, 'oae_vertical_profiles_nc_scratch',
                 os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_vertical_profiles_nc)))
-        setattr(cfg, 'oae_hourofday_nc_scratch',
-                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_hourofday_nc)))
-        setattr(cfg, 'oae_dayofweek_nc_scratch',
-                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_dayofweek_nc)))
-        setattr(cfg, 'oae_monthofyear_nc_scratch',
-                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_monthofyear_nc)))
-        setattr(cfg, 'oae_hourofyear_nc_scratch',
-                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_hourofyear_nc)))
+        if hasattr(cfg, 'oae_hourofday_nc'):
+            setattr(cfg, 'oae_hourofday_nc_scratch',
+                    os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_hourofday_nc)))
+        else:
+            setattr(cfg, 'oae_hourofday_nc_scratch', '')
+        if hasattr(cfg, 'oae_dayofweek_nc'):
+            setattr(cfg, 'oae_dayofweek_nc_scratch',
+                    os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_dayofweek_nc)))
+        else:
+            setattr(cfg, 'oae_dayofweek_nc_scratch', '')
+        if hasattr(cfg, 'oae_monthofyear_nc'):
+            setattr(cfg, 'oae_monthofyear_nc_scratch',
+                    os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_monthofyear_nc)))
+        else:
+            setattr(cfg, 'oae_monthofyear_nc_scratch', '')
+        if hasattr(cfg, 'oae_hourofyear_nc'):
+            setattr(cfg, 'oae_hourofyear_nc_scratch',
+                    os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_hourofyear_nc)))
+        else:
+            setattr(cfg, 'oae_hourofyear_nc_scratch', '')
         setattr(cfg, 'oae_chem_init_nc_scratch',
                 os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_chem_init_nc)))
         setattr(cfg, 'oae_ens_reg_nc_scratch',
