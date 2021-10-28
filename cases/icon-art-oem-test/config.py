@@ -56,8 +56,10 @@ icontools_runjobs = [
 ]
 
 # Icontools executables
-iconremap_bin = os.path.join(exe_dir, "iconremap")
-iconsub_bin   = os.path.join(exe_dir, "iconsub")
+#icontools_dir = exe_dir
+icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
+iconremap_bin = os.path.join(icontools_dir, "iconremap")
+iconsub_bin   = os.path.join(icontools_dir, "iconsub")
 
 # Input data for runscript----------------------------------------------------
 # Grid
@@ -99,7 +101,7 @@ oae_vertical_profiles_nc = 'vertical_profiles.nc'
 oae_hourofday_nc = 'hourofday.nc'
 oae_dayofweek_nc = 'dayofweek.nc'
 oae_monthofyear_nc = 'monthofyear.nc'
-oae_hourofyear_nc = 'hourofyear.nc'
+#oae_hourofyear_nc = 'hourofyear.nc'
 oae_chem_init_nc = 'cams_gqpe_20180101_00_wet.nc'
 oae_ens_reg_nc = 'regions_testcase.nc'
 oae_ens_lambda_nc = 'lambdas_testcase.nc'
@@ -107,7 +109,7 @@ oae_ens_lambda_nc = 'lambdas_testcase.nc'
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin = os.path.join(exe_dir, "icon-art_20210814")
+icon_bin = os.path.join(exe_dir, "icon-kit-art_20211018")
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
