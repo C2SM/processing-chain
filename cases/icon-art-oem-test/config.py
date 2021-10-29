@@ -44,7 +44,7 @@ meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
 meteo_inc = 3
 
-input_root_chem = '/store/empa/em05/input_iconart_processing_chain_example/chem/'
+input_root_chem = '/store/empa/em05/input_iconart_processing_chain_example/chem'
 
 input_root_icbc = os.path.join(input_root, 'icbc')
 chem_prefix = 'cams_gqpe_'
