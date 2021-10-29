@@ -53,6 +53,7 @@ Run the following bash script once to register your email address::
 
     ./generate_settings_file.sh
 
+Afterwards, close and re-open your terminal, and continue with the next section.
 
 Run the Chain
 *************
