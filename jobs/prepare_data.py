@@ -91,8 +91,6 @@ def main(starttime, hstart, hstop, cfg):
         tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
         tools.create_dir(cfg.icon_output, "icon_output")
         tools.create_dir(cfg.icon_restart_out, "icon_restart_out") 
-        if cfg.target is tools.Target.ICONARTOEM:
-            tools.create_dir(cfg.icon_input_chem, "icon_input_chem")
 
         #-----------------------------------------------------
         # Get datafile lists for LBC (each at 00 UTC and others)
@@ -104,7 +102,7 @@ def main(starttime, hstart, hstop, cfg):
             meteo_file = os.path.join(cfg.icon_input_icbc,
                                       time.strftime(cfg.meteo_nameformat))
             if cfg.target is tools.Target.ICONARTOEM:
-                chem_file = os.path.join(cfg.icon_input_chem,
+                chem_file = os.path.join(cfg.icon_input_icbc,
                                           time.strftime(cfg.chem_nameformat))
             datafile_list_chem.append(chem_file + cfg.chem_suffix)
             if meteo_file.endswith('00'):

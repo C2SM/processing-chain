@@ -308,7 +308,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
     setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
     setattr(cfg, 'icon_input_icbc', os.path.join(chain_root, 'icon', 'input', 'icbc'))
-    setattr(cfg, 'icon_input_chem', os.path.join(chain_root, 'icon', 'input', 'chem'))
     setattr(cfg, 'icon_input_oae', os.path.join(chain_root, 'icon', 'input', 'oae'))
     setattr(cfg, 'icon_input_grid', os.path.join(chain_root, 'icon', 'input', 'grid'))
     setattr(cfg, 'icon_input_mapping', os.path.join(chain_root, 'icon', 'input', 'mapping'))
@@ -341,7 +340,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
 
     # OEM
     if cfg.target is tools.Target.ICONARTOEM:
-        setattr(cfg, 'icon_input_chem', os.path.join(chain_root, 'icon', 'input', 'chem'))
         setattr(cfg, 'oae_gridded_emissions_nc_scratch',
                 os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_gridded_emissions_nc)))
         setattr(cfg, 'oae_vertical_profiles_nc_scratch',
