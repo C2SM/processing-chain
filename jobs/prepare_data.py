@@ -113,6 +113,7 @@ def main(starttime, hstart, hstop, cfg):
                 datafile_list_rest.append(meteo_file + cfg.meteo_suffix)
         datafile_list = ' '.join([str(v) for v in datafile_list])
         datafile_list_rest = ' '.join([str(v) for v in datafile_list_rest])
+        datafile_list_chem = ' '.join([str(v) for v in datafile_list_chem])
 
         #-----------------------------------------------------
         # Write and submit runscripts 
