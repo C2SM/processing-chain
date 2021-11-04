@@ -85,14 +85,14 @@ def main(starttime, hstart, hstop, cfg):
         # Create directories
         #-----------------------------------------------------
         tools.create_dir(cfg.icon_work, "icon_work")
-        #tools.create_dir(cfg.icon_input_oae, "icon_input_oae") # TODO_MJ: move to oae job
         tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
         tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
         tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping")
         tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
         tools.create_dir(cfg.icon_output, "icon_output")
         tools.create_dir(cfg.icon_restart_out, "icon_restart_out") 
-
+        if cfg.target is tools.Target.ICONARTOEM:
+            tools.create_dir(cfg.icon_input_chem, "icon_input_chem")
 
         #-----------------------------------------------------
         # Get datafile lists for LBC (each at 00 UTC and others)
