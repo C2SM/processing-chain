@@ -103,8 +103,9 @@ def main(starttime, hstart, hstop, cfg):
         for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
             meteo_file = os.path.join(cfg.icon_input_icbc,
                                       time.strftime(cfg.meteo_nameformat))
-            chem_file = os.path.join(cfg.icon_input_chem,
-                                      time.strftime(cfg.chem_nameformat))
+            if cfg.target is tools.Target.ICONARTOEM:
+                chem_file = os.path.join(cfg.icon_input_chem,
+                                          time.strftime(cfg.chem_nameformat))
             datafile_list_chem.append(chem_file + cfg.chem_suffix)
             if meteo_file.endswith('00'):
                 datafile_list.append(meteo_file + cfg.meteo_suffix)
