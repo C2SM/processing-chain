@@ -93,6 +93,39 @@ def main(starttime, hstart, hstop, cfg):
         tools.create_dir(cfg.icon_restart_out, "icon_restart_out") 
 
         #-----------------------------------------------------
+        # Copy files
+        #-----------------------------------------------------
+        # Copy grid files
+        tools.copy_file(cfg.radiation_grid_filename, cfg.radiation_grid_filename_scratch,
+                        output_log=True)
+        tools.copy_file(cfg.dynamics_grid_filename, cfg.dynamics_grid_filename_scratch,
+                        output_log=True)
+        tools.copy_file(cfg.map_file_latbc, cfg.map_file_latbc_scratch,
+                        output_log=True)
+        tools.copy_file(cfg.extpar_filename, cfg.extpar_filename_scratch,
+                        output_log=True)
+        tools.copy_file(cfg.lateral_boundary_grid, cfg.lateral_boundary_grid_scratch,
+                        output_log=True)
+
+        # Copy radiation files
+        tools.copy_file(cfg.cldopt_filename, cfg.cldopt_filename_scratch,
+                        output_log=True)
+        tools.copy_file(cfg.lrtm_filename, cfg.lrtm_filename_scratch,
+                        output_log=True)
+
+        # Copy mapping file
+        tools.copy_file(cfg.map_file_ana, cfg.map_file_ana_scratch,
+                        output_log=True)
+
+        # Copy tracer data in case of ART
+        if cfg.target is tools.Target.ICONART  or cfg.target is tools.Target.ICONARTOEM:
+            tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
+            tools.copy_file(cfg.chemtracer_xml_filename, cfg.chemtracer_xml_filename_scratch,
+                            output_log=True)
+            tools.copy_file(cfg.pntSrc_xml_filename, cfg.pntSrc_xml_filename_scratch,
+                            output_log=True)
+
+        #-----------------------------------------------------
         # Get datafile lists for LBC (each at 00 UTC and others)
         #-----------------------------------------------------
         datafile_list = []
@@ -205,36 +238,6 @@ def main(starttime, hstart, hstop, cfg):
                 tools.rename_file(merged_file, meteo_file)
                 logging.info("Added chemical tracer to file {}".format(merged_file))
 
-
-        # Copy grid files
-        tools.copy_file(cfg.radiation_grid_filename, cfg.radiation_grid_filename_scratch,
-                        output_log=True)
-        tools.copy_file(cfg.dynamics_grid_filename, cfg.dynamics_grid_filename_scratch,
-                        output_log=True)
-        tools.copy_file(cfg.map_file_latbc, cfg.map_file_latbc_scratch,
-                        output_log=True)
-        tools.copy_file(cfg.extpar_filename, cfg.extpar_filename_scratch,
-                        output_log=True)
-        tools.copy_file(cfg.lateral_boundary_grid, cfg.lateral_boundary_grid_scratch,
-                        output_log=True)
-
-        # Copy radiation files
-        tools.copy_file(cfg.cldopt_filename, cfg.cldopt_filename_scratch,
-                        output_log=True)
-        tools.copy_file(cfg.lrtm_filename, cfg.lrtm_filename_scratch,
-                        output_log=True)
-
-        # Copy mapping file
-        tools.copy_file(cfg.map_file_ana, cfg.map_file_ana_scratch,
-                        output_log=True)
-
-        # Copy tracer data in case of ART
-        if cfg.target is tools.Target.ICONART  or cfg.target is tools.Target.ICONARTOEM:
-            tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
-            tools.copy_file(cfg.chemtracer_xml_filename, cfg.chemtracer_xml_filename_scratch,
-                            output_log=True)
-            tools.copy_file(cfg.pntSrc_xml_filename, cfg.pntSrc_xml_filename_scratch,
-                            output_log=True)
 
     # If COSMO (and not ICON):
     else:
