@@ -216,7 +216,7 @@ def main(starttime, hstart, hstop, cfg):
                     ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
                     ds_chem['PS'].attrs["long_name"] = 'surface pressure'
                     # merge:
-                    ds_merged = xarray.merge([ds_meteo, ds_chem])
+                    ds_merged = xarray.merge([ds_meteo, ds_chem],compat="override")
                     #ds_merged.attrs = ds.attrs
                     ds_merged.to_netcdf(merged_file)
                     # Rename file to get original file name
@@ -240,7 +240,7 @@ def main(starttime, hstart, hstop, cfg):
                 ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
                 ds_chem['PS'].attrs["long_name"] = 'surface pressure'
                 # merge:
-                ds_merged = xarray.merge([ds_meteo, ds_chem])
+                ds_merged = xarray.merge([ds_meteo, ds_chem],compat="override")
                 #ds_merged.attrs = ds.attrs
                 ds_merged.to_netcdf(merged_file)
                 # Rename file to get original file name
