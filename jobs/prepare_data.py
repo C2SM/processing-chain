@@ -221,7 +221,7 @@ def main(starttime, hstart, hstop, cfg):
                     ds_merged.to_netcdf(merged_file)
                     # Rename file to get original file name
                     tools.rename_file(merged_file, meteo_file)
-                    tools.remove_file(meteo_file)
+                    tools.remove_file(chem_file)
                     logging.info("Added chemical tracer to file {}".format(merged_file))
 
                 #------------
@@ -245,7 +245,7 @@ def main(starttime, hstart, hstop, cfg):
                 ds_merged.to_netcdf(merged_file)
                 # Rename file to get original file name
                 tools.rename_file(merged_file, meteo_file)
-                tools.remove_file(meteo_file)
+                tools.remove_file(chem_file)
                 logging.info("Added chemical tracer to file {}".format(merged_file))
 
 
