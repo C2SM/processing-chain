@@ -4,7 +4,7 @@ Processing Chain for COSMO and ICON Simulations
 The Processing Chain is a python script that prepares necessary input data,
 submits compute-jobs to the queue on Piz Daint and does post-processing steps.
 It supports different types of simulations, including **COSMO**, **COSMO-GHG**,
-**COSMO-ART**, **ICON** and **ICON-OEM**. The chain can flexibly be adapted
+**COSMO-ART**, **ICON** and **ICON-ART**. The chain can flexibly be adapted
 according to your needs, e.g., by creating your own case or adding new jobs.
 
 Setting up your Virtual Environment using ``pip``
