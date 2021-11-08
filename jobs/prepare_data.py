@@ -204,38 +204,48 @@ def main(starttime, hstart, hstop, cfg):
                     # Merge IC:
                     #------------
                     meteo_file = os.path.join(cfg.icon_input_icbc,
-                                               time.strftime(cfg.chem_nameformat) + '.nc')
+                                               time.strftime(cfg.meteo_nameformat) + '.nc')
                     chem_file = os.path.join(cfg.icon_input_icbc,
                                                time.strftime(cfg.chem_nameformat) + '.nc')
                     merged_file = os.path.join(cfg.icon_input_icbc,
-                                               time.strftime(cfg.chem_nameformat) + '_merged.nc')
+                                               time.strftime(cfg.meteo_nameformat) + '_merged.nc')
                     ds_meteo = xarray.open_dataset(meteo_file)
                     ds_chem = xarray.open_dataset(chem_file)
-                    # Merge GEOSP into temporary file
+                    # LNPS --> PS
+                    ds_chem['PS'] = ds_chem['LNPS']
+                    ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
+                    ds_chem['PS'].attrs["long_name"] = 'surface pressure'
+                    # merge:
                     ds_merged = xarray.merge([ds_meteo, ds_chem])
-                    ds_merged.attrs = ds.attrs
+                    #ds_merged.attrs = ds.attrs
                     ds_merged.to_netcdf(merged_file)
                     # Rename file to get original file name
                     tools.rename_file(merged_file, meteo_file)
+                    tools.remove_file(meteo_file)
                     logging.info("Added chemical tracer to file {}".format(merged_file))
 
                 #------------
                 # Merge LBC:
                 #------------
                 meteo_file = os.path.join(cfg.icon_input_icbc,
-                                           time.strftime(cfg.chem_nameformat) + '_lbc.nc')
+                                           time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
                 chem_file = os.path.join(cfg.icon_input_icbc,
                                            time.strftime(cfg.chem_nameformat) + '_lbc.nc')
                 merged_file = os.path.join(cfg.icon_input_icbc,
-                                           time.strftime(cfg.chem_nameformat) + '_merged.nc')
+                                           time.strftime(cfg.meteo_nameformat) + '_merged.nc')
                 ds_meteo = xarray.open_dataset(meteo_file)
                 ds_chem = xarray.open_dataset(chem_file)
-                # Merge GEOSP into temporary file
+                # LNPS --> PS
+                ds_chem['PS'] = ds_chem['LNPS']
+                ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
+                ds_chem['PS'].attrs["long_name"] = 'surface pressure'
+                # merge:
                 ds_merged = xarray.merge([ds_meteo, ds_chem])
-                ds_merged.attrs = ds.attrs
+                #ds_merged.attrs = ds.attrs
                 ds_merged.to_netcdf(merged_file)
                 # Rename file to get original file name
                 tools.rename_file(merged_file, meteo_file)
+                tools.remove_file(meteo_file)
                 logging.info("Added chemical tracer to file {}".format(merged_file))
 
 
