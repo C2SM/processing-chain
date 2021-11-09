@@ -95,8 +95,7 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 
 # ART settings----------------------------------------------------------------
 input_root_tracers = os.path.join(input_root, 'XML')
-chemtracer_xml_filename = os.path.join(input_root_tracers, 'tracers_oh_pntsrc.xml')
-pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc_example.xml')
+chemtracer_xml_filename = os.path.join(input_root_tracers, 'tracers_ensemble.xml.xml')
 art_input_folder = os.path.join(input_root, 'ART')
 
 # OAE ------------------------------------------------------------------------
@@ -108,14 +107,13 @@ oae_hourofday_nc = 'hourofday.nc'
 oae_dayofweek_nc = 'dayofweek.nc'
 oae_monthofyear_nc = 'monthofyear.nc'
 #oae_hourofyear_nc = 'hourofyear.nc'
-oae_chem_init_nc = 'cams_gqpe_20180101_00_wet.nc'
 oae_ens_reg_nc = 'regions_testcase.nc'
 oae_ens_lambda_nc = 'lambdas_testcase.nc'
 
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin = os.path.join(exe_dir, "icon-kit-art_20211018")
+icon_bin = os.path.join(exe_dir, "icon-art-oem-nudging_20211011")
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')

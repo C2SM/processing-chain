@@ -120,10 +120,20 @@ def main(starttime, hstart, hstop, cfg):
         # Copy tracer data in case of ART
         if cfg.target is tools.Target.ICONART  or cfg.target is tools.Target.ICONARTOEM:
             tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
-            tools.copy_file(cfg.chemtracer_xml_filename, cfg.chemtracer_xml_filename_scratch,
-                            output_log=True)
-            tools.copy_file(cfg.pntSrc_xml_filename, cfg.pntSrc_xml_filename_scratch,
-                            output_log=True)
+            if hasattr(cfg, 'chemtracer_xml_filename'):
+                tools.copy_file(cfg.chemtracer_xml_filename, cfg.chemtracer_xml_filename_scratch,
+                                output_log=True)
+            if hasattr(cfg, 'pntSrc_xml_filename'):
+                tools.copy_file(cfg.pntSrc_xml_filename, cfg.pntSrc_xml_filename_scratch,
+                                output_log=True)
+
+        if cfg.target is tools.Target.ICONARTOEM:
+            if hasattr(cfg, 'oae_ens_reg_nc'):
+                tools.copy_file(os.path.join(oae_dir, cfg.oae_ens_reg_nc),
+                                os.path.join(dest_dir, cfg.oae_ens_reg_nc))
+            if hasattr(cfg, 'oae_ens_lambda_nc'):
+                tools.copy_file(os.path.join(oae_dir, cfg.oae_ens_lambda_nc),
+                                os.path.join(dest_dir, cfg.oae_ens_lambda_nc))
 
         #-----------------------------------------------------
         # Get datafile lists for LBC (each at 00 UTC and others)
