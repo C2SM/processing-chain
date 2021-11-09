@@ -231,6 +231,37 @@ def rename_file(source_path, dest_path, output_log=False):
                  source_path, dest_path))
 
 
+def remove_file(dest_path, output_log=False):
+    """Delete a file at dest_path
+
+    Use os.remove to delete the file.
+    dest_path has to be a filepath.
+
+    Provides error description to the logfiles
+
+    Parameters
+    ----------
+    dest_path : str
+        Path to the destination file
+    """
+    try:
+        os.remove(dest_path)
+    except FileNotFoundError:
+        logging.error("Target-file not found at {}."
+                      .format(dest_path))
+        raise
+    except PermissionError:
+        logging.error("Removing file {} failed due to"
+                      "a permission error.".format(dest_path))
+        raise
+    except (OSError, Exception) as e:
+        logging.error("Removing {} failed with {}". format(
+                      dest_path, type(e).__name__))
+        raise
+    logging.info("Removed {}". format(
+                 dest_path))
+
+
 class Target(Enum):
     COSMO = auto()
     COSMOART = auto()

@@ -88,6 +88,7 @@ def main(starttime, hstart, hstop, cfg):
         tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
         tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
         tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping")
+        tools.create_dir(cfg.icon_input_oae, "icon_input_oem")
         tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
         tools.create_dir(cfg.icon_output, "icon_output")
         tools.create_dir(cfg.icon_restart_out, "icon_restart_out") 
@@ -120,10 +121,36 @@ def main(starttime, hstart, hstop, cfg):
         # Copy tracer data in case of ART
         if cfg.target is tools.Target.ICONART  or cfg.target is tools.Target.ICONARTOEM:
             tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
-            tools.copy_file(cfg.chemtracer_xml_filename, cfg.chemtracer_xml_filename_scratch,
-                            output_log=True)
-            tools.copy_file(cfg.pntSrc_xml_filename, cfg.pntSrc_xml_filename_scratch,
-                            output_log=True)
+            if hasattr(cfg, 'chemtracer_xml_filename'):
+                tools.copy_file(cfg.chemtracer_xml_filename, cfg.chemtracer_xml_filename_scratch,
+                                output_log=True)
+            if hasattr(cfg, 'pntSrc_xml_filename'):
+                tools.copy_file(cfg.pntSrc_xml_filename, cfg.pntSrc_xml_filename_scratch,
+                                output_log=True)
+
+        if cfg.target is tools.Target.ICONARTOEM:
+            tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_gridded_emissions_nc),
+                                cfg.oae_gridded_emissions_nc_scratch)
+            tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_vertical_profiles_nc),
+                                cfg.oae_vertical_profiles_nc_scratch)
+            if hasattr(cfg, 'oae_hourofday_nc'):
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_hourofday_nc),
+                                cfg.oae_hourofday_nc_scratch)
+            if hasattr(cfg, 'oae_dayofweek_nc'):
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_dayofweek_nc),
+                                cfg.oae_dayofweek_nc_scratch)
+            if hasattr(cfg, 'oae_monthofyear_nc'):
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_monthofyear_nc),
+                                cfg.oae_monthofyear_nc_scratch)
+            if hasattr(cfg, 'oae_hourofyear_nc'):
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_hourofyear_nc),
+                                cfg.oae_hourofyear_nc_scratch)
+            if hasattr(cfg, 'oae_ens_reg_nc'):
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_ens_reg_nc),
+                                cfg.oae_ens_reg_nc_scratch)
+            if hasattr(cfg, 'oae_ens_lambda_nc'):
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_ens_lambda_nc),
+                                cfg.oae_ens_lambda_nc_scratch)
 
         #-----------------------------------------------------
         # Get datafile lists for LBC (each at 00 UTC and others)
@@ -204,38 +231,50 @@ def main(starttime, hstart, hstop, cfg):
                     # Merge IC:
                     #------------
                     meteo_file = os.path.join(cfg.icon_input_icbc,
-                                               time.strftime(cfg.chem_nameformat) + '.nc')
+                                               time.strftime(cfg.meteo_nameformat) + '.nc')
                     chem_file = os.path.join(cfg.icon_input_icbc,
                                                time.strftime(cfg.chem_nameformat) + '.nc')
                     merged_file = os.path.join(cfg.icon_input_icbc,
-                                               time.strftime(cfg.chem_nameformat) + '_merged.nc')
+                                               time.strftime(cfg.meteo_nameformat) + '_merged.nc')
                     ds_meteo = xarray.open_dataset(meteo_file)
                     ds_chem = xarray.open_dataset(chem_file)
-                    # Merge GEOSP into temporary file
-                    ds_merged = xarray.merge([ds_meteo, ds_chem])
-                    ds_merged.attrs = ds.attrs
+                    # LNPS --> PS
+                    ds_chem['PS'] = ds_chem['LNPS']
+                    ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
+                    ds_chem['PS'] = ds_chem['PS'].squeeze(dim='lev_2')
+                    ds_chem['PS'].attrs["long_name"] = 'surface pressure'
+                    # merge:
+                    ds_merged = xarray.merge([ds_meteo, ds_chem],compat="override")
+                    #ds_merged.attrs = ds.attrs
                     ds_merged.to_netcdf(merged_file)
                     # Rename file to get original file name
                     tools.rename_file(merged_file, meteo_file)
+                    tools.remove_file(chem_file)
                     logging.info("Added chemical tracer to file {}".format(merged_file))
 
                 #------------
                 # Merge LBC:
                 #------------
                 meteo_file = os.path.join(cfg.icon_input_icbc,
-                                           time.strftime(cfg.chem_nameformat) + '_lbc.nc')
+                                           time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
                 chem_file = os.path.join(cfg.icon_input_icbc,
                                            time.strftime(cfg.chem_nameformat) + '_lbc.nc')
                 merged_file = os.path.join(cfg.icon_input_icbc,
-                                           time.strftime(cfg.chem_nameformat) + '_merged.nc')
+                                           time.strftime(cfg.meteo_nameformat) + '_merged.nc')
                 ds_meteo = xarray.open_dataset(meteo_file)
                 ds_chem = xarray.open_dataset(chem_file)
-                # Merge GEOSP into temporary file
-                ds_merged = xarray.merge([ds_meteo, ds_chem])
-                ds_merged.attrs = ds.attrs
+                # LNPS --> PS
+                ds_chem['PS'] = ds_chem['LNPS']
+                ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
+                ds_chem['PS'].attrs["long_name"] = 'surface pressure'
+                ds_chem['TRCH4_chemtr'] = ds_chem['CH4_BG']
+                # merge:
+                ds_merged = xarray.merge([ds_meteo, ds_chem],compat="override")
+                #ds_merged.attrs = ds.attrs
                 ds_merged.to_netcdf(merged_file)
                 # Rename file to get original file name
                 tools.rename_file(merged_file, meteo_file)
+                tools.remove_file(chem_file)
                 logging.info("Added chemical tracer to file {}".format(merged_file))
 
 

@@ -95,8 +95,7 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 
 # ART settings----------------------------------------------------------------
 input_root_tracers = os.path.join(input_root, 'XML')
-chemtracer_xml_filename = os.path.join(input_root_tracers, 'tracers_oh_pntsrc.xml')
-pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc_example.xml')
+chemtracer_xml_filename = os.path.join(input_root_tracers, 'tracers_ensemble.xml')
 art_input_folder = os.path.join(input_root, 'ART')
 
 # OAE ------------------------------------------------------------------------
@@ -108,6 +107,8 @@ oae_hourofday_nc = 'hourofday.nc'
 oae_dayofweek_nc = 'dayofweek.nc'
 oae_monthofyear_nc = 'monthofyear.nc'
 #oae_hourofyear_nc = 'hourofyear.nc'
+oae_ens_reg_nc = 'regions_testcase.nc'
+oae_ens_lambda_nc = 'lambdas_testcase.nc'
 
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
