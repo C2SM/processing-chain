@@ -267,6 +267,7 @@ def main(starttime, hstart, hstop, cfg):
                 ds_chem['PS'] = ds_chem['LNPS']
                 ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
                 ds_chem['PS'].attrs["long_name"] = 'surface pressure'
+                ds_chem['TRCH4_chemtr'] = ds_chem['CH4_BG']
                 # merge:
                 ds_merged = xarray.merge([ds_meteo, ds_chem],compat="override")
                 #ds_merged.attrs = ds.attrs
