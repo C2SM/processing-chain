@@ -222,7 +222,7 @@ def main(starttime, hstart, hstop, cfg):
                 logging.info("Added GEOSP to file {}".format(merged_file))
 
         #-----------------------------------------------------
-        # In cae of OEM: merge chem tracers with meteo-files
+        # In case of OEM: merge chem tracers with meteo-files
         #-----------------------------------------------------
         if cfg.target is tools.Target.ICONARTOEM:
             for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
