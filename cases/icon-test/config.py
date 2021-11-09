@@ -61,20 +61,19 @@ icontools_parameter = {
 # Input data for runscript----------------------------------------------------
 # Grid
 input_root_grid = os.path.join(input_root, 'grid')
-radiation_grid_filename = "VERIFY_DOM_DOM01.parent.nc"
-dynamics_grid_filename = "VERIFY_DOM_DOM01.nc"
-map_file_latbc = "map_file.latbc"
-extpar_filename = "external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc"
-lateral_boundary_grid = "lateral_boundary.grid.nc"
+radiation_grid_filename = os.path.join(input_root_grid, "VERIFY_DOM_DOM01.parent.nc")
+dynamics_grid_filename = os.path.join(input_root_grid, "VERIFY_DOM_DOM01.nc")
+map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
+extpar_filename = os.path.join(input_root_grid, 
+                               "external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc")
+lateral_boundary_grid = os.path.join(input_root_grid, "lateral_boundary.grid.nc")
 
-# Radiation
 input_root_rad = os.path.join(input_root, 'rad')
-cldopt_filename = 'rrtm_cldopt.nc'
-lrtm_filename = 'rrtmg_lw.nc'
+cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
+lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
 
-# Mapping
 input_root_mapping = os.path.join(input_root, 'mapping')
-map_file_ana = "map_file.ana"
+map_file_ana = os.path.join(input_root_mapping, "map_file.ana")
 
 # File names -----------------------------------------------------------------
 latbc_filename = "ifs_201801<d><h>_lbc.nc"

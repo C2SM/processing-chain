@@ -134,7 +134,7 @@ def main(starttime, hstart, hstop, cfg):
         for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
             meteo_file = os.path.join(cfg.icon_input_icbc,
                                       time.strftime(cfg.meteo_nameformat))
-            if cfg.target is tools.Target.ICONARTOEM:
+            if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM:
                 chem_file = os.path.join(cfg.icon_input_icbc,
                                           time.strftime(cfg.chem_nameformat))
             datafile_list_chem.append(chem_file + cfg.chem_suffix)

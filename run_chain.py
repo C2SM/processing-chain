@@ -317,29 +317,32 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
     setattr(cfg, 'icon_output_reduced', os.path.join(chain_root, 'icon',
                                                       'output_reduced'))
-    setattr(cfg, 'radiation_grid_filename_scratch',
-            os.path.join(cfg.icon_input_grid, os.path.basename(cfg.radiation_grid_filename)))
-    setattr(cfg, 'dynamics_grid_filename_scratch',
-            os.path.join(cfg.icon_input_grid, os.path.basename(cfg.dynamics_grid_filename)))
-    setattr(cfg, 'map_file_latbc_scratch',
-            os.path.join(cfg.icon_input_grid, os.path.basename(cfg.map_file_latbc)))
-    setattr(cfg, 'extpar_filename_scratch',
-            os.path.join(cfg.icon_input_grid, os.path.basename(cfg.extpar_filename)))
-    setattr(cfg, 'lateral_boundary_grid_scratch',
-            os.path.join(cfg.icon_input_grid, os.path.basename(cfg.lateral_boundary_grid)))
-    setattr(cfg, 'cldopt_filename_scratch', 
-            os.path.join(cfg.icon_input_rad, os.path.basename(cfg.cldopt_filename)))
-    setattr(cfg, 'lrtm_filename_scratch', 
-            os.path.join(cfg.icon_input_rad, os.path.basename(cfg.lrtm_filename)))
-    setattr(cfg, 'map_file_ana_scratch', 
-            os.path.join(cfg.icon_input_mapping, os.path.basename(cfg.map_file_ana)))
-    setattr(cfg, 'chemtracer_xml_filename_scratch', 
-            os.path.join(cfg.icon_input_xml, os.path.basename(cfg.chemtracer_xml_filename)))
-    setattr(cfg, 'pntSrc_xml_filename_scratch', 
-            os.path.join(cfg.icon_input_xml, os.path.basename(cfg.pntSrc_xml_filename)))
+    
+    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART \
+            or cfg.target is tools.Target.ICONARTOEM:
+        setattr(cfg, 'radiation_grid_filename_scratch',
+                os.path.join(cfg.icon_input_grid, os.path.basename(cfg.radiation_grid_filename)))
+        setattr(cfg, 'dynamics_grid_filename_scratch',
+                os.path.join(cfg.icon_input_grid, os.path.basename(cfg.dynamics_grid_filename)))
+        setattr(cfg, 'map_file_latbc_scratch',
+                os.path.join(cfg.icon_input_grid, os.path.basename(cfg.map_file_latbc)))
+        setattr(cfg, 'extpar_filename_scratch',
+                os.path.join(cfg.icon_input_grid, os.path.basename(cfg.extpar_filename)))
+        setattr(cfg, 'lateral_boundary_grid_scratch',
+                os.path.join(cfg.icon_input_grid, os.path.basename(cfg.lateral_boundary_grid)))
+        setattr(cfg, 'cldopt_filename_scratch', 
+                os.path.join(cfg.icon_input_rad, os.path.basename(cfg.cldopt_filename)))
+        setattr(cfg, 'lrtm_filename_scratch', 
+                os.path.join(cfg.icon_input_rad, os.path.basename(cfg.lrtm_filename)))
+        setattr(cfg, 'map_file_ana_scratch', 
+                os.path.join(cfg.icon_input_mapping, os.path.basename(cfg.map_file_ana)))
 
     # OEM
     if cfg.target is tools.Target.ICONARTOEM:
+        setattr(cfg, 'chemtracer_xml_filename_scratch', 
+                os.path.join(cfg.icon_input_xml, os.path.basename(cfg.chemtracer_xml_filename)))
+        setattr(cfg, 'pntSrc_xml_filename_scratch', 
+                os.path.join(cfg.icon_input_xml, os.path.basename(cfg.pntSrc_xml_filename)))
         setattr(cfg, 'oae_gridded_emissions_nc_scratch',
                 os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_gridded_emissions_nc)))
         setattr(cfg, 'oae_vertical_profiles_nc_scratch',
