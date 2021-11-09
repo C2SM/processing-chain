@@ -129,6 +129,20 @@ def main(starttime, hstart, hstop, cfg):
                                 output_log=True)
 
         if cfg.target is tools.Target.ICONARTOEM:
+            tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_vertical_profiles_nc),
+                                cfg.oae_vertical_profiles_nc_scratch)
+            if hasattr(cfg, 'oae_hourofday_nc'):
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_hourofday_nc),
+                                cfg.oae_hourofday_nc_scratch)
+            if hasattr(cfg, 'oae_dayofweek_nc'):
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_dayofweek_nc),
+                                cfg.oae_dayofweek_nc_scratch)
+            if hasattr(cfg, 'oae_monthofyear_nc'):
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_monthofyear_nc),
+                                cfg.oae_monthofyear_nc_scratch)
+            if hasattr(cfg, 'oae_hourofyear_nc'):
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_hourofyear_nc),
+                                cfg.oae_hourofyear_nc_scratch)
             if hasattr(cfg, 'oae_ens_reg_nc'):
                 tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_ens_reg_nc),
                                 cfg.oae_ens_reg_nc_scratch)
