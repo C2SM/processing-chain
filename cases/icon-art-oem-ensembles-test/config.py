@@ -61,7 +61,6 @@ icontools_runjobs = [
 ]
 
 # Icontools executables
-#icontools_dir = exe_dir
 #icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
 icontools_dir = '/scratch/snx3000/msteiner/spack-stages/daint/spack-stage-icontools-master-t524rnfa5sfyn4rbvarypyzwae4jg46d/spack-src/icontools'
 iconremap_bin = os.path.join(icontools_dir, "iconremap")

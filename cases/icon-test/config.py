@@ -88,9 +88,10 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 icon_bin = os.path.join(exe_dir, "icon-pgi-20.1.1-cpu-20210816")
 
 # Icontools executables
-icontools_dir = exe_dir
-iconremap_bin = "iconremap"
-iconsub_bin   = "iconsub"
+#icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
+icontools_dir = '/scratch/snx3000/msteiner/spack-stages/daint/spack-stage-icontools-master-t524rnfa5sfyn4rbvarypyzwae4jg46d/spack-src/icontools'
+iconremap_bin = os.path.join(icontools_dir, "iconremap")
+iconsub_bin   = os.path.join(icontools_dir, "iconsub")
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'runscript.cfg')
