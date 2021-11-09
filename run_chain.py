@@ -344,10 +344,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
 
     # OEM
     if cfg.target is tools.Target.ICONARTOEM:
-        setattr(cfg, 'chemtracer_xml_filename_scratch', 
-                os.path.join(cfg.icon_input_xml, os.path.basename(cfg.chemtracer_xml_filename)))
-        setattr(cfg, 'pntSrc_xml_filename_scratch', 
-                os.path.join(cfg.icon_input_xml, os.path.basename(cfg.pntSrc_xml_filename)))
         setattr(cfg, 'oae_gridded_emissions_nc_scratch',
                 os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_gridded_emissions_nc)))
         setattr(cfg, 'oae_vertical_profiles_nc_scratch',
