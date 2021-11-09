@@ -41,22 +41,23 @@ input_root_icbc = os.path.join(input_root, 'icbc')
 # meteo
 input_root_meteo = '/store/empa/em05/dbrunner/icon-art/meteo'
 meteo_prefix = 'ifs'
-source_nameformat = meteo_prefix + '_%Y%m%d%H'
+meteo_nameformat = meteo_prefix + '_%Y%m%d%H'
+meteo_suffix = '.grb'
 meteo_inc = 3
 
 # ICONTools ------------------------------------------------------------------
-icontools_parameter = {
-    'remap_ic_runjob': 'icontools_remap_ic_runjob.cfg',
-    'auxgrid_runjob': 'icontools_auxgrid_runjob.cfg',
-    'remap_ana_lbc_runjob': 'icontools_remap_ana_lbc_runjob.cfg',
-    'remap_fc_lbc_runjob': 'icontools_remap_fc_lbc_runjob.cfg',
-    'remap_aux_runjob': 'icontools_remap_aux_runjob.cfg',
-    'namelist_iconsub': 'icontools_namelist_iconsub.cfg',
-    'namelist_remapfields_ic': 'icontools_namelist_remapfields_ic.cfg',
-    'namelist_remapfields_ana_lbc': 'icontools_namelist_remapfields_ana_lbc.cfg',
-    'namelist_remapfields_fc_lbc': 'icontools_namelist_remapfields_fc_lbc.cfg',
-    'namelist_remap': 'icontools_namelist_remap.cfg',
-}
+icontools_runjobs = [
+    'icontools_remap_ic_runjob.cfg',
+    'icontools_auxgrid_runjob.cfg',
+    'icontools_remap_ana_lbc_runjob.cfg',
+    'icontools_remap_fc_lbc_runjob.cfg',
+    'icontools_remap_aux_runjob.cfg',
+    'icontools_namelist_iconsub.cfg',
+    'icontools_namelist_remapfields_ic.cfg',
+    'icontools_namelist_remapfields_ana_lbc.cfg',
+    'icontools_namelist_remapfields_fc_lbc.cfg',
+    'icontools_namelist_remap.cfg',
+]
 
 # Input data for runscript----------------------------------------------------
 # Grid
