@@ -88,6 +88,7 @@ def main(starttime, hstart, hstop, cfg):
         tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
         tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
         tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping")
+        tools.create_dir(cfg.icon_input_oae, "icon_input_oem")
         tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
         tools.create_dir(cfg.icon_output, "icon_output")
         tools.create_dir(cfg.icon_restart_out, "icon_restart_out") 
@@ -129,11 +130,11 @@ def main(starttime, hstart, hstop, cfg):
 
         if cfg.target is tools.Target.ICONARTOEM:
             if hasattr(cfg, 'oae_ens_reg_nc'):
-                tools.copy_file(os.path.join(oae_dir, cfg.oae_ens_reg_nc),
-                                os.path.join(dest_dir, cfg.oae_ens_reg_nc))
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_ens_reg_nc),
+                                cfg.oae_ens_reg_nc_scratch)
             if hasattr(cfg, 'oae_ens_lambda_nc'):
-                tools.copy_file(os.path.join(oae_dir, cfg.oae_ens_lambda_nc),
-                                os.path.join(dest_dir, cfg.oae_ens_lambda_nc))
+                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_ens_lambda_nc),
+                                cfg.oae_ens_lambda_nc_scratch)
 
         #-----------------------------------------------------
         # Get datafile lists for LBC (each at 00 UTC and others)
