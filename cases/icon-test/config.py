@@ -51,12 +51,11 @@ icontools_runjobs = [
     'icontools_auxgrid_runjob.cfg',
     'icontools_remap_ana_lbc_runjob.cfg',
     'icontools_remap_fc_lbc_runjob.cfg',
-    'icontools_remap_aux_runjob.cfg',
-    'icontools_namelist_iconsub.cfg',
-    'icontools_namelist_remapfields_ic.cfg',
-    'icontools_namelist_remapfields_ana_lbc.cfg',
-    'icontools_namelist_remapfields_fc_lbc.cfg',
-    'icontools_namelist_remap.cfg',
+#   'icontools_namelist_iconsub.cfg',
+#   'icontools_namelist_remapfields_ic.cfg',
+#   'icontools_namelist_remapfields_ana_lbc.cfg',
+#   'icontools_namelist_remapfields_fc_lbc.cfg',
+#   'icontools_namelist_remap.cfg',
 ]
 
 # Input data for runscript----------------------------------------------------
