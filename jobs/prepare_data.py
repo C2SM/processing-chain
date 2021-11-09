@@ -224,6 +224,7 @@ def main(starttime, hstart, hstop, cfg):
                     ds_chem = xarray.open_dataset(chem_file)
                     # LNPS --> PS
                     ds_chem['PS'] = ds_chem['LNPS']
+                    ds_chem['PS'].squeeze(dim='lev_2')
                     ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
                     ds_chem['PS'].attrs["long_name"] = 'surface pressure'
                     # merge:
