@@ -129,6 +129,8 @@ def main(starttime, hstart, hstop, cfg):
                                 output_log=True)
 
         if cfg.target is tools.Target.ICONARTOEM:
+            tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_gridded_emissions_nc),
+                                cfg.oae_gridded_emissions_nc_scratch)
             tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_vertical_profiles_nc),
                                 cfg.oae_vertical_profiles_nc_scratch)
             if hasattr(cfg, 'oae_hourofday_nc'):
