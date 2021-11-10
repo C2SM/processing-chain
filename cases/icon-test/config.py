@@ -40,22 +40,17 @@ input_root = '/store/empa/em05/input_icon_processing_chain_example/'
 input_root_icbc = os.path.join(input_root, 'icbc')
 # meteo
 input_root_meteo = '/store/empa/em05/dbrunner/icon-art/meteo'
-meteo_prefix = 'ifs'
-meteo_nameformat = meteo_prefix + '_%Y%m%d%H'
+meteo_prefix = 'ifs_'
+meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
 meteo_inc = 3
 
 # ICONTools ------------------------------------------------------------------
+
 icontools_runjobs = [
     'icontools_remap_ic_runjob.cfg',
-    'icontools_auxgrid_runjob.cfg',
-    'icontools_remap_ana_lbc_runjob.cfg',
-    'icontools_remap_fc_lbc_runjob.cfg',
-#   'icontools_namelist_iconsub.cfg',
-#   'icontools_namelist_remapfields_ic.cfg',
-#   'icontools_namelist_remapfields_ana_lbc.cfg',
-#   'icontools_namelist_remapfields_fc_lbc.cfg',
-#   'icontools_namelist_remap.cfg',
+    'icontools_remap_00_lbc_runjob.cfg',
+    'icontools_remap_lbc_rest_runjob.cfg',
 ]
 
 # Input data for runscript----------------------------------------------------
@@ -85,7 +80,7 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin = os.path.join(exe_dir, "icon-pgi-20.1.1-cpu-20210816")
+icon_bin = os.path.join(exe_dir, "icon-kit-art_20211018")
 
 # Icontools executables
 #icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
@@ -94,7 +89,7 @@ iconremap_bin = os.path.join(icontools_dir, "iconremap")
 iconsub_bin   = os.path.join(icontools_dir, "iconsub")
 
 # Namelists and slurm runscript templates
-icon_runjob = os.path.join(case_dir, 'runscript.cfg')
+icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
 
 # Walltimes and domain decomposition
 if compute_queue == "normal":
