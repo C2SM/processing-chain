@@ -22,36 +22,43 @@ for the necessary namelist files for **int2lm**, **COSMO** or **ICON**.
 
 If you don't supply a joblist, the default joblist will be executed.
 
-For **COSMO**, that is ``meteo`` ``icbc`` ``emissions`` ``biofluxes`` ``int2lm``
+For **COSMO**, that is ``prepare_data`` ``emissions`` ``biofluxes`` ``int2lm``
 ``post_int2lm`` ``cosmo`` ``post_cosmo``,
 
-For **COSMOART** it is ``meteo`` ``icbc`` ``emissions`` ``obs_nudging``
+For **COSMOART** it is ``prepare_data`` ``emissions`` ``obs_nudging``
 ``photo_rate`` ``int2lm`` ``cosmo`` ``post_cosmo``.
 
-For **ICON** it is ``meteo`` ``icon``.
+For **ICON** it is ``prepare_data`` ``icon``.
 
-For **ICONART** it is ``meteo`` ``icbc`` ``icon``.
+For **ICONART** it is ``prepare_data`` ``icon``.
 
-For **ICONARTOEM** it is ``meteo`` ``icbc`` ``oae`` ``icon``.
+For **ICONARTOEM** it is ``prepare_data`` ``oae`` ``icon``.
 
 The model type can be chosen by setting the variable ``target`` in the ``config.py``-file.
 
 To run the **COSMO-GHG** example test case, run::
 
-    $ python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -j meteo icbc emissions biofluxes int2lm post_int2lm cosmo post_cosmo
+    $ python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -j prepare_data emissions biofluxes int2lm post_int2lm cosmo post_cosmo
 
 To run the **COSMO-ART** example case, run::
 
-    $ python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-02-04 0 12 -j meteo icbc emissions obs_nudging photo_rate int2lm cosmo post_cosmo
+    $ python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 24 -j prepare_data emissions obs_nudging photo_rate int2lm cosmo post_cosmo
 
-To run the **ICON** example case, run::
+To run the **ICON** or **ICON-ART** example cases, run::
 
-    $ python run_chain.py icon-test 2018-01-01 0 24 -j meteo icon
+    $ python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon
 
-To run the **ICON-OEM** example case, run::
+or::
 
-    $ python run_chain.py icon-oem-test 2018-01-01 0 24 -j meteo icbc oae icon
+    $ python run_chain.py icon-art-test 2018-01-01 0 24 -j prepare_data icon
 
+To run the **ICON-OEM** example cases, run::
+
+    $ python run_chain.py icon-oem-test 2018-01-01 0 24 -j prepare_data oae icon
+
+or::
+
+    $ python run_chain.py icon-oem-ensembles-test 2018-01-01 0 24 -j prepare_data oae icon
         
 What it Does
 ------------
@@ -90,8 +97,7 @@ Running the ``cosmo-ghg-11km-test``-case therefore produces the following direct
 			 |   + input/
 			 |   |  + emissions/
 			 |   |  + extpart/
-			 |   |  + icbc/
-			 |   |  + meteo/
+			 |   |  + prepare_data/
 			 |   |  \ vprm/
 			 |   + run/
 			 |   |  + int2lm   # executable
