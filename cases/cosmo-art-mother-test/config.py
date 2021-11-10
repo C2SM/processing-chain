@@ -27,8 +27,9 @@ work_root = os.environ['SCRATCH'] + "/processing_chain"
 # METEO ---------------------------------------------------------------------- #
 # meteo files (either path to intput dir or name of mother run)
 meteo_dir = os.path.join(input_root, 'meteo')
-meteo_inc = 3  # increment between timesteps
 meteo_prefix = "eas"
+meteo_nameformat = meteo_prefix + '%Y%m%d%H'
+meteo_inc = 3  # increment between timesteps
 
 
 # EMISSIONS ------------------------------------------------------------------ #

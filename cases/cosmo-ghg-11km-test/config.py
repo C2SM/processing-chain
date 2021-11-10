@@ -43,6 +43,7 @@ input_root = '/store/empa/em05/input_processing_chain_example/'
 # METEO ----------------------------------------------------------------------
 meteo_dir = os.path.join(input_root, 'meteo')
 meteo_prefix = "laf"
+meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_inc = 1
 
 # ICBC -----------------------------------------------------------------------

@@ -27,6 +27,8 @@ work_root = os.environ['SCRATCH'] + "/processing_chain"
 # METEO ---------------------------------------------------------------------- #
 # meteo files (either path to intput dir or name of mother run)
 meteo_dir = "example_cosmoart_mother"
+meteo_prefix = "eas"
+meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 
 
 # EMISSIONS ------------------------------------------------------------------ #
