@@ -107,12 +107,12 @@ contributed significantly to the initial development (in alphabetic order):
 * Pavle Arsenovic
 * Dominik Brunner
 * Jean-Matthieu Haussaire
-* Michael Jähn
 * Gerrit Kuhlmann
 * Qing Mu
 * David Ochsner
 * Michael Steiner
 
+The current code owner is Michael Jähn (michael.jaehn@c2sm.ethz.ch).
 
 .. _requirements.txt: requirements.txt
 .. _documentation: https://processing-chain.readthedocs.io
