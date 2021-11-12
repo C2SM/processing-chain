@@ -13,23 +13,22 @@ from scipy.constants import *
 # N_A = 6.02214129e23  (Avogadro constant, units: mol-1)
 
 # ICAO Standard Atmosphere
-p0 = physical_constants['standard atmosphere'][0] # pressure, units: Pa
-T0 =  288.15                                      # temperature, units: K
+p0 = physical_constants['standard atmosphere'][0]  # pressure, units: Pa
+T0 = 288.15  # temperature, units: K
 
 # gas constants
-R_dryair = 287.053 # (gas constant of dry air)
-R_vapor = 461.     # (gas constant for water vapour)
-
+R_dryair = 287.053  # (gas constant of dry air)
+R_vapor = 461.  # (gas constant for water vapour)
 
 # ratio gast constant of dryair and vapor
 epsilon = R_dryair / R_vapor
 
 # lapse rate
-GAMMA = -6.5e-3 # K / m
+GAMMA = -6.5e-3  # K / m
 
 GMR = g / R_dryair
 
-C_P = 1005.0 # J / (kg K)
+C_P = 1005.0  # J / (kg K)
 C_V = 717.0  # J / (kg K)
 
 KAPPA = R_dryair / C_P
@@ -37,40 +36,40 @@ KAPPA = R_dryair / C_P
 # molar mass (kg/m3)
 M = {
     'air': 28.97e-3,  # dry air
-    'CO':  28.01e-3,
+    'CO': 28.01e-3,
     'CO2': 44.01e-3,
     '14CO2': 45.99307e-3,
-    'H2O': 18.01528e-3, 
+    'H2O': 18.01528e-3,
     'NO2': 46.0055e-3,
-    'NO':  30.01e-3,
-    'O3':  48.00e-3,
+    'NO': 30.01e-3,
+    'O3': 48.00e-3,
     'SO2': 64.066e-3,
     'CH4': 16.0425e-3,
 }
 
 METRIC_PREFIXES = {
-    'Y':  1e24, # yotta
-    'Z':  1e21, # zetta
-    'E':  1e18, # exa
-    'P':  1e15, # peta
-    'T':  1e12, # tera
-    'G':  1e9,  # giga
-    'M':  1e6,  # mega
-    'k':  1e3,  # kilo
-    'h':  1e2,  # hecto
+    'Y': 1e24,  # yotta
+    'Z': 1e21,  # zetta
+    'E': 1e18,  # exa
+    'P': 1e15,  # peta
+    'T': 1e12,  # tera
+    'G': 1e9,  # giga
+    'M': 1e6,  # mega
+    'k': 1e3,  # kilo
+    'h': 1e2,  # hecto
     'da': 1e1,  # deca
-    '':   1e0,
-    'd':  1e-1, # deci
-    'c':  1e-2, # centi
-    'm':  1e-3, # milli
-    'u':  1e-6, # micro
-    'µ':  1e-6, # micro (again)
-    'n':  1e-9, # nano
-    'p':  1e-12, # pico
-    'f':  1e-15, # femto
-    'a':  1e-18, # atto
-    'z':  1e-21, # zepto
-    'y':  1e-24, # yocto
+    '': 1e0,
+    'd': 1e-1,  # deci
+    'c': 1e-2,  # centi
+    'm': 1e-3,  # milli
+    'u': 1e-6,  # micro
+    'µ': 1e-6,  # micro (again)
+    'n': 1e-9,  # nano
+    'p': 1e-12,  # pico
+    'f': 1e-15,  # femto
+    'a': 1e-18,  # atto
+    'z': 1e-21,  # zepto
+    'y': 1e-24,  # yocto
 }
 
 # precision
@@ -165,25 +164,26 @@ var = {
 ANSI_colors = {"green": '\033[32m', "red": '\033[31m', "yellow": '\033[33m'}
 
 
-
-def find_variables_file(alternate_csv_file):    
+def find_variables_file(alternate_csv_file):
     # Default path for variables.csv
     dir_path = os.path.dirname(os.path.realpath(__file__))
     csv_file = os.path.join(dir_path, 'variables.csv')
     variables = pd.read_csv(csv_file,
-                names=['name','lsd','min_value','max_value'],
-                header=0, index_col=0)
+                            names=['name', 'lsd', 'min_value', 'max_value'],
+                            header=0,
+                            index_col=0)
 
     # Check for an extra variables.csv file in the cases folder
     # If a variable is defined in both, this one overwrites the default one
     if os.path.exists(alternate_csv_file):
-        variables_bis = pd.read_csv(alternate_csv_file,
-                        names=['name','lsd','min_value','max_value'],
-                        header=0, index_col=0)
+        variables_bis = pd.read_csv(
+            alternate_csv_file,
+            names=['name', 'lsd', 'min_value', 'max_value'],
+            header=0,
+            index_col=0)
         variables = variables_bis.combine_first(variables)
 
     return variables
-
 
 
 def common_unit(gas):
@@ -215,9 +215,8 @@ def common_unit(gas):
         unit = 'ppmv'
     else:
         return ValueError('Unknown gas %s' % gas)
-    
-    return unit
 
+    return unit
 
 
 def convert_unit(x, from_, to, molar_mass=None, p=p0, T=T0):
@@ -239,14 +238,13 @@ def convert_unit(x, from_, to, molar_mass=None, p=p0, T=T0):
     from_, from_conversion = unit2quantity(from_)
     to, to_conversion = unit2quantity(to)
 
-
     if isinstance(molar_mass, str):
         Mi = M[molar_mass]
     else:
         Mi = molar_mass
 
-    if Mi is None and ((from_ in ['xm', 'cm'] and to not in ['xm', 'cm'])
-                       or (from_ not in ['xm', 'cm'] and to in ['xm', 'cm'])):
+    if Mi is None and ((from_ in ['xm', 'cm'] and to not in ['xm', 'cm']) or
+                       (from_ not in ['xm', 'cm'] and to in ['xm', 'cm'])):
         raise ValueError('Need molar mass to convert %s to %s but M is "%s"' %
                          (from_, to, Mi))
 
@@ -279,7 +277,6 @@ def convert_unit(x, from_, to, molar_mass=None, p=p0, T=T0):
         raise ValueError('Cannot convert to "%s"' % to)
 
     return x * from_conversion / to_conversion
-
 
 
 def unit2quantity(unit):
@@ -366,7 +363,6 @@ def unit2quantity(unit):
     return quantity, conv
 
 
-
 def rotpole2wgs(rlon, rlat, pollon, pollat, inverse=False):
     """
     Transform rotated pole to WGS84.
@@ -380,17 +376,19 @@ def rotpole2wgs(rlon, rlat, pollon, pollat, inverse=False):
     if np.ndim(rlon) == 0:
         res = c_out.transform_point(rlon, rlat, c_in)
         return res[0], res[1]
-    elif np.ndim(rlon) in [1,2]:
+    elif np.ndim(rlon) in [1, 2]:
         res = c_out.transform_points(c_in, rlon, rlat)
-        return res[...,0], res[...,1]
+        return res[..., 0], res[..., 1]
     else:
         shape = rlon.shape
         res = c_out.transform_points(c_in, rlon.flatten(), rlat.flatten())
-        return res[:,0].reshape(shape), res[:,1].reshape(shape)
+        return res[:, 0].reshape(shape), res[:, 1].reshape(shape)
 
 
-
-def datasets_equal(dataset1, dataset2, variables, fixed_precisions=False,
+def datasets_equal(dataset1,
+                   dataset2,
+                   variables,
+                   fixed_precisions=False,
                    verbose=True):
     """Compare the contents of dataset1 and dataset2
 
@@ -443,8 +441,10 @@ def datasets_equal(dataset1, dataset2, variables, fixed_precisions=False,
 
     for var in variables:
         if not dataset1[var].dtype == dataset2[var].dtype:
-            ccprint("{} has different types ({}, {}).".format(var,
-                    dataset1[var].dtype,dataset2[var].dtype), "red", verbose)
+            ccprint(
+                "{} has different types ({}, {}).".format(
+                    var, dataset1[var].dtype, dataset2[var].dtype), "red",
+                verbose)
             result = False
 
         # Compare with pre-defined absolute precision value if
@@ -452,19 +452,24 @@ def datasets_equal(dataset1, dataset2, variables, fixed_precisions=False,
         # it is a compressed variable (i.e., types are different)
         if fixed_precisions and var in precision.var and not result:
             try:
-                if np.ma.allclose(dataset1[var][:], dataset2[var][:],
-                                  atol=precision.var[var], rtol=0.0):
-                 ccprint("{} is equal within pre-defined tolerance ({})."
-                         .format(var, precision.var[var]), "green", verbose)
+                if np.ma.allclose(dataset1[var][:],
+                                  dataset2[var][:],
+                                  atol=precision.var[var],
+                                  rtol=0.0):
+                    ccprint(
+                        "{} is equal within pre-defined tolerance ({}).".
+                        format(var, precision.var[var]), "green", verbose)
                 else:
-                    ccprint("{} is not equal within pre-defined tolerance ({})"
-                            .format(var, precision.var[var]), "red", verbose)
+                    ccprint(
+                        "{} is not equal within pre-defined tolerance ({})".
+                        format(var, precision.var[var]), "red", verbose)
                     result = False
                     result_numeric = False
             except TypeError:
-                ccprint("{} is not a numeric type ({}) "
-                        "and not compared.".format(var, dataset1[var].dtype),
-                        None, verbose)
+                ccprint(
+                    "{} is not a numeric type ({}) "
+                    "and not compared.".format(var, dataset1[var].dtype), None,
+                    verbose)
         # Compare with standard absolute tolerance value (1e-8) or with
         # scale_factor from compression
         else:
@@ -474,22 +479,25 @@ def datasets_equal(dataset1, dataset2, variables, fixed_precisions=False,
                     abs_tol = dataset1[var].scale_factor
                 if 'scale_factor' in dataset2[var].ncattrs():
                     abs_tol = dataset2[var].scale_factor
-                if np.ma.allclose(dataset2[var][:], dataset1[var][:],
-                                  atol=abs_tol, rtol=0.0):
-                    ccprint("{} is equal within tolerance ({}).".format(var,
-                         abs_tol), "green", verbose)
+                if np.ma.allclose(dataset2[var][:],
+                                  dataset1[var][:],
+                                  atol=abs_tol,
+                                  rtol=0.0):
+                    ccprint(
+                        "{} is equal within tolerance ({}).".format(
+                            var, abs_tol), "green", verbose)
 
                 else:
                     ccprint("{} is not equal".format(var), "red", verbose)
                     result = False
                     result_numeric = False
             except TypeError:
-               ccprint("{} is not a numeric type ({}) "
-                       "and not compared.".format(var, dataset1[var].dtype),
-                       None, verbose)
+                ccprint(
+                    "{} is not a numeric type ({}) "
+                    "and not compared.".format(var, dataset1[var].dtype), None,
+                    verbose)
 
     return result, result_numeric
-
 
 
 def ccprint(text, color=None, verbose=True):
@@ -542,28 +550,27 @@ def calculate_mair(p, ps, h, q=None):
             q = q[0]
 
     # swap vertical axis
-    p = p[::-1,:,:]
-    h = h[::-1,:,:]
+    p = p[::-1, :, :]
+    h = h[::-1, :, :]
 
     if q is not None:
-        q = q[::-1,:,:]
+        q = q[::-1, :, :]
 
     ke, je, ie = p.shape
-    pp = np.zeros((ke+1,je,ie))
+    pp = np.zeros((ke + 1, je, ie))
     pp[0] = ps
 
-    h_mid = 0.5 * (h[1:,:,:] + h[:-1,:,:])
+    h_mid = 0.5 * (h[1:, :, :] + h[:-1, :, :])
 
     for i, j in np.ndindex((ie, je)):
-        pp[1:,j,i] = np.interp(h[1:,j,i], h_mid[:,j,i], p[:,j,i])
+        pp[1:, j, i] = np.interp(h[1:, j, i], h_mid[:, j, i], p[:, j, i])
 
     if q is not None:
-        mair = - np.diff(pp, axis=0) / g * (1.0 - q)
+        mair = -np.diff(pp, axis=0) / g * (1.0 - q)
     else:
-        mair = - np.diff(pp, axis=0) / g 
+        mair = -np.diff(pp, axis=0) / g
 
-    return mair[::-1,:,:]
-
+    return mair[::-1, :, :]
 
 
 def calculate_xgas(xm, mair, gas, q=0.0):
@@ -585,10 +592,17 @@ def calculate_xgas(xm, mair, gas, q=0.0):
     return 1e6 * xgas * M['air'] / M[gas]
 
 
-
 class Domain:
-    def __init__(self, name, startlon, startlat, stoplon, stoplat,
-                 ie=None, je=None, pollon=None, pollat=None):
+    def __init__(self,
+                 name,
+                 startlon,
+                 startlat,
+                 stoplon,
+                 stoplat,
+                 ie=None,
+                 je=None,
+                 pollon=None,
+                 pollat=None):
         """
         to add: dlon, dlat, ie, je
         """
@@ -610,7 +624,7 @@ class Domain:
         self.pollon = pollon
         self.pollat = pollat
 
-        self.is_rotpole =  pollon is not None and pollat is not None
+        self.is_rotpole = pollon is not None and pollat is not None
         is_grid = self.ie is not None and self.je is not None
 
         if is_grid:
@@ -618,7 +632,6 @@ class Domain:
             self.dlat = (self.stoplat - self.startlat) / (self.je - 1)
         else:
             self.dlon, self.dlat = None, None
-
 
         if self.is_rotpole:
             self.proj = ccrs.RotatedPole(pole_latitude=pollat,
@@ -637,11 +650,9 @@ class Domain:
                 self.lon = np.linspace(self.startlon, self.stoplon, self.ie)
                 self.lat = np.linspace(self.startlat, self.stoplat, self.je)
 
-
     @property
     def shape(self):
         return self.je, self.ie
-
 
     @classmethod
     def from_nml(cls, filename):
@@ -657,9 +668,8 @@ class Domain:
         ie = nml['lmgrid']['ie_tot']
         je = nml['lmgrid']['je_tot']
 
-        stoplat = startlat + (je-1) * dlat
-        stoplon = startlon + (ie-1) * dlon
+        stoplat = startlat + (je - 1) * dlat
+        stoplon = startlon + (ie - 1) * dlon
 
-        return cls(filename, startlon, startlat, stoplon, stoplat,
-                   ie, je, pollon, pollat)
-
+        return cls(filename, startlon, startlat, stoplon, stoplat, ie, je,
+                   pollon, pollat)

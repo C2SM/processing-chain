@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
 Script used by `reduce_output` job
 
@@ -22,6 +21,7 @@ import csv
 import helper
 
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -33,7 +33,7 @@ def str2char(s):
     return np.array(list(s), 'c')
 
 
-def search_met(infile,fname_met):
+def search_met(infile, fname_met):
     """
     Checks which file contains the meteorology data
     """
@@ -43,7 +43,7 @@ def search_met(infile,fname_met):
     for f in infile:
         basename = os.path.split(f)[1]
         print(basename)
-        timestr = basename.split('lffd',1)[1][:10]
+        timestr = basename.split('lffd', 1)[1][:10]
         mytime = datetime.strptime(timestr, '%Y%m%d%H')
         if time is None:
             time = mytime
@@ -55,11 +55,12 @@ def search_met(infile,fname_met):
             for var in ['T', 'P', 'PS', 'QV']:
                 if var in inf.variables:
                     basename = os.path.split(f)[1]
-                    fileending = basename.split('lffd',1)[1][10:-3]
+                    fileending = basename.split('lffd', 1)[1][10:-3]
                     fname_met[var] = fileending
 
     return fname_met
-    
+
+
 def append_variable(nc, name, values, attrs=None):
     """\
     Append variable (name, values) to netCDF file.
@@ -70,7 +71,8 @@ def append_variable(nc, name, values, attrs=None):
     if attrs is None:
         attrs = {}
 
-    var = nc.createVariable(name, values.dtype, ('time', 'rlat', 'rlon'),
+    var = nc.createVariable(name,
+                            values.dtype, ('time', 'rlat', 'rlon'),
                             zlib=True)
     var[0] = values
 
@@ -94,8 +96,9 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
         outf.setncatts(inf.__dict__)
         # Copy dimensions
         for name, dimension in inf.dimensions.items():
-            outf.createDimension(name, (len(dimension)
-                if not dimension.isunlimited() else None))
+            outf.createDimension(
+                name,
+                (len(dimension) if not dimension.isunlimited() else None))
 
         # Get level information
         level = len(inf.dimensions['level'])
@@ -112,13 +115,14 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
             logging.info('%s: %s' % (output_filename, varname))
             var = inf.variables[varname]
             attrs = get_attrs(var)
-            if len(var.dimensions)==4:
+            if len(var.dimensions) == 4:
                 if var.dimensions[1] == 'level':
                     var_dimensions = list(var.dimensions)
-                    var_dimensions[1] = 'level'+'2'*(nout_levels != level)
+                    var_dimensions[1] = 'level' + '2' * (nout_levels != level)
                 elif var.dimensions[1] == 'level1':
                     var_dimensions = list(var.dimensions)
-                    var_dimensions[1] = 'level'+'2'*(nout_levels != level) + '1'*(nout_levels == level)
+                    var_dimensions[1] = 'level' + '2' * (
+                        nout_levels != level) + '1' * (nout_levels == level)
                 else:
                     var_dimensions = var.dimensions
             else:
@@ -128,30 +132,38 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
                 if (varname in lsd):
                     if '_FillValue' in var.ncattrs():
                         fill_value = inf[varname].getncattr('_FillValue')
-                        outf.createVariable(varname, var.dtype,
-                                            var_dimensions,
-                                            zlib=True,
-                                            fill_value=fill_value,
-                                            least_significant_digit=lsd[varname])
+                        outf.createVariable(
+                            varname,
+                            var.dtype,
+                            var_dimensions,
+                            zlib=True,
+                            fill_value=fill_value,
+                            least_significant_digit=lsd[varname])
                     else:
-                        outf.createVariable(varname, var.dtype,
-                                            var_dimensions,
-                                            zlib=True, 
-                                            least_significant_digit=lsd[varname])
+                        outf.createVariable(
+                            varname,
+                            var.dtype,
+                            var_dimensions,
+                            zlib=True,
+                            least_significant_digit=lsd[varname])
                 else:
                     if '_FillValue' in var.ncattrs():
                         fill_value = inf[varname].getncattr('_FillValue')
-                        outf.createVariable(varname, var.dtype,
+                        outf.createVariable(varname,
+                                            var.dtype,
                                             var_dimensions,
                                             zlib=True,
                                             fill_value=fill_value)
                     else:
-                        outf.createVariable(varname, var.dtype,
+                        outf.createVariable(varname,
+                                            var.dtype,
                                             var_dimensions,
                                             zlib=True)
             else:
-                outf.createVariable(varname, var.dtype,
-                                    var_dimensions, zlib=True)
+                outf.createVariable(varname,
+                                    var.dtype,
+                                    var_dimensions,
+                                    zlib=True)
 
             for attr in var.ncattrs():
                 if attr != '_FillValue':
@@ -162,50 +174,51 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
                 # Check for 3D data and extract only lower_levels
                 if 'level1' in var.dimensions and \
                     len(var.dimensions) == 4:
-                        lstart = -nout_levels - (nout_levels == level)
+                    lstart = -nout_levels - (nout_levels == level)
                 elif 'level' in var.dimensions and \
                     len(var.dimensions) == 4:
-                        lstart = -nout_levels
+                    lstart = -nout_levels
                 else:
                     outf[varname][:] = inf[varname][:]
 
-            if (varname.startswith('CO2_') or varname.startswith('CO_') or 
-                varname.startswith('CH4_') or varname.startswith('C14_') or 
+            if (varname.startswith('CO2_') or varname.startswith('CO_') or
+                varname.startswith('CH4_') or varname.startswith('C14_') or
                 varname.startswith('NOX_') or varname.startswith('NO2_')) and \
                 len(var.dimensions) == 4:
                 outvar = outf.variables[varname]
                 gas = varname.split('_')[0]
                 if gas == 'NOX':
                     attrs['standard_name'] = attrs['standard_name'].replace(
-                            'NOX', 'NO2')
+                        'NOX', 'NO2')
                     gas = 'NO2'
-                field = inf[varname][:,lstart:,:,:] 
+                field = inf[varname][:, lstart:, :, :]
                 unit = attrs['units']
 
                 if convert:
                     outvar.units = helper.common_unit(gas)
                     if gas == 'C14':
                         outf[varname][:] = helper.convert_unit(
-                                               field, unit, outvar.units, 45.993e-3)
+                            field, unit, outvar.units, 45.993e-3)
                     else:
                         outf[varname][:] = helper.convert_unit(
-                                               field, unit, outvar.units, gas)
+                            field, unit, outvar.units, gas)
                 else:
                     outvar.units = unit
                     outf[varname][:] = field
 
                 attrs['standard_name'] = attrs['standard_name'].replace(
-                        '%s_mass_fraction' % gas, 'X%s' % gas)
+                    '%s_mass_fraction' % gas, 'X%s' % gas)
                 attrs['units'] = outvar.units
                 attrs2 = attrs.copy()
                 attrs2['standard_name'] = attrs2['standard_name'].replace(
-                                          'X%s' % gas, 'Y%s' % gas)
+                    'X%s' % gas, 'Y%s' % gas)
             elif varname != 'rotated_pole' and len(var.dimensions) == 4 and \
             ('level1' in var.dimensions or 'level' in var.dimensions):
-                outf[varname][:] = inf[varname][:,lstart:,:,:]
+                outf[varname][:] = inf[varname][:, lstart:, :, :]
 
             if gas:
-                fname_met_base = os.path.split(infile)[0]+'/'+os.path.split(infile)[1][:14]
+                fname_met_base = os.path.split(
+                    infile)[0] + '/' + os.path.split(infile)[1][:14]
                 with nc.Dataset(fname_met_base+fname_met['QV']+'.nc', 'r') as inf_qv, \
                      nc.Dataset(fname_met_base+fname_met['T']+'.nc', 'r') as inf_t, \
                      nc.Dataset(fname_met_base+fname_met['PS']+'.nc', 'r') as inf_ps, \
@@ -222,14 +235,15 @@ def reduce_output(infile, cfiles, h, nout_levels, output_path, fname_met, lsd,
                     column = helper.calculate_xgas(xm, mair, gas, qv)
                     column = column.astype('f4')
                     logging.info('%s: X%s' % (output_filename, varname))
-                    append_variable(outf, 'X%s' % varname, column,
-                                    attrs=attrs)
+                    append_variable(outf, 'X%s' % varname, column, attrs=attrs)
 
                     # Column-averaged moist-air mole fraction
                     column2 = helper.calculate_xgas(xm, mair, gas, 0.0)
                     column2 = column2.astype('f4')
                     logging.info('%s: Y%s' % (output_filename, varname))
-                    append_variable(outf, 'Y%s' % varname, column2,
+                    append_variable(outf,
+                                    'Y%s' % varname,
+                                    column2,
                                     attrs=attrs2)
 
     return fname_met
@@ -247,11 +261,10 @@ def main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile,
     opath : str
         Output path where the processed data is going to be written
     """
-
     """Get list of constant files"""
     cfiles = []
     read_cfile = False
-    for infile in sorted(glob.glob(os.path.join(indir, "lffd*[0-9]c*.nc"))): 
+    for infile in sorted(glob.glob(os.path.join(indir, "lffd*[0-9]c*.nc"))):
         cfiles.append(infile)
         if not read_cfile:
             # Read the first constant file and store height value
@@ -262,11 +275,8 @@ def main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile,
 
     if not read_cfile:
         logging.error('Constant file could not be read')
-
-
     """Get list of files"""
     infiles = sorted(glob.glob(os.path.join(indir, "lffd*.nc")))
-
     """Remove constant files from file list"""
     for cfile in cfiles:
         if cfile in infiles:
@@ -274,41 +284,37 @@ def main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile,
 
     date_start = datetime.strptime(strdate_start, '%Y%m%d%H')
     date_end = datetime.strptime(strdate_end, '%Y%m%d%H')
-
     """Only take relevant date period into account"""
     for infile in list(infiles):
         basename = os.path.split(infile)[1]
-        timestr = basename.split('lffd',1)[1][:10]
+        timestr = basename.split('lffd', 1)[1][:10]
         mytime = datetime.strptime(timestr, '%Y%m%d%H')
         if mytime < date_start or mytime > date_end:
             infiles.remove(infile)
-
     """Initialize dict to remember file name for meteo variables"""
-    fname_met = { 'T': None,
-                  'P': None,
-                  'PS': None,
-                  'QV': None,
-                }
+    fname_met = {
+        'T': None,
+        'P': None,
+        'PS': None,
+        'QV': None,
+    }
     fname_met = search_met(infiles, fname_met)
-    
     """Translate csv file to dict"""
     variables = helper.find_variables_file(csvfile)
     lsd = variables['lsd'].to_dict()
-    
     """Loop over all input files and apply output reduction"""
     for infile in infiles:
-        fname_met = reduce_output(infile, cfiles, h, int(nout_levels),
-                                  outdir, fname_met, lsd, convert_gas=='True')
+        fname_met = reduce_output(infile, cfiles, h, int(nout_levels), outdir,
+                                  fname_met, lsd, convert_gas == 'True')
 
 
 if __name__ == '__main__':
     indir = sys.argv[1]
     outdir = sys.argv[2]
-    strdate_start = sys.argv[3]  
-    strdate_end = sys.argv[4]  
+    strdate_start = sys.argv[3]
+    strdate_end = sys.argv[4]
     nout_levels = sys.argv[5]
     csvfile = sys.argv[6]
     convert_gas = sys.argv[7]
     main(indir, outdir, strdate_start, strdate_end, nout_levels, csvfile,
          convert_gas)
-

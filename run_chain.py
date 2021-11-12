@@ -17,17 +17,19 @@ settings = configparser.ConfigParser()
 import jobs
 from jobs import tools
 
-
 default_jobs = {
-    tools.Target.COSMO:      ["prepare_data", "int2lm", "cosmo", "post_cosmo"],
-    tools.Target.COSMOGHG:   ["prepare_data", "emissions", "biofluxes", "oae",
-                              "online_vprm", "int2lm", "post_int2lm",
-                              "cosmo", "post_cosmo"],
-    tools.Target.COSMOART:   ["prepare_data", "emissions", "obs_nudging",
-                              "photo_rate", "int2lm", "cosmo", "post_cosmo"],
-    tools.Target.ICON:       ["prepare_data", "icon"],
-    tools.Target.ICONART:    ["prepare_data", "icon"],
-    tools.Target.ICONARTOEM: ["prepare_data", "oae", "icon"]
+    tools.Target.COSMO: ["meteo", "int2lm", "cosmo", "post_cosmo"],
+    tools.Target.COSMOGHG: [
+        "meteo", "icbc", "emissions", "biofluxes", "oae", "online_vprm",
+        "int2lm", "post_int2lm", "cosmo", "post_cosmo"
+    ],
+    tools.Target.COSMOART: [
+        "meteo", "icbc", "emissions", "obs_nudging", "photo_rate", "int2lm",
+        "cosmo", "post_cosmo"
+    ],
+    tools.Target.ICON: ["meteo", "icon"],
+    tools.Target.ICONART: ["meteo", "icbc", "icon"],
+    tools.Target.ICONOEM: ["meteo", "icbc", "oae", "icon"]
 }
 
 
@@ -59,9 +61,7 @@ def parse_arguments():
                   "processing-chain will split up the simulation "
                   "and perform several restarts before reaching the "
                   "stopping-time.")
-    parser.add_argument("times",
-                        nargs=3,
-                        help=times_help)
+    parser.add_argument("times", nargs=3, help=times_help)
 
     jobs_help = ("List of job-names to be executed. A job is a .py-"
                  "file in jobs/ with a main()-function which "
@@ -71,10 +71,11 @@ def parse_arguments():
                  "Jobs are executed in the order in which they are "
                  "given here. "
                  "If no jobs are given, the default that will be "
-                 "executed is: COSMO: {} | COSMOART : {}"
-                 .format(default_jobs[tools.Target.COSMO],
-                         default_jobs[tools.Target.COSMOART]))
-    parser.add_argument("-j", "--jobs",
+                 "executed is: COSMO: {} | COSMOART : {}".format(
+                     default_jobs[tools.Target.COSMO],
+                     default_jobs[tools.Target.COSMOART]))
+    parser.add_argument("-j",
+                        "--jobs",
                         nargs='*',
                         dest="job_list",
                         help=jobs_help,
@@ -85,18 +86,16 @@ def parse_arguments():
                   " previously. WARNING: Only logfiles get deleted,"
                   " other effects of a given job (copied files etc.)"
                   " are simply overwritten. This may cause errors.")
-    parser.add_argument("-f", "--force",
-                        action='store_true',
-                        help=force_help)
+    parser.add_argument("-f", "--force", action='store_true', help=force_help)
 
     tries_help = ("Amount of time the cosmo job is re-tried before crashing."
                   " Default is 1.")
-    parser.add_argument("-t", "--try",
+    parser.add_argument("-t",
+                        "--try",
                         help=tries_help,
                         dest="ntry",
                         type=int,
                         default=1)
-
 
     args = parser.parse_args()
     args.startdate = args.times[0]
@@ -141,7 +140,8 @@ def load_config_file(casename, cfg):
     if not os.path.exists(os.path.dirname(cfg_path)):
         all_cases = [path.name for path in os.scandir('cases') if path.is_dir]
         closest_name = min([(tools.levenshtein(casename, name), name)
-                            for name in all_cases], key=lambda x: x[0])[1]
+                            for name in all_cases],
+                           key=lambda x: x[0])[1]
         raise FileNotFoundError("Case-directory '{}' not found, did you "
                                 "mean '{}'?".format(casename, closest_name))
 
@@ -186,16 +186,16 @@ def set_simulation_type(cfg):
     try:
         target_enum = tools.str_to_enum[target_str.lower()]
     except KeyError:
-        raise ValueError("The target of the chain must be one of {}"
-                         .format(list(tools.str_to_enum.keys())))
+        raise ValueError("The target of the chain must be one of {}".format(
+            list(tools.str_to_enum.keys())))
     setattr(cfg, 'target', target_enum)
 
     subtarget_str = getattr(cfg, 'subtarget', 'none')
     try:
         subtarget_enum = tools.str_to_enum[subtarget_str.lower()]
     except KeyError:
-        raise ValueError("The target of the chain must be one of {}"
-                         .format(list(tools.str_to_enum.keys())))
+        raise ValueError("The target of the chain must be one of {}".format(
+            list(tools.str_to_enum.keys())))
     setattr(cfg.target, 'subtarget', subtarget_enum)
 
 
@@ -244,7 +244,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         mail_address = None
 
     # ini date and forecast time (ignore meteo times)
-    inidate = int((start_time - datetime(1970,1,1)).total_seconds())
+    inidate = int((start_time - datetime(1970, 1, 1)).total_seconds())
     inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
     inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
     forecasttime = '%d' % (hstop - hstart)
@@ -254,25 +254,26 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'hstart', hstart)
     setattr(cfg, 'hstop', hstop)
     forecasttime = '%d' % (hstop - hstart)
-    inidate_int2lm_yyyymmddhh = (start_time + timedelta(hours=hstart)
-                                ).strftime('%Y%m%d%H')
+    inidate_int2lm_yyyymmddhh = (start_time +
+                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
 
     if cfg.target.subtarget is tools.Subtarget.SPINUP:
-        if cfg.first_one: # first run in spinup
+        if cfg.first_one:  # first run in spinup
             chain_root_last_run = ''
-        else: # consecutive runs in spinup 
-            inidate_yyyymmddhh_spinup = (start_time - timedelta(hours=cfg.spinup)
-                                        ).strftime('%Y%m%d%H')
+        else:  # consecutive runs in spinup
+            inidate_yyyymmddhh_spinup = (
+                start_time - timedelta(hours=cfg.spinup)).strftime('%Y%m%d%H')
             setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh_spinup)
             setattr(cfg, 'hstart', 0)
             setattr(cfg, 'hstop', hstop + cfg.spinup)
             forecasttime = '%d' % (hstop + cfg.spinup)
-            inidate_yyyymmddhh_last_run = (start_time - timedelta(hours=cfg.restart_step)
-                                          ).strftime('%Y%m%d%H')
-            if cfg.second_one: # second run (i.e., get job_id from first run)
-                job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run,
-                                                                    0, hstop)
-            else: # all other runs
+            inidate_yyyymmddhh_last_run = (
+                start_time -
+                timedelta(hours=cfg.restart_step)).strftime('%Y%m%d%H')
+            if cfg.second_one:  # second run (i.e., get job_id from first run)
+                job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run, 0,
+                                                hstop)
+            else:  # all other runs
                 job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run,
                                                 0 - cfg.spinup, hstop)
             chain_root_last_run = os.path.join(work_root, cfg.casename,
@@ -301,8 +302,8 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'cosmo_input', os.path.join(chain_root, 'cosmo', 'input'))
     setattr(cfg, 'cosmo_work', os.path.join(chain_root, 'cosmo', 'run'))
     setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
-    setattr(cfg, 'cosmo_output_reduced', os.path.join(chain_root, 'cosmo',
-                                                      'output_reduced'))
+    setattr(cfg, 'cosmo_output_reduced',
+            os.path.join(chain_root, 'cosmo', 'output_reduced'))
 
     # ICON
     setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
@@ -414,7 +415,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
             setattr(cfg, 'lasync_io', '.TRUE.')
             setattr(cfg, 'num_iope_percomm', 1)
 
-
     if cfg.target.subtarget is tools.Subtarget.SPINUP:
         setattr(cfg, 'last_cosmo_output',
                 os.path.join(chain_root_last_run, 'cosmo', 'output'))
@@ -425,12 +425,12 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh,
                                         hstart - cfg.restart_step, hstart)
         chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                          job_id_last_run)
+                                           job_id_last_run)
         # Set restart directories
-        setattr(cfg, 'cosmo_restart_out', os.path.join(chain_root,
-                                                       'cosmo', 'restart'))
-        setattr(cfg, 'cosmo_restart_in', os.path.join(chain_root_last_run,
-                                                      'cosmo', 'restart'))
+        setattr(cfg, 'cosmo_restart_out',
+                os.path.join(chain_root, 'cosmo', 'restart'))
+        setattr(cfg, 'cosmo_restart_in',
+                os.path.join(chain_root_last_run, 'cosmo', 'restart'))
 
     if cfg.target is tools.Target.COSMOART:
         # no restarts in cosmoart
@@ -446,22 +446,20 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         setattr(cfg, 'ini_datetime_string', ini_datetime_string)
         setattr(cfg, 'end_datetime_string', end_datetime_string)
         # Set restart directories
-        setattr(cfg, 'icon_restart_out', os.path.join(chain_root,
-                                                       'icon', 'restart'))
-        setattr(cfg, 'icon_restart_in', os.path.join(chain_root_last_run,
-                                                      'icon', 'restart'))
+        setattr(cfg, 'icon_restart_out',
+                os.path.join(chain_root, 'icon', 'restart'))
+        setattr(cfg, 'icon_restart_in',
+                os.path.join(chain_root_last_run, 'icon', 'restart'))
         # TODO: Set correct restart setting
         setattr(cfg, 'lrestart', '.FALSE.')
 
     # if nested run: use output of mother-simulation
-    if cfg.target is tools.Target.COSMOART and not os.path.isdir(cfg.meteo_dir):
+    if cfg.target is tools.Target.COSMOART and not os.path.isdir(
+            cfg.meteo_dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
         mother_name = cfg.meteo_dir
-        cfg.meteo_dir = os.path.join(work_root,
-                                     mother_name,
-                                     job_id,
-                                     'cosmo',
+        cfg.meteo_dir = os.path.join(work_root, mother_name, job_id, 'cosmo',
                                      'output')
 
         cfg.meteo_inc = 1
@@ -482,7 +480,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     if not hasattr(cfg, 'output_levels'):
         setattr(cfg, 'output_levels', -1)
     if not hasattr(cfg, 'convert_gas'):
-        setattr(cfg, 'convert_gas',True)
+        setattr(cfg, 'convert_gas', True)
 
     # run jobs (if required)
     for job in job_names:
@@ -499,7 +497,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         if os.path.exists(os.path.join(log_working_dir, job)):
             if not force:
                 while True:
-                    if os.path.exists( os.path.join(log_finished_dir, job) ):
+                    if os.path.exists(os.path.join(log_finished_dir, job)):
                         print('Skip "%s" for chain "%s"' % (job, job_id))
                         skip = True
                         break
@@ -518,27 +516,27 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         if not skip:
             print('Process "%s" for chain "%s"' % (job, job_id))
             sys.stdout.flush()
-            
-            try_count = 1+(args.ntry-1)*(job=='cosmo')
-            while try_count>0:
-                try_count-=1
+
+            try_count = 1 + (args.ntry - 1) * (job == 'cosmo')
+            while try_count > 0:
+                try_count -= 1
                 try:
                     # Change the log file
-                    logfile=os.path.join(cfg.log_working_dir,job)
-                    logfile_finish=os.path.join(cfg.log_finished_dir,job)
+                    logfile = os.path.join(cfg.log_working_dir, job)
+                    logfile_finish = os.path.join(cfg.log_finished_dir, job)
                     tools.change_logfile(logfile)
 
                     # Launch the job
-                    to_call = getattr(jobs,job)
-                    to_call.main(start_time,hstart,hstop,cfg)
+                    to_call = getattr(jobs, job)
+                    to_call.main(start_time, hstart, hstop, cfg)
 
                     shutil.copy(logfile, logfile_finish)
 
-                    exitcode=0
-                    try_count=0
+                    exitcode = 0
+                    try_count = 0
                 except:
-                    subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (job,
-                              job_id)
+                    subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
+                        job, job_id)
                     logging.exception(subject)
                     if mail_address:
                         message = tools.prepare_message(os.path.join(log_working_dir, job))
@@ -547,15 +545,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                     if try_count ==0:
                         raise RuntimeError(subject)
 
-                    
-                
-            # except AttributeError:
-            #     print(job+".py not found so running the bash script instead")
-            #     exitcode = call_bash_function(
-            #         os.path.join(cfg.chain_src_dir, 'jobs', '%s.bash' % job),
-            #         job
-            #     )
-                
             if exitcode != 0 or not os.path.exists(os.path.join(log_finished_dir, job)):
                 subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (job,
                           job_id)
@@ -603,16 +592,17 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names, force):
 
         print("Starting run with starttime {}".format(time))
 
-        run_chain(work_root = work_root,
-                  cfg = cfg,
-                  start_time = start,
-                  hstart = sub_hstart,
-                  hstop = sub_hstop,
-                  job_names = job_names,
-                  force = force)
+        run_chain(work_root=work_root,
+                  cfg=cfg,
+                  start_time=start,
+                  hstart=sub_hstart,
+                  hstop=sub_hstop,
+                  job_names=job_names,
+                  force=force)
 
 
-def restart_runs_spinup(work_root, cfg, start, hstart, hstop, job_names, force):
+def restart_runs_spinup(work_root, cfg, start, hstart, hstop, job_names,
+                        force):
     """Starts the subchains in the specified intervals.
     
     Slices the total runtime of the chain according to ``cfg.restart_step``.
@@ -669,28 +659,28 @@ def restart_runs_spinup(work_root, cfg, start, hstart, hstop, job_names, force):
             continue
 
         endtime_act_sim = time - timedelta(hours=cfg.restart_step) \
-                               + timedelta(hours=run_time) 
+                               + timedelta(hours=run_time)
         if endtime_act_sim > start + timedelta(hours=hstop):
             continue
 
         print('Runtime of sub-simulation: ', run_time)
- 
+
         if cfg.first_one:
-            run_chain(work_root = work_root,
-                      cfg = cfg,
-                      start_time = time,
-                      hstart = 0, 
-                      hstop = run_time,
-                      job_names = job_names,
-                      force = force)
+            run_chain(work_root=work_root,
+                      cfg=cfg,
+                      start_time=time,
+                      hstart=0,
+                      hstop=run_time,
+                      job_names=job_names,
+                      force=force)
         else:
-            run_chain(work_root = work_root,
-                      cfg = cfg,
-                      start_time = time,
-                      hstart = -cfg.spinup, 
-                      hstop = run_time - cfg.spinup,
-                      job_names = job_names,
-                      force = force)
+            run_chain(work_root=work_root,
+                      cfg=cfg,
+                      start_time=time,
+                      hstart=-cfg.spinup,
+                      hstop=run_time - cfg.spinup,
+                      job_names=job_names,
+                      force=force)
 
 
 if __name__ == '__main__':
@@ -705,39 +695,40 @@ if __name__ == '__main__':
         if args.job_list is None:
             args.job_list = default_jobs[cfg.target]
 
-        print("Starting chain for case {}, using {}".format(casename,
-                                                            cfg.target.name))
+        print("Starting chain for case {}, using {}".format(
+            casename, cfg.target.name))
 
         if cfg.target is tools.Target.COSMO or cfg.target is tools.Target.ICON or \
            cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM or \
            cfg.target is tools.Target.COSMOGHG:
             if cfg.target.subtarget is tools.Subtarget.NONE:
-                restart_runs(work_root = cfg.work_root,
-                             cfg = cfg,
-                             start = start_time,
-                             hstart = args.hstart,
-                             hstop = args.hstop,
-                             job_names = args.job_list,
-                             force = args.force)
+                restart_runs(work_root=cfg.work_root,
+                             cfg=cfg,
+                             start=start_time,
+                             hstart=args.hstart,
+                             hstop=args.hstop,
+                             job_names=args.job_list,
+                             force=args.force)
             elif cfg.target.subtarget is tools.Subtarget.SPINUP:
-                restart_runs_spinup(work_root = cfg.work_root,
-                                    cfg = cfg,
-                                    start = start_time,
-                                    hstart = args.hstart,
-                                    hstop = args.hstop,
-                                    job_names = args.job_list,
-                                    force = args.force)
+                restart_runs_spinup(work_root=cfg.work_root,
+                                    cfg=cfg,
+                                    start=start_time,
+                                    hstart=args.hstart,
+                                    hstop=args.hstop,
+                                    job_names=args.job_list,
+                                    force=args.force)
             else:
-                raise RuntimeError("Unknown subtarget: {}".format(cfg.subtarget))
+                raise RuntimeError("Unknown subtarget: {}".format(
+                    cfg.subtarget))
         elif cfg.target is tools.Target.COSMOART:
             # cosmoart can't do restarts
-            run_chain(   work_root = cfg.work_root,
-                         cfg = cfg,
-                         start_time = start_time,
-                         hstart = args.hstart,
-                         hstop = args.hstop,
-                         job_names = args.job_list,
-                         force = args.force)
+            run_chain(work_root=cfg.work_root,
+                      cfg=cfg,
+                      start_time=start_time,
+                      hstart=args.hstart,
+                      hstop=args.hstop,
+                      job_names=args.job_list,
+                      force=args.force)
         else:
             raise RuntimeError("Unknown target: {}".format(cfg.target))
 

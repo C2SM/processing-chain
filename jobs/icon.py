@@ -3,7 +3,7 @@
 #
 # Setup the namelist for an ICON run and submit the job to the queue
 #
-# result in case of success: forecast fields found in  
+# result in case of success: forecast fields found in
 #                            ${icon_output}
 #
 # Michael Jähn, February 2021
@@ -87,5 +87,3 @@ def main(starttime, hstart, hstop, cfg):
 
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-
-

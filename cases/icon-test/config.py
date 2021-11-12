@@ -7,7 +7,7 @@ Configuration file for the 'icon-test' case with ICON
 # GENERAL SETTINGS =========================================================== 
 user = os.environ['USER']
 target = 'icon'
-restart_step = 24 # hours
+restart_step = 24  # hours
 
 compute_host = 'daint'
 compute_queue = 'debug' # 'normal' / 'debug'
@@ -46,7 +46,6 @@ meteo_suffix = '.grb'
 meteo_inc = 3
 
 # ICONTools ------------------------------------------------------------------
-
 icontools_runjobs = [
     'icontools_remap_ic_runjob.cfg',
     'icontools_remap_00_lbc_runjob.cfg',
@@ -102,33 +101,37 @@ else:
     logging.error("Unknown queue name: %s" % compute_queue)
     sys.exit(1)
 
-# POST-PROCESSING ============================================================ 
+# POST-PROCESSING ============================================================
 # REDUCE_OUTPUT --------------------------------------------------------------
 convert_gas = True
 output_levels = 20
 
-# POST_COSMO ----------------------------------------------------------------- 
+# POST_COSMO -----------------------------------------------------------------
 # Root directory where the output of the chain is copied to
-output_root = os.path.join("/store/empa/em05/", user, 
+output_root = os.path.join("/store/empa/em05/", user,
                            "processing_chain_output", casename)
 
-# VERIFY_CHAIN --------------------------------------------------------------- 
+# VERIFY_CHAIN ---------------------------------------------------------------
 reference_dir = os.path.join(input_root, "reference_output")
 
 # If the output file that gets compared to the reference is not at the location
 # that post_icon copied it to, give the path to it here. Else leave it 'None'
 #output_dir = None
-output_dir = os.path.join(work_root, casename, '2018010100_0_24', 'icon', 'output')
+output_dir = os.path.join(work_root, casename, '2018010100_0_24', 'icon',
+                          'output')
 
 # variables_to_check is a dict() with a tuple() of filenames as key and a list
 # of variables-names as value. The tuple consists of the filenames of the two
 # files to check, the list contains the variable-names that are compared.
 # The verify_chain job will look for the files in the reference_dir (first tuple
 # element) and the ouput_dir (second tuple element)
-values_to_check = {("icon-pgi-20.1.1-cpu-20210215-NWP_LAM_DOM01_01000000.nc",
-                    "NWP_LAM_DOM01_01000000.nc") :
-                   ['temp', 'pres', 'u', 'v', 'w', 
-                   ]
-                  }
-
-
+values_to_check = {
+    ("icon-pgi-20.1.1-cpu-20210215-NWP_LAM_DOM01_01000000.nc", "NWP_LAM_DOM01_01000000.nc"):
+    [
+        'temp',
+        'pres',
+        'u',
+        'v',
+        'w',
+    ]
+}

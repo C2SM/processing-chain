@@ -59,12 +59,10 @@ def main(starttime, hstart, hstop, cfg):
         # run data location
         if cfg.output_dir is None:
             # Standard output location
-            run_file_path = os.path.join(cfg.output_root,
-                                         starttime.strftime('%Y%m%d%H') +
-                                         "_" + str(int(hstart)) + "_" +
-                                         str(int(hstop)),
-                                         "cosmo_output",
-                                         run_file)
+            run_file_path = os.path.join(
+                cfg.output_root,
+                starttime.strftime('%Y%m%d%H') + "_" + str(int(hstart)) + "_" +
+                str(int(hstop)), "cosmo_output", run_file)
         else:
             # User-provided output location
             run_file_path = os.path.join(cfg.output_dir, run_file)

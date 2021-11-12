@@ -11,7 +11,6 @@ import sys
 from datetime import datetime, timedelta
 from enum import Enum, auto
 
-
 from . import cams4int2cosmo
 from . import ctnoaa4int2cosmo
 from . import string2char
@@ -22,6 +21,7 @@ from . import mozart2int2lm
 from .check_target import check_target
 from . import comp_nc
 from . import helper
+
 
 def iter_hours(starttime, hstart, hstop, step=1):
     """Return a generator that yields datetime-objects from 
@@ -106,7 +106,8 @@ def send_mail(address, subject, message=''):
     message : str, optional
         Body of the message, default is empty
     """
-    p = subprocess.Popen(['mail', '-s', '"%s"' % subject, address], stdin=subprocess.PIPE)
+    p = subprocess.Popen(
+        ['mail', '-s', '"%s"' % subject, address], stdin=subprocess.PIPE)
     p.stdin.write(message.encode('utf-8'))
     p.stdin.close()
 
@@ -125,10 +126,10 @@ def change_logfile(filename):
     # fileh.setFormatter(log_format)
 
     log = logging.getLogger()  # root logger
-    if len(log.handlers)>0:
-        log.handlers = [fileh]      # set the new handler
+    if len(log.handlers) > 0:
+        log.handlers = [fileh]  # set the new handler
     else:
-        logging.basicConfig(filename=filename,level=logging.INFO)
+        logging.basicConfig(filename=filename, level=logging.INFO)
 
 
 def create_dir(path, readable_name):
@@ -151,9 +152,9 @@ def create_dir(path, readable_name):
     try:
         os.makedirs(path, exist_ok=True)
     except (OSError, Exception) as e:
-        logging.error(
-            "Creating {} directory at path {} failed with {}".format(
-                readable_name, path, type(e).__name__))
+        logging.error("Creating {} directory at path {} failed with {}".format(
+            readable_name, path,
+            type(e).__name__))
         raise
 
 
@@ -179,16 +180,17 @@ def copy_file(source_path, dest_path, output_log=False):
         shutil.copy(source_path, dest_path)
     except FileNotFoundError:
         logging.error("Source-file not found at {} OR "
-                      "target-directory {} doesn't exist."
-                      .format(source_path, dest_path))
+                      "target-directory {} doesn't exist.".format(
+                          source_path, dest_path))
         raise
     except PermissionError:
         logging.error("Copying file from {} to {} failed due to"
                       "a permission error.".format(source_path, dest_path))
         raise
     except (OSError, Exception) as e:
-        logging.error("Copying {} to {} failed with {}". format(
-                      source_path, dest_path, type(e).__name__))
+        logging.error("Copying {} to {} failed with {}".format(
+            source_path, dest_path,
+            type(e).__name__))
         raise
     logging.info("Copied {} to {}". format(
                  source_path, dest_path))
@@ -270,6 +272,7 @@ class Target(Enum):
     ICONART = auto()
     ICONARTOEM = auto()
 
+
 class Subtarget(Enum):
     NONE = auto()
     SPINUP = auto()
@@ -283,7 +286,6 @@ str_to_enum = {'cosmo': Target.COSMO,
                'none': Subtarget.NONE,
                'spinup': Subtarget.SPINUP,
                }
-
 
 def check_target(cfg, target=Target.COSMO):
     """Check that the target specified in cfg matched the prescribed target.
@@ -299,8 +301,8 @@ def check_target(cfg, target=Target.COSMO):
     """
     if not cfg.target is target:
         raise RuntimeError("The target specified in the configuration file "
-                           "is {}, but the job only applies to {}."
-                           .format(cfg.target.name, target.name))
+                           "is {}, but the job only applies to {}.".format(
+                               cfg.target.name, target.name))
 
 
 def levenshtein(s1, s2):
@@ -333,7 +335,7 @@ def levenshtein(s1, s2):
             substitutions = previous_row[j] + (c1 != c2)
             current_row.append(min(insertions, deletions, substitutions))
         previous_row = current_row
-    
+
     return previous_row[-1]
 
 
@@ -375,14 +377,12 @@ def check_job_completion(log_finished_dir, job, waittime=3000):
     waittime : time to wait (factor of .1 second)
                Defaults to 3000 (300 seconds)
     """
-    logfile = os.path.join(log_finished_dir,job)
+    logfile = os.path.join(log_finished_dir, job)
     while True:
         if not os.path.exists(logfile):
-            print("Waiting for the %s job to finish first" %(job))
+            print("Waiting for the %s job to finish first" % (job))
             sys.stdout.flush()
             for _ in range(waittime):
                 time.sleep(0.1)
         else:
             break
-
- 
