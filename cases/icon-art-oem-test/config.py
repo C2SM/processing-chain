@@ -1,18 +1,17 @@
 import os
-
 """
 Configuration file for the 'icon-art-test' case with ICON-ART
 """
 
-# GENERAL SETTINGS =========================================================== 
+# GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
 target = 'icon-art-oem'
-restart_step = 24 # hours
+restart_step = 24  # hours
 
 compute_host = 'daint'
-compute_queue = 'debug' # 'normal' / 'debug'
+compute_queue = 'debug'  # 'normal' / 'debug'
 compute_account = 'em05'
-constraint = 'mc' # 'mc' / 'gpu'
+constraint = 'mc'  # 'mc' / 'gpu'
 
 if constraint == 'gpu':
     ntasks_per_node = 12
@@ -64,17 +63,19 @@ icontools_runjobs = [
 #icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
 icontools_dir = '/scratch/snx3000/msteiner/spack-stages/daint/spack-stage-icontools-master-t524rnfa5sfyn4rbvarypyzwae4jg46d/spack-src/icontools'
 iconremap_bin = os.path.join(icontools_dir, "iconremap")
-iconsub_bin   = os.path.join(icontools_dir, "iconsub")
+iconsub_bin = os.path.join(icontools_dir, "iconsub")
 
 # Input data for runscript----------------------------------------------------
 # Grid
 input_root_grid = os.path.join(input_root, 'grids')
-radiation_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.parent.nc")
+radiation_grid_filename = os.path.join(input_root_grid,
+                                       "testcase_DOM01.parent.nc")
 dynamics_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.nc")
 map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
-extpar_filename = os.path.join(input_root_grid, 
-                               "external_parameter_icon_testcase_DOM01_tiles.nc")
-lateral_boundary_grid = os.path.join(input_root_grid, "lateral_boundary.grid.nc")
+extpar_filename = os.path.join(
+    input_root_grid, "external_parameter_icon_testcase_DOM01_tiles.nc")
+lateral_boundary_grid = os.path.join(input_root_grid,
+                                     "lateral_boundary.grid.nc")
 
 input_root_rad = os.path.join(input_root, 'rad')
 cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
@@ -94,7 +95,8 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 
 # ART settings----------------------------------------------------------------
 input_root_tracers = os.path.join(input_root, 'XML')
-chemtracer_xml_filename = os.path.join(input_root_tracers, 'tracers_oh_pntsrc.xml')
+chemtracer_xml_filename = os.path.join(input_root_tracers,
+                                       'tracers_oh_pntsrc.xml')
 pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc_example.xml')
 art_input_folder = os.path.join(input_root, 'ART')
 
@@ -125,38 +127,43 @@ if compute_queue == "normal":
 elif compute_queue == "debug":
     icon_walltime = "00:30:00"
     icon_np_tot = 10
-else: 
+else:
     logging.error("Unknown queue name: %s" % compute_queue)
     sys.exit(1)
 
-# POST-PROCESSING ============================================================ 
+# POST-PROCESSING ============================================================
 # REDUCE_OUTPUT --------------------------------------------------------------
 convert_gas = True
 output_levels = 20
 
-# POST_COSMO ----------------------------------------------------------------- 
+# POST_COSMO -----------------------------------------------------------------
 # Root directory where the output of the chain is copied to
-output_root = os.path.join("/scratch/snx3000", user, 
-                           "processing_chain_output", casename)
+output_root = os.path.join("/scratch/snx3000", user, "processing_chain_output",
+                           casename)
 
-# VERIFY_CHAIN --------------------------------------------------------------- 
+# VERIFY_CHAIN ---------------------------------------------------------------
 reference_dir = os.path.join(input_root, "reference_output")
 
 # If the output file that gets compared to the reference is not at the location
 # that post_icon copied it to, give the path to it here. Else leave it 'None'
 #output_dir = None
-output_dir = os.path.join(work_root, casename, '2018010100_0_24', 'icon', 'output')
+output_dir = os.path.join(work_root, casename, '2018010100_0_24', 'icon',
+                          'output')
 
 # variables_to_check is a dict() with a tuple() of filenames as key and a list
 # of variables-names as value. The tuple consists of the filenames of the two
 # files to check, the list contains the variable-names that are compared.
 # The verify_chain job will look for the files in the reference_dir (first tuple
 # element) and the ouput_dir (second tuple element)
-values_to_check = {("icon-oem-pgi-20.1.1-cpu-20210215-NWP_LAM_DOM01_01000000.nc",
-                    "NWP_LAM_DOM01_01000000.nc") :
-                   ['temp', 'pres', 'u', 'v', 'w', 
-                    'OEM_tracer_1', 'OEM_tracer_2',
-                   ]
-                  }
-
-
+values_to_check = {
+    ("icon-oem-pgi-20.1.1-cpu-20210215-NWP_LAM_DOM01_01000000.nc", "NWP_LAM_DOM01_01000000.nc"):
+    [
+        'temp',
+        'pres',
+        'u',
+        'v',
+        'w',
+        'OEM_tracer_1',
+        'OEM_tracer_2',
+    ]
+}

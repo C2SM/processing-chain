@@ -12,6 +12,7 @@ import shutil
 import argparse
 import csv
 import configparser
+
 settings = configparser.ConfigParser()
 
 import jobs
@@ -249,8 +250,8 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
     forecasttime = '%d' % (hstop - hstart)
     setattr(cfg, 'inidate', inidate)
-    setattr(cfg, 'inidate_yyyymmddhh',inidate_yyyymmddhh)
-    setattr(cfg, 'inidate_yyyymmdd_hh',inidate_yyyymmdd_hh)
+    setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh)
+    setattr(cfg, 'inidate_yyyymmdd_hh', inidate_yyyymmdd_hh)
     setattr(cfg, 'hstart', hstart)
     setattr(cfg, 'hstop', hstop)
     forecasttime = '%d' % (hstop - hstart)
@@ -308,73 +309,115 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     # ICON
     setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
     setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
-    setattr(cfg, 'icon_input_icbc', os.path.join(chain_root, 'icon', 'input', 'icbc'))
-    setattr(cfg, 'icon_input_oae', os.path.join(chain_root, 'icon', 'input', 'oae'))
-    setattr(cfg, 'icon_input_grid', os.path.join(chain_root, 'icon', 'input', 'grid'))
-    setattr(cfg, 'icon_input_mapping', os.path.join(chain_root, 'icon', 'input', 'mapping'))
-    setattr(cfg, 'icon_input_rad', os.path.join(chain_root, 'icon', 'input', 'rad'))
-    setattr(cfg, 'icon_input_xml', os.path.join(chain_root, 'icon', 'input', 'xml'))
+    setattr(cfg, 'icon_input_icbc',
+            os.path.join(chain_root, 'icon', 'input', 'icbc'))
+    setattr(cfg, 'icon_input_oae',
+            os.path.join(chain_root, 'icon', 'input', 'oae'))
+    setattr(cfg, 'icon_input_grid',
+            os.path.join(chain_root, 'icon', 'input', 'grid'))
+    setattr(cfg, 'icon_input_mapping',
+            os.path.join(chain_root, 'icon', 'input', 'mapping'))
+    setattr(cfg, 'icon_input_rad',
+            os.path.join(chain_root, 'icon', 'input', 'rad'))
+    setattr(cfg, 'icon_input_xml',
+            os.path.join(chain_root, 'icon', 'input', 'xml'))
     setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
     setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
-    setattr(cfg, 'icon_output_reduced', os.path.join(chain_root, 'icon',
-                                                      'output_reduced'))
+    setattr(cfg, 'icon_output_reduced',
+            os.path.join(chain_root, 'icon', 'output_reduced'))
     if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART \
             or cfg.target is tools.Target.ICONARTOEM:
-        setattr(cfg, 'radiation_grid_filename_scratch',
-                os.path.join(cfg.icon_input_grid, os.path.basename(cfg.radiation_grid_filename)))
-        setattr(cfg, 'dynamics_grid_filename_scratch',
-                os.path.join(cfg.icon_input_grid, os.path.basename(cfg.dynamics_grid_filename)))
-        setattr(cfg, 'map_file_latbc_scratch',
-                os.path.join(cfg.icon_input_grid, os.path.basename(cfg.map_file_latbc)))
-        setattr(cfg, 'extpar_filename_scratch',
-                os.path.join(cfg.icon_input_grid, os.path.basename(cfg.extpar_filename)))
-        setattr(cfg, 'lateral_boundary_grid_scratch',
-                os.path.join(cfg.icon_input_grid, os.path.basename(cfg.lateral_boundary_grid)))
-        setattr(cfg, 'cldopt_filename_scratch', 
-                os.path.join(cfg.icon_input_rad, os.path.basename(cfg.cldopt_filename)))
-        setattr(cfg, 'lrtm_filename_scratch', 
-                os.path.join(cfg.icon_input_rad, os.path.basename(cfg.lrtm_filename)))
-        setattr(cfg, 'map_file_ana_scratch', 
-                os.path.join(cfg.icon_input_mapping, os.path.basename(cfg.map_file_ana)))
+        setattr(
+            cfg, 'radiation_grid_filename_scratch',
+            os.path.join(cfg.icon_input_grid,
+                         os.path.basename(cfg.radiation_grid_filename)))
+        setattr(
+            cfg, 'dynamics_grid_filename_scratch',
+            os.path.join(cfg.icon_input_grid,
+                         os.path.basename(cfg.dynamics_grid_filename)))
+        setattr(
+            cfg, 'map_file_latbc_scratch',
+            os.path.join(cfg.icon_input_grid,
+                         os.path.basename(cfg.map_file_latbc)))
+        setattr(
+            cfg, 'extpar_filename_scratch',
+            os.path.join(cfg.icon_input_grid,
+                         os.path.basename(cfg.extpar_filename)))
+        setattr(
+            cfg, 'lateral_boundary_grid_scratch',
+            os.path.join(cfg.icon_input_grid,
+                         os.path.basename(cfg.lateral_boundary_grid)))
+        setattr(
+            cfg, 'cldopt_filename_scratch',
+            os.path.join(cfg.icon_input_rad,
+                         os.path.basename(cfg.cldopt_filename)))
+        setattr(
+            cfg, 'lrtm_filename_scratch',
+            os.path.join(cfg.icon_input_rad,
+                         os.path.basename(cfg.lrtm_filename)))
+        setattr(
+            cfg, 'map_file_ana_scratch',
+            os.path.join(cfg.icon_input_mapping,
+                         os.path.basename(cfg.map_file_ana)))
         if hasattr(cfg, 'chemtracer_xml_filename'):
-            setattr(cfg, 'chemtracer_xml_filename_scratch', 
-                    os.path.join(cfg.icon_input_xml, os.path.basename(cfg.chemtracer_xml_filename)))
+            setattr(
+                cfg, 'chemtracer_xml_filename_scratch',
+                os.path.join(cfg.icon_input_xml,
+                             os.path.basename(cfg.chemtracer_xml_filename)))
         if hasattr(cfg, 'pntSrc_xml_filename'):
-            setattr(cfg, 'pntSrc_xml_filename_scratch', 
-                    os.path.join(cfg.icon_input_xml, os.path.basename(cfg.pntSrc_xml_filename)))
+            setattr(
+                cfg, 'pntSrc_xml_filename_scratch',
+                os.path.join(cfg.icon_input_xml,
+                             os.path.basename(cfg.pntSrc_xml_filename)))
 
     # OEM
     if cfg.target is tools.Target.ICONARTOEM:
-        setattr(cfg, 'oae_gridded_emissions_nc_scratch',
-                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_gridded_emissions_nc)))
-        setattr(cfg, 'oae_vertical_profiles_nc_scratch',
-                os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_vertical_profiles_nc)))
+        setattr(
+            cfg, 'oae_gridded_emissions_nc_scratch',
+            os.path.join(cfg.icon_input_oae,
+                         os.path.basename(cfg.oae_gridded_emissions_nc)))
+        setattr(
+            cfg, 'oae_vertical_profiles_nc_scratch',
+            os.path.join(cfg.icon_input_oae,
+                         os.path.basename(cfg.oae_vertical_profiles_nc)))
         if hasattr(cfg, 'oae_hourofday_nc'):
-            setattr(cfg, 'oae_hourofday_nc_scratch',
-                    os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_hourofday_nc)))
+            setattr(
+                cfg, 'oae_hourofday_nc_scratch',
+                os.path.join(cfg.icon_input_oae,
+                             os.path.basename(cfg.oae_hourofday_nc)))
         else:
             setattr(cfg, 'oae_hourofday_nc_scratch', '')
         if hasattr(cfg, 'oae_dayofweek_nc'):
-            setattr(cfg, 'oae_dayofweek_nc_scratch',
-                    os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_dayofweek_nc)))
+            setattr(
+                cfg, 'oae_dayofweek_nc_scratch',
+                os.path.join(cfg.icon_input_oae,
+                             os.path.basename(cfg.oae_dayofweek_nc)))
         else:
             setattr(cfg, 'oae_dayofweek_nc_scratch', '')
         if hasattr(cfg, 'oae_monthofyear_nc'):
-            setattr(cfg, 'oae_monthofyear_nc_scratch',
-                    os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_monthofyear_nc)))
+            setattr(
+                cfg, 'oae_monthofyear_nc_scratch',
+                os.path.join(cfg.icon_input_oae,
+                             os.path.basename(cfg.oae_monthofyear_nc)))
         else:
             setattr(cfg, 'oae_monthofyear_nc_scratch', '')
         if hasattr(cfg, 'oae_hourofyear_nc'):
-            setattr(cfg, 'oae_hourofyear_nc_scratch',
-                    os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_hourofyear_nc)))
+            setattr(
+                cfg, 'oae_hourofyear_nc_scratch',
+                os.path.join(cfg.icon_input_oae,
+                             os.path.basename(cfg.oae_hourofyear_nc)))
         else:
             setattr(cfg, 'oae_hourofyear_nc_scratch', '')
         if hasattr(cfg, 'oae_ens_reg_nc'):
-            setattr(cfg, 'oae_ens_reg_nc_scratch',
-                    os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_ens_reg_nc)))
+            setattr(
+                cfg, 'oae_ens_reg_nc_scratch',
+                os.path.join(cfg.icon_input_oae,
+                             os.path.basename(cfg.oae_ens_reg_nc)))
         if hasattr(cfg, 'oae_ens_lambda_nc'):
-            setattr(cfg, 'oae_ens_lambda_nc_scratch',
-                    os.path.join(cfg.icon_input_oae, os.path.basename(cfg.oae_ens_lambda_nc)))
+            setattr(
+                cfg, 'oae_ens_lambda_nc_scratch',
+                os.path.join(cfg.icon_input_oae,
+                             os.path.basename(cfg.oae_ens_lambda_nc)))
 
     # Number of tracers
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
@@ -438,11 +481,12 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
 
     if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
        cfg.target is tools.Target.ICONARTOEM:
-        ini_datetime_string = (start_time + timedelta(hours=hstart) 
-                              ).strftime('%Y-%m-%dT%H:00:00Z')
-        end_datetime_string = (start_time + timedelta(hours=hstart) + 
-                               timedelta(hours=hstop) 
-                              ).strftime('%Y-%m-%dT%H:00:00Z')
+        ini_datetime_string = (
+            start_time +
+            timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
+        end_datetime_string = (
+            start_time + timedelta(hours=hstart) +
+            timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
         setattr(cfg, 'ini_datetime_string', ini_datetime_string)
         setattr(cfg, 'end_datetime_string', end_datetime_string)
         # Set restart directories
@@ -539,17 +583,20 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                         job, job_id)
                     logging.exception(subject)
                     if mail_address:
-                        message = tools.prepare_message(os.path.join(log_working_dir, job))
+                        message = tools.prepare_message(
+                            os.path.join(log_working_dir, job))
                         logging.info('Sending log file to %s' % mail_address)
                         tools.send_mail(mail_address, subject, message)
-                    if try_count ==0:
+                    if try_count == 0:
                         raise RuntimeError(subject)
 
-            if exitcode != 0 or not os.path.exists(os.path.join(log_finished_dir, job)):
-                subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (job,
-                          job_id)
+            if exitcode != 0 or not os.path.exists(
+                    os.path.join(log_finished_dir, job)):
+                subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
+                    job, job_id)
                 if mail_address:
-                    message = tools.prepare_message(os.path.join(log_working_dir, job))
+                    message = tools.prepare_message(
+                        os.path.join(log_working_dir, job))
                     logging.info('Sending log file to %s' % mail_address)
                     tools.send_mail(mail_address, subject, message)
                 raise RuntimeError(subject)

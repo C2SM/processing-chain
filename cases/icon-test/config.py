@@ -1,18 +1,17 @@
 import os
-
 """
 Configuration file for the 'icon-test' case with ICON
 """
 
-# GENERAL SETTINGS =========================================================== 
+# GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
 target = 'icon'
 restart_step = 24  # hours
 
 compute_host = 'daint'
-compute_queue = 'debug' # 'normal' / 'debug'
+compute_queue = 'debug'  # 'normal' / 'debug'
 compute_account = 'em05'
-constraint = 'gpu' # 'mc' / 'gpu'
+constraint = 'gpu'  # 'mc' / 'gpu'
 
 if constraint == 'gpu':
     ntasks_per_node = 12
@@ -55,12 +54,14 @@ icontools_runjobs = [
 # Input data for runscript----------------------------------------------------
 # Grid
 input_root_grid = os.path.join(input_root, 'grid')
-radiation_grid_filename = os.path.join(input_root_grid, "VERIFY_DOM_DOM01.parent.nc")
+radiation_grid_filename = os.path.join(input_root_grid,
+                                       "VERIFY_DOM_DOM01.parent.nc")
 dynamics_grid_filename = os.path.join(input_root_grid, "VERIFY_DOM_DOM01.nc")
 map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
-extpar_filename = os.path.join(input_root_grid, 
-                               "external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc")
-lateral_boundary_grid = os.path.join(input_root_grid, "lateral_boundary.grid.nc")
+extpar_filename = os.path.join(
+    input_root_grid, "external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc")
+lateral_boundary_grid = os.path.join(input_root_grid,
+                                     "lateral_boundary.grid.nc")
 
 input_root_rad = os.path.join(input_root, 'rad')
 cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
@@ -85,7 +86,7 @@ icon_bin = os.path.join(exe_dir, "icon-kit-art_20211018")
 #icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
 icontools_dir = '/scratch/snx3000/msteiner/spack-stages/daint/spack-stage-icontools-master-t524rnfa5sfyn4rbvarypyzwae4jg46d/spack-src/icontools'
 iconremap_bin = os.path.join(icontools_dir, "iconremap")
-iconsub_bin   = os.path.join(icontools_dir, "iconsub")
+iconsub_bin = os.path.join(icontools_dir, "iconsub")
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
@@ -97,7 +98,7 @@ if compute_queue == "normal":
 elif compute_queue == "debug":
     icon_walltime = "00:30:00"
     icon_np_tot = 10
-else: 
+else:
     logging.error("Unknown queue name: %s" % compute_queue)
     sys.exit(1)
 

@@ -192,8 +192,7 @@ def copy_file(source_path, dest_path, output_log=False):
             source_path, dest_path,
             type(e).__name__))
         raise
-    logging.info("Copied {} to {}". format(
-                 source_path, dest_path))
+    logging.info("Copied {} to {}".format(source_path, dest_path))
 
 
 def rename_file(source_path, dest_path, output_log=False):
@@ -218,19 +217,19 @@ def rename_file(source_path, dest_path, output_log=False):
         os.rename(source_path, dest_path)
     except FileNotFoundError:
         logging.error("Source-file not found at {} OR "
-                      "target-directory {} doesn't exist."
-                      .format(source_path, dest_path))
+                      "target-directory {} doesn't exist.".format(
+                          source_path, dest_path))
         raise
     except PermissionError:
         logging.error("Copying file from {} to {} failed due to"
                       "a permission error.".format(source_path, dest_path))
         raise
     except (OSError, Exception) as e:
-        logging.error("Copying {} to {} failed with {}". format(
-                      source_path, dest_path, type(e).__name__))
+        logging.error("Copying {} to {} failed with {}".format(
+            source_path, dest_path,
+            type(e).__name__))
         raise
-    logging.info("Renamed {} to {}". format(
-                 source_path, dest_path))
+    logging.info("Renamed {} to {}".format(source_path, dest_path))
 
 
 def remove_file(dest_path, output_log=False):
@@ -249,19 +248,18 @@ def remove_file(dest_path, output_log=False):
     try:
         os.remove(dest_path)
     except FileNotFoundError:
-        logging.error("Target-file not found at {}."
-                      .format(dest_path))
+        logging.error("Target-file not found at {}.".format(dest_path))
         raise
     except PermissionError:
         logging.error("Removing file {} failed due to"
                       "a permission error.".format(dest_path))
         raise
     except (OSError, Exception) as e:
-        logging.error("Removing {} failed with {}". format(
-                      dest_path, type(e).__name__))
+        logging.error("Removing {} failed with {}".format(
+            dest_path,
+            type(e).__name__))
         raise
-    logging.info("Removed {}". format(
-                 dest_path))
+    logging.info("Removed {}".format(dest_path))
 
 
 class Target(Enum):
@@ -277,15 +275,18 @@ class Subtarget(Enum):
     NONE = auto()
     SPINUP = auto()
 
-str_to_enum = {'cosmo': Target.COSMO,
-               'cosmo-art': Target.COSMOART,
-               'cosmo-ghg': Target.COSMOGHG,
-               'icon': Target.ICON,
-               'icon-art': Target.ICONART,
-               'icon-art-oem': Target.ICONARTOEM,
-               'none': Subtarget.NONE,
-               'spinup': Subtarget.SPINUP,
-               }
+
+str_to_enum = {
+    'cosmo': Target.COSMO,
+    'cosmo-art': Target.COSMOART,
+    'cosmo-ghg': Target.COSMOGHG,
+    'icon': Target.ICON,
+    'icon-art': Target.ICONART,
+    'icon-art-oem': Target.ICONARTOEM,
+    'none': Subtarget.NONE,
+    'spinup': Subtarget.SPINUP,
+}
+
 
 def check_target(cfg, target=Target.COSMO):
     """Check that the target specified in cfg matched the prescribed target.
@@ -360,7 +361,7 @@ def grep(string, filename):
             list_iline.append(iline)
             lo_success = True
 
-    return {"success": lo_success,  "iline" : list_iline, "line" : list_line}
+    return {"success": lo_success, "iline": list_iline, "line": list_line}
 
 
 def check_job_completion(log_finished_dir, job, waittime=3000):
