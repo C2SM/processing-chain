@@ -22,7 +22,7 @@
 # 2017-01-15 Modified for hypatia and project SmartCarb
 # 2018-06-21 Translated to Python (kug)
 # 2021-02-28 Modified for ICON-simulations (stem)
-# 2021-09-xx Modified for ICON-ART-simulations (mjaehn)
+# 2021-11-12 Modified for ICON-ART-simulations (mjaehn)
 
 import os
 import logging

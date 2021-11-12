@@ -9,7 +9,7 @@
 # Michael Jähn, February 2021
 #
 # 2021-04-26 Initial release
-# 2021-08-xx <Update description>
+# 2021-11-21 Updated for ICON-ART
 
 import logging
 import os
