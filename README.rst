@@ -75,15 +75,24 @@ To run the example cases with their standard jobs, type::
 
 or::
 
-    python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 12
+    python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 24
 
 or::
 
-    python run_chain.py icon-test 2018-01-01 0 24
+    python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon
 
 or::
 
-    python run_chain.py icon-oem-test 2018-01-01 0 24
+    python run_chain.py icon-art-test 2018-01-01 0 24 -j prepare_data icon
+    
+or::
+
+    python run_chain.py icon-oem-test 2018-01-01 0 24 -j prepare_data oae icon
+    
+or::
+
+    python run_chain.py icon-oem-ensembles-test 2018-01-01 0 24 -j prepare_data oae icon
+    
       
 Documentation
 *************
