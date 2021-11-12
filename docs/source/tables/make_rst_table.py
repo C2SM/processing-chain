@@ -32,7 +32,7 @@ def maketable(contents):
         assert len(row) == len(max_lengths), ("Row {} has different # of "
                                               "from previous rows".format(i))
         for j, entry in enumerate(row):
-            if (len(entry)+4) > max_lengths[j]:
+            if (len(entry) + 4) > max_lengths[j]:
                 max_lengths[j] = len(entry) + 8
 
     # assemble contents into list of lines
@@ -62,7 +62,7 @@ def maketable(contents):
     return '\n'.join(table)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     contents = read_csv(sys.argv[1])
     table = maketable(contents)
     print(table)

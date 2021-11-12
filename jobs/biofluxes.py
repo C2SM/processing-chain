@@ -3,7 +3,7 @@
 #
 # Create VPRM biogenic fluxes from VPRM and put them into the input folder
 #
-# result in case of success: all VPRM input-files necessary are found in 
+# result in case of success: all VPRM input-files necessary are found in
 #                            ${int2lm_input}/vprm/
 #
 # Dominik Brunner, July 2013
@@ -41,22 +41,27 @@ def main(starttime, hstart, hstop, cfg):
     """
     tools.check_target(cfg, tools.Target.COSMOGHG)
 
-    scratch_path = os.path.join(cfg.int2lm_input,'vprm')
+    scratch_path = os.path.join(cfg.int2lm_input, 'vprm')
 
     tools.create_dir(scratch_path, "biofluxes input")
 
     for time in tools.iter_hours(starttime, hstart, hstop):
         logging.info(time)
-        
+
         for prefix in cfg.vprm_prefix:
-            filename = os.path.join(cfg.vprm_dir, prefix+time.strftime('%Y%m%d%H.nc'))       
-            filename_sc = os.path.join(scratch_path, prefix+time.strftime('%Y%m%d%H.nc'))
+            filename = os.path.join(cfg.vprm_dir,
+                                    prefix + time.strftime('%Y%m%d%H.nc'))
+            filename_sc = os.path.join(scratch_path,
+                                       prefix + time.strftime('%Y%m%d%H.nc'))
             if not (os.path.isfile(filename)):
-                logging.error("File %s not found. Consider using the vprmsplit.py script prior",filename)
+                logging.error(
+                    "File %s not found. Consider using the vprmsplit.py script prior",
+                    filename)
                 #tools.vprmsplit.main(time.strftime("%Y%m%d%H"),cfg.vprm_dir_orig,cfg.vprm_dir_proc,cfg)
 
             tools.copy_file(filename, scratch_path)
 
             if not os.path.isfile(filename_sc):
-                loggig.error("Splitting or copying of GPP or/and RA files to scratch failed.")
-
+                loggig.error(
+                    "Splitting or copying of GPP or/and RA files to scratch failed."
+                )

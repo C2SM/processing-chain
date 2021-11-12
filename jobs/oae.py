@@ -58,8 +58,7 @@ def main(starttime, hstart, hstop, cfg):
     dest_dir = os.path.join(input_dir, "oae")
     tools.create_dir(dest_dir, "online emissions input")
 
-    logging.info("Copying oae files from {} to {}"
-                 .format(oae_dir, dest_dir))
+    logging.info("Copying oae files from {} to {}".format(oae_dir, dest_dir))
 
     if hod_tps:
         tools.copy_file(oae_gridded_emissions_nc,
@@ -83,5 +82,3 @@ def main(starttime, hstart, hstop, cfg):
     if hasattr(cfg, 'oae_ens_lambda_nc'):
         tools.copy_file(os.path.join(oae_dir, cfg.oae_ens_lambda_nc),
                         os.path.join(dest_dir, cfg.oae_ens_lambda_nc))
-
-

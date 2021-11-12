@@ -1,32 +1,33 @@
 import os
 
-# GENERAL SETTINGS =========================================================== 
+# GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
 mail_address = {
     'dbrunner': 'dominik.brunner@empa.ch',
-    'shenne':   'stephan.henne@empa.ch',
-    'mjaehn':   'michael.jaehn@empa.ch',
+    'shenne': 'stephan.henne@empa.ch',
+    'mjaehn': 'michael.jaehn@empa.ch',
     'haussaij': 'jean-matthieu.haussaire@empa.ch',
-    'gkuhl':    'gerrit.kuhlmann@empa.ch',
-    'isuter':   'ivo.suter@empa.ch',
+    'gkuhl': 'gerrit.kuhlmann@empa.ch',
+    'isuter': 'ivo.suter@empa.ch',
     'msteiner': 'michael.steiner@empa.ch',
 }[user]
 
 target = 'icon'
-restart_step = 24 # hours
+restart_step = 24  # hours
 
 compute_host = 'daint'
-compute_queue = 'normal' # 'normal' / 'debug'
+compute_queue = 'normal'  # 'normal' / 'debug'
 compute_account = 'em05'
-constraint = 'mc' # 'mc' / 'gpu'
+constraint = 'mc'  # 'mc' / 'gpu'
 
 if constraint == 'gpu':
     ntasks_per_node = 12
-    mpich_cuda = ('export MPICH_RDMA_ENABLED_CUDA=1\n'
-                  'export MPICH_G2G_PIPELINE=256\n'
-                  'export CRAY_CUDA_MPS=1\n'
-                  'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/nvidia/default/lib64'
-                 ) 
+    mpich_cuda = (
+        'export MPICH_RDMA_ENABLED_CUDA=1\n'
+        'export MPICH_G2G_PIPELINE=256\n'
+        'export CRAY_CUDA_MPS=1\n'
+        'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/nvidia/default/lib64'
+    )
 elif constraint == 'mc':
     ntasks_per_node = 36
     mpich_cuda = ''
@@ -68,17 +69,21 @@ meteo_inc = 3
 #icontools_namelist_remapfields_fc_lbc   = 'icontools_namelist_remapfields_fc_lbc.cfg'
 #icontools_namelist_remap                = 'icontools_namelist_remap.cfg'
 
-icontools_parameter = {'icontools_remap_ic_runjob': 'icontools_remap_ic_runjob.cfg',
-                       'icontools_auxgrid_runjob': 'icontools_auxgrid_runjob.cfg',
-                       'icontools_remap_ana_lbc_runjob': 'icontools_remap_ana_lbc_runjob.cfg',
-                       'icontools_remap_fc_lbc_runjob': 'icontools_remap_fc_lbc_runjob.cfg',
-                       'icontools_remap_aux_runjob': 'icontools_remap_aux_runjob.cfg',
-                       'icontools_namelist_iconsub': 'icontools_namelist_iconsub.cfg',
-                       'icontools_namelist_remapfields_ic': 'icontools_namelist_remapfields_ic.cfg',
-                       'icontools_namelist_remapfields_ana_lbc': 'icontools_namelist_remapfields_ana_lbc.cfg',
-                       'icontools_namelist_remapfields_fc_lbc': 'icontools_namelist_remapfields_fc_lbc.cfg',
-                       'icontools_namelist_remap': 'icontools_namelist_remap.cfg',
-                      }
+icontools_parameter = {
+    'icontools_remap_ic_runjob': 'icontools_remap_ic_runjob.cfg',
+    'icontools_auxgrid_runjob': 'icontools_auxgrid_runjob.cfg',
+    'icontools_remap_ana_lbc_runjob': 'icontools_remap_ana_lbc_runjob.cfg',
+    'icontools_remap_fc_lbc_runjob': 'icontools_remap_fc_lbc_runjob.cfg',
+    'icontools_remap_aux_runjob': 'icontools_remap_aux_runjob.cfg',
+    'icontools_namelist_iconsub': 'icontools_namelist_iconsub.cfg',
+    'icontools_namelist_remapfields_ic':
+    'icontools_namelist_remapfields_ic.cfg',
+    'icontools_namelist_remapfields_ana_lbc':
+    'icontools_namelist_remapfields_ana_lbc.cfg',
+    'icontools_namelist_remapfields_fc_lbc':
+    'icontools_namelist_remapfields_fc_lbc.cfg',
+    'icontools_namelist_remap': 'icontools_namelist_remap.cfg',
+}
 
 # Input data for runscript----------------------------------------------------
 # Grid
@@ -113,7 +118,7 @@ icon_bin = os.path.join(exe_dir, "icon-pgi-20.1.1-cpu-20210215")
 # Icontools executables
 icontools_dir = exe_dir
 iconremap_bin = "iconremap"
-iconsub_bin   = "iconsub"
+iconsub_bin = "iconsub"
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
@@ -127,37 +132,41 @@ if compute_queue == "normal":
 elif compute_queue == "debug":
     icon_walltime = "00:30:00"
     icon_np_tot = 2
-else: 
+else:
     logging.error("Unknown queue name: %s" % compute_queue)
     sys.exit(1)
 
-# POST-PROCESSING ============================================================ 
+# POST-PROCESSING ============================================================
 # REDUCE_OUTPUT --------------------------------------------------------------
 convert_gas = True
 output_levels = 20
 
-# POST_COSMO ----------------------------------------------------------------- 
+# POST_COSMO -----------------------------------------------------------------
 # Root directory where the output of the chain is copied to
-output_root = os.path.join("/store/empa/em05/", user, 
+output_root = os.path.join("/store/empa/em05/", user,
                            "processing_chain_output", casename)
 
-# VERIFY_CHAIN --------------------------------------------------------------- 
+# VERIFY_CHAIN ---------------------------------------------------------------
 reference_dir = os.path.join(input_root, "reference_output")
 
 # If the output file that gets compared to the reference is not at the location
 # that post_icon copied it to, give the path to it here. Else leave it 'None'
 #output_dir = None
-output_dir = os.path.join(work_root, casename, '2018010100_0_24', 'icon', 'output')
+output_dir = os.path.join(work_root, casename, '2018010100_0_24', 'icon',
+                          'output')
 
 # variables_to_check is a dict() with a tuple() of filenames as key and a list
 # of variables-names as value. The tuple consists of the filenames of the two
 # files to check, the list contains the variable-names that are compared.
 # The verify_chain job will look for the files in the reference_dir (first tuple
 # element) and the ouput_dir (second tuple element)
-values_to_check = {("icon-pgi-20.1.1-cpu-20210215-NWP_LAM_DOM01_01000000.nc",
-                    "NWP_LAM_DOM01_01000000.nc") :
-                   ['temp', 'pres', 'u', 'v', 'w', 
-                   ]
-                  }
-
-
+values_to_check = {
+    ("icon-pgi-20.1.1-cpu-20210215-NWP_LAM_DOM01_01000000.nc", "NWP_LAM_DOM01_01000000.nc"):
+    [
+        'temp',
+        'pres',
+        'u',
+        'v',
+        'w',
+    ]
+}

@@ -2,6 +2,7 @@ import numpy as np
 
 from netCDF4 import Dataset
 
+
 class DimensionCopier:
     """Copy netCDF-Dimensions"""
     def __init__(self, src_name, dst_name=None):
@@ -25,8 +26,12 @@ class DimensionCopier:
 
 class VariableCopier:
     """Copy (and possibly alter) netCDF-Variables"""
-    def __init__(self, src_names, dst_name=None,
-                 var_args={}, var_val_indices=np.s_[:], var_attrs={}):
+    def __init__(self,
+                 src_names,
+                 dst_name=None,
+                 var_args={},
+                 var_val_indices=np.s_[:],
+                 var_attrs={}):
         """
         Parameters
         ----------
@@ -117,8 +122,8 @@ class VariableCopier:
             for var_name in self.src_names:
                 if src_dataset[var_name].dimensions != ref_var.dimensions:
                     msg = "Different dimensions:\n{}: {},\n{}: {}.".format(
-                        self.src_names[0], ref_var.dimensions,
-                        var_name, src_dataset[var_name].dimensions)
+                        self.src_names[0], ref_var.dimensions, var_name,
+                        src_dataset[var_name].dimensions)
                     raise ValueError(msg)
 
                 vals += src_dataset[var_name][self.var_val_indices]
@@ -143,8 +148,8 @@ class VariableCopier:
         var_attrs = dict([(name, ref_var.getncattr(name)) for name in ncattrs])
         var_attrs.update(self.var_attrs)
 
-        (VariableCreator(var_args=var_args, var_vals=vals, var_attrs=var_attrs)
-         .apply_to(dst_dataset))
+        (VariableCreator(var_args=var_args, var_vals=vals,
+                         var_attrs=var_attrs).apply_to(dst_dataset))
 
 
 class VariableCreator:
@@ -208,7 +213,7 @@ def copy_nc_dataset(src_filename, dst_filename):
                 copier.apply_to(src, dst)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     srcname = 'emis_2015062600.nc'
     dstname = 'dst2.nc'
 

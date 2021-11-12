@@ -3,7 +3,7 @@
 #
 # Setup the namelist for an ICON tracer run and submit the job to the queue
 #
-# result in case of success: forecast fields found in  
+# result in case of success: forecast fields found in
 #                            ${icon_output}
 #
 # Michael Jähn, February 2021
@@ -60,7 +60,8 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(cfg.icon_work, "icon_work")
     tools.create_dir(cfg.icon_input_oae, "icon_input_oae")
     tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
-    tools.create_dir(cfg.icon_input_icbc_processed, "icon_input_icbc_processed")
+    tools.create_dir(cfg.icon_input_icbc_processed,
+                     "icon_input_icbc_processed")
     tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
     tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping")
     tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
@@ -129,14 +130,13 @@ def main(starttime, hstart, hstop, cfg):
         to_write = input_file.read()
     output_file = os.path.join(cfg.icon_work, "run_icon.job")
     with open(output_file, "w") as outf:
-        outf.write(to_write.format(
-            cfg=cfg,
-            logfile=logfile, logfile_finish=logfile_finish)
-        )
+        outf.write(
+            to_write.format(cfg=cfg,
+                            logfile=logfile,
+                            logfile_finish=logfile_finish))
 
-    exitcode = subprocess.call(["sbatch", "--wait",
-                                os.path.join(cfg.icon_work, 'run_icon.job')])
+    exitcode = subprocess.call(
+        ["sbatch", "--wait",
+         os.path.join(cfg.icon_work, 'run_icon.job')])
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-
-

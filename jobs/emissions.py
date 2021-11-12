@@ -3,7 +3,7 @@
 #
 # Create anthropogenic emissions and put them into the input folder
 #
-# Result in case of success: all emission input-files necessary are found in 
+# Result in case of success: all emission input-files necessary are found in
 #                            ${int2lm_input}/emissions/
 #
 # Dominik Brunner, July 2013
@@ -67,12 +67,11 @@ def main(starttime, hstart, hstop, cfg):
     for i, (emis_dir, emis_prefix) in enumerate(zip(emis_dirs, emis_prefixes)):
         # create directory
         if i == 0:
-            target_dir = os.path.join(cfg.int2lm_input,
-                                      "emissions")
+            target_dir = os.path.join(cfg.int2lm_input, "emissions")
             tools.create_dir(target_dir, "emissions input")
         else:
             target_dir = os.path.join(cfg.int2lm_input,
-                                      "emissions" + str(i+1))
+                                      "emissions" + str(i + 1))
             tools.create_dir(target_dir, "emissions input")
         # copy data
         for time in tools.iter_hours(starttime, hstart, hstop):

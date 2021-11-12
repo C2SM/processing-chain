@@ -106,7 +106,7 @@ def perturb_bg_in_dataset(nc_dataset, lambdas):
     attrs = dict((name, basevar.getncattr(name)) for name in attr_names)
 
     for i, lambda_ in enumerate(lambdas):
-        name = basevar_name + '{:03d}'.format(i+1)
+        name = basevar_name + '{:03d}'.format(i + 1)
         var = nc_dataset.createVariable(varname=name,
                                         datatype=dtype,
                                         dimensions=dims,
@@ -157,8 +157,8 @@ def perturb_bgs_in_dir(lambdas_nc, directory):
                     with Dataset(entry.path, 'a') as nc_dataset:
                         perturb_bg_in_dataset(nc_dataset, lambdas)
                 except OSError:
-                    logging.info("File {} is not a netCDF-file."
-                                 .format(entry.name))
+                    logging.info("File {} is not a netCDF-file.".format(
+                        entry.name))
 
 
 def main(starttime, hstart, hstop, cfg):
@@ -187,8 +187,8 @@ def main(starttime, hstart, hstop, cfg):
     create_dir_and_copy_input(dest_dir=dest_dir,
                               lambdas_src=cfg.octe_lambdas,
                               maps_src=cfg.octe_maps)
-    logging.info("Copied OCTE files {} and {} to {}"
-                 .format(cfg.octe_lambdas, cfg.octe_maps, dest_dir))
+    logging.info("Copied OCTE files {} and {} to {}".format(
+        cfg.octe_lambdas, cfg.octe_maps, dest_dir))
 
     logging.info("Starting to create BG-ensembles in " + cfg.int2lm_output)
     perturb_bgs_in_dir(cfg.octe_lambdas, cfg.int2lm_output)

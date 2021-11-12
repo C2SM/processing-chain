@@ -9,7 +9,7 @@ import logging
 import os
 import shutil
 import datetime
-import glob 
+import glob
 from subprocess import call
 
 from . import tools
@@ -17,27 +17,21 @@ from . import tools
 
 def logfile_header_template():
     """Returns a template for the logfile-header"""
-    return (
-    "\n=====================================================\n"
-    "============== POST PROCESSING {}\n"
-    "============== {}\n"
-    "=====================================================\n\n"
-    )
+    return ("\n=====================================================\n"
+            "============== POST PROCESSING {}\n"
+            "============== {}\n"
+            "=====================================================\n\n")
 
 
 def runscript_header_template():
     """Returns a template for the runscript-header (#SBATCH-directives)"""
-    return '\n'.join(
-        ["#SBATCH --job-name=post_cosmo",
-         "#SBATCH --partition=xfer",
-         "#SBATCH --constraint={constraint}",
-         "#SBATCH --account={compute_account}",
-         "#SBATCH --output={logfile}",
-         "#SBATCH --open-mode=append",
-         "#SBATCH --chdir={cosmo_work}",
-         "#SBATCH --time=00:30:00",
-         "",
-         ""])
+    return '\n'.join([
+        "#SBATCH --job-name=post_cosmo", "#SBATCH --partition=xfer",
+        "#SBATCH --constraint={constraint}",
+        "#SBATCH --account={compute_account}", "#SBATCH --output={logfile}",
+        "#SBATCH --open-mode=append", "#SBATCH --chdir={cosmo_work}",
+        "#SBATCH --time=00:30:00", "", ""
+    ])
 
 
 def runscript_commands_template():
@@ -48,12 +42,13 @@ def runscript_commands_template():
     template).
     """
     commands = list()
-    
-    return '\n'.join(
-        ["srun cp -Raf {int2lm_work_src}/. {int2lm_work_dest}/",
-         "srun cp -Raf {cosmo_work_src}/. {cosmo_work_dest}/",
-         "srun cp -Raf {cosmo_output_src}/. {cosmo_output_dest}/",
-         "srun cp -Raf {logs_src}/. {logs_dest}/"])
+
+    return '\n'.join([
+        "srun cp -Raf {int2lm_work_src}/. {int2lm_work_dest}/",
+        "srun cp -Raf {cosmo_work_src}/. {cosmo_work_dest}/",
+        "srun cp -Raf {cosmo_output_src}/. {cosmo_output_dest}/",
+        "srun cp -Raf {logs_src}/. {logs_dest}/"
+    ])
 
 
 def main(starttime, hstart, hstop, cfg):
@@ -80,32 +75,34 @@ def main(starttime, hstart, hstop, cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    if cfg.compute_host!="daint":
+    if cfg.compute_host != "daint":
         logging.error("The copy script is supposed to be run on daint only,"
                       "not on {}".format(cfg.compute_host))
         raise RuntimeError("Wrong compute host for copy-script")
 
-    logfile=os.path.join(cfg.log_working_dir,"post_cosmo")
+    logfile = os.path.join(cfg.log_working_dir, "post_cosmo")
     cosmo_work_dir = cfg.cosmo_work
     runscript_path = os.path.join(cfg.cosmo_work, "post_cosmo.job")
-    copy_path = os.path.join(cfg.output_root, starttime.strftime('%Y%m%d%H')+
-                             "_"+str(int(hstart))+"_"+str(int(hstop)))
+    copy_path = os.path.join(
+        cfg.output_root,
+        starttime.strftime('%Y%m%d%H') + "_" + str(int(hstart)) + "_" +
+        str(int(hstop)))
 
-    logging.info(logfile_header_template()
-                 .format("STARTS",
-                         str(datetime.datetime.today())))
+    logging.info(logfile_header_template().format(
+        "STARTS", str(datetime.datetime.today())))
 
     # Prepare the runscript
     runscript_content = "#!/bin/bash\n"
     runscript_content += runscript_header_template().format(
-        compute_account = cfg.compute_account,
-        logfile = logfile,
-        constraint = cfg.constraint,
-        cosmo_work = cfg.cosmo_work)
+        compute_account=cfg.compute_account,
+        logfile=logfile,
+        constraint=cfg.constraint,
+        cosmo_work=cfg.cosmo_work)
 
     if os.path.isdir(cfg.cosmo_output_reduced):
         cosmo_output_src = cfg.cosmo_output_reduced.rstrip('/')
-        cosmo_output_dest = os.path.join(copy_path, "cosmo_output_reduced").rstrip('/')
+        cosmo_output_dest = os.path.join(copy_path,
+                                         "cosmo_output_reduced").rstrip('/')
     else:
         cosmo_output_src = cfg.cosmo_output.rstrip('/')
         cosmo_output_dest = os.path.join(copy_path, "cosmo_output").rstrip('/')
@@ -118,22 +115,22 @@ def main(starttime, hstart, hstop, cfg):
 
     # Format the runscript
     runscript_content += runscript_commands_template().format(
-        target_dir = copy_path.rstrip('/'),
-        int2lm_work_src = cfg.int2lm_work.rstrip('/'),
-        int2lm_work_dest = os.path.join(copy_path, "int2lm_run").rstrip('/'),
-        cosmo_work_src = cfg.cosmo_work.rstrip('/'),
-        cosmo_work_dest = os.path.join(copy_path, "cosmo_run").rstrip('/'),
-        cosmo_output_src = cosmo_output_src,
-        cosmo_output_dest = cosmo_output_dest,
-        logs_src = cfg.log_finished_dir.rstrip('/'),
-        logs_dest = os.path.join(copy_path, "logs").rstrip('/'))
+        target_dir=copy_path.rstrip('/'),
+        int2lm_work_src=cfg.int2lm_work.rstrip('/'),
+        int2lm_work_dest=os.path.join(copy_path, "int2lm_run").rstrip('/'),
+        cosmo_work_src=cfg.cosmo_work.rstrip('/'),
+        cosmo_work_dest=os.path.join(copy_path, "cosmo_run").rstrip('/'),
+        cosmo_output_src=cosmo_output_src,
+        cosmo_output_dest=cosmo_output_dest,
+        logs_src=cfg.log_finished_dir.rstrip('/'),
+        logs_dest=os.path.join(copy_path, "logs").rstrip('/'))
 
     # Wait for Cosmo to finish first
-    tools.check_job_completion(cfg.log_finished_dir,"cosmo")
+    tools.check_job_completion(cfg.log_finished_dir, "cosmo")
 
     with open(runscript_path, "w") as script:
         script.write(runscript_content)
-    
+
     logging.info("Submitting the copy job to the xfer queue")
     logging.info("Make sure you have the module 'xalt' unloaded!")
 
@@ -141,16 +138,14 @@ def main(starttime, hstart, hstop, cfg):
 
     if sbatch_wait:
         exitcode = call(["sbatch", "--wait", runscript_path])
-        logging.info(logfile_header_template()
-                     .format("ENDS",
-                             str(datetime.datetime.today())))
+        logging.info(logfile_header_template().format(
+            "ENDS", str(datetime.datetime.today())))
 
         # copy own logfile aswell
         tools.copy_file(logfile, os.path.join(copy_path, "logs/"))
 
     else:
         exitcode = call(["sbatch", runscript_path])
-        
+
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-

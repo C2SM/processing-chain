@@ -11,8 +11,8 @@ import sys
 def art_control(nart_ds, nart_trcr, hstart=0):
     lines = [
         "&ARTCONTROL",
-        "  nart_ds = %d," % nart_ds,       # number of dataset groups
-        "  nart_trcr = %d," % nart_trcr,   # number of tracers groups
+        "  nart_ds = %d," % nart_ds,  # number of dataset groups
+        "  nart_trcr = %d," % nart_trcr,  # number of tracers groups
         "  hstart = %d," % hstart,
         "/"
     ]
@@ -36,7 +36,10 @@ def make_group(keys, values, group):
 
 def read_file(filename):
     with open(filename, 'r') as csv_file:
-        lines = [line[1:] for line in csv.reader(csv_file) if not line[0].startswith('#')]
+        lines = [
+            line[1:] for line in csv.reader(csv_file)
+            if not line[0].startswith('#')
+        ]
 
     return lines[0], lines[1:]
 
@@ -91,16 +94,27 @@ def main(trcr_filename, set_filename, nml_filename, hstart=0):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Write INPUT_ART for int2lm.')
 
-    parser.add_argument('-t', dest='trcr_filename', default=None,
-                        type=str, help='filename of csv file with tracers')
-    parser.add_argument('-d', dest='datasets_filename', default=None,
-                        type=str, help='filename of csv file with datasets')
-    parser.add_argument('-o', dest='nml_filename', default='INPUT_ART',
-                        type=str, help='output filename (INPUT_ART)')
-    parser.add_argument('-m', dest='meteo_spinup', default=0,
-                        type=float, help='meteorology spin up')
+    parser.add_argument('-t',
+                        dest='trcr_filename',
+                        default=None,
+                        type=str,
+                        help='filename of csv file with tracers')
+    parser.add_argument('-d',
+                        dest='datasets_filename',
+                        default=None,
+                        type=str,
+                        help='filename of csv file with datasets')
+    parser.add_argument('-o',
+                        dest='nml_filename',
+                        default='INPUT_ART',
+                        type=str,
+                        help='output filename (INPUT_ART)')
+    parser.add_argument('-m',
+                        dest='meteo_spinup',
+                        default=0,
+                        type=float,
+                        help='meteorology spin up')
 
     args = parser.parse_args()
-    main(args.trcr_filename, args.datasets_filename,
-         args.nml_filename, args.meteo_spinup)
-
+    main(args.trcr_filename, args.datasets_filename, args.nml_filename,
+         args.meteo_spinup)

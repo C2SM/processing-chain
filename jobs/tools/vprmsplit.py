@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
 Script to extract VPRM emissions for a single day
 and to convert the output into an int2lm compatible format.
@@ -30,6 +29,7 @@ from netCDF4 import Dataset
 from datetime import datetime
 from datetime import timedelta
 import logging
+
 
 def main(year, ipath, opath):
     """
@@ -86,59 +86,63 @@ def main(year, ipath, opath):
     # Change fluxes from umol m-2 s-1 to kg m-2 s-1 for RESP
     resp *= 1e-9 * m_co2
 
-    print (hours)
+    print(hours)
     for ti, hour in enumerate(hours):
 
-        begin_of_year_dt = datetime.strptime(year[:4]+'0101', '%Y%m%d')
+        begin_of_year_dt = datetime.strptime(year[:4] + '0101', '%Y%m%d')
         curdate_dt = begin_of_year_dt + timedelta(hours=int(hour))
         curdate_str = datetime.strftime(curdate_dt, '%Y%m%d%H')
         print(curdate_dt)
 
-        ofile_gpp = Dataset(opath+'/gpp_'+curdate_str+'.nc', mode='w')
+        ofile_gpp = Dataset(opath + '/gpp_' + curdate_str + '.nc', mode='w')
 
         olat = ofile_gpp.createDimension('lat', len(lat))
         olon = ofile_gpp.createDimension('lon', len(lon))
         otime = ofile_gpp.createDimension('time', 1)
 
-        olat = ofile_gpp.createVariable('lat', np.float64, ('lat',))
-        olon = ofile_gpp.createVariable('lon', np.float64, ('lon',))
-        otime = ofile_gpp.createVariable('time', np.float64, ('time',))
-        otime.units = ''.join(['seconds since ',year,'-01-01 00:00:00'])
+        olat = ofile_gpp.createVariable('lat', np.float64, ('lat', ))
+        olon = ofile_gpp.createVariable('lon', np.float64, ('lon', ))
+        otime = ofile_gpp.createVariable('time', np.float64, ('time', ))
+        otime.units = ''.join(['seconds since ', year, '-01-01 00:00:00'])
         otime.calendar = 'proleptic_gregorian'
 
-        ogpp = ofile_gpp.createVariable('CO2_GPP_F', np.float32, ('time','lat','lon'),fill_value=-999.99)
+        ogpp = ofile_gpp.createVariable('CO2_GPP_F',
+                                        np.float32, ('time', 'lat', 'lon'),
+                                        fill_value=-999.99)
         ogpp.units = 'kg m-2 s-1'
         ogpp.long_name = 'surface upward mass flux of GPP CO2'
         ogpp.standard_name = 'surface_upward_mass_flux_of_gpp_carbon_dioxide'
 
-        olat[:] = lat + dx/2.
-        olon[:] = lon + dy/2.
-        otime[:] = int((curdate_dt-begin_of_year_dt).total_seconds())
-        ogpp[:] = gpp[ti,:]
+        olat[:] = lat + dx / 2.
+        olon[:] = lon + dy / 2.
+        otime[:] = int((curdate_dt - begin_of_year_dt).total_seconds())
+        ogpp[:] = gpp[ti, :]
 
         ofile_gpp.close()
 
-        ofile_resp = Dataset(opath+'/ra_'+curdate_str+'.nc', mode='w')
+        ofile_resp = Dataset(opath + '/ra_' + curdate_str + '.nc', mode='w')
 
         olat = ofile_resp.createDimension('lat', len(lat))
         olon = ofile_resp.createDimension('lon', len(lon))
         otime = ofile_resp.createDimension('time', 1)
 
-        olat = ofile_resp.createVariable('lat', np.float64, ('lat',))
-        olon = ofile_resp.createVariable('lon', np.float64, ('lon',))
-        otime = ofile_resp.createVariable('time', np.float64, ('time',))
-        otime.units = ''.join(['seconds since ',year,'-01-01 00:00:00'])
+        olat = ofile_resp.createVariable('lat', np.float64, ('lat', ))
+        olon = ofile_resp.createVariable('lon', np.float64, ('lon', ))
+        otime = ofile_resp.createVariable('time', np.float64, ('time', ))
+        otime.units = ''.join(['seconds since ', year, '-01-01 00:00:00'])
         otime.calendar = 'proleptic_gregorian'
 
-        oresp = ofile_resp.createVariable('CO2_RA_F', np.float32, ('time','lat','lon'),fill_value=-999.99)
+        oresp = ofile_resp.createVariable('CO2_RA_F',
+                                          np.float32, ('time', 'lat', 'lon'),
+                                          fill_value=-999.99)
         oresp.units = 'kg m-2 s-1'
         oresp.long_name = 'surface upward mass flux of respiration CO2'
         oresp.standard_name = 'surface_upward_mass_flux_of_respiration_carbon_dioxide'
 
-        olat[:] = lat + dx/2.
-        olon[:] = lon + dy/2.
-        otime[:] = int((curdate_dt-begin_of_year_dt).total_seconds())
-        oresp[:] = resp[ti,:]
+        olat[:] = lat + dx / 2.
+        olon[:] = lon + dy / 2.
+        otime[:] = int((curdate_dt - begin_of_year_dt).total_seconds())
+        oresp[:] = resp[ti, :]
 
         ofile_resp.close()
 
@@ -147,5 +151,5 @@ if __name__ == '__main__':
 
     year = sys.argv[1]
     ipath = sys.argv[2]
-    opath = sys.argv[3]  
+    opath = sys.argv[3]
     main(year, ipath, opath)
