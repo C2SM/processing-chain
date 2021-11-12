@@ -62,40 +62,49 @@ def extract_data(in_path, time_index, dim_ops, var_ops, out_path_template):
             of.createDimension(dimname='time', size=1)
 
             # Create time variable
-            (VariableCreator(var_args={'varname': 'time',
-                                       'datatype': 'f8'},
-                             var_attrs={'axis': 'T',
-                                        'calendar': 'proleptic_gregorian',
-                                        'long_name': 'simulation_time',
-                                        'standard_name': 'time',
-                                        'units': timestamp.strftime(
-                                            'seconds since %Y-%m-%d %H:%M:%S')},
-                             var_vals=0)
-             .apply_to(of))
+            (VariableCreator(
+                var_args={
+                    'varname': 'time',
+                    'datatype': 'f8'
+                },
+                var_attrs={
+                    'axis': 'T',
+                    'calendar': 'proleptic_gregorian',
+                    'long_name': 'simulation_time',
+                    'standard_name': 'time',
+                    'units':
+                    timestamp.strftime('seconds since %Y-%m-%d %H:%M:%S')
+                },
+                var_vals=0).apply_to(of))
 
             # Create date variable
-            (VariableCreator(var_args={'varname': 'date',
-                                       'datatype': 'i4',
-                                       'dimensions': ('time', )},
-                             var_attrs={'long_name': ('current date as 8 digit'
-                                                      ' integer (YYYYMMDD)')},
-                             var_vals=int(timestamp.strftime('%Y%m%d')))
-             .apply_to(of))
+            (VariableCreator(var_args={
+                'varname': 'date',
+                'datatype': 'i4',
+                'dimensions': ('time', )
+            },
+                             var_attrs={
+                                 'long_name': ('current date as 8 digit'
+                                               ' integer (YYYYMMDD)')
+                             },
+                             var_vals=int(
+                                 timestamp.strftime('%Y%m%d'))).apply_to(of))
 
             # Create datesec variable
-            sec_from_midnight = ((timestamp - timestamp.replace(hour=0,
-                                                                minute=0,
-                                                                second=0,
-                                                                microsecond=0))
-                                 .total_seconds())
-            (VariableCreator(var_args={'varname': 'datesec',
-                                       'datatype': 'i4',
-                                       'dimensions': ('time', )},
-                             var_attrs={'long_name': ('seconds to complete',
-                                                      'current date'),
-                                        'units': 's'},
-                             var_vals=sec_from_midnight)
-             .apply_to(of))
+            sec_from_midnight = ((timestamp - timestamp.replace(
+                hour=0, minute=0, second=0, microsecond=0)).total_seconds())
+            (VariableCreator(var_args={
+                'varname': 'datesec',
+                'datatype': 'i4',
+                'dimensions': ('time', )
+            },
+                             var_attrs={
+                                 'long_name':
+                                 ('seconds to complete', 'current date'),
+                                 'units':
+                                 's'
+                             },
+                             var_vals=sec_from_midnight).apply_to(of))
 
             # Transfer specified dimensions and variables
             for op in dim_ops + var_ops:
@@ -130,155 +139,136 @@ def main(_, infile, outdir, params):
     """
     outname_template = join(outdir, params['suffix'] + '_%Y%m%d%H.nc')
 
-    dimpairs = [('lev',     # name in src
-                 'level'),  # name in dst
-                ('lat',
-                 'lat'),
-                ('lon',
-                 'lon'),
-                ('ilev',
-                 'ilev')]
+    dimpairs = [
+        (
+            'lev',  # name in src
+            'level'),  # name in dst
+        ('lat', 'lat'),
+        ('lon', 'lon'),
+        ('ilev', 'ilev')
+    ]
 
-    dim_copiers = [DimensionCopier(src_name, dst_name)
-                   for src_name, dst_name in dimpairs]
+    dim_copiers = [
+        DimensionCopier(src_name, dst_name) for src_name, dst_name in dimpairs
+    ]
 
-    varpairs_to_copy = [(['CH3CHO_VMR_inst', 'GLYALD_VMR_inst'],
-                         'ALD'),
-                        ('CO_VMR_inst',  # name in src, lists added toghether
-                         'CO'),          # name in dst
-                        ('CRESOL_VMR_inst',
-                         'CSL'),
-                        ('C2H6_VMR_inst',
-                         'ETH'),
-                        ('GLYOXAL_VMR_inst',
-                         'GLY'),
-                        ('H2O2_VMR_inst',
-                         'H2O2'),
-                        ('C3H8_VMR_inst',
-                         'HC3'),
-                        ('HNO3_VMR_inst',
-                         'HNO3'),
-                        ('BIGALK_VMR_inst',
-                         'HC5'),
-                        ('CH2O_VMR_inst',
-                         'HCHO'),
-                        ('HO2NO2_VMR_inst',
-                         'HNO4'),
-                        ('HO2_VMR_inst',
-                         'HO2'),
-                        ('ISOP_VMR_inst',
-                         'ISO'),
-                        (['CH3COCH3_VMR_inst',
-                          'HYAC_VMR_inst',
-                          'MEK_VMR_inst'],
-                         'KET'),
-                        (['MVK_VMR_inst', 'MACR_VMR_inst'],
-                         'MACR'),
-                        ('CH3COCHO_VMR_inst',
-                         'MGLY'),
-                        ('MPAN_VMR_inst',
-                         'MPAN'),
-                        ('N2O5_VMR_inst',
-                         'N2O5'),
-                        ('NH3_VMR_inst',
-                         'NH3'),
-                        ('NO_VMR_inst',
-                         'NO'),
-                        ('NO2_VMR_inst',
-                         'NO2'),
-                        ('NO3_VMR_inst',
-                         'NO3'),
-                        ('OH_VMR_inst',
-                         'OH'),
-                        ('C2H4_VMR_inst',
-                         'OL2'),
-                        ('ONIT_VMR_inst',
-                         'ONIT'),
-                        ('CH3OOH_VMR_inst',
-                         'OP1'),
-                        ('C2H5OOH_VMR_inst',
-                         'OP2'),
-                        ('CH3COOH_VMR_inst',
-                         'ORA2'),
-                        ('O3_VMR_inst',
-                         'OZONE'),
-                        ('CH3COOOH_VMR_inst',
-                         'PAA'),
-                        ('PAN_VMR_inst',
-                         'PAN'),
-                        ('SO2_VMR_inst',
-                         'SO2'),
-                        ('T',
-                         'T'),
-                        ('TOLUENE_VMR_inst',
-                         'TOL'),
-                        ('DUST1',
-                         'VSOILA'),
-                        ('DUST2',
-                         'VSOILB'),
-                        ('DUST3',
-                         'VSOILC')]
+    varpairs_to_copy = [
+        (['CH3CHO_VMR_inst', 'GLYALD_VMR_inst'], 'ALD'),
+        (
+            'CO_VMR_inst',  # name in src, lists added toghether
+            'CO'),  # name in dst
+        ('CRESOL_VMR_inst', 'CSL'),
+        ('C2H6_VMR_inst', 'ETH'),
+        ('GLYOXAL_VMR_inst', 'GLY'),
+        ('H2O2_VMR_inst', 'H2O2'),
+        ('C3H8_VMR_inst', 'HC3'),
+        ('HNO3_VMR_inst', 'HNO3'),
+        ('BIGALK_VMR_inst', 'HC5'),
+        ('CH2O_VMR_inst', 'HCHO'),
+        ('HO2NO2_VMR_inst', 'HNO4'),
+        ('HO2_VMR_inst', 'HO2'),
+        ('ISOP_VMR_inst', 'ISO'),
+        (['CH3COCH3_VMR_inst', 'HYAC_VMR_inst', 'MEK_VMR_inst'], 'KET'),
+        (['MVK_VMR_inst', 'MACR_VMR_inst'], 'MACR'),
+        ('CH3COCHO_VMR_inst', 'MGLY'),
+        ('MPAN_VMR_inst', 'MPAN'),
+        ('N2O5_VMR_inst', 'N2O5'),
+        ('NH3_VMR_inst', 'NH3'),
+        ('NO_VMR_inst', 'NO'),
+        ('NO2_VMR_inst', 'NO2'),
+        ('NO3_VMR_inst', 'NO3'),
+        ('OH_VMR_inst', 'OH'),
+        ('C2H4_VMR_inst', 'OL2'),
+        ('ONIT_VMR_inst', 'ONIT'),
+        ('CH3OOH_VMR_inst', 'OP1'),
+        ('C2H5OOH_VMR_inst', 'OP2'),
+        ('CH3COOH_VMR_inst', 'ORA2'),
+        ('O3_VMR_inst', 'OZONE'),
+        ('CH3COOOH_VMR_inst', 'PAA'),
+        ('PAN_VMR_inst', 'PAN'),
+        ('SO2_VMR_inst', 'SO2'),
+        ('T', 'T'),
+        ('TOLUENE_VMR_inst', 'TOL'),
+        ('DUST1', 'VSOILA'),
+        ('DUST2', 'VSOILB'),
+        ('DUST3', 'VSOILC')
+    ]
 
-    varpairs_to_copy_dimchange = [('NH4_VMR_inst',
-                                   'VNH4Jm'),
-                                  (['OC1_VMR_inst', 'OC2_VMR_inst'],
-                                   'VORG1Jm'),
-                                  ('SO4_VMR_inst',
-                                   'VSO4Jm'),
-                                  (['CB1_VMR_inst', 'CB2_VMR_inst'],
-                                   'VSOOTJ')]
+    varpairs_to_copy_dimchange = [('NH4_VMR_inst', 'VNH4Jm'),
+                                  (['OC1_VMR_inst',
+                                    'OC2_VMR_inst'], 'VORG1Jm'),
+                                  ('SO4_VMR_inst', 'VSO4Jm'),
+                                  (['CB1_VMR_inst', 'CB2_VMR_inst'], 'VSOOTJ')]
 
     for time_index in range(Dataset(infile).dimensions['time'].size):
         # Have to give dimensions explicitly because 'lev' changes to 'level'
         # Have to give var_val_indices explicitly because we only copy one
         # time index
-        spacial_variable_options = {'var_args': {'dimensions': ('time',
-                                                                'level',
-                                                                'lat',
-                                                                'lon')},
-                                    'var_val_indices': np.s_[time_index, :]}
+        spacial_variable_options = {
+            'var_args': {
+                'dimensions': ('time', 'level', 'lat', 'lon')
+            },
+            'var_val_indices': np.s_[time_index, :]
+        }
 
         # 3D variables that simply get copied
-        var_opts = [{'src_names': src,
-                     'dst_name': dst,
-                     **spacial_variable_options}
-                    for src, dst in varpairs_to_copy]
+        var_opts = [{
+            'src_names': src,
+            'dst_name': dst,
+            **spacial_variable_options
+        } for src, dst in varpairs_to_copy]
 
         # 3D variables with dimchange to mol/mol
-        var_opts += [{'src_names': src,
-                      'dst_name': dst,
-                      'var_attrs': {'units': 'mol/mol'},
-                      **spacial_variable_options}
-                     for src, dst in varpairs_to_copy_dimchange]
+        var_opts += [{
+            'src_names': src,
+            'dst_name': dst,
+            'var_attrs': {
+                'units': 'mol/mol'
+            },
+            **spacial_variable_options
+        } for src, dst in varpairs_to_copy_dimchange]
 
         # Others
-        var_opts += [{'src_names': 'lat',
-                      'dst_name': 'lat'},
-                     {'src_names': 'lev',
-                      'dst_name': 'level',
-                      'var_args': {'dimensions': ('level', )}},
-                     {'src_names': 'lon',
-                      'dst_name': 'lon'},
-                     {'src_names': 'P0',
-                      'dst_name': 'P0'},
-                     {'src_names': 'PS',
-                      'dst_name': 'PSURF',
-                      'var_args': {'dimensions': ('time', 'lat', 'lon')},
-                      'var_val_indices': np.s_[time_index, :]},
-                     {'src_names': 'hyam',
-                      'dst_name': 'hyam',
-                      'var_args': {'dimensions': ('level', )}},
-                     {'src_names': 'hybm',
-                      'dst_name': 'hybm',
-                      'var_args': {'dimensions': ('level', )}},
-                     {'src_names': 'ilev',
-                      'dst_name': 'ilev'}]
+        var_opts += [{
+            'src_names': 'lat',
+            'dst_name': 'lat'
+        }, {
+            'src_names': 'lev',
+            'dst_name': 'level',
+            'var_args': {
+                'dimensions': ('level', )
+            }
+        }, {
+            'src_names': 'lon',
+            'dst_name': 'lon'
+        }, {
+            'src_names': 'P0',
+            'dst_name': 'P0'
+        }, {
+            'src_names': 'PS',
+            'dst_name': 'PSURF',
+            'var_args': {
+                'dimensions': ('time', 'lat', 'lon')
+            },
+            'var_val_indices': np.s_[time_index, :]
+        }, {
+            'src_names': 'hyam',
+            'dst_name': 'hyam',
+            'var_args': {
+                'dimensions': ('level', )
+            }
+        }, {
+            'src_names': 'hybm',
+            'dst_name': 'hybm',
+            'var_args': {
+                'dimensions': ('level', )
+            }
+        }, {
+            'src_names': 'ilev',
+            'dst_name': 'ilev'
+        }]
 
-        var_copiers = [VariableCopier(**kwargs)
-                       for kwargs in var_opts]
+        var_copiers = [VariableCopier(**kwargs) for kwargs in var_opts]
 
-        extract_data(infile,
-                     time_index,
-                     dim_copiers,
-                     var_copiers,
+        extract_data(infile, time_index, dim_copiers, var_copiers,
                      outname_template)

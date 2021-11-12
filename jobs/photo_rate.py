@@ -7,7 +7,8 @@ import shutil
 
 from . import tools
 
-def main(starttime,hstart,hstop,cfg):
+
+def main(starttime, hstart, hstop, cfg):
     """Copy photolysis-rate file to the **COSMOART** input directory.
 
     Only necessary for **COSMOART** simulations.
@@ -27,12 +28,10 @@ def main(starttime,hstart,hstop,cfg):
         Object holding all user-configuration parameters as attributes
     """
     tools.check_target(cfg, tools.Target.COSMOART)
-    
-    logging.info("Copying photolysis-rate file from {} to {}"
-                 .format(cfg.photo_rate_file,
-                         os.path.join(cfg.cosmo_input,
-                                      "art_photolysis",
-                                      "papa_data.p")))
+
+    logging.info("Copying photolysis-rate file from {} to {}".format(
+        cfg.photo_rate_file,
+        os.path.join(cfg.cosmo_input, "art_photolysis", "papa_data.p")))
 
     tools.create_dir(os.path.join(cfg.cosmo_input, "art_photolysis"),
                      "photolysis rate input")

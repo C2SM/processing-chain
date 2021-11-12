@@ -34,12 +34,12 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(dest_dir, "input data for vprm")
 
     modis_data_nc = os.path.join(modis_dir, cfg.modis_filename)
-    logging.info("Copying MODIS file from {} to {}"
-                 .format(modis_dir, dest_dir))
+    logging.info("Copying MODIS file from {} to {}".format(
+        modis_dir, dest_dir))
     tools.copy_file(modis_data_nc, os.path.join(dest_dir, dest_modis))
 
     vegetation_data_nc = os.path.join(vegetation_dir, cfg.vegetation_filename)
-    logging.info("Copying vegetation class fraction file from {} to {}"
-                 .format(vegetation_dir, dest_dir))
-    tools.copy_file(vegetation_data_nc, os.path.join(dest_dir, dest_vegetation))
-
+    logging.info("Copying vegetation class fraction file from {} to {}".format(
+        vegetation_dir, dest_dir))
+    tools.copy_file(vegetation_data_nc, os.path.join(dest_dir,
+                                                     dest_vegetation))

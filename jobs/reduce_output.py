@@ -5,7 +5,7 @@ import logging
 import os
 import shutil
 import datetime as dt
-import glob 
+import glob
 import netCDF4 as nc
 import subprocess
 import numpy as np
@@ -60,24 +60,25 @@ def main(starttime, hstart, hstop, cfg):
 =====================================================
 ============== POST PROCESSING BEGINS ===============
 ============== StartTime: %s 
-=====================================================""" %date.strftime("%s")
-    
+=====================================================""" % date.strftime("%s")
+
     logging.info(to_print)
-    
+
     tools.create_dir(output_path, "output")
 
-    if cfg.compute_host!="daint":
-        logging.error("The reduce_output script is supposed to be run on daint only, "
-                      "not on %s" % cfg.compute_host)
+    if cfg.compute_host != "daint":
+        logging.error(
+            "The reduce_output script is supposed to be run on daint only, "
+            "not on %s" % cfg.compute_host)
         sys.exit(1)
 
     # Wait for Cosmo to finish first
-    tools.check_job_completion(cfg.log_finished_dir,"cosmo")
-        
+    tools.check_job_completion(cfg.log_finished_dir, "cosmo")
     """Get list of constant files"""
     cfiles = []
     read_cfile = False
-    for infile in sorted(glob.glob(os.path.join(cosmo_output, "lffd*[0-9]c*.nc"))): 
+    for infile in sorted(
+            glob.glob(os.path.join(cosmo_output, "lffd*[0-9]c*.nc"))):
         cfiles.append(infile)
         if not read_cfile:
             # Read the first constant file and store height value
@@ -89,76 +90,79 @@ def main(starttime, hstart, hstop, cfg):
 
     if not read_cfile:
         logging.error('Constant file could not be read')
-
     """Copy constant file directly"""
     if os.path.exists(cfiles[0]):
-        shutil.copy(cfiles[0], output_path)  
-        logging.info('Copied constant file %s to %s.' % (cfiles[0], output_path))
+        shutil.copy(cfiles[0], output_path)
+        logging.info('Copied constant file %s to %s.' %
+                     (cfiles[0], output_path))
     else:
         logging.error('Constant file could not be copied.')
-
     """Get list of files"""
     infiles = sorted(glob.glob(os.path.join(cosmo_output, "lffd*.nc")))
     mytimes = []
     for infile in list(infiles):
         basename = os.path.split(infile)[1]
-        timestr = basename.split('lffd',1)[1][:10]
+        timestr = basename.split('lffd', 1)[1][:10]
         mytimes.append(datetime.strptime(timestr, '%Y%m%d%H'))
 
     str_startdate = mytimes[0].strftime('%Y-%m-%d %H')
     str_enddate = mytimes[-1].strftime('%Y-%m-%d %H')
-
     """Compute time step for parallel tasks"""
     ncores = 36
     total_time = mytimes[-1] - mytimes[0]
-    nout_times = int(total_time.total_seconds()//3600) + 1
+    nout_times = int(total_time.total_seconds() // 3600) + 1
     output_step = int(max(math.ceil(nout_times / ncores), 2))
-
     """Execute parallel bash script"""
     dir_path = os.path.dirname(os.path.realpath(__file__))
     tool_path = os.path.join(dir_path, 'tools')
     bash_file = os.path.join(tool_path, 'reduce_output_parallel.bash')
     py_file = os.path.join(tool_path, 'reduce_output_start_end.py')
-    alternate_csv_file = os.path.join(cfg.chain_src_dir,
-                                      'cases', cfg.casename, 'variables.csv')
-    logfile=os.path.join(cfg.log_working_dir, 'reduce_output')
+    alternate_csv_file = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
+                                      'variables.csv')
+    logfile = os.path.join(cfg.log_working_dir, 'reduce_output')
     logging.info('Submitting job to the queue...')
-    
-    exitcode = subprocess.call(["sbatch", '--output=' + logfile,
-                                '--open-mode=append', '--wait', bash_file,
-                                py_file, cosmo_output, output_path,
-                                str_startdate, str_enddate, 
-                                str(cfg.output_levels), str(output_step),
-                                alternate_csv_file, str(cfg.convert_gas)]) 
 
-    if exitcode != 0:                                                          
+    exitcode = subprocess.call([
+        "sbatch", '--output=' + logfile, '--open-mode=append', '--wait',
+        bash_file, py_file, cosmo_output, output_path, str_startdate,
+        str_enddate,
+        str(cfg.output_levels),
+        str(output_step), alternate_csv_file,
+        str(cfg.convert_gas)
+    ])
+
+    if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-
     """Check if all files have been processed"""
     cfile_names = []
     for cfile in cfiles:
-        cfile_names.append(os.path.basename(cfile)) 
-    files_cosmo = sorted([name for name in os.listdir(cosmo_output)
-                          if os.path.isfile(os.path.join(cosmo_output, name))
-                          and name not in cfile_names])
-    files_reduced = sorted([name for name in os.listdir(output_path) 
-                            if os.path.isfile(os.path.join(output_path, name))
-                            and name not in cfile_names])
+        cfile_names.append(os.path.basename(cfile))
+    files_cosmo = sorted([
+        name for name in os.listdir(cosmo_output)
+        if os.path.isfile(os.path.join(cosmo_output, name))
+        and name not in cfile_names
+    ])
+    files_reduced = sorted([
+        name for name in os.listdir(output_path)
+        if os.path.isfile(os.path.join(output_path, name))
+        and name not in cfile_names
+    ])
 
     if not files_cosmo == files_reduced:
         logging.error(set(files_cosmo).symmetric_difference(files_reduced))
         logging.error('Reduced output files differ from original output!')
         raise RuntimeError('Error in reduce_output job')
-
     """Check for corrupted files"""
-    for f in [os.path.join(output_path, name) for name in os.listdir(output_path)]:
+    for f in [
+            os.path.join(output_path, name) for name in os.listdir(output_path)
+    ]:
         with nc.Dataset(f) as _:
-            logging.info('File %s is not corrupted' %f)
-    
+            logging.info('File %s is not corrupted' % f)
+
     date = dt.datetime.today()
     to_print = """=====================================================
 ============== POST PROCESSING ENDS ==================
 ============== EndTime: %s
-====================================================="""%date.strftime("%s")
+=====================================================""" % date.strftime("%s")
 
     logging.info(to_print)

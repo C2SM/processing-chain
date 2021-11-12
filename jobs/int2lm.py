@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#                                                                              
-# Setup the namelist for int2lm and submit the job to the queue       
-#                                                                              
-# Dominik Brunner, July 2013                                                   
-#                                                                              
+#
+# Setup the namelist for int2lm and submit the job to the queue
+#
+# Dominik Brunner, July 2013
+#
 # 2013-07-20 Initial release, based on Christoph Knote's int2lm.bash (brd)
 # 2017-01-15 adapted for hypatia and project SmartCarb (brd)
 # 2018-08-03 Translated to Python (jae)
@@ -60,7 +60,7 @@ def main(starttime, hstart, hstop, cfg):
     logfile_finish = os.path.join(cfg.log_finished_dir, "int2lm")
 
     # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
-    if starttime < datetime.strptime('2007-08-02', '%Y-%m-%d'): 
+    if starttime < datetime.strptime('2007-08-02', '%Y-%m-%d'):
         multi_layer = ".FALSE."
     else:
         multi_layer = ".TRUE."
@@ -73,7 +73,7 @@ def main(starttime, hstart, hstop, cfg):
     tools.copy_file(cfg.int2lm_bin, os.path.join(cfg.int2lm_work, "int2lm"))
 
     # Copy extpar file to input/extpar directory
-    extpar_dir = os.path.join(cfg.int2lm_input,"extpar")
+    extpar_dir = os.path.join(cfg.int2lm_input, "extpar")
     extpar_file = os.path.join(cfg.int2lm_extpar_dir, cfg.int2lm_extpar_file)
     tools.create_dir(extpar_dir, "int2lm extpar")
     tools.copy_file(extpar_file, extpar_dir)
@@ -87,7 +87,7 @@ def main(starttime, hstart, hstop, cfg):
         pft_file_src = os.path.join(cfg.int2lm_pft_dir, cfg.int2lm_pft_file)
         pft_file_dst = os.path.join(extpar_dir, 'pft.nc')
         tools.copy_file(pft_file_src, pft_file_dst)
-    
+
     # Copy libgrib_api
     if cfg.target is tools.Target.COSMOART:
         dest = os.path.join(cfg.int2lm_work, 'libgrib_api')
@@ -112,8 +112,7 @@ def main(starttime, hstart, hstop, cfg):
                                   'int2lm_tracers.csv')
     if os.path.isfile(tracer_csvfile):
         datasets_csvfile = os.path.join(cfg.chain_src_dir, 'cases',
-                                        cfg.casename,
-                                        'int2lm_datasets.csv') 
+                                        cfg.casename, 'int2lm_datasets.csv')
         input_art_filename = os.path.join(cfg.int2lm_work, 'INPUT_ART')
 
         tools.write_int2lm_input_art.main(tracer_csvfile, datasets_csvfile,
@@ -133,14 +132,16 @@ def main(starttime, hstart, hstop, cfg):
 
     output_file = os.path.join(cfg.int2lm_work, "run.job")
     with open(output_file, "w") as outf:
-        outf.write(to_write.format(
-            cfg=cfg,
-            ini_day = cfg.inidate_int2lm_yyyymmddhh[0:8],
-            ini_hour = cfg.inidate_int2lm_yyyymmddhh[8:],
-            logfile=logfile, logfile_finish = logfile_finish))
+        outf.write(
+            to_write.format(cfg=cfg,
+                            ini_day=cfg.inidate_int2lm_yyyymmddhh[0:8],
+                            ini_hour=cfg.inidate_int2lm_yyyymmddhh[8:],
+                            logfile=logfile,
+                            logfile_finish=logfile_finish))
 
     # Submit job
-    exitcode = subprocess.call(["sbatch", "--wait",
-                                os.path.join(cfg.int2lm_work, "run.job")])
+    exitcode = subprocess.call(
+        ["sbatch", "--wait",
+         os.path.join(cfg.int2lm_work, "run.job")])
     if exitcode != 0:
-       raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))

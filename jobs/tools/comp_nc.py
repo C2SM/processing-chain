@@ -9,8 +9,8 @@ import argparse
 import netCDF4 as nc
 import numpy as np
 
-
 colors = {"green": '\033[32m', "red": '\033[31m', "yellow": '\033[33m'}
+
 
 def ccprint(text, color=None, verbose=True):
     """Print-wrapper that Conditionally prints Colored text
@@ -98,16 +98,17 @@ def datasets_equal(dataset1, dataset2, variables, verbose=True):
             ccprint("{} has different types.".format(var), "red", verbose)
             result = False
 
-        if (dataset1[var].dtype in np.sctypes['float'] or
-                dataset1[var].dtype in np.sctypes['int']):
+        if (dataset1[var].dtype in np.sctypes['float']
+                or dataset1[var].dtype in np.sctypes['int']):
             if np.allclose(dataset1[var], dataset2[var]):
                 ccprint("{} is equal.".format(var), None, verbose)
             else:
                 ccprint("{} is not equal".format(var), "red", verbose)
                 result = False
         else:
-            ccprint("{} is not a numeric type "
-                    "and not compared.".format(var), None, verbose)
+            ccprint(
+                "{} is not a numeric type "
+                "and not compared.".format(var), None, verbose)
 
     return result
 
@@ -120,14 +121,17 @@ if __name__ == '__main__':
     parser.add_argument("Dataset2",
                         type=str,
                         help="Path to the second dataset.")
-    parser.add_argument("-v", "--variables", nargs='*', default=[],
-                        dest="variables", help="Variables to be compared. If "
+    parser.add_argument("-v",
+                        "--variables",
+                        nargs='*',
+                        default=[],
+                        dest="variables",
+                        help="Variables to be compared. If "
                         "none are given, all variables in the files are "
                         "compared.")
     args = parser.parse_args()
 
-    if datasets_equal(import_data(args.Dataset1),
-                      import_data(args.Dataset2),
+    if datasets_equal(import_data(args.Dataset1), import_data(args.Dataset2),
                       args.variables):
         ccprint("Provided files are equal", color="green")
     else:

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """\
 Convert string to char for attributes globally and for variables.
 """
@@ -12,7 +11,8 @@ import numpy as np
 import netCDF4
 
 if (sys.version_info.major) >= 3:
-    basestring = (str,bytes)
+    basestring = (str, bytes)
+
 
 def string2char(nc, name, value):
     if isinstance(value, basestring):
@@ -39,6 +39,7 @@ def main(filename):
             for name in var.ncattrs():
                 value = var.getncattr(name)
                 string2char(var, name, value)
+
 
 if __name__ == '__main__':
     main(sys.argv[1])

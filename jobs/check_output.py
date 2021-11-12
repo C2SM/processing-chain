@@ -7,7 +7,7 @@ from os.path import dirname, realpath, basename
 import shutil
 from distutils.dir_util import copy_tree
 import datetime as dt
-import glob 
+import glob
 import numpy as np
 import xarray as xr
 import pandas as pd
@@ -20,13 +20,13 @@ from matplotlib import gridspec
 from PIL import Image
 
 import matplotlib.pyplot as plt
+
 plt.switch_backend('Agg')
 
 try:
     from . import tools
 except ImportError:
     import tools
-
 
 
 def pkl_path(folder, pid=None):
@@ -57,9 +57,9 @@ def pkl_path(folder, pid=None):
         output_folder = os.path.join(folder, 'check_output')
     else:
         output_folder = os.path.join(folder, 'check_output', 'data')
-    tools.create_dir(output_folder,'check_output')
+    tools.create_dir(output_folder, 'check_output')
     output_path = os.path.join(output_folder, filename)
-        
+
     return output_path
 
 
@@ -80,7 +80,7 @@ def timeseries_path(cfg):
     output_folder = os.path.join(cfg.output_root, 'check_output', 'timeseries')
     tools.create_dir(output_folder, 'timeseries')
     output_path = os.path.join(cfg.output_root, 'check_output', 'timeseries')
-    
+
     return output_path
 
 
@@ -99,7 +99,7 @@ def maps_path(cfg):
     """
     output_folder = os.path.join(cfg.chain_root, 'check_output', 'maps')
     tools.create_dir(output_folder, 'check_output maps')
-    
+
     return output_folder
 
 
@@ -119,7 +119,7 @@ def animations_path(cfg):
     output_folder = os.path.join(cfg.output_root, 'check_output', 'animations')
     tools.create_dir(output_folder, 'animations')
     output_path = os.path.join(cfg.output_root, 'check_output', 'animations')
-    
+
     return output_path
 
 
@@ -165,7 +165,7 @@ def get_variable_names(cols):
     for col in cols:
         split_col = col.split('_')
         for todel in todels:
-            split_col = list(filter(lambda x : x != todel, split_col))
+            split_col = list(filter(lambda x: x != todel, split_col))
         varnames.append('_'.join(split_col))
     varnames = list(dict.fromkeys(varnames))
 
@@ -220,7 +220,7 @@ def plot_timeseries(cfg, units):
     data_path = pkl_path(cfg.output_root)
     df = pd.read_pickle(data_path)
     ts_path = timeseries_path(cfg)
-    
+
     varnames = get_variable_names(df.columns.values)
 
     # Tweak figure properties
@@ -238,9 +238,9 @@ def plot_timeseries(cfg, units):
         vmax = df[varname + '_max']
 
         # Unit conversion
-        if (varname.startswith('CO2_') or varname.startswith('CO_') or 
-            varname.startswith('CH4_') or varname.startswith('C14_') or 
-            varname.startswith('NOX_') or varname.startswith('NO2_')):
+        if (varname.startswith('CO2_') or varname.startswith('CO_')
+                or varname.startswith('CH4_') or varname.startswith('C14_')
+                or varname.startswith('NOX_') or varname.startswith('NO2_')):
             gas = tracername2gas(varname)
             in_unit = units[varname]
             out_unit = tools.helper.common_unit(gas)
@@ -252,8 +252,11 @@ def plot_timeseries(cfg, units):
             out_unit = units[varname]
 
         # Figure options
-        fig, axes = plt.subplots(ncols=1, nrows=3, num=style_label,
-                                 figsize=fig_size, squeeze=True)
+        fig, axes = plt.subplots(ncols=1,
+                                 nrows=3,
+                                 num=style_label,
+                                 figsize=fig_size,
+                                 squeeze=True)
         fig.suptitle(cfg.casename)
 
         axes[0].plot(df.index, vmean, linestyle='-')
@@ -264,12 +267,12 @@ def plot_timeseries(cfg, units):
 
         axes[2].plot(df.index, vmax, linestyle='-')
         axes[2].set_title('Global maximum values')
-        
+
         for ax in axes:
             ylabel = '%s (%s)' % (varname, out_unit)
             ax.set_ylabel(ylabel)
             ax.grid()
-        
+
         axes[2].set_xlabel('Datetime')
 
         fig.tight_layout(rect=[0, 0, 1, 0.95])
@@ -278,7 +281,7 @@ def plot_timeseries(cfg, units):
         plt.close('all')
 
 
-def get_data_single_file(infile, chain_src_dir,casename,chain_root):
+def get_data_single_file(infile, chain_src_dir, casename, chain_root):
     """Fetches the diagnostic data from COSMO output files.
 
     Parameters
@@ -300,9 +303,10 @@ def get_data_single_file(infile, chain_src_dir,casename,chain_root):
     nctime = DS.time.values[-1]
 
     # Read values from variables.csv
-    alternate_csv_file = os.path.join(chain_src_dir,                                                                            'cases', casename, 'variables.csv')
+    alternate_csv_file = os.path.join(chain_src_dir, 'cases', casename,
+                                      'variables.csv')
     variables = tools.helper.find_variables_file(alternate_csv_file)
-    
+
     # Drop variables without min/max values
     variables['min_value'].replace('', np.nan, inplace=True)
     variables['max_value'].replace('', np.nan, inplace=True)
@@ -330,12 +334,10 @@ def get_data_single_file(infile, chain_src_dir,casename,chain_root):
             da_ground = da.flatten()
 
         da = da.flatten()
-        minval = float(variables.loc
-                       [varname, 'min_value'])
-        maxval = float(variables.loc
-                       [varname, 'max_value'])
-        logging.info("{:10s} (min: {:11.4e}, max: {:11.4e})"
-                     .format(varname, minval, maxval))
+        minval = float(variables.loc[varname, 'min_value'])
+        maxval = float(variables.loc[varname, 'max_value'])
+        logging.info("{:10s} (min: {:11.4e}, max: {:11.4e})".format(
+            varname, minval, maxval))
 
         varmin = np.nanmin(da)
         varmax = np.nanmax(da)
@@ -343,7 +345,7 @@ def get_data_single_file(infile, chain_src_dir,casename,chain_root):
         varmax_ground = np.nanmax(da_ground)
         varmean = np.mean(da_ground)
         varstd = np.std(da_ground)
-        
+
         data_values[varname + '_min'] = varmin
         data_values[varname + '_max'] = varmax
         data_values[varname + '_min_ground'] = varmin_ground
@@ -352,27 +354,25 @@ def get_data_single_file(infile, chain_src_dir,casename,chain_root):
         data_values[varname + '_std'] = varstd
 
         if np.isnan(da).any():
-            error_msg = ('Variable %s in file %s has NaNs!' 
-                        % (varname, infile))
+            error_msg = ('Variable %s in file %s has NaNs!' %
+                         (varname, infile))
             logging.error(error_msg)
         if (varmin < minval):
             error_msg = ('Variable %s in file %s falls below minimum value!\n'
                          'Allowed min = %e\n'
-                         'Actual min = %e' 
-                        % (varname, infile, minval, varmin))
+                         'Actual min = %e' % (varname, infile, minval, varmin))
             logging.error(error_msg)
         if (varmax > maxval):
             error_msg = ('Variable %s in file %s exceeds maximum value!\n'
                          'Allowed max = %e\n'
-                         'Actual max = %e' 
-                        % (varname, infile, maxval, varmax))
+                         'Actual max = %e' % (varname, infile, maxval, varmax))
             logging.error(error_msg)
 
     # Get the time from the name
     time_str = os.path.basename(infile)[4:14]
-    ctime = dt.datetime.strptime(time_str,'%Y%m%d%H')
-    
-    data = pd.DataFrame(data_values,index=[ctime])
+    ctime = dt.datetime.strptime(time_str, '%Y%m%d%H')
+
+    data = pd.DataFrame(data_values, index=[ctime])
 
     # Store the time series of min and max in a pandas file format.
     pid = os.getpid()
@@ -428,8 +428,8 @@ def store_data(data, folder, pid=None):
     pid : int
         Process ID in case of parallel exectution
     """
-    output_path = pkl_path(folder, pid) 
-    
+    output_path = pkl_path(folder, pid)
+
     if os.path.exists(output_path):
         history = pd.read_pickle(output_path)
         history = history.combine_first(data)
@@ -459,7 +459,7 @@ def write_footnotetext(field):
 
     footnotetext = 'min: ' + "{:.1f}".format(fmin) + \
                    '  max: ' + "{:.1f}".format(fmax) + \
-                   '  mean: ' + "{:.1f}".format(fmean) 
+                   '  mean: ' + "{:.1f}".format(fmean)
 
     return footnotetext
 
@@ -478,19 +478,21 @@ def get_infiles(path):
         Sorted List of filenames of COSMO ouputs
     """
     infiles = sorted(glob.glob(os.path.join(path, "lffd*.nc")))
-    infiles = [infile for infile in infiles if os.path.split(infile)[1].
-                                               split('lffd',1)[1][10] != 'c']
+    infiles = [
+        infile for infile in infiles
+        if os.path.split(infile)[1].split('lffd', 1)[1][10] != 'c'
+    ]
 
     # If this is a spin-up simulation, skip the first output files
     timestr = basename(dirname(dirname(realpath(path))))
     times = timestr.split("_")
     spinup_time = int(times[1])
-    start = dt.datetime.strptime(times[0],'%Y%m%d%H')
+    start = dt.datetime.strptime(times[0], '%Y%m%d%H')
 
     if spinup_time < 0:
         for f in infiles.copy():
             fname = basename(f)
-            ftime = dt.datetime.strptime(fname[4:14],'%Y%m%d%H')
+            ftime = dt.datetime.strptime(fname[4:14], '%Y%m%d%H')
             if ftime < start:
                 infiles.remove(f)
 
@@ -519,7 +521,7 @@ def plot_single_map(data, infile, output_path, varnames):
     ground_level = DS.level.values[-1]
     nctime = DS.time.values[-1]
     ts = nctime.astype(dt.datetime)
-    ts = dt.datetime.utcfromtimestamp(ts/1e9)
+    ts = dt.datetime.utcfromtimestamp(ts / 1e9)
     timestr = ts.strftime("%Y%m%d%H")
 
     rlon = DS['rlon'].values
@@ -527,14 +529,19 @@ def plot_single_map(data, infile, output_path, varnames):
     lon = DS['lon'].values
     lat = DS['lat'].values
     pollon = DS["rotated_pole"].attrs["grid_north_pole_longitude"]
-    pollat =  DS["rotated_pole"].attrs["grid_north_pole_latitude"]
+    pollat = DS["rotated_pole"].attrs["grid_north_pole_latitude"]
     startlon = rlon[0]
     endlon = rlon[-1]
-    startlat = rlat[0] 
+    startlat = rlat[0]
     endlat = rlat[-1]
 
-    domain = tools.helper.Domain('COSMO', startlon, startlat,
-                          endlon, endlat, pollon=pollon, pollat=pollat)
+    domain = tools.helper.Domain('COSMO',
+                                 startlon,
+                                 startlat,
+                                 endlon,
+                                 endlat,
+                                 pollon=pollon,
+                                 pollat=pollat)
 
     # Check for rotated pole coordinates
     if not isinstance(domain.proj, ccrs.RotatedPole):
@@ -544,17 +551,17 @@ def plot_single_map(data, infile, output_path, varnames):
         try:
             field = DS[varname].sel(time=nctime).values
         except KeyError:
-            logging.warning('%s: Variable not in output file \n%s' 
-                           % (varname, infile))
+            logging.warning('%s: Variable not in output file \n%s' %
+                            (varname, infile))
             continue
         if len(np.shape(field)) == 3:
             field = DS[varname].sel(level=ground_level, time=nctime).values
 
         convert = False
         # Unit conversion
-        if (varname.startswith('CO2_') or varname.startswith('CO_') or 
-            varname.startswith('CH4_') or varname.startswith('C14_') or 
-            varname.startswith('NOX_') or varname.startswith('NO2_')):
+        if (varname.startswith('CO2_') or varname.startswith('CO_')
+                or varname.startswith('CH4_') or varname.startswith('C14_')
+                or varname.startswith('NOX_') or varname.startswith('NO2_')):
             convert = True
             gas = tracername2gas(varname)
             in_unit = DS[varname].units
@@ -564,8 +571,8 @@ def plot_single_map(data, infile, output_path, varnames):
             out_unit = DS[varname].units
 
         # Set min/max for colorbar and convert if needed
-        vmin = data[varname+"_min_ground"].min()
-        vmax = data[varname+"_max_ground"].max()
+        vmin = data[varname + "_min_ground"].min()
+        vmax = data[varname + "_max_ground"].max()
         if convert:
             vmin = tools.helper.convert_unit(vmin, in_unit, out_unit, gas)
             vmax = tools.helper.convert_unit(vmax, in_unit, out_unit, gas)
@@ -576,7 +583,7 @@ def plot_single_map(data, infile, output_path, varnames):
 
         # Create figure and axes objects
         fig = plt.figure()
-        gs = gridspec.GridSpec(1, 2, width_ratios=[9, 1]) 
+        gs = gridspec.GridSpec(1, 2, width_ratios=[9, 1])
         ax = plt.subplot(gs[0], projection=domain.proj)
         cax = plt.subplot(gs[1])
 
@@ -594,8 +601,10 @@ def plot_single_map(data, infile, output_path, varnames):
         ax.set_title(varname, loc='left', pad=10.0)
         ax.set_title(timestr, loc='right', pad=10.0)
         footnotetext = write_footnotetext(field)
-        ax.annotate(footnotetext, (0,0), (0,-4), xycoords='axes fraction',
-                    textcoords='offset points', va='top')
+        ax.annotate(footnotetext, (0, 0), (0, -4),
+                    xycoords='axes fraction',
+                    textcoords='offset points',
+                    va='top')
 
         # Add coastlines
         ax.coastlines(resolution='10m', color="black", linewidth=1)
@@ -604,13 +613,19 @@ def plot_single_map(data, infile, output_path, varnames):
             name='admin_0_boundary_lines_land',
             scale='10m',
         )
-        ax.add_feature(lines, edgecolor="grey", facecolor='none',
+        ax.add_feature(lines,
+                       edgecolor="grey",
+                       facecolor='none',
                        linewidth=0.75)
 
         # Fill the plot
-        im = ax.imshow(field, vmin=vmin, vmax=vmax, cmap='viridis',
+        im = ax.imshow(field,
+                       vmin=vmin,
+                       vmax=vmax,
+                       cmap='viridis',
                        extent=(left, right, bottom, top),
-                       interpolation=None, transform=domain.proj)
+                       interpolation=None,
+                       transform=domain.proj)
 
         # Colorbar
         cax.cla()
@@ -621,8 +636,9 @@ def plot_single_map(data, infile, output_path, varnames):
 
         # Save figure
         output_folder = os.path.join(output_path, varname)
-        fig.savefig(os.path.join(output_folder, varname + '_' + timestr +
-                                 '.png'), bbox_inches='tight')
+        fig.savefig(os.path.join(output_folder,
+                                 varname + '_' + timestr + '.png'),
+                    bbox_inches='tight')
         plt.close('all')
 
 
@@ -667,7 +683,7 @@ def create_animations(cfg):
     map_path = os.path.join(cfg.output_root, 'check_output', 'maps')
     output_path = animations_path(cfg)
     for varname in varnames:
-        infile_path =  os.path.join(map_path, varname)
+        infile_path = os.path.join(map_path, varname)
         infiles = sorted(glob.glob(os.path.join(infile_path, "*.png")))
         frames = []
         for i in infiles:
@@ -676,11 +692,11 @@ def create_animations(cfg):
 
         # Save into a GIF file
         outfile = os.path.join(output_path, varname + '.gif')
-        frames[0].save(outfile, format='GIF',
+        frames[0].save(outfile,
+                       format='GIF',
                        append_images=frames[1:],
                        save_all=True,
                        duration=300)
-
 
 
 def main(starttime, hstart, hstop, cfg):
@@ -710,20 +726,19 @@ def main(starttime, hstart, hstop, cfg):
 =====================================================
 ============== POST PROCESSING BEGINS ===============
 ============== StartTime: %s 
-=====================================================""" %date.strftime("%s")
-    
+=====================================================""" % date.strftime("%s")
+
     logfile = os.path.join(cfg.log_working_dir, "check_output")
-    logging.basicConfig(filename=logfile,level=logging.INFO)
+    logging.basicConfig(filename=logfile, level=logging.INFO)
     logging.info(to_print)
-    
+
     # if cfg.compute_host!="daint":
     #     logging.error("The check_output script is supposed to be run on daint only, "
     #                   "not on %s" % cfg.compute_host)
     #     sys.exit(1)
-
-
     """Wait for Cosmo to finish first"""
-    tools.check_job_completion(cfg.log_finished_dir, "cosmo", waittime=300) # check every 30 seconds
+    tools.check_job_completion(cfg.log_finished_dir, "cosmo",
+                               waittime=300)  # check every 30 seconds
 
     # Get list of files
     logging.info('Getting list of input files')
@@ -765,23 +780,21 @@ source ~/python/stem2/bin/activate
 srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain} {chain_root} {action}
 """
     to_write_fmt = to_write.format(cfg=cfg,
-                               casename = cfg.casename,
-                               cosmo_output = cfg.cosmo_output,
-                               output_root = cfg.output_root,
-                               work_log = cfg.log_working_dir,
-                               logfile = logfile,
-                               chain = cfg.chain_src_dir,
-                               chain_root = cfg.chain_root,
-                               action = 'get_data'
-    )
+                                   casename=cfg.casename,
+                                   cosmo_output=cfg.cosmo_output,
+                                   output_root=cfg.output_root,
+                                   work_log=cfg.log_working_dir,
+                                   logfile=logfile,
+                                   chain=cfg.chain_src_dir,
+                                   chain_root=cfg.chain_root,
+                                   action='get_data')
 
     output_file = os.path.join(cfg.cosmo_work, "get_data.job")
 
-    with open(output_file,'w') as outf:
+    with open(output_file, 'w') as outf:
         outf.write(to_write_fmt)
 
-    exitcode = subprocess.call(["sbatch", "--wait",
-                                output_file])
+    exitcode = subprocess.call(["sbatch", "--wait", output_file])
 
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
@@ -800,7 +813,7 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
     units = get_units(infiles, varnames)
     logging.info(units)
 
-    # Plots 
+    # Plots
     logging.info('Creating timeseries plots in %s' % timeseries_path(cfg))
     plot_timeseries(cfg, units)
 
@@ -808,22 +821,20 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
     create_map_directories(cfg, data, units)
 
     to_write_fmt = to_write.format(cfg=cfg,
-                               casename = cfg.casename,
-                               cosmo_output = cfg.cosmo_output,
-                               output_root = cfg.output_root,
-                               logfile = logfile,
-                               chain = cfg.chain_src_dir,
-                               chain_root = cfg.chain_root,
-                               action = 'plot_maps'
-    )
+                                   casename=cfg.casename,
+                                   cosmo_output=cfg.cosmo_output,
+                                   output_root=cfg.output_root,
+                                   logfile=logfile,
+                                   chain=cfg.chain_src_dir,
+                                   chain_root=cfg.chain_root,
+                                   action='plot_maps')
 
     output_file = os.path.join(cfg.cosmo_work, "plot_maps.job")
 
-    with open(output_file,'w') as outf:
+    with open(output_file, 'w') as outf:
         outf.write(to_write_fmt)
 
-    exitcode = subprocess.call(["sbatch", "--wait",
-                                output_file])
+    exitcode = subprocess.call(["sbatch", "--wait", output_file])
 
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
@@ -848,7 +859,7 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
     to_print = """=====================================================
 ============== POST PROCESSING ENDS ==================
 ============== EndTime: %s
-====================================================="""%date.strftime("%s")
+=====================================================""" % date.strftime("%s")
     logging.info(to_print)
 
     # Check for errors
@@ -857,7 +868,7 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
             raise RuntimeError('Logfile containing errors! See %s' % logfile)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     args = sys.argv
 
     casename = args[1]
@@ -879,18 +890,13 @@ if __name__=='__main__':
             # Get variable names
             output_path = os.path.join(output_folder, 'maps')
             varnames = get_variable_names(data.columns.values)
-            pool.starmap(plot_single_map,[
-                (data,infile,output_path,varnames)
-                for infile in infiles
-            ])
+            pool.starmap(plot_single_map,
+                         [(data, infile, output_path, varnames)
+                          for infile in infiles])
 
     elif action == 'get_data':
         # Loop over all files and check values
         with multiprocessing.Pool(nthread) as pool:
-            pool.starmap(get_data_single_file,[
-                (infile, chain_src_dir,casename,chain_root)
-                for infile in infiles
-            ])
-
-
-
+            pool.starmap(get_data_single_file,
+                         [(infile, chain_src_dir, casename, chain_root)
+                          for infile in infiles])

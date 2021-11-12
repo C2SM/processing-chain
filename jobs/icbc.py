@@ -3,7 +3,7 @@
 #
 # Check presence of CarbonTracker files, preprocess, and soft link
 #
-# Result in case of success: all emission input-files necessary are found in 
+# Result in case of success: all emission input-files necessary are found in
 #                            ${int2lm_input}/icbc/
 #
 # Dominik Brunner, Jul 2013
@@ -24,6 +24,7 @@ from . import tools
 #from tools import mozart2int2lm
 
 cdo = Cdo()
+
 
 def main(starttime, hstart, hstop, cfg):
     """
@@ -73,28 +74,38 @@ def main(starttime, hstart, hstop, cfg):
         logging.info('ICON chemistry data for IC/BC')
 
         # Wait for meteo to finish first
-        tools.check_job_completion(cfg.log_finished_dir,"meteo")
+        tools.check_job_completion(cfg.log_finished_dir, "meteo")
 
         tools.create_dir(cfg.icon_input_oae, "online emissions input")
         tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
-        tools.create_dir(cfg.icon_input_icbc_processed, "icon_input_icbc_processed")
+        tools.create_dir(cfg.icon_input_icbc_processed,
+                         "icon_input_icbc_processed")
 
-        starttime_real = starttime + timedelta(hours = hstart)
+        starttime_real = starttime + timedelta(hours=hstart)
 
         #-----------------------------------------------------
         # Remap chemistry initial conditions
         #-----------------------------------------------------
         logfile = os.path.join(cfg.log_working_dir, "ic_chem")
-        logfile_finish = os.path.join(cfg.log_finished_dir,"ic_chem")
+        logfile_finish = os.path.join(cfg.log_finished_dir, "ic_chem")
 
         # Write remap_chem namelist
-        in_filename       = os.path.join(cfg.input_root_chem,starttime.strftime(cfg.chem_nameformat)+'.grb')
-        out_filename      = os.path.join(cfg.icon_input,'oae',cfg.oae_chem_init_nc+'_dry.nc')
-        in_grid_filename  = in_filename
-        out_grid_filename = os.path.join(cfg.input_root_grid,cfg.dynamics_grid_filename)
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_namelist_remap_chem'])) as input_file:
+        in_filename = os.path.join(
+            cfg.input_root_chem,
+            starttime.strftime(cfg.chem_nameformat) + '.grb')
+        out_filename = os.path.join(cfg.icon_input, 'oae',
+                                    cfg.oae_chem_init_nc + '_dry.nc')
+        in_grid_filename = in_filename
+        out_grid_filename = os.path.join(cfg.input_root_grid,
+                                         cfg.dynamics_grid_filename)
+        with open(
+                os.path.join(
+                    cfg.case_dir,
+                    cfg.icontools_parameter['icontools_namelist_remap_chem'])
+        ) as input_file:
             to_write = input_file.read()
-        output_nml = os.path.join(cfg.icon_work, 'icontools_remap_chem_ic.namelist')
+        output_nml = os.path.join(cfg.icon_work,
+                                  'icontools_remap_chem_ic.namelist')
         with open(output_nml, "w") as outf:
             to_write = to_write.format(cfg=cfg,
                                        in_filename=in_filename,
@@ -104,24 +115,35 @@ def main(starttime, hstart, hstop, cfg):
             outf.write(to_write)
 
         # Write remapfields namelist
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_namelist_remapfields_chem_ic'])) as input_file:
+        with open(
+                os.path.join(
+                    cfg.case_dir, cfg.icontools_parameter[
+                        'icontools_namelist_remapfields_chem_ic'])
+        ) as input_file:
             to_write = input_file.read()
-        output_fields = os.path.join(cfg.icon_work, 'icontools_remapfields_chem_ic.namelist')
+        output_fields = os.path.join(cfg.icon_work,
+                                     'icontools_remapfields_chem_ic.namelist')
         with open(output_fields, "w") as outf:
             to_write = to_write.format(cfg=cfg)
             outf.write(to_write)
 
         # Write run script (remap_ic.job)
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_remap_chem_ic_runjob'])) as input_file:
+        with open(
+                os.path.join(
+                    cfg.case_dir,
+                    cfg.icontools_parameter['icontools_remap_chem_ic_runjob'])
+        ) as input_file:
             to_write = input_file.read()
         output_run = os.path.join(cfg.icon_work, "remap_chem_ic.job")
         with open(output_run, "w") as outf:
-            outf.write(to_write.format(
-                cfg=cfg,
-                logfile=logfile, logfile_finish=logfile_finish)
-            )
-        exitcode = subprocess.call(["sbatch", "--wait",
-                                    os.path.join(cfg.icon_work, 'remap_chem_ic.job')])
+            outf.write(
+                to_write.format(cfg=cfg,
+                                logfile=logfile,
+                                logfile_finish=logfile_finish))
+        exitcode = subprocess.call([
+            "sbatch", "--wait",
+            os.path.join(cfg.icon_work, 'remap_chem_ic.job')
+        ])
         if exitcode != 0:
             raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
         logging.info("Remapped initial conditions with icontools")
@@ -131,29 +153,38 @@ def main(starttime, hstart, hstop, cfg):
         os.remove(output_run)
 
         # Transform initial data from dry to wet mixing ratios
-        cdo.expr("'CH4w=CH4*(1-QV)'",input=out_filename,output='temp_file_01.nc')
-        cdo.selvar("LNSP",input=out_filename,output='temp_file_03.nc')
+        cdo.expr("'CH4w=CH4*(1-QV)'",
+                 input=out_filename,
+                 output='temp_file_01.nc')
+        cdo.selvar("LNSP", input=out_filename, output='temp_file_03.nc')
         os.remove(out_filename)
         # Rename variable to match ICON internal name with CDO:
-        out_filename = os.path.join(cfg.icon_input,'oae',cfg.oae_chem_init_nc)
-        cdo.chname("CH4w","CH4",input='temp_file_01.nc',output='temp_file_02.nc')
-        cdo.merge(input='temp_file_02.nc temp_file_03.nc',output=out_filename)
+        out_filename = os.path.join(cfg.icon_input, 'oae',
+                                    cfg.oae_chem_init_nc)
+        cdo.chname("CH4w",
+                   "CH4",
+                   input='temp_file_01.nc',
+                   output='temp_file_02.nc')
+        cdo.merge(input='temp_file_02.nc temp_file_03.nc', output=out_filename)
 
         os.remove('temp_file_01.nc')
         os.remove('temp_file_02.nc')
         os.remove('temp_file_03.nc')
-        
-
 
         #-----------------------------------------------------
         # Remap chem LBC
         #-----------------------------------------------------
         logfile = os.path.join(cfg.log_working_dir, "lbc_chem")
-        logfile_finish = os.path.join(cfg.log_finished_dir,"lbc_chem")
+        logfile_finish = os.path.join(cfg.log_finished_dir, "lbc_chem")
 
-        with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_namelist_remapfields_chem_lbc'])) as input_file:
+        with open(
+                os.path.join(
+                    cfg.case_dir, cfg.icontools_parameter[
+                        'icontools_namelist_remapfields_chem_lbc'])
+        ) as input_file:
             to_write = input_file.read()
-        output_nml_fields = os.path.join(cfg.icon_work, 'icontools_remapfields_chem_lbc.namelist')
+        output_nml_fields = os.path.join(
+            cfg.icon_work, 'icontools_remapfields_chem_lbc.namelist')
         with open(output_nml_fields, "w") as outf:
             to_write = to_write.format(cfg=cfg)
             outf.write(to_write)
@@ -161,13 +192,25 @@ def main(starttime, hstart, hstop, cfg):
         for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
 
             # Write remap_lbc namelist
-            in_grid_filename  = os.path.join(cfg.input_root_chem,starttime.strftime(cfg.chem_nameformat)+'.grb')
-            in_filename       = os.path.join(cfg.input_root_chem,time.strftime(cfg.chem_nameformat)+'.grb')
-            out_grid_filename = os.path.join(cfg.icon_input_grid,cfg.lateral_boundary_grid)
-            out_filename      = os.path.join(cfg.icon_input_icbc,time.strftime(cfg.chem_nameformat)+'_lbc')
-            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_namelist_remap'])) as input_file:
+            in_grid_filename = os.path.join(
+                cfg.input_root_chem,
+                starttime.strftime(cfg.chem_nameformat) + '.grb')
+            in_filename = os.path.join(
+                cfg.input_root_chem,
+                time.strftime(cfg.chem_nameformat) + '.grb')
+            out_grid_filename = os.path.join(cfg.icon_input_grid,
+                                             cfg.lateral_boundary_grid)
+            out_filename = os.path.join(
+                cfg.icon_input_icbc,
+                time.strftime(cfg.chem_nameformat) + '_lbc')
+            with open(
+                    os.path.join(
+                        cfg.case_dir,
+                        cfg.icontools_parameter['icontools_namelist_remap'])
+            ) as input_file:
                 to_write = input_file.read()
-            output_nml_lbc = os.path.join(cfg.icon_work, 'icontools_remap_chem_lbc.namelist')
+            output_nml_lbc = os.path.join(cfg.icon_work,
+                                          'icontools_remap_chem_lbc.namelist')
             with open(output_nml_lbc, "w") as outf:
                 to_write = to_write.format(cfg=cfg,
                                            in_grid_filename=in_grid_filename,
@@ -177,25 +220,32 @@ def main(starttime, hstart, hstop, cfg):
                 outf.write(to_write)
 
             # Write run script (remap_chem_lbc.job)
-            with open(os.path.join(cfg.case_dir,cfg.icontools_parameter['icontools_remap_chem_lbc_runjob'])) as input_file:
+            with open(
+                    os.path.join(
+                        cfg.case_dir, cfg.icontools_parameter[
+                            'icontools_remap_chem_lbc_runjob'])) as input_file:
                 to_write = input_file.read()
             output_run = os.path.join(cfg.icon_work, "remap_chem_lbc.job")
             with open(output_run, "w") as outf:
-                outf.write(to_write.format(
-                    cfg=cfg,
-                    logfile=logfile, logfile_finish=logfile_finish)
-                )
-            exitcode = subprocess.call(["sbatch", "--wait",
-                                        os.path.join(cfg.icon_work, 'remap_chem_lbc.job')])
+                outf.write(
+                    to_write.format(cfg=cfg,
+                                    logfile=logfile,
+                                    logfile_finish=logfile_finish))
+            exitcode = subprocess.call([
+                "sbatch", "--wait",
+                os.path.join(cfg.icon_work, 'remap_chem_lbc.job')
+            ])
             if exitcode != 0:
-                raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-            logging.info("Remapped boundary conditions at {} with icontools".format(time))
+                raise RuntimeError(
+                    "sbatch returned exitcode {}".format(exitcode))
+            logging.info(
+                "Remapped boundary conditions at {} with icontools".format(
+                    time))
 
             os.remove(output_nml_lbc)
             os.remove(output_run)
 
         os.remove(output_nml_fields)
-
 
         #-----------------------------------------------------
         # Merge chem files with meteo files using cdo
@@ -203,21 +253,39 @@ def main(starttime, hstart, hstop, cfg):
 
         for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
 
-            chem_file = os.path.join(cfg.icon_input_icbc,time.strftime(cfg.chem_nameformat)+'_lbc')
-            meteo_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.source_nameformat)+'_lbc.nc')
-            var_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.source_nameformat)+'_lbc_var.nc')
-            transform_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.source_nameformat)+'_lbc_transform.nc')
-            name_file = os.path.join(cfg.icon_input_icbc, time.strftime(cfg.source_nameformat)+'_lbc_name.nc')
-            processed_file = os.path.join(cfg.icon_input_icbc_processed, time.strftime(cfg.source_nameformat)+'_lbc.nc')
+            chem_file = os.path.join(
+                cfg.icon_input_icbc,
+                time.strftime(cfg.chem_nameformat) + '_lbc')
+            meteo_file = os.path.join(
+                cfg.icon_input_icbc,
+                time.strftime(cfg.source_nameformat) + '_lbc.nc')
+            var_file = os.path.join(
+                cfg.icon_input_icbc,
+                time.strftime(cfg.source_nameformat) + '_lbc_var.nc')
+            transform_file = os.path.join(
+                cfg.icon_input_icbc,
+                time.strftime(cfg.source_nameformat) + '_lbc_transform.nc')
+            name_file = os.path.join(
+                cfg.icon_input_icbc,
+                time.strftime(cfg.source_nameformat) + '_lbc_name.nc')
+            processed_file = os.path.join(
+                cfg.icon_input_icbc_processed,
+                time.strftime(cfg.source_nameformat) + '_lbc.nc')
 
             # Select variable with CDO
-            cdo.selvar("CH4","QV",input=chem_file,output=var_file)
+            cdo.selvar("CH4", "QV", input=chem_file, output=var_file)
             # Transform to wet-mixing ratios with CDO
-            cdo.expr("'CH4w=CH4*(1-QV)'",input=var_file,output=transform_file)
+            cdo.expr("'CH4w=CH4*(1-QV)'",
+                     input=var_file,
+                     output=transform_file)
             # Rename variable to match ICON internal name with CDO:
-            cdo.chname("CH4w","oem_tracer_1",input=transform_file,output=name_file)
+            cdo.chname("CH4w",
+                       "oem_tracer_1",
+                       input=transform_file,
+                       output=name_file)
             # Merge with CDO
-            cdo.merge(input=name_file+' '+meteo_file,output=processed_file)
+            cdo.merge(input=name_file + ' ' + meteo_file,
+                      output=processed_file)
 
             # Delete temporary files
             os.remove(chem_file)
@@ -227,41 +295,41 @@ def main(starttime, hstart, hstop, cfg):
 
             logging.info("Merged chem variables to file {}".format(meteo_file))
 
-
-
     # If COSMO (and not ICON):
     else:
         inv_to_process = []
         if cfg.target is tools.Target.COSMOGHG:
             try:
-                CAMS = dict(fullname = "CAMS",
-                            nickname = "cams",
-                            executable = "cams4int2cosmo",
-                            indir = cfg.cams_dir_orig,
-                            outdir = cfg.cams_dir_proc,
-                            param = cfg.cams_parameters)
+                CAMS = dict(fullname="CAMS",
+                            nickname="cams",
+                            executable="cams4int2cosmo",
+                            indir=cfg.cams_dir_orig,
+                            outdir=cfg.cams_dir_proc,
+                            param=cfg.cams_parameters)
                 inv_to_process.append(CAMS)
             except AttributeError:
                 pass
             try:
-                CT = dict(fullname = "CarbonTracker",
-                          nickname = "ct",
-                          executable = "ctnoaa4int2cosmo",
-                          indir = cfg.ct_dir_orig,
-                          outdir = cfg.ct_dir_proc,
-                          param = cfg.ct_parameters)
+                CT = dict(fullname="CarbonTracker",
+                          nickname="ct",
+                          executable="ctnoaa4int2cosmo",
+                          indir=cfg.ct_dir_orig,
+                          outdir=cfg.ct_dir_proc,
+                          param=cfg.ct_parameters)
                 inv_to_process.append(CT)
             except AttributeError:
                 pass
         elif cfg.target is tools.Target.COSMOART:
             try:
-                MOZART = dict(fullname = 'MOZART',
-                              nickname = 'mozart',
-                              executable = 'mozart2int2lm',
-                              indir = cfg.mozart_file_orig,
-                              outdir = cfg.mozart_dir_proc,
-                              param = [{'inc' : cfg.mozart_inc,
-                                        'suffix' : cfg.mozart_prefix}])
+                MOZART = dict(fullname='MOZART',
+                              nickname='mozart',
+                              executable='mozart2int2lm',
+                              indir=cfg.mozart_file_orig,
+                              outdir=cfg.mozart_dir_proc,
+                              param=[{
+                                  'inc': cfg.mozart_inc,
+                                  'suffix': cfg.mozart_prefix
+                              }])
                 inv_to_process.append(MOZART)
             except AttributeError:
                 pass
@@ -269,32 +337,37 @@ def main(starttime, hstart, hstop, cfg):
             # Unknown target
             raise RuntimeError("Unknown target: {}".format(cfg.target))
 
-        # TO DO 
+        # TO DO
         #MOZART = dict(fullname="MOZART", nickname="mozart",executable="cams4int2cosmo")
-        
-        logging.info("Processing " + ", ".join([i["fullname"] for i in inv_to_process])+" data")
 
-        scratch_path = os.path.join(cfg.int2lm_input,'icbc')
+        logging.info("Processing " +
+                     ", ".join([i["fullname"]
+                                for i in inv_to_process]) + " data")
+
+        scratch_path = os.path.join(cfg.int2lm_input, 'icbc')
         tools.create_dir(scratch_path, "icbc input")
 
         for inv in inv_to_process:
-            logging.info(inv["fullname"]+" files")
+            logging.info(inv["fullname"] + " files")
             tools.create_dir(inv["outdir"], "processed " + inv["fullname"])
             #process_inv(starttime,hstart,hstop,increment,inv,cfg)
-        
+
             for p in inv["param"]:
                 inc = p["inc"]
                 for time in tools.iter_hours(starttime, hstart, hstop, inc):
                     logging.info(time)
 
-                    filename = os.path.join(inv["outdir"],p["suffix"]+"_"+time.strftime("%Y%m%d%H")+".nc")
+                    filename = os.path.join(
+                        inv["outdir"],
+                        p["suffix"] + "_" + time.strftime("%Y%m%d%H") + ".nc")
                     if not os.path.exists(filename):
                         logging.info(filename)
                         try:
                             to_call = getattr(tools, inv["executable"])
-                            to_call.main(time,inv["indir"],inv["outdir"],p)
+                            to_call.main(time, inv["indir"], inv["outdir"], p)
                         except:
-                            logging.error("Preprocessing "+inv["fullname"] + " data failed")
+                            logging.error("Preprocessing " + inv["fullname"] +
+                                          " data failed")
                             raise
 
                     # copy to (temporary) run input directory

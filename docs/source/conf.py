@@ -19,8 +19,8 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../..'))
 
+sys.path.insert(0, os.path.abspath('../..'))
 
 # -- General configuration ------------------------------------------------
 
@@ -31,12 +31,10 @@ sys.path.insert(0, os.path.abspath('../..'))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-    'sphinx.ext.todo',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon']
+extensions = [
+    'sphinx.ext.autodoc', 'sphinx.ext.todo', 'sphinx.ext.mathjax',
+    'sphinx.ext.ifconfig', 'sphinx.ext.viewcode', 'sphinx.ext.napoleon'
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -81,7 +79,6 @@ pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
-
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -129,6 +126,7 @@ html_sidebars = {
     ]
 }
 
+
 # Include css file to control disable horizontal table scrollbar
 def setup(app):
     app.add_stylesheet('custom.css')
@@ -138,7 +136,6 @@ def setup(app):
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'ProcessingChaindoc'
-
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -168,16 +165,12 @@ latex_documents = [
      'Abt 503', 'manual'),
 ]
 
-
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'processingchain', 'Processing Chain Documentation',
-     [author], 1)
-]
-
+man_pages = [(master_doc, 'processingchain', 'Processing Chain Documentation',
+              [author], 1)]
 
 # -- Options for Texinfo output -------------------------------------------
 
@@ -185,10 +178,6 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'ProcessingChain', 'Processing Chain Documentation',
-     author, 'ProcessingChain', 'One line description of project.',
-     'Miscellaneous'),
+    (master_doc, 'ProcessingChain', 'Processing Chain Documentation', author,
+     'ProcessingChain', 'One line description of project.', 'Miscellaneous'),
 ]
-
-
-
