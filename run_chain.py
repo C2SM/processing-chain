@@ -19,18 +19,15 @@ import jobs
 from jobs import tools
 
 default_jobs = {
-    tools.Target.COSMO: ["meteo", "int2lm", "cosmo", "post_cosmo"],
-    tools.Target.COSMOGHG: [
-        "meteo", "icbc", "emissions", "biofluxes", "oae", "online_vprm",
-        "int2lm", "post_int2lm", "cosmo", "post_cosmo"
-    ],
-    tools.Target.COSMOART: [
-        "meteo", "icbc", "emissions", "obs_nudging", "photo_rate", "int2lm",
-        "cosmo", "post_cosmo"
-    ],
-    tools.Target.ICON: ["meteo", "icon"],
-    tools.Target.ICONART: ["meteo", "icbc", "icon"],
-    tools.Target.ICONOEM: ["meteo", "icbc", "oae", "icon"]
+    tools.Target.COSMO:      ["prepare_data", "int2lm", "cosmo", "post_cosmo"],
+    tools.Target.COSMOGHG:   ["prepare_data", "emissions", "biofluxes", "oae",
+                              "online_vprm", "int2lm", "post_int2lm",
+                              "cosmo", "post_cosmo"],
+    tools.Target.COSMOART:   ["prepare_data", "emissions", "obs_nudging",
+                              "photo_rate", "int2lm", "cosmo", "post_cosmo"],
+    tools.Target.ICON:       ["prepare_data", "icon"],
+    tools.Target.ICONART:    ["prepare_data", "icon"],
+    tools.Target.ICONARTOEM: ["prepare_data", "oae", "icon"]
 }
 
 
