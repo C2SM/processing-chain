@@ -1,18 +1,18 @@
 import os
 
 """
-Configuration file for the 'icon-test' case with ICON
+Configuration file for the 'icon-art-test' case with ICON-ART
 """
 
 # GENERAL SETTINGS =========================================================== 
 user = os.environ['USER']
-target = 'icon'
+target = 'icon-art'
 restart_step = 24 # hours
 
 compute_host = 'daint'
 compute_queue = 'debug' # 'normal' / 'debug'
 compute_account = 'em05'
-constraint = 'gpu' # 'mc' / 'gpu'
+constraint = 'mc' # 'mc' / 'gpu'
 
 if constraint == 'gpu':
     ntasks_per_node = 12
@@ -35,17 +35,19 @@ exe_dir = "/store/empa/em05/executables"
 # Case directory
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
-# PRE-PROCESSING =============================================================
-input_root = '/store/empa/em05/input_icon_processing_chain_example/'
-input_root_icbc = os.path.join(input_root, 'icbc')
-# meteo
-input_root_meteo = '/store/empa/em05/dbrunner/icon-art/meteo'
+# PREPARE_DATA ---------------------------------------------------------------
+input_root = '/store/empa/em05/input_iconart_processing_chain_example/'
+
+input_root_meteo = '/store/empa/em05/input_iconart_processing_chain_example/meteo'
 meteo_prefix = 'ifs_'
 meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
 meteo_inc = 3
 
-# ICONTools ------------------------------------------------------------------
+input_root_icbc = os.path.join(input_root, 'icbc')
+chem_prefix = 'cams_gqpe'
+chem_nameformat = chem_prefix + '_%Y%m%d_%H'
+chem_suffix = '.nc'
 
 icontools_runjobs = [
     'icontools_remap_ic_runjob.cfg',
@@ -53,14 +55,20 @@ icontools_runjobs = [
     'icontools_remap_lbc_rest_runjob.cfg',
 ]
 
+# Icontools executables
+#icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
+icontools_dir = '/scratch/snx3000/msteiner/spack-stages/daint/spack-stage-icontools-master-t524rnfa5sfyn4rbvarypyzwae4jg46d/spack-src/icontools'
+iconremap_bin = os.path.join(icontools_dir, "iconremap")
+iconsub_bin   = os.path.join(icontools_dir, "iconsub")
+
 # Input data for runscript----------------------------------------------------
 # Grid
-input_root_grid = os.path.join(input_root, 'grid')
-radiation_grid_filename = os.path.join(input_root_grid, "VERIFY_DOM_DOM01.parent.nc")
-dynamics_grid_filename = os.path.join(input_root_grid, "VERIFY_DOM_DOM01.nc")
+input_root_grid = os.path.join(input_root, 'grids')
+radiation_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.parent.nc")
+dynamics_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.nc")
 map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
 extpar_filename = os.path.join(input_root_grid, 
-                               "external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc")
+                               "external_parameter_icon_testcase_DOM01_tiles.nc")
 lateral_boundary_grid = os.path.join(input_root_grid, "lateral_boundary.grid.nc")
 
 input_root_rad = os.path.join(input_root, 'rad')
@@ -71,30 +79,35 @@ input_root_mapping = os.path.join(input_root, 'mapping')
 map_file_ana = os.path.join(input_root_mapping, "map_file.ana")
 
 # File names -----------------------------------------------------------------
-latbc_filename = "ifs_201801<d><h>_lbc.nc"
-inidata_filename = "ifs_init_2018010100.nc"
+latbc_filename = "ifs_<y><m><d><h>_lbc.nc"
+inidata_prefix = "ifs_init_"
+inidata_nameformat = inidata_prefix + '%Y%m%d%H'
+inidata_filename_suffix = ".nc"
 
-output_filename = "NWP_LAM"
+output_filename = "icon-art-test"
 filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
+
+# ART settings----------------------------------------------------------------
+input_root_tracers = os.path.join(input_root, 'XML')
+chemtracer_xml_filename = os.path.join(input_root_tracers, 'tracers_oh_pntsrc.xml')
+pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc_example.xml')
+art_input_folder = os.path.join(input_root, 'ART')
+
 
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
 icon_bin = os.path.join(exe_dir, "icon-kit-art_20211018")
 
-# Icontools executables
-#icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
-icontools_dir = '/scratch/snx3000/msteiner/spack-stages/daint/spack-stage-icontools-master-t524rnfa5sfyn4rbvarypyzwae4jg46d/spack-src/icontools'
-iconremap_bin = os.path.join(icontools_dir, "iconremap")
-iconsub_bin   = os.path.join(icontools_dir, "iconsub")
-
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
+icon_namelist_master = os.path.join(case_dir, 'icon_master.namelist.cfg')
+icon_namelist_nwp = os.path.join(case_dir, 'icon_NAMELIST_NWP.cfg')
 
 # Walltimes and domain decomposition
 if compute_queue == "normal":
     icon_walltime = "00:30:00"
-    icon_np_tot = 12
+    icon_np_tot = 16
 elif compute_queue == "debug":
     icon_walltime = "00:30:00"
     icon_np_tot = 10
@@ -109,7 +122,7 @@ output_levels = 20
 
 # POST_COSMO ----------------------------------------------------------------- 
 # Root directory where the output of the chain is copied to
-output_root = os.path.join("/store/empa/em05/", user, 
+output_root = os.path.join("/scratch/snx3000", user, 
                            "processing_chain_output", casename)
 
 # VERIFY_CHAIN --------------------------------------------------------------- 
@@ -125,9 +138,10 @@ output_dir = os.path.join(work_root, casename, '2018010100_0_24', 'icon', 'outpu
 # files to check, the list contains the variable-names that are compared.
 # The verify_chain job will look for the files in the reference_dir (first tuple
 # element) and the ouput_dir (second tuple element)
-values_to_check = {("icon-pgi-20.1.1-cpu-20210215-NWP_LAM_DOM01_01000000.nc",
+values_to_check = {("icon-oem-pgi-20.1.1-cpu-20210215-NWP_LAM_DOM01_01000000.nc",
                     "NWP_LAM_DOM01_01000000.nc") :
                    ['temp', 'pres', 'u', 'v', 'w', 
+                    'OEM_tracer_1', 'OEM_tracer_2',
                    ]
                   }
 

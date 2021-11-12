@@ -2,16 +2,6 @@ import os
 
 # GENERAL SETTINGS =========================================================== 
 user = os.environ['USER']
-mail_address = {
-    'dbrunner': 'dominik.brunner@empa.ch',
-    'shenne':   'stephan.henne@empa.ch',
-    'mjaehn':   'michael.jaehn@empa.ch',
-    'haussaij': 'jean-matthieu.haussaire@empa.ch',
-    'gkuhl':    'gerrit.kuhlmann@empa.ch',
-    'isuter':   'ivo.suter@empa.ch',
-    'msteiner': 'michael.steiner@empa.ch'
-}[user]
-
 target = 'cosmo-ghg'
 restart_step = 12 # hours
 #subtarget = 'spinup'
@@ -53,6 +43,7 @@ input_root = '/store/empa/em05/input_processing_chain_example/'
 # METEO ----------------------------------------------------------------------
 meteo_dir = os.path.join(input_root, 'meteo')
 meteo_prefix = "laf"
+meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_inc = 1
 
 # ICBC -----------------------------------------------------------------------

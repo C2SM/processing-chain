@@ -4,7 +4,7 @@ Processing Chain for COSMO and ICON Simulations
 The Processing Chain is a python script that prepares necessary input data,
 submits compute-jobs to the queue on Piz Daint and does post-processing steps.
 It supports different types of simulations, including **COSMO**, **COSMO-GHG**,
-**COSMO-ART**, **ICON** and **ICON-OEM**. The chain can flexibly be adapted
+**COSMO-ART**, **ICON** and **ICON-ART**. The chain can flexibly be adapted
 according to your needs, e.g., by creating your own case or adding new jobs.
 
 Setting up your Virtual Environment using ``pip``
@@ -46,6 +46,14 @@ To install the requirements, type::
 
     python -m pip install -r requirements.txt
 
+4. Create the settings.ini File
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Run the following bash script once to register your email address::
+
+    ./generate_settings_file.sh
+
+Afterwards, close and re-open your terminal, and continue with the next section.
 
 Run the Chain
 *************
@@ -54,7 +62,7 @@ Once everything has been set up correctly according to the above steps,
 you just need to execute the following command to load the necessary modules
 and activate your environment::
 
-    $ source modules.env
+    source modules.env
 
 To test if your environment has been successfully set,
 use the command line help to see the available arguments for the main script::
@@ -99,12 +107,12 @@ contributed significantly to the initial development (in alphabetic order):
 * Pavle Arsenovic
 * Dominik Brunner
 * Jean-Matthieu Haussaire
-* Michael Jähn
 * Gerrit Kuhlmann
 * Qing Mu
 * David Ochsner
 * Michael Steiner
 
+The current code owner is Michael Jähn (michael.jaehn@c2sm.ethz.ch).
 
 .. _requirements.txt: requirements.txt
 .. _documentation: https://processing-chain.readthedocs.io

@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Setup the namelist for an ICON tracer run and submit the job to the queue
+# Setup the namelist for an ICON run and submit the job to the queue
 #
 # result in case of success: forecast fields found in  
 #                            ${icon_output}
 #
 # Michael Jähn, February 2021
 #
-# 2021-XX-XX Initial release
+# 2021-04-26 Initial release
+# 2021-08-xx <Update description>
 
 import logging
 import os
@@ -56,73 +57,14 @@ def main(starttime, hstart, hstop, cfg):
     logging.info("Setup the namelist for an ICON run and "
                  "submit the job to the queue")
 
-    # Create directories
-    tools.create_dir(cfg.icon_work, "icon_work")
-    tools.create_dir(cfg.icon_input_oae, "icon_input_oae")
-    tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
-    tools.create_dir(cfg.icon_input_icbc_processed, "icon_input_icbc_processed")
-    tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
-    tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping")
-    tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
-    tools.create_dir(cfg.icon_output, "icon_output")
-    tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
-
-    # Copy grid files
-    src_dir = cfg.input_root_grid
-    dest_dir = cfg.icon_input_grid
-    tools.copy_file(os.path.join(src_dir, cfg.radiation_grid_filename),
-                    os.path.join(dest_dir, cfg.radiation_grid_filename))
-    tools.copy_file(os.path.join(src_dir, cfg.dynamics_grid_filename),
-                    os.path.join(dest_dir, cfg.dynamics_grid_filename))
-    tools.copy_file(os.path.join(src_dir, cfg.map_file_latbc),
-                    os.path.join(dest_dir, cfg.map_file_latbc))
-    tools.copy_file(os.path.join(src_dir, cfg.extpar_filename),
-                    os.path.join(dest_dir, cfg.extpar_filename))
-    tools.copy_file(os.path.join(src_dir, cfg.lateral_boundary_grid),
-                    os.path.join(dest_dir, cfg.lateral_boundary_grid))
-
-    # Copy radiation files
-    src_dir = cfg.input_root_rad
-    dest_dir = cfg.icon_input_rad
-    tools.copy_file(os.path.join(src_dir, cfg.cldopt_filename),
-                    os.path.join(dest_dir, cfg.cldopt_filename))
-    tools.copy_file(os.path.join(src_dir, cfg.lrtm_filename),
-                    os.path.join(dest_dir, cfg.lrtm_filename))
-
-    # Copy mapping file
-    src_dir = cfg.input_root_mapping
-    dest_dir = cfg.icon_input_mapping
-    tools.copy_file(os.path.join(src_dir, cfg.map_file_ana),
-                    os.path.join(dest_dir, cfg.map_file_ana))
-
     # Copy icon executable
     execname = 'icon.exe'
     tools.copy_file(cfg.icon_bin, os.path.join(cfg.icon_work, execname))
 
-    # Tracer file
-    tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
-                                  'icon_tracers.csv')
-
-    # Write master namelist
-    with open(cfg.icon_namelist_master) as input_file:
-        to_write = input_file.read()
-    output_file = os.path.join(cfg.icon_work, 'icon_master.namelist')
-    with open(output_file, "w") as outf:
-        to_write = to_write.format(cfg=cfg)
-        outf.write(to_write)
-
-    # Write NWP namelist
-    with open(cfg.icon_namelist_nwp) as input_file:
-        to_write = input_file.read()
-    output_file = os.path.join(cfg.icon_work, 'NAMELIST_NWP')
-    with open(output_file, "w") as outf:
-        to_write = to_write.format(cfg=cfg)
-        outf.write(to_write)
-
-    # Append NWP namelist with tracer definitions from csv file
-    if os.path.isfile(tracer_csvfile):
-        input_ghg_filename = os.path.join(cfg.icon_work, 'NAMELIST_NWP')
-        write_cosmo_input_ghg.main(tracer_csvfile, input_ghg_filename, cfg)
+    # Get name if initial file
+    starttime_real = starttime + timedelta(hours = hstart)                 
+    inidata_filename  = os.path.join(cfg.icon_input_icbc,
+                                     starttime_real.strftime(cfg.meteo_nameformat) + '.nc')
 
     # Write run script (run_icon.job)
     with open(cfg.icon_runjob) as input_file:
@@ -130,12 +72,19 @@ def main(starttime, hstart, hstop, cfg):
     output_file = os.path.join(cfg.icon_work, "run_icon.job")
     with open(output_file, "w") as outf:
         outf.write(to_write.format(
-            cfg=cfg,
+            cfg=cfg, inidata_filename=inidata_filename,
             logfile=logfile, logfile_finish=logfile_finish)
         )
 
     exitcode = subprocess.call(["sbatch", "--wait",
                                 os.path.join(cfg.icon_work, 'run_icon.job')])
+
+    # In case of ICON-ART, ignore the "invalid pointer" error on successful run
+    if cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONART:
+        if tools.grep("free(): invalid pointer", logfile)['success'] and \
+           tools.grep("clean-up finished", logfile)['success']:
+            exitcode = 0
+
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
 

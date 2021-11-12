@@ -68,6 +68,29 @@ def iter_hours(starttime, hstart, hstop, step=1):
         current += timedelta(hours=step)
 
 
+def prepare_message(logfile_path):
+    """Shortens the logfile to be sent via mail if it is too long.
+
+    Parameters
+    ----------
+    logfile_path : str
+        Path of logfile
+    """
+
+    with open(logfile_path) as logfile:
+        message = logfile.read()
+    # Shorten big logfiles
+    if len(message) > 4096:
+        message = message[:2048] + \
+                  "\n\n--------------------------------------------------\n" + \
+                  "### Some lines are skipped here. Original logfile:\n" + \
+                  logfile_path + \
+                  "\n--------------------------------------------------\n\n" + \
+                  message[-2048:]
+
+    return message
+
+
 def send_mail(address, subject, message=''):
     """Send an email to adress.
 
@@ -134,7 +157,7 @@ def create_dir(path, readable_name):
         raise
 
 
-def copy_file(source_path, dest_path):
+def copy_file(source_path, dest_path, output_log=False):
     """Copy a file from source_path to dest_path
 
     Use shutil.copy to copy the file.
@@ -167,6 +190,76 @@ def copy_file(source_path, dest_path):
         logging.error("Copying {} to {} failed with {}". format(
                       source_path, dest_path, type(e).__name__))
         raise
+    logging.info("Copied {} to {}". format(
+                 source_path, dest_path))
+
+
+def rename_file(source_path, dest_path, output_log=False):
+    """Copy a file from source_path to dest_path
+
+    Use os.rename to rename the file.
+    dest_path can be either a directory or a filepath.
+    If it is a directory, the name of the file will be
+    kept, if it is a filepath the file will be renamed.
+    File permissions will be kept as well.
+
+    Provides error description to the logfiles
+
+    Parameters
+    ----------
+    source_path : str
+        Path to the file to be renamed
+    dest_path : str
+        Path to the destination directory or destination file
+    """
+    try:
+        os.rename(source_path, dest_path)
+    except FileNotFoundError:
+        logging.error("Source-file not found at {} OR "
+                      "target-directory {} doesn't exist."
+                      .format(source_path, dest_path))
+        raise
+    except PermissionError:
+        logging.error("Copying file from {} to {} failed due to"
+                      "a permission error.".format(source_path, dest_path))
+        raise
+    except (OSError, Exception) as e:
+        logging.error("Copying {} to {} failed with {}". format(
+                      source_path, dest_path, type(e).__name__))
+        raise
+    logging.info("Renamed {} to {}". format(
+                 source_path, dest_path))
+
+
+def remove_file(dest_path, output_log=False):
+    """Delete a file at dest_path
+
+    Use os.remove to delete the file.
+    dest_path has to be a filepath.
+
+    Provides error description to the logfiles
+
+    Parameters
+    ----------
+    dest_path : str
+        Path to the destination file
+    """
+    try:
+        os.remove(dest_path)
+    except FileNotFoundError:
+        logging.error("Target-file not found at {}."
+                      .format(dest_path))
+        raise
+    except PermissionError:
+        logging.error("Removing file {} failed due to"
+                      "a permission error.".format(dest_path))
+        raise
+    except (OSError, Exception) as e:
+        logging.error("Removing {} failed with {}". format(
+                      dest_path, type(e).__name__))
+        raise
+    logging.info("Removed {}". format(
+                 dest_path))
 
 
 class Target(Enum):
@@ -175,7 +268,7 @@ class Target(Enum):
     COSMOGHG = auto()
     ICON = auto()
     ICONART = auto()
-    ICONOEM = auto()
+    ICONARTOEM = auto()
 
 class Subtarget(Enum):
     NONE = auto()
@@ -186,7 +279,7 @@ str_to_enum = {'cosmo': Target.COSMO,
                'cosmo-ghg': Target.COSMOGHG,
                'icon': Target.ICON,
                'icon-art': Target.ICONART,
-               'icon-oem': Target.ICONOEM,
+               'icon-art-oem': Target.ICONARTOEM,
                'none': Subtarget.NONE,
                'spinup': Subtarget.SPINUP,
                }
@@ -242,6 +335,30 @@ def levenshtein(s1, s2):
         previous_row = current_row
     
     return previous_row[-1]
+
+
+def grep(string, filename):
+    """Mimics the "grep" function.
+
+    Parameters
+    ----------
+    string : string to be searched for
+
+    filename: file name in which string is searched
+    """
+
+    # List of lines where string is found
+    list_line = []
+    list_iline = []
+    lo_success = False
+
+    for iline, line in enumerate(open(filename)):
+        if string in line:
+            list_line.append(line)
+            list_iline.append(iline)
+            lo_success = True
+
+    return {"success": lo_success,  "iline" : list_iline, "line" : list_line}
 
 
 def check_job_completion(log_finished_dir, job, waittime=3000):

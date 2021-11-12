@@ -131,7 +131,7 @@ html_sidebars = {
 
 # Include css file to control disable horizontal table scrollbar
 def setup(app):
-    app.add_stylesheet('custom.css')
+    app.add_css_file('custom.css')
 
 
 # -- Options for HTMLHelp output ------------------------------------------
