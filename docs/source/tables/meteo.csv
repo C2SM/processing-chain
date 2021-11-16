@@ -1,8 +1,0 @@
-**Name**,**Description**,**Target**
-meteo_dir," Path to the directory where the meteo-files are found. For a nested run, this is the casename of the mother-run. In that case, ``meteo_prefix`` and ```meteo_inc`` can be omitted", "COSMO, COSMO-ART, ICON"
-meteo_prefix, Prefix of the meteo-files. Meteo-filenames are assumed to be ``{meteo_prefix}YYMMDD``, "COSMO, COSMO-ART, ICON"
-meteo_inc, Increment in hours between meteo-files, "COSMO, COSMO-ART, ICON"
-icontools_dir, Path to the icontools executables, ICON
-iconremap_bin, Name of the iconremap executable, ICON
-iconsub_bin, Name of the iconsub executable, ICON
-icontools_parameter, Dictionary containing names of the icontools runscript and namelist templates, ICON

@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 
-from . import meteo
-from . import icbc
+from . import prepare_data
 from . import emissions
 from . import oae
 from . import biofluxes
@@ -18,5 +17,4 @@ from . import obs_nudging
 from . import online_vprm
 from . import octe
 from . import check_output
-#from . import icon_meteo
 from . import icon

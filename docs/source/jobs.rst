@@ -10,10 +10,9 @@ has to be respected.
 
 **COSMO**:
 
-1.  :func:`jobs.biofluxes.main` | :func:`jobs.icbc.main` | 
-    :func:`jobs.meteo.main` | :func:`jobs.emissions.main` |
-    :func:`jobs.online_vprm.main` | :func:`jobs.oae.main` |
-    :func:`jobs.obs_nudging.main`
+1.  :func:`jobs.biofluxes.main` | :func:`jobs.prepare_data.main` | 
+    :func:`jobs.emissions.main` | :func:`jobs.online_vprm.main` | 
+    :func:`jobs.oae.main` | :func:`jobs.obs_nudging.main`
 2.  :func:`jobs.int2lm.main`
 3.  :func:`jobs.post_int2lm.main`
 4.  :func:`jobs.octe.main`
@@ -24,26 +23,32 @@ has to be respected.
 
 **COSMOART**:
 
-1. :func:`jobs.emissions.main` | :func:`jobs.meteo.main` |
+1. :func:`jobs.emissions.main` | :func:`jobs.prepare_data.main` |
    :func:`jobs.photo_rate.main` | :func:`jobs.obs_nudging.main` |
-   :func:`jobs.icbc.main` | :func:`jobs.online_vprm.main` |
-   :func:`jobs.oae.main`
+   :func:`jobs.online_vprm.main` | :func:`jobs.oae.main`
 2. :func:`jobs.int2lm.main`
 3. :func:`jobs.cosmo.main`
 4. :func:`jobs.check_output.main`
 5. :func:`jobs.reduce_output.main`
 6. :func:`jobs.post_cosmo.main` | :func:`jobs.verify_chain.main`
 
-**ICON-OEM**:
-
-1.  :func:`jobs.icbc.main` |
-2.  :func:`jobs.meteo.main` | :func:`jobs.oae.main`
-3.  :func:`jobs.icon.main`
-
 **ICON**:
 
-1.  :func:`jobs.meteo.main`
+1.  :func:`jobs.prepare_data.main`
 2.  :func:`jobs.icon.main`
+
+**ICONART**:
+
+1.  :func:`jobs.prepare_data.main`
+2.  :func:`jobs.icon.main`
+
+
+**ICONARTOEM**:
+
+1.  :func:`jobs.prepare_data.main` 
+2.  :func:`jobs.oae.main`
+3.  :func:`jobs.icon.main`
+
 
 Adding new jobs
 ---------------
@@ -64,10 +69,9 @@ List of available jobs
 * :func:`jobs.check_output.main`
 * :func:`jobs.cosmo.main`
 * :func:`jobs.emissions.main`
-* :func:`jobs.icbc.main`
 * :func:`jobs.icon.main`
 * :func:`jobs.int2lm.main`
-* :func:`jobs.meteo.main`
+* :func:`jobs.prepare_data.main`
 * :func:`jobs.oae.main`
 * :func:`jobs.obs_nudging.main`
 * :func:`jobs.octe.main`
@@ -96,10 +100,6 @@ List of available jobs
 
 -------------------------------------------
 
-.. autofunction:: jobs.icbc.main
-
--------------------------------------------
-
 .. autofunction:: jobs.icon.main
 
 -------------------------------------------
@@ -108,7 +108,7 @@ List of available jobs
 
 -------------------------------------------
 
-.. autofunction:: jobs.meteo.main
+.. autofunction:: jobs.prepare_data.main
 
 -------------------------------------------
 

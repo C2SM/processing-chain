@@ -51,7 +51,7 @@ def main(starttime, hstart, hstop, cfg):
                            " have to be given for online emissions")
 
     if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
-       cfg.target is tools.Target.ICONOEM:
+       cfg.target is tools.Target.ICONARTOEM:
         input_dir = cfg.icon_input
     else:
         input_dir = cfg.cosmo_input

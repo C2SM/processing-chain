@@ -1,4 +1,12 @@
 **Name**,**Description**,**Target**
+meteo_dir," Path to the directory where the meteo-files are found. For a nested run, this is the casename of the mother-run. In that case, ``meteo_prefix`` and ```meteo_inc`` can be omitted", "COSMO, COSMO-ART, ICON"
+meteo_prefix, Prefix of the meteo-files. Meteo-filenames are assumed to be ``{meteo_prefix}YYMMDD``, "COSMO, COSMO-ART, ICON"
+meteo_nameformat, Format for meteo files, "COSMO, COSMO-ART, ICON"
+meteo_inc, Increment in hours between meteo-files, "COSMO, COSMO-ART, ICON"
+icontools_dir, Path to the icontools executables, ICON
+iconremap_bin, Name of the iconremap executable, ICON
+iconsub_bin, Name of the iconsub executable, ICON
+icontools_parameter, Dictionary containing names of the icontools runscript and namelist templates, ICON
 mozart_file_orig, Path to input-file for mozart-files, COSMO-ART
 mozart_dir_proc, "Path to the processed mozart-files. Processed mozart-files are stored here, if there are files found here then ``file_dir_orig`` is not used", COSMO-ART
 mozart_inc, Increment in hours between mozart-files, COSMO-ART

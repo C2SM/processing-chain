@@ -10,7 +10,7 @@ a look into ``jobs/tools`` directly.
 Conversion Functions
 --------------------
 
-These functions are used by the job :func:`jobs.icbc.main`. They convert data into
+These functions are used by the job :func:`jobs.prepare_data.main`. They convert data into
 a format usable by **int2lm**.
 
 .. autofunction:: jobs.tools.cams4int2cosmo.main

@@ -1,20 +1,7 @@
 import os
 
 # ORGANIZATIONAL ============================================================= #
-
 user = os.environ['USER']
-mail_address = {
-    'gkuhl': 'gerrit.kuhlmann@empa.ch',
-    'kug': 'gerrit.kuhlmann@empa.ch',
-    'dbrunner': 'dominik.brunner@empa.ch',
-    'haussaij': 'jean-matthieu.haussaire@empa.ch',
-    'mjaehn': 'michael.jaehn@empa.ch',
-    'muq': 'qing.mu@empa.ch',
-    'parsenov': 'pavle.arsenovic@empa.ch',
-    'ochsnerd': 'david.ochsner@empa.ch',
-    'msteiner': 'michael.steiner@empa.ch',
-}[user]
-
 compute_host = 'daint'
 compute_queue = 'normal'
 compute_account = 'em05'
@@ -38,6 +25,8 @@ work_root = os.environ['SCRATCH'] + "/processing_chain"
 # METEO ---------------------------------------------------------------------- #
 # meteo files (either path to intput dir or name of mother run)
 meteo_dir = "example_cosmoart_mother"
+meteo_prefix = "eas"
+meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 
 # EMISSIONS ------------------------------------------------------------------ #
 # (possibly multiple) emissions-datasets
