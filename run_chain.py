@@ -345,8 +345,10 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                          os.path.basename(cfg.extpar_filename)))
         setattr(
             cfg, 'lateral_boundary_grid_scratch',
-            os.path.join(cfg.icon_input_grid,
-                         os.path.basename(cfg.lateral_boundary_grid)))
+            os.path.join(cfg.icon_input_grid,'lateral_boundary.grid.nc'))
+        setattr(
+            cfg, 'lateral_boundary_grid_order',
+            os.path.join(cfg.icon_input_grid,'lateral_boundary'))
         setattr(
             cfg, 'cldopt_filename_scratch',
             os.path.join(cfg.icon_input_rad,
