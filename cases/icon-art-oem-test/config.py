@@ -74,9 +74,6 @@ dynamics_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.nc")
 map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
 extpar_filename = os.path.join(
     input_root_grid, "external_parameter_icon_testcase_DOM01_tiles.nc")
-lateral_boundary_grid = os.path.join(input_root_grid,
-                                     "lateral_boundary.grid.nc")
-
 input_root_rad = os.path.join(input_root, 'rad')
 cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
 lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
