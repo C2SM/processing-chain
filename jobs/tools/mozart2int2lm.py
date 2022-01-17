@@ -11,6 +11,7 @@ def date_from_days_since_0(days_since_00000101):
     """Convert a float counting days since days since 0000-01-01 00:00:00
     to a datetime object.
     """
+
     def add_years(d, years):
         """Return a date that's `years` years after the date (or datetime)
         object `d`. Return the same calendar date (month and day) in the
