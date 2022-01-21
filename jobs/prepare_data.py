@@ -110,9 +110,6 @@ def main(starttime, hstart, hstop, cfg):
         tools.copy_file(cfg.extpar_filename,
                         cfg.extpar_filename_scratch,
                         output_log=True)
-        tools.copy_file(cfg.lateral_boundary_grid,
-                        cfg.lateral_boundary_grid_scratch,
-                        output_log=True)
 
         # Copy radiation files
         tools.copy_file(cfg.cldopt_filename,

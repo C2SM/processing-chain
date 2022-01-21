@@ -593,6 +593,7 @@ def calculate_xgas(xm, mair, gas, q=0.0):
 
 
 class Domain:
+
     def __init__(self,
                  name,
                  startlon,

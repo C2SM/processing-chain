@@ -5,6 +5,7 @@ from netCDF4 import Dataset
 
 class DimensionCopier:
     """Copy netCDF-Dimensions"""
+
     def __init__(self, src_name, dst_name=None):
         self.src_name = src_name
         if dst_name is None:
@@ -26,6 +27,7 @@ class DimensionCopier:
 
 class VariableCopier:
     """Copy (and possibly alter) netCDF-Variables"""
+
     def __init__(self,
                  src_names,
                  dst_name=None,
@@ -154,6 +156,7 @@ class VariableCopier:
 
 class VariableCreator:
     """Creates a netCDF4 variable with the specified parameters"""
+
     def __init__(self, var_args, var_vals, var_attrs={}):
         """
 

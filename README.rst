@@ -87,11 +87,11 @@ or::
     
 or::
 
-    python run_chain.py icon-oem-test 2018-01-01 0 24 -j prepare_data oae icon
+    python run_chain.py icon-art-oem-test 2018-01-01 0 24 -j prepare_data oae icon
     
 or::
 
-    python run_chain.py icon-oem-ensembles-test 2018-01-01 0 24 -j prepare_data oae icon
+    python run_chain.py icon-art-oem-ensembles-test 2018-01-01 0 24 -j prepare_data oae icon
     
       
 Documentation
