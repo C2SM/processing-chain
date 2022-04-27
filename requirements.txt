@@ -1,5 +1,5 @@
 # Third-party requirements
-cartopy==0.17.0
+cartopy
 f90nml
 matplotlib
 netCDF4

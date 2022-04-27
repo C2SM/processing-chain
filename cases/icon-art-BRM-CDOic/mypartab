@@ -1,0 +1,143 @@
+&parameter
+name = "Z"
+out_name = "GEOSP"
+param_out =129
+/
+&parameter  ! temperature
+name      = "T"
+out_name     = "T"
+param_out = 130
+/
+&parameter  ! horiz. wind comp. u
+name      = "U"
+out_name     = "U"
+/
+&parameter  ! horiz. wind comp. u
+name      = "V"
+out_name     = "V"
+/
+&parameter  ! vertical velocity
+name      = "OMEGA"
+out_name     = "W"
+param_out           = 135
+/
+&parameter  ! surface pressure
+name      = "LNPS"
+out_name     = "LNPS" 
+param_out           = 152
+/
+&parameter  ! specific humidity
+name      = "QV"
+out_name     = "QV"
+param_out           = 133
+/
+&parameter  ! cloud liquid water content
+name      = "clwc"
+out_name     = "QC"
+param_out           = 246
+/
+&parameter  ! cloud ice water content
+name      = "ciwc"
+out_name     = "QI"
+param_out           = 247
+/
+&parameter  ! rain water content
+name      = "crwc"
+out_name     = "QR"
+param_out= 75 
+/
+&parameter  ! snow water content
+name      = "cswc"
+out_name     = "QS" 
+param_out           = 76
+/
+&parameter  ! snow temperature
+name      = "TSN"
+out_name     = "T_SNOW" 
+param_out          = 238
+/
+&parameter ! water content of snow
+name      = "SD"
+out_name     = "W_SNOW" 
+param_out           = 141
+/
+&parameter  ! density of snow
+name      = "RSN"
+out_name     = "RHO_SNOW" 
+param_out          = 33
+/
+&parameter  ! snow albedo
+name      = "ASN"
+out_name     = "ALB_SNOW" 
+param_out          = 32
+/
+&parameter  ! skin temperature
+name      = "SKT"
+out_name     = "SKT" 
+param_out          = 235
+/
+&parameter  ! sea surface temperature
+name      = "SST"
+out_name     = "SST" 
+param_out          = 34
+/
+&parameter  ! soil temperature level 1
+name      = "STL1"
+out_name     = "STL1" 
+param_out           = 139
+/
+&parameter  ! soil temperature level 2
+name      = "STL2"
+out_name     = "STL2" 
+param_out          = 170
+/
+&parameter  ! soil temperature level 3
+name      = "STL3"
+out_name     = "STL3" 
+param_out          = 183
+/
+&parameter  ! soil temperature level 4
+name      = "STL4"
+out_name     = "STL4" 
+param_out          = 236
+/
+&parameter  ! sea-ice cover
+name      = "CI"
+out_name     = "CI" 
+param_out          = 31
+/
+&parameter  ! water cont. of interception storage
+name      = "SRC"
+out_name     = "W_I" 
+param_out     = 198 
+/
+&parameter  ! surface roughness
+name      = "SR"
+out_name     = "Z0" 
+param_out           = 173
+/
+&parameter  ! Land/sea mask
+name      = "LSM"
+out_name     = "LSM" 
+param_out          = 172 
+/
+&parameter  ! soil moisture index layer 1
+name      = "SWVL1"
+out_name     = "SMIL1" 
+param_out          = 80
+/
+&parameter  ! soil moisture index layer 2
+name      = "SWVL2"
+out_name     = "SMIL2" 
+param_out           = 81
+/
+&parameter  ! soil moisture index layer 3
+name      = "SWVL3"
+out_name     = "SMIL3" 
+param_out          = 82
+/
+&parameter  ! soil moisture index layer 4
+name      = "SWVL4"
+out_name     = "SMIL4" 
+param_out          = 83
+/

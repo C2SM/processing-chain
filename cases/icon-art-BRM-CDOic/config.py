@@ -49,12 +49,13 @@ chem_nameformat = chem_prefix + '_%Y%m%d_%H'
 chem_suffix = '.nc'
 
 icontools_runjobs = [
+    'icontools_remap_ic_runjob.cfg',
     'icontools_remap_00_lbc_runjob.cfg',
     'icontools_remap_lbc_rest_runjob.cfg',
 ]
 
 # Icontools executables
-#icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
+icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
 icontools_dir = '/project/g110/spack-install/daint/icontools/c2sm-master/gcc/mxikzrglofw6sz6ew25bowqwdenvmpzd/bin/'
 iconremap_bin = os.path.join(icontools_dir, "iconremap")
 iconsub_bin = os.path.join(icontools_dir, "iconsub")
@@ -68,7 +69,7 @@ dynamics_grid_filename = os.path.join(input_root2, "ICON-1E_DOM01.nc")
 map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
 extpar_filename = os.path.join(
     input_root2, "external_parameter_mch_ICON_1E_R19B08_DOM1.nc")
-lateral_boundary_grid = "/scratch/snx3000/kivanova/processing_chain/icon-art-BRM/2018041500_0_24/icon/input/grid/lateral_boundary.grid.grid.nc"
+lateral_boundary_grid = "/scratch/snx3000/kivanova/processing_chain/icon-art-BRM/2018041500_0_24/icon/input/grid/lateral_boundary.grid.nc"
 
 input_root_rad = os.path.join(input_root, 'rad')
 cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
@@ -79,11 +80,11 @@ map_file_ana = os.path.join(input_root_mapping, "map_file.ana")
 
 # File names -----------------------------------------------------------------
 latbc_filename = "ifs_<y><m><d><h>_lbc.nc"
-inidata_prefix = "IC_cdo_ifs_"
+inidata_prefix = "ifs_init_"
 inidata_nameformat = inidata_prefix + '%Y%m%d%H'
-inidata_filename_suffix = ".grb"
+inidata_filename_suffix = ".nc"
 
-output_filename = "icon-art-BRM-CDOic"
+output_filename = "icon-art-test"
 filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 
 # ART settings----------------------------------------------------------------
@@ -106,10 +107,10 @@ icon_namelist_nwp = os.path.join(case_dir, 'icon_NAMELIST_NWP.cfg')
 
 # Walltimes and domain decomposition
 if compute_queue == "normal":
-    icon_walltime = "00:30:00"
+    icon_walltime = "02:30:00"
     icon_np_tot = 16
 elif compute_queue == "debug":
-    icon_walltime = "00:30:00"
+    icon_walltime = "01:30:00"
     icon_np_tot = 10
 else:
     logging.error("Unknown queue name: %s" % compute_queue)
@@ -150,4 +151,4 @@ values_to_check = {
         'OEM_tracer_1',
         'OEM_tracer_2',
     ]
-}
+    }
