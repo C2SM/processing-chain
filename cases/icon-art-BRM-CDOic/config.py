@@ -1,6 +1,6 @@
 import os
 """
-Configuration file for the 'icon-art-BRM' case with ICON-ART
+Configuration file for the 'icon-art-BRM-CDOic' case with ICON-ART
 """
 
 # GENERAL SETTINGS ===========================================================
@@ -70,6 +70,8 @@ map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
 extpar_filename = os.path.join(
     input_root2, "external_parameter_mch_ICON_1E_R19B08_DOM1.nc")
 lateral_boundary_grid = "/scratch/snx3000/kivanova/processing_chain/icon-art-BRM-CDOic/2018041500_0_24/icon/input/grid/lateral_boundary.grid.nc"
+#lateral_boundary_grid =  os.path.join(input_root_grid, "lateral_boundary.grid.nc")
+
 
 input_root_rad = os.path.join(input_root, 'rad')
 cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
