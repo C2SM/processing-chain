@@ -61,7 +61,7 @@ def main(starttime, hstart, hstop, cfg):
     execname = 'icon.exe'
     tools.copy_file(cfg.icon_bin, os.path.join(cfg.icon_work, execname))
 
-    # Get name if initial file
+    # Get name of initial file
     starttime_real = starttime + timedelta(hours=hstart)
     inidata_filename = os.path.join(
         cfg.icon_input_icbc,

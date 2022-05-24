@@ -26,7 +26,7 @@
 
 import os
 import logging
-import shutil
+import glob
 import subprocess
 from datetime import timedelta
 import xarray
@@ -110,6 +110,9 @@ def main(starttime, hstart, hstop, cfg):
         tools.copy_file(cfg.extpar_filename,
                         cfg.extpar_filename_scratch,
                         output_log=True)
+        tools.copy_file(cfg.lateral_boundary_grid,
+                        cfg.lateral_boundary_grid_scratch,
+                        output_log=True)
 
         # Copy radiation files
         tools.copy_file(cfg.cldopt_filename,
@@ -118,6 +121,9 @@ def main(starttime, hstart, hstop, cfg):
         tools.copy_file(cfg.lrtm_filename,
                         cfg.lrtm_filename_scratch,
                         output_log=True)
+        tools.copy_dir(cfg.ecrad_data,
+                       cfg.ecrad_data_scratch,
+                       output_log=True)
 
         # Copy mapping file
         tools.copy_file(cfg.map_file_ana,
@@ -167,26 +173,42 @@ def main(starttime, hstart, hstop, cfg):
                     os.path.join(cfg.oae_dir, cfg.oae_ens_lambda_nc),
                     cfg.oae_ens_lambda_nc_scratch)
 
+        # Copy initial and boundary condition files
+        if cfg.copyICBC:
+            # copy files individually based on filename
+            icbc_file_list = glob.glob(
+                    os.path.join(cfg.input_root_icbc, cfg.latbc_prefix)
+                    + (len(cfg.latbc_nameformat)-2)*'?'
+                    + cfg.latbc_suffix)
+            icbc_file_list.sort()
+            icbc_file_list.append( 
+                    os.path.join(cfg.input_root_icbc, cfg.inidata_filename)
+                    )
+            for latbc_file in icbc_file_list:
+                tools.copy_file(latbc_file, cfg.icon_input_icbc)
+
+
         #-----------------------------------------------------
         # Get datafile lists for LBC (each at 00 UTC and others)
         #-----------------------------------------------------
-        datafile_list = []
-        datafile_list_rest = []
-        datafile_list_chem = []
-        for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-            meteo_file = os.path.join(cfg.icon_input_icbc,
-                                      time.strftime(cfg.meteo_nameformat))
-            if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM:
-                chem_file = os.path.join(cfg.icon_input_icbc,
-                                         time.strftime(cfg.chem_nameformat))
-                datafile_list_chem.append(chem_file + cfg.chem_suffix)
-            if meteo_file.endswith('00'):
-                datafile_list.append(meteo_file + cfg.meteo_suffix)
-            else:
-                datafile_list_rest.append(meteo_file + cfg.meteo_suffix)
-        datafile_list = ' '.join([str(v) for v in datafile_list])
-        datafile_list_rest = ' '.join([str(v) for v in datafile_list_rest])
-        datafile_list_chem = ' '.join([str(v) for v in datafile_list_chem])
+        if cfg.doMeteo:
+            datafile_list = []
+            datafile_list_rest = []
+            datafile_list_chem = []
+            for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+                meteo_file = os.path.join(cfg.icon_input_icbc,
+                                          time.strftime(cfg.meteo_nameformat))
+                if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM:
+                    chem_file = os.path.join(cfg.icon_input_icbc,
+                                             time.strftime(cfg.chem_nameformat))
+                    datafile_list_chem.append(chem_file + cfg.chem_suffix)
+                if meteo_file.endswith('00'):
+                    datafile_list.append(meteo_file + cfg.meteo_suffix)
+                else:
+                    datafile_list_rest.append(meteo_file + cfg.meteo_suffix)
+            datafile_list = ' '.join([str(v) for v in datafile_list])
+            datafile_list_rest = ' '.join([str(v) for v in datafile_list_rest])
+            datafile_list_chem = ' '.join([str(v) for v in datafile_list_chem])
 
         #-----------------------------------------------------
         # Write and submit runscripts
@@ -217,28 +239,29 @@ def main(starttime, hstart, hstop, cfg):
         #-----------------------------------------------------
         # Add GEOSP to all meteo files
         #-----------------------------------------------------
-        for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-            src_file = os.path.join(
-                cfg.icon_input_icbc,
-                time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
-            merged_file = os.path.join(
-                cfg.icon_input_icbc,
-                time.strftime(cfg.meteo_nameformat) + '_merged.nc')
-            ds = xarray.open_dataset(src_file)
-            # Load GEOSP-dataset as ds_geosp at time 00:
-            if (time.hour == 0):
-                da_geosp = ds['GEOSP']
-            # Merge GEOSP-dataset with other timesteps
-            elif (time.hour != 0):
-                # Change values of time dimension to current time
-                da_geosp = da_geosp.assign_coords(time=[time])
-                # Merge GEOSP into temporary file
-                ds_merged = xarray.merge([ds, da_geosp])
-                ds_merged.attrs = ds.attrs
-                ds_merged.to_netcdf(merged_file)
-                # Rename file to get original file name
-                tools.rename_file(merged_file, src_file)
-                logging.info("Added GEOSP to file {}".format(merged_file))
+        if cfg.doMeteo:
+            for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+                src_file = os.path.join(
+                    cfg.icon_input_icbc,
+                    time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
+                merged_file = os.path.join(
+                    cfg.icon_input_icbc,
+                    time.strftime(cfg.meteo_nameformat) + '_merged.nc')
+                ds = xarray.open_dataset(src_file)
+                # Load GEOSP-dataset as ds_geosp at time 00:
+                if (time.hour == 0):
+                    da_geosp = ds['GEOSP']
+                # Merge GEOSP-dataset with other timesteps
+                elif (time.hour != 0):
+                    # Change values of time dimension to current time
+                    da_geosp = da_geosp.assign_coords(time=[time])
+                    # Merge GEOSP into temporary file
+                    ds_merged = xarray.merge([ds, da_geosp])
+                    ds_merged.attrs = ds.attrs
+                    ds_merged.to_netcdf(merged_file)
+                    # Rename file to get original file name
+                    tools.rename_file(merged_file, src_file)
+                    logging.info("Added GEOSP to file {}".format(merged_file))
 
         #-----------------------------------------------------
         # In case of OEM: merge chem tracers with meteo-files

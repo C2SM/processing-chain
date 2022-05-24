@@ -195,6 +195,40 @@ def copy_file(source_path, dest_path, output_log=False):
     logging.info("Copied {} to {}".format(source_path, dest_path))
 
 
+def copy_dir(source_path, dest_path, output_log=False):
+    """Copy a directory from source_path to dest_path
+
+    Use shutil.copytree to copy the directory.
+    File permissions will be copied as well.
+
+    Provides error description to the logfiles
+
+    Parameters
+    ----------
+    source_path : str
+        Path to the directory to be copied
+    dest_path : str
+        Path to the destination directory
+    """
+    try:
+        shutil.copytree(source_path, dest_path)
+    except FileNotFoundError:
+        logging.error("Source-directory not found at {} OR "
+                      "target-directory {} doesn't exist.".format(
+                          source_path, dest_path))
+        raise
+    except PermissionError:
+        logging.error("Copying directory from {} to {} failed due to"
+                      "a permission error.".format(source_path, dest_path))
+        raise
+    except (OSError, Exception) as e:
+        logging.error("Copying {} to {} failed with {}".format(
+            source_path, dest_path,
+            type(e).__name__))
+        raise
+    logging.info("Copied {} to {}".format(source_path, dest_path))
+
+
 def rename_file(source_path, dest_path, output_log=False):
     """Copy a file from source_path to dest_path
 
