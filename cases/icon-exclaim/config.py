@@ -1,6 +1,6 @@
 import os
 """
-Configuration file for the 'icon-test1' case with ICON
+Configuration file for the 'icon-exclaim' case with ICON
 """
 
 # GENERAL SETTINGS ===========================================================
@@ -46,7 +46,7 @@ exe_dir = os.path.join("/store/g142", user, "local/bin")
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
 # PRE-PROCESSING =============================================================
-input_root      = os.path.join("/store/g142", user, "icon_data/cases/test1")
+input_root      = os.path.join("/store/g142", user, "icon_data/cases/exclaim")
 input_root_icbc = os.path.join(input_root, 'icbc')
 
 # meteo
@@ -78,7 +78,7 @@ input_root_grid         = os.path.join(input_root,      'grid')
 radiation_grid_filename = os.path.join(input_root_grid, 'ICON-1E_DOM01.parent.nc')
 dynamics_grid_filename  = os.path.join(input_root_grid, 'ICON-1E_DOM01.nc')
 map_file_latbc          = os.path.join(input_root_grid, 'map_file.latbc')
-extpar_filename         = os.path.join(input_root_grid, 'extpar_test1.nc')
+extpar_filename         = os.path.join(input_root_grid, 'extpar_exclaim.nc')
 lateral_boundary_grid   = os.path.join(input_root_grid, 'lateral_boundary.grid.nc')
 
 # Radiation
@@ -98,7 +98,7 @@ latbc_suffix     = '_lbc.nc'
 latbc_filename   = latbc_prefix + latbc_nameformat + latbc_suffix
 inidata_filename = 'laf2021111812.nc'
 
-output_filename = "test1"
+output_filename = "exclaim"
 filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 
 # SIMULATION =================================================================
