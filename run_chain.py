@@ -786,4 +786,15 @@ if __name__ == '__main__':
         else:
             raise RuntimeError("Unknown target: {}".format(cfg.target))
 
+        settings_file = os.path.join(cfg.chain_src_dir, 'settings.ini')
+        if os.path.isfile(settings_file):
+            settings.read(settings_file)
+            mail_address = settings['User']['Mail']
+        else:
+            mail_address = None
+        if mail_address:
+            subject = message = "Finished chain for case {}".format(casename)
+            logging.info('Sending end message to %s' % mail_address)
+            tools.send_mail(mail_address, subject, message)
+
     print('>>> finished chain for good or bad! <<<')
