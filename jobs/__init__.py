@@ -10,6 +10,7 @@ from . import int2lm
 from . import post_int2lm
 from . import cosmo
 from . import post_cosmo
+from . import post_icon
 from . import reduce_output
 from . import verify_chain
 from . import photo_rate

@@ -45,8 +45,8 @@ def runscript_commands_template():
 
     return '\n'.join([
         #"srun rsync -av {int2lm_work_src}/. {int2lm_work_dest}/",
-        "srun rsync -av {cosmo_work_src}/. {cosmo_work_dest}/",
-        "srun rsync -av {cosmo_output_src}/. {cosmo_output_dest}/",
+        "srun rsync -av {icon_work_src}/. {icon_work_dest}/",
+        "srun rsync -av {icon_output_src}/. {icon_output_dest}/",
         "srun rsync -av {logs_src}/. {logs_dest}/"
     ])
 
