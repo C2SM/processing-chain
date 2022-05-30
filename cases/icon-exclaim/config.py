@@ -116,11 +116,10 @@ icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
 convert_gas = False
 output_levels = 20
 
-# POST_COSMO -----------------------------------------------------------------
-# TODO change this to POST_ICON
+# POST_ICON -----------------------------------------------------------------
 # Root directory where the output of the chain is copied to
-output_root = os.path.join("/store/g142/", user, "processing_chain_output",
-                           casename)
+output_root = os.path.join("/store/g142/", user, "icon_output", casename)
+
 
 # VERIFY_CHAIN ---------------------------------------------------------------
 reference_dir = os.path.join(input_root, "reference_output")
