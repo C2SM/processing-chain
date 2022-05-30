@@ -9,7 +9,7 @@ target = 'icon'
 restart_step = 24  # hours
 
 compute_host = 'daint'
-compute_queue = 'debug'  # 'normal' / 'debug'
+compute_queue = 'normal'  # 'normal' / 'debug'
 compute_account = 'g142'
 constraint = 'gpu'  # 'mc' / 'gpu'
 
