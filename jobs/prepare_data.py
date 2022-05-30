@@ -121,9 +121,7 @@ def main(starttime, hstart, hstop, cfg):
         tools.copy_file(cfg.lrtm_filename,
                         cfg.lrtm_filename_scratch,
                         output_log=True)
-        tools.copy_dir(cfg.ecrad_data,
-                       cfg.ecrad_data_scratch,
-                       output_log=True)
+        tools.copy_dir(cfg.ecrad_data, cfg.ecrad_data_scratch, output_log=True)
 
         # Copy mapping file
         tools.copy_file(cfg.map_file_ana,
@@ -177,16 +175,13 @@ def main(starttime, hstart, hstop, cfg):
         if cfg.copyICBC:
             # copy files individually based on filename
             icbc_file_list = glob.glob(
-                    os.path.join(cfg.input_root_icbc, cfg.latbc_prefix)
-                    + (len(cfg.latbc_nameformat)-2)*'?'
-                    + cfg.latbc_suffix)
+                os.path.join(cfg.input_root_icbc, cfg.latbc_prefix) +
+                (len(cfg.latbc_nameformat) - 2) * '?' + cfg.latbc_suffix)
             icbc_file_list.sort()
-            icbc_file_list.append( 
-                    os.path.join(cfg.input_root_icbc, cfg.inidata_filename)
-                    )
+            icbc_file_list.append(
+                os.path.join(cfg.input_root_icbc, cfg.inidata_filename))
             for latbc_file in icbc_file_list:
                 tools.copy_file(latbc_file, cfg.icon_input_icbc)
-
 
         #-----------------------------------------------------
         # Get datafile lists for LBC (each at 00 UTC and others)
@@ -195,12 +190,14 @@ def main(starttime, hstart, hstop, cfg):
             datafile_list = []
             datafile_list_rest = []
             datafile_list_chem = []
-            for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+            for time in tools.iter_hours(starttime, hstart, hstop,
+                                         cfg.meteo_inc):
                 meteo_file = os.path.join(cfg.icon_input_icbc,
                                           time.strftime(cfg.meteo_nameformat))
                 if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM:
-                    chem_file = os.path.join(cfg.icon_input_icbc,
-                                             time.strftime(cfg.chem_nameformat))
+                    chem_file = os.path.join(
+                        cfg.icon_input_icbc,
+                        time.strftime(cfg.chem_nameformat))
                     datafile_list_chem.append(chem_file + cfg.chem_suffix)
                 if meteo_file.endswith('00'):
                     datafile_list.append(meteo_file + cfg.meteo_suffix)
@@ -240,7 +237,8 @@ def main(starttime, hstart, hstop, cfg):
         # Add GEOSP to all meteo files
         #-----------------------------------------------------
         if cfg.doMeteo:
-            for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+            for time in tools.iter_hours(starttime, hstart, hstop,
+                                         cfg.meteo_inc):
                 src_file = os.path.join(
                     cfg.icon_input_icbc,
                     time.strftime(cfg.meteo_nameformat) + '_lbc.nc')

@@ -357,8 +357,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                          os.path.basename(cfg.lrtm_filename)))
         setattr(
             cfg, 'ecrad_data_scratch',
-            os.path.join(cfg.icon_input_rad,
-                         os.path.basename(cfg.ecrad_data)))
+            os.path.join(cfg.icon_input_rad, os.path.basename(cfg.ecrad_data)))
         setattr(
             cfg, 'inidata_filename_scratch',
             os.path.join(cfg.icon_input_icbc,

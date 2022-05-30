@@ -46,12 +46,12 @@ exe_dir = os.path.join("/store/g142", user, "local/bin")
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
 # PRE-PROCESSING =============================================================
-input_root      = os.path.join("/store/g142", user, "icon_data/cases/exclaim")
+input_root = os.path.join("/store/g142", user, "icon_data/cases/exclaim")
 input_root_icbc = os.path.join(input_root, 'icbc')
 
 # meteo
 doMeteo = False
-input_root_meteo = input_root_icbc # this might actually be the default
+input_root_meteo = input_root_icbc  # this might actually be the default
 meteo_inc = 1
 meteo_prefix = 'efsf'
 meteo_nameformat = meteo_prefix + '%d%H%M%S'
@@ -64,7 +64,7 @@ copyICBC = True
 # Icontools executables
 icontools_dir = '/project/g110/spack-install/daint/icontools/c2sm-master/gcc/mxikzrglofw6sz6ew25bowqwdenvmpzd/bin'
 iconremap_bin = os.path.join(icontools_dir, "iconremap")
-iconsub_bin   = os.path.join(icontools_dir, "iconsub")
+iconsub_bin = os.path.join(icontools_dir, "iconsub")
 
 icontools_runjobs = [
     #'icontools_remap_ic_runjob.cfg',
@@ -74,28 +74,30 @@ icontools_runjobs = [
 
 # Input data for runscript----------------------------------------------------
 # Grid
-input_root_grid         = os.path.join(input_root,      'grid')
-radiation_grid_filename = os.path.join(input_root_grid, 'ICON-1E_DOM01.parent.nc')
-dynamics_grid_filename  = os.path.join(input_root_grid, 'ICON-1E_DOM01.nc')
-map_file_latbc          = os.path.join(input_root_grid, 'map_file.latbc')
-extpar_filename         = os.path.join(input_root_grid, 'extpar_exclaim.nc')
-lateral_boundary_grid   = os.path.join(input_root_grid, 'lateral_boundary.grid.nc')
+input_root_grid = os.path.join(input_root, 'grid')
+radiation_grid_filename = os.path.join(input_root_grid,
+                                       'ICON-1E_DOM01.parent.nc')
+dynamics_grid_filename = os.path.join(input_root_grid, 'ICON-1E_DOM01.nc')
+map_file_latbc = os.path.join(input_root_grid, 'map_file.latbc')
+extpar_filename = os.path.join(input_root_grid, 'extpar_exclaim.nc')
+lateral_boundary_grid = os.path.join(input_root_grid,
+                                     'lateral_boundary.grid.nc')
 
 # Radiation
-input_root_rad  = os.path.join(input_root,     'rad')
+input_root_rad = os.path.join(input_root, 'rad')
 cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
-lrtm_filename   = os.path.join(input_root_rad, 'rrtmg_lw.nc')
-ecrad_data      = os.path.join(input_root_rad, 'ecrad_data')
+lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
+ecrad_data = os.path.join(input_root_rad, 'ecrad_data')
 
 # Mapping
-input_root_mapping = os.path.join(input_root,         'mapping')
-map_file_ana       = os.path.join(input_root_mapping, 'map_file.ana')
+input_root_mapping = os.path.join(input_root, 'mapping')
+map_file_ana = os.path.join(input_root_mapping, 'map_file.ana')
 
 # File names -----------------------------------------------------------------
-latbc_prefix     = 'efsf'
+latbc_prefix = 'efsf'
 latbc_nameformat = '<ddhhmmss>'
-latbc_suffix     = '_lbc.nc'
-latbc_filename   = latbc_prefix + latbc_nameformat + latbc_suffix
+latbc_suffix = '_lbc.nc'
+latbc_filename = latbc_prefix + latbc_nameformat + latbc_suffix
 inidata_filename = 'laf2021111812.nc'
 
 output_filename = "exclaim"
@@ -117,8 +119,8 @@ output_levels = 20
 # POST_COSMO -----------------------------------------------------------------
 # TODO change this to POST_ICON
 # Root directory where the output of the chain is copied to
-output_root = os.path.join("/store/g142/", user,
-                           "processing_chain_output", casename)
+output_root = os.path.join("/store/g142/", user, "processing_chain_output",
+                           casename)
 
 # VERIFY_CHAIN ---------------------------------------------------------------
 reference_dir = os.path.join(input_root, "reference_output")
