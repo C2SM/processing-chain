@@ -101,7 +101,7 @@ def main(starttime, hstart, hstop, cfg):
     if os.path.isdir(cfg.icon_output_reduced):
         icon_output_src = cfg.icon_output_reduced.rstrip('/')
         icon_output_dest = os.path.join(copy_path,
-                                         "icon_output_reduced").rstrip('/')
+                                        "icon_output_reduced").rstrip('/')
     else:
         icon_output_src = cfg.icon_output.rstrip('/')
         icon_output_dest = os.path.join(copy_path, "icon_output").rstrip('/')
