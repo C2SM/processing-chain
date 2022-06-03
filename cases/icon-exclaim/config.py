@@ -1,4 +1,4 @@
-import os
+import os, glob
 """
 Configuration file for the 'icon-exclaim' case with ICON
 """
@@ -62,7 +62,7 @@ copyICBC = True
 
 # ICONTools ------------------------------------------------------------------
 # Icontools executables
-icontools_dir = '/project/g110/spack-install/daint/icontools/c2sm-master/gcc/mxikzrglofw6sz6ew25bowqwdenvmpzd/bin'
+icontools_dir = glob.glob('/project/g110/spack-install/daint/icontools/c2sm-master/gcc/*/bin')[0]
 iconremap_bin = os.path.join(icontools_dir, "iconremap")
 iconsub_bin = os.path.join(icontools_dir, "iconsub")
 
