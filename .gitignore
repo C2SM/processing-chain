@@ -2,5 +2,8 @@ docs/build/
 *__pycache__/
 *.pyc
 fieldextra.diagnostic
-venv/
 settings.ini
+.venv/
+ebfiles_repo/
+modules/
+software/
