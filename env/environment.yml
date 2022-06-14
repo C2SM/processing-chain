@@ -1,0 +1,17 @@
+name: proc-chain
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - sphinx_rtd_theme
+  - cdo
+  - netcdf4
+  - numpy
+  - f90nml
+  - cartopy
+  - matplotlib
+  - scipy
+  - sphinx
+  - pillow
+  - xarray
