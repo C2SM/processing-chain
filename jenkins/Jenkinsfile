@@ -7,42 +7,40 @@ pipeline {
     }
     agent none
     stages {
-        stage('Setup') {
-            stage('setup miniconda') {
-                environment {
-                    PATH = "$WORKSPACE/miniconda/bin:$PATH"
+        stage('setup miniconda') {
+            environment {
+                PATH = "$WORKSPACE/miniconda/bin:$PATH"
+            }
+            steps {
+                script {
+                    BuildBadge.setStatus('running')
                 }
-                steps {
-                    script {
-                        BuildBadge.setStatus('running')
-                    }
-                    sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-                    sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
-                    sh 'conda config --set always_yes yes --set changeps1 no'
-                    sh 'conda config --add channels conda-forge'
-                    sh 'conda env create -f env/environment.yml'
-                    sh '''source $WORKSPACE/miniconda/etc/profile.d/conda.sh
-                        conda activate proc-chain
-                        conda deactivate
-                        rm miniconda.sh'''
-                }
-                post {
-                    failure {
-                        echo 'Cleaning up workspace'
-                        deleteDir()
-                    }
-                }
+                sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
+                sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
+                sh 'conda config --set always_yes yes --set changeps1 no'
+                sh 'conda config --add channels conda-forge'
+                sh 'conda env create -f env/environment.yml'
+                sh '''source $WORKSPACE/miniconda/etc/profile.d/conda.sh
+                    conda activate proc-chain
+                    conda deactivate
+                    rm miniconda.sh'''
             }
             post {
                 failure {
-                    script {
-                        BuildBadge.setStatus('failing')
-                    }
+                    echo 'Cleaning up workspace'
+                    deleteDir()
                 }
-                success {
-                    script {
-                        BuildBadge.setStatus('passing')
-                    }
+            }
+        }
+        post {
+            failure {
+                script {
+                    BuildBadge.setStatus('failing')
+                }
+            }
+            success {
+                script {
+                    BuildBadge.setStatus('passing')
                 }
             }
         }
