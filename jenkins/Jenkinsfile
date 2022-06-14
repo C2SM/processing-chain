@@ -29,18 +29,14 @@ pipeline {
                 failure {
                     echo 'Cleaning up workspace'
                     deleteDir()
+                    script {
+                        BuildBadge.setStatus('failing')
+                    }
                 }
-            }
-        }
-        post {
-            failure {
-                script {
-                    BuildBadge.setStatus('failing')
-                }
-            }
-            success {
-                script {
-                    BuildBadge.setStatus('passing')
+                success {
+                    script {
+                        BuildBadge.setStatus('passing')
+                    }
                 }
             }
         }
