@@ -3,7 +3,4 @@ docs/build/
 *.pyc
 fieldextra.diagnostic
 settings.ini
-.venv/
-ebfiles_repo/
-modules/
-software/
+input/
