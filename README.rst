@@ -7,69 +7,74 @@ It supports different types of simulations, including **COSMO**, **COSMO-GHG**,
 **COSMO-ART**, **ICON** and **ICON-ART**. The chain can flexibly be adapted
 according to your needs, e.g., by creating your own case or adding new jobs.
 
-Setting up your Virtual Environment using ``pip``
-*************************************************
+Environment Setup
+*****************
 
 The following steps allow you to create and use your own virtual environment
-to run the Processing Chain. It is assumed that you are in the root folder
-of this repository.
+to run the Processing Chain. We recommend to use a conda environment for the
+usage of the provided scripts. Please follow the instruction for the installation.
 
-1. Install EasyBuild Packages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. Install Miniconda
+~~~~~~~~~~~~~~~~~~~~
 
-The Processing Chain uses the ``cartopy`` package, which depends on ``GEOS`` and ``PROJ``.
-However, these packages cannot be installed via ``pip``. Therefore, they have to be
-installed using EasyBuild. For more information about the EasyBuild framework, you 
-can have a look here: https://user.cscs.ch/computing/compilation/easybuild/ ::
+Install as user specific miniconda, e.g. on ``/scratch`` (enter ``cd $SCRATCH`` and
+``pwd`` at the command line to get to your personal scratch directory on Daint).
+When the command prompt asks for installation location, provide the path to your
+scratch and append ``/miniconda3``.
 
-    module load daint-gpu EasyBuild-custom
-    eb easybuild/GEOS-3.9.1-CrayGNU-20.11.eb -r
-    eb easybuild/PROJ-4.9.3-CrayGNU-20.11.eb -r
+    **Note**: The default location would be on your /home directory, which may lead to memory issues.
+    (the default location would be on your home directory, which may lead to memory issues).
+        
+To install the latest miniconda, type::
+
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    bash Miniconda3-latest-Linux-x86_64.sh
+
+Then, export ``$PATH`` to your conda installation::
+
+    export PATH="$SCRATCH/miniconda3/bin:$PATH"
     
-2. Create the Virtual Environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+2. Create the Conda Environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 
-Now we create the virtual environment named ``venv``, which is installed into
-the folder of the same name::
+Create a conda environment ``proc-chain`` with and install requirements::
 
-    module load cray-python/3.8.5.0
-    python -m venv --system-site-packages venv
-    source venv/bin/activate
-    module load GEOS/3.9.1-CrayGNU-20.11
-    module load PROJ/4.9.3-CrayGNU-20.11
+    conda env create -f env/environment.yml
 
-3. Install Requirements
-~~~~~~~~~~~~~~~~~~~~~~~
+Activate the environment (use "source activate" in case "conda activate" does not work)::
 
-The requirements.txt_ contains all packages that are needed to run the Processing Chain. 
-To install the requirements, type::
+    conda activate proc-chain
 
-    python -m pip install -r requirements.txt
+If you already have the environment but want to update it::
 
-4. Create the settings.ini File
+    conda env update --file env/environment.yml --prune
+
+3. Create the settings.ini File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Run the following bash script once to register your email address::
 
     ./generate_settings_file.sh
 
-Afterwards, close and re-open your terminal, and continue with the next section.
-
 Run the Chain
 *************
 
 Once everything has been set up correctly according to the above steps,
-you just need to execute the following command to load the necessary modules
-and activate your environment::
+you just need to execute the following command to activate your environment::
 
-    source modules.env
+    conda activate proc-chain
 
 To test if your environment has been successfully set,
 use the command line help to see the available arguments for the main script::
 
     python run_chain.py -h
 
-To run the example cases with their standard jobs, type::
+To run the example cases with their standard jobs, you will need to download
+the necessary input data first (this may take some time)::
+
+    ./get_data.sh
+
+Afterwards, type::
 
     python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24
 
@@ -123,7 +128,6 @@ contributed significantly to the initial development (in alphabetic order):
 
 The current code owner is Michael Jähn (michael.jaehn@c2sm.ethz.ch).
 
-.. _requirements.txt: requirements.txt
 .. _documentation: https://processing-chain.readthedocs.io
 .. _python-cdo: https://pypi.org/project/cdo
 .. _Empa: https://www.empa.ch
