@@ -5,6 +5,11 @@ pipeline {
     environment {
        EMAIL_TO_1 = 'michael.jaehn@c2sm.ethz.ch'
     }
+    agent {
+        node {
+            label 'daint'
+        }
+    }
     stages {
         stage('setup miniconda') {
             environment {
