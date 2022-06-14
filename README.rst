@@ -49,12 +49,14 @@ If you already have the environment but want to update it::
 
     conda env update --file env/environment.yml --prune
 
-3. Create the settings.ini File
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3. Store user-specific data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Run the following bash script once to register your email address::
+To register your email address and standard account, store them into these
+files within your home directory::
 
-    ./generate_settings_file.sh
+    echo <your_account_id> > ~/.acct
+    echo <your_email_address> > ~/.forward
 
 Run the Chain
 *************
