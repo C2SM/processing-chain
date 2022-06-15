@@ -68,9 +68,7 @@ pipeline {
                 }
             }
         }
-    }
-    stages {
-        stage('testing') {
+        stage('Testing') {
             environment {
                 PATH = "$WORKSPACE/miniconda/bin:$PATH"
             }
