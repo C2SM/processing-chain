@@ -12,10 +12,10 @@ pipeline {
     }
     stages {
         stage('Setup') {
+            environment {
+                PATH = "$WORKSPACE/miniconda/bin:$PATH"
+            }
             parallel {
-                environment {
-                    PATH = "$WORKSPACE/miniconda/bin:$PATH"
-                }
                 steps {
                     script {
                         BuildBadge.setStatus('running')
