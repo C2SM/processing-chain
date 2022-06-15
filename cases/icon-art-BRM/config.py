@@ -63,8 +63,7 @@ iconsub_bin = os.path.join(icontools_dir, "iconsub")
 # Input data for runscript----------------------------------------------------
 # Grid
 input_root_grid = os.path.join(input_root, 'grids')
-radiation_grid_filename = os.path.join(input_root2,
-                                       "ICON-1E_DOM01.parent.nc")
+radiation_grid_filename = os.path.join(input_root2, "ICON-1E_DOM01.parent.nc")
 dynamics_grid_filename = os.path.join(input_root2, "ICON-1E_DOM01.nc")
 map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
 extpar_filename = os.path.join(
@@ -97,7 +96,7 @@ art_input_folder = os.path.join(input_root, 'ART')
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin ="/scratch/snx3000/kivanova/icon/bin/icon.exe"
+icon_bin = "/scratch/snx3000/kivanova/icon/bin/icon.exe"
 #os.path.join(exe_dir, "icon-kit-art_20211018")
 
 # Namelists and slurm runscript templates
@@ -151,4 +150,4 @@ values_to_check = {
         'OEM_tracer_1',
         'OEM_tracer_2',
     ]
-    }
+}
