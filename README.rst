@@ -79,8 +79,12 @@ the necessary input data first (this may take some time)::
 Afterwards, type::
 
     python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24
-
+    
 or::
+
+    python run_chain.py icon-art-test 2018-01-01 0 24 -j prepare_data icon
+
+Empa users can perform additional test cases::
 
     python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 24
 
