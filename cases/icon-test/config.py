@@ -81,10 +81,9 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 icon_bin = os.path.join(chain_src_dir, 'icon', 'bin', 'icon')
 
 # Icontools executables
-#icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
-icontools_dir = '/scratch/snx3000/msteiner/spack-stages/daint/spack-stage-icontools-master-t524rnfa5sfyn4rbvarypyzwae4jg46d/spack-src/icontools'
-iconremap_bin = os.path.join(icontools_dir, "iconremap")
-iconsub_bin = os.path.join(icontools_dir, "iconsub")
+icontools_dir = os.popen('spack location -i icontools').read().strip()
+iconremap_bin = os.path.join(icontools_dir, "bin", "iconremap")
+iconsub_bin = os.path.join(icontools_dir, "bin", "iconsub")
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
