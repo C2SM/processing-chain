@@ -2,7 +2,7 @@ docs/build/
 *__pycache__/
 *.pyc
 fieldextra.diagnostic
-settings.ini
+input_processing-chain.tgz
 input/
 work/
 icon/
