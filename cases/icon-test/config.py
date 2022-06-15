@@ -32,17 +32,14 @@ chain_src_dir = os.getcwd()
 # Root directory of the working space of the chain
 work_root = os.path.join(chain_src_dir, 'work')
 
-# Directory where executables are stored
-exe_dir = "/store/empa/em05/executables"
-
 # Case directory
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
 # PRE-PROCESSING =============================================================
-input_root = '/store/empa/em05/input_icon_processing_chain_example/'
+input_root = os.path.join(chain_src_dir, 'input', 'icon')
 input_root_icbc = os.path.join(input_root, 'icbc')
 # meteo
-input_root_meteo = '/store/empa/em05/dbrunner/icon-art/meteo'
+input_root_meteo = os.path.join(chain_src_dir, 'input', 'meteo')
 meteo_prefix = 'ifs_'
 meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
