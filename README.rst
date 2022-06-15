@@ -82,15 +82,11 @@ Afterwards, type::
     
 or::
 
-    python run_chain.py icon-art-test 2018-01-01 0 24 -j prepare_data icon
+    python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon
 
-Empa users can perform additional test cases::
+Empa users can perform additional tests::
 
     python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 24
-
-or::
-
-    python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon
 
 or::
 
