@@ -11,24 +11,43 @@ pipeline {
         }
     }
     stages {
-        stage('setup miniconda') {
-            environment {
-                PATH = "$WORKSPACE/miniconda/bin:$PATH"
-            }
-            steps {
-                script {
-                    BuildBadge.setStatus('running')
+        stage('Setup') {
+            parallel {
+                environment {
+                    PATH = "$WORKSPACE/miniconda/bin:$PATH"
                 }
-                sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-                sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
-                sh 'conda config --set always_yes yes --set changeps1 no'
-                sh 'conda config --add channels conda-forge'
-                sh 'conda env create -f env/environment.yml'
-                sh '''source $WORKSPACE/miniconda/etc/profile.d/conda.sh
-                    conda activate proc-chain
-                    conda deactivate
-                    rm miniconda.sh'''
-                sh './jenkins/scripts/create-icon-binary.sh'
+                steps {
+                    script {
+                        BuildBadge.setStatus('running')
+                    }
+                    sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
+                    sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
+                    sh 'conda config --set always_yes yes --set changeps1 no'
+                    sh 'conda config --add channels conda-forge'
+                    sh 'conda env create -f env/environment.yml'
+                    sh '''source $WORKSPACE/miniconda/etc/profile.d/conda.sh
+                        conda activate proc-chain
+                        conda deactivate
+                        rm miniconda.sh'''
+                }
+                post {
+                    failure {
+                        echo 'Cleaning up workspace'
+                        deleteDir()
+                    }
+                }
+                steps {
+                    script {
+                        BuildBadge.setStatus('running')
+                    }
+                    sh './jenkins/scripts/create-icon-binary.sh'
+                }
+                post {
+                    failure {
+                        echo 'Cleaning up workspace'
+                        deleteDir()
+                    }
+                }
             }
             post {
                 failure {
