@@ -1,16 +1,23 @@
 import os
+"""
+Configuration file for the 'cosmo-ghg-11km-test' case with COSMO-GHG
+"""
 
 # GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
+if os.path.exists(os.environ['HOME'] + '/.acct'):
+    with open(os.environ['HOME'] + '/.acct', 'r') as file:
+        compute_account = file.read().rstrip()
+else:
+    compute_account = os.system("id -gn")
+compute_host = 'daint'
+compute_queue = 'debug'  # 'normal'
+constraint = 'gpu'  # 'mc'
+
 target = 'cosmo-ghg'
 restart_step = 12  # hours
 #subtarget = 'spinup'
 #spinup = 6
-
-compute_host = 'daint'
-compute_queue = 'debug'  # 'normal'
-compute_account = 'em05'
-constraint = 'gpu'  # 'mc'
 
 if constraint == 'gpu':
     ntasks_per_node = 12
@@ -32,13 +39,10 @@ casename = os.path.basename(os.path.dirname(path))
 chain_src_dir = os.getcwd()
 
 # Root directory of the working space of the chain
-work_root = os.environ['SCRATCH'] + "/processing_chain"
-
-# Directory where executables are stored
-exe_dir = "/store/empa/em05/executables"
+work_root = os.path.join(chain_src_dir, 'work')
 
 # PRE-PROCESSING =============================================================
-input_root = '/store/empa/em05/input_processing_chain_example/'
+input_root = os.path.join(os.path.join(chain_src_dir, 'input', 'cosmo-ghg'))
 
 # METEO ----------------------------------------------------------------------
 meteo_dir = os.path.join(input_root, 'meteo')
@@ -112,7 +116,8 @@ int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = "test_domain.nc"
 
 # Executable
-int2lm_bin = os.path.join(exe_dir, "int2lm_gnu_208d68e_20201005")
+#int2lm_bin = os.system("spack location -i int2lm@c2sm-master%nvhpc")
+int2lm_bin = os.popen('spack location -i int2lm@c2sm-master%nvhpc').read().strip() + '/bin'
 
 # Namelist and slurm runscript templates
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT.cfg' % (chain_src_dir, casename)
@@ -141,7 +146,7 @@ post_int2lm_species = ["CO2_BG"]
 # SIMULATION =================================================================
 # COSMO ----------------------------------------------------------------------
 # Executable
-cosmo_bin = os.path.join(exe_dir, "cosmo-org-ghg-pgi_2b2a54e7_20210127")
+cosmo_bin = os.popen('spack location -i cosmo@empa-ghg%nvhpc').read().strip() + '/bin/cosmo-ghg_gpu'
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir, casename)

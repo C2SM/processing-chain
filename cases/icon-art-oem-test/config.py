@@ -1,17 +1,21 @@
 import os
 """
-Configuration file for the 'icon-art-test' case with ICON-ART
+Configuration file for the 'icon-art-oem-test' case with ICON-ART
 """
 
 # GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
-target = 'icon-art-oem'
-restart_step = 24  # hours
-
+if os.path.exists(os.environ['HOME'] + '/.acct'):
+    with open(os.environ['HOME'] + '/.acct', 'r') as file:
+        compute_account = file.read().rstrip()
+else:
+    compute_account = os.system("id -gn")
 compute_host = 'daint'
 compute_queue = 'debug'  # 'normal' / 'debug'
-compute_account = 'em05'
 constraint = 'mc'  # 'mc' / 'gpu'
+
+target = 'icon-art-oem'
+restart_step = 24  # hours
 
 if constraint == 'gpu':
     ntasks_per_node = 12
@@ -26,7 +30,7 @@ casename = os.path.basename(os.path.dirname(path))
 chain_src_dir = os.getcwd()
 
 # Root directory of the working space of the chain
-work_root = os.environ['SCRATCH'] + "/processing_chain"
+work_root = os.path.join(chain_src_dir, 'work')
 
 # Directory where executables are stored
 exe_dir = "/store/empa/em05/executables"

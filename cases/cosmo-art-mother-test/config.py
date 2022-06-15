@@ -1,10 +1,17 @@
 import os
+"""
+Configuration file for the 'cosmo-art-mother-test' case with COSMO-ART
+"""
 
-# ORGANIZATIONAL ============================================================= #
+# GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
+if os.path.exists(os.environ['HOME'] + '/.acct'):
+    with open(os.environ['HOME'] + '/.acct', 'r') as file:
+        compute_account = file.read().rstrip()
+else:
+    compute_account = os.system("id -gn")
 compute_host = 'daint'
 compute_queue = 'normal'
-compute_account = 'em05'
 
 # Controls which flavor of cosmo is used to do the simulation.
 target = 'cosmo-art'
@@ -18,7 +25,7 @@ chain_src_dir = os.getcwd()
 # Root directory of the input data (for convenience, not used outside this file)
 input_root = '/store/empa/em05/input_cosmoart_processing_chain_example/'
 # Root directory of the working space of the chain
-work_root = os.environ['SCRATCH'] + "/processing_chain"
+work_root = os.path.join(chain_src_dir, 'work')
 
 # INPUT ====================================================================== #
 

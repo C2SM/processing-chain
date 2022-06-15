@@ -5,13 +5,17 @@ Configuration file for the 'icon-test' case with ICON
 
 # GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
-target = 'icon'
-restart_step = 24  # hours
-
+if os.path.exists(os.environ['HOME'] + '/.acct'):
+    with open(os.environ['HOME'] + '/.acct', 'r') as file:
+        compute_account = file.read().rstrip()
+else:
+    compute_account = os.system("id -gn")
 compute_host = 'daint'
 compute_queue = 'debug'  # 'normal' / 'debug'
-compute_account = 'em05'
 constraint = 'gpu'  # 'mc' / 'gpu'
+
+target = 'icon'
+restart_step = 24  # hours
 
 if constraint == 'gpu':
     ntasks_per_node = 12
@@ -26,7 +30,7 @@ casename = os.path.basename(os.path.dirname(path))
 chain_src_dir = os.getcwd()
 
 # Root directory of the working space of the chain
-work_root = os.environ['SCRATCH'] + "/processing_chain"
+work_root = os.path.join(chain_src_dir, 'work')
 
 # Directory where executables are stored
 exe_dir = "/store/empa/em05/executables"
@@ -77,7 +81,7 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin = os.path.join(exe_dir, "icon-kit-art_20211018")
+icon_bin = os.path.join(chain_src_dir, 'icon', 'bin', 'icon')
 
 # Icontools executables
 #icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
