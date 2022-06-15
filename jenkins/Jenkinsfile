@@ -77,6 +77,7 @@ pipeline {
                 script {
                     TestBadge.setStatus('running')
                 }
+                sh 'conda activate proc-chain'
                 sh 'python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24'
 //              sh 'python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon'
             }
