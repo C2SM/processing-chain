@@ -117,7 +117,8 @@ int2lm_extpar_file = "test_domain.nc"
 
 # Executable
 #int2lm_bin = os.system("spack location -i int2lm@c2sm-master%nvhpc")
-int2lm_bin = os.popen('spack location -i int2lm@c2sm-master%nvhpc').read().strip() + '/bin'
+int2lm_bin = os.popen(
+    'spack location -i int2lm@c2sm-master%nvhpc').read().strip() + '/bin'
 
 # Namelist and slurm runscript templates
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT.cfg' % (chain_src_dir, casename)
@@ -146,7 +147,8 @@ post_int2lm_species = ["CO2_BG"]
 # SIMULATION =================================================================
 # COSMO ----------------------------------------------------------------------
 # Executable
-cosmo_bin = os.popen('spack location -i cosmo@empa-ghg%nvhpc').read().strip() + '/bin/cosmo-ghg_gpu'
+cosmo_bin = os.popen('spack location -i cosmo@empa-ghg%nvhpc').read().strip(
+) + '/bin/cosmo-ghg_gpu'
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir, casename)
