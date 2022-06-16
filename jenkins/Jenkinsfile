@@ -1,5 +1,5 @@
-def BuildBadge = addEmbeddableBadgeConfiguration(id: "build", subject: "Build")
-def TestBadge = addEmbeddableBadgeConfiguration(id: "test", subject: "Test")
+def BuildBadge = addEmbeddableBadgeConfiguration(id: "build", subject: "build")
+def TestBadge = addEmbeddableBadgeConfiguration(id: "test", subject: "test")
 
 pipeline {
     environment {
@@ -41,9 +41,6 @@ pipeline {
                 }
                 stage('get data') {
                     steps {
-                        script {
-                            BuildBadge.setStatus('running')
-                        }
                         sh './get_data.sh'
                     }
                     post {
@@ -55,12 +52,9 @@ pipeline {
                 }
                 stage('install cosmo-ghg') {
                     steps {
-                        script {
-                            BuildBadge.setStatus('running')
-                        }
                         sh '''module load cray-python
                         source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
-                        spack installcosmo cosmo@empa-ghg%nvhpc cosmo_target=gpu +cppdycore'''
+                        spack installcosmo -v cosmo@empa-ghg%nvhpc cosmo_target=gpu +cppdycore'''
                     }
                     post {
                         failure {
@@ -71,9 +65,6 @@ pipeline {
                 }
                 stage('create icon binary') {
                     steps {
-                        script {
-                            BuildBadge.setStatus('running')
-                        }
                         sh './jenkins/scripts/create-icon-binary.sh'
                     }
                     post {
@@ -81,6 +72,18 @@ pipeline {
                             echo 'Cleaning up workspace'
                             deleteDir()
                         }
+                    }
+                }
+            }
+            post {
+                failure {
+                    script {
+                        BuildBadge.setStatus('failing')
+                    }
+                }
+                success {
+                    script {
+                        BuildBadge.setStatus('passing')
                     }
                 }
             }
