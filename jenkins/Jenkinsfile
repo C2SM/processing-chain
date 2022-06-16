@@ -52,7 +52,7 @@ pipeline {
                 }
                 stage('install cosmo-ghg') {
                     steps {
-                        sh '''module load cray-python
+                        sh '''module load cray-python && module unload cray-libsci
                         source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
                         spack installcosmo -v cosmo@empa-ghg%nvhpc cosmo_target=gpu +cppdycore'''
                     }
