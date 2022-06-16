@@ -5,7 +5,9 @@ Configuration file for the 'cosmo-ghg-11km-test' case with COSMO-GHG
 
 # GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
-if os.path.exists(os.environ['HOME'] + '/.acct'):
+if user == 'jenkins':
+    compute_account=g110
+elif os.path.exists(os.environ['HOME'] + '/.acct'):
     with open(os.environ['HOME'] + '/.acct', 'r') as file:
         compute_account = file.read().rstrip()
 else:

@@ -5,7 +5,9 @@ Configuration file for the 'icon-test' case with ICON
 
 # GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
-if os.path.exists(os.environ['HOME'] + '/.acct'):
+if user == 'jenkins':
+    compute_account=g110
+elif os.path.exists(os.environ['HOME'] + '/.acct'):
     with open(os.environ['HOME'] + '/.acct', 'r') as file:
         compute_account = file.read().rstrip()
 else:
