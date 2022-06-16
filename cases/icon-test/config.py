@@ -10,10 +10,9 @@ if os.path.exists(os.environ['HOME'] + '/.acct'):
         compute_account = file.read().rstrip()
 else:
     compute_account = os.popen("id -gn").read().splitlines()[0]
-
 compute_host = 'daint'
 compute_queue = 'debug'  # 'normal' / 'debug'
-constraint = 'mc'  # 'mc' / 'gpu'
+constraint = 'gpu'  # 'mc' / 'gpu'
 
 target = 'icon'
 restart_step = 24  # hours
