@@ -10,7 +10,7 @@ if os.path.exists(os.environ['HOME'] + '/.acct'):
         compute_account = file.read().rstrip()
 else:
     compute_account = os.system("id -gn")
-print(compute_account) # Jenkins
+print(compute_account)  # Jenkins
 compute_host = 'daint'
 compute_queue = 'debug'  # 'normal'
 constraint = 'gpu'  # 'mc'
