@@ -27,7 +27,7 @@ pipeline {
                         sh 'conda config --set always_yes yes --set changeps1 no'
                         sh 'conda config --add channels conda-forge'
                         sh 'conda env create -f env/environment.yml'
-                        sh '''source $WORKSPACE/miniconda/etc/profile.d/conda.sh
+                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                             conda activate proc-chain
                             conda deactivate
                             rm miniconda.sh'''
@@ -77,10 +77,10 @@ pipeline {
                 script {
                     TestBadge.setStatus('running')
                 }
-                sh 'source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh'
-                sh 'conda activate proc-chain'
-                sh 'python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24'
-//              sh 'python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon'
+                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                conda activate proc-chain
+                python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24
+//              python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon'''
             }
             post {
                 failure {
