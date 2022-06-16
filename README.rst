@@ -76,6 +76,17 @@ the necessary input data first (this may take some time)::
 
     ./get_data.sh
 
+Furthermore, executables for COSMO-GHG and ICON are needed. COSMO-GHG
+can be installed via spack::
+
+    module load cray-python
+    source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
+    spack installcosmo cosmo@empa-ghg%nvhpc cosmo_target=gpu +cppdycore
+
+For ICON, use the following script::
+
+    ./jenkins/scripts/create-icon-binary.sh
+
 Afterwards, type::
 
     python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24
