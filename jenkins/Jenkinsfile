@@ -53,6 +53,22 @@ pipeline {
                         }
                     }
                 }
+                stage('install cosmo-ghg') {
+                    steps {
+                        script {
+                            BuildBadge.setStatus('running')
+                        }
+                        sh '''module load cray-python
+                        source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
+                        spack installcosmo cosmo@empa-ghg%nvhpc cosmo_target=gpu +cppdycore'''
+                    }
+                    post {
+                        failure {
+                            echo 'Cleaning up workspace'
+                            deleteDir()
+                        }
+                    }
+                }
                 stage('create icon binary') {
                     steps {
                         script {
