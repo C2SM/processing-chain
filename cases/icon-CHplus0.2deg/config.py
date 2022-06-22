@@ -1,6 +1,6 @@
 import os, glob
 """
-Configuration file for the 'icon-exclaim' case with ICON
+Configuration file for the 'icon-CHplus0.2deg' case with ICON
 Using the input data for the CHplus0.2deg domain
 """
 
@@ -47,7 +47,7 @@ exe_dir = os.path.join("/store/g142", user, "local/bin")
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
 # PRE-PROCESSING =============================================================
-input_root = os.path.join("/store/g142", user, "icon_input/cases/CHplus0.2deg")
+input_root = os.path.join("/store/g142/icon_input/cases/CHplus0.2deg")
 input_root_icbc = os.path.join(input_root, 'icbc')
 
 # Fieldextra: remap IC and BC to scratch
@@ -65,11 +65,7 @@ copyICBC = False
 # converting with icontools
 doMeteo = False
 
-# ICONTools ------------------------------------------------------------------
-# Icontools executables
-##icontools_dir = glob.glob('/project/g110/spack-install/daint/icontools/c2sm-master/gcc/*/bin')[0]
-##iconremap_bin = os.path.join(icontools_dir, "iconremap")
-##iconsub_bin = os.path.join(icontools_dir, "iconsub")
+# ICONTools/Fieldextra -------------------------------------------------------
 fieldextra_dir = "/project/s83c/fieldextra/daint/bin"
 fieldextra_bin = os.path.join(fieldextra_dir, "fieldextra_gnu_opt_omp")
 
