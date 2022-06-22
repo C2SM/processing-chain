@@ -44,7 +44,7 @@ def main(starttime, hstart, hstop, cfg):
 
      All runscripts specified in ``cfg.icontools_runjobs`` are submitted.
 
-     The meteo files are read-in from the original input directory 
+     The meteo files are read-in from the original input directory
      (``cfg.input_root_meteo``) and the remapped meteo files are
      saved in the input folder on scratch (``cfg.icon_input/icbc``).
 
@@ -59,10 +59,10 @@ def main(starttime, hstart, hstop, cfg):
      from project directory (``cfg.meteo_dir/cfg.meteo_prefixYYYYMMDDHH``) to
      int2lm input folder on scratch (``cfg.int2lm_input/meteo``).
 
-     For nested runs (meteo files are cosmo-output: ``cfg.meteo_prefix == 
+     For nested runs (meteo files are cosmo-output: ``cfg.meteo_prefix ==
      'lffd'``), also the ``*c.nc``-file with constant parameters is copied.
 
-    
+
     Parameters
     ----------
     starttime : datetime-object
@@ -171,17 +171,41 @@ def main(starttime, hstart, hstop, cfg):
                     os.path.join(cfg.oae_dir, cfg.oae_ens_lambda_nc),
                     cfg.oae_ens_lambda_nc_scratch)
 
-        # Copy initial and boundary condition files
+        #-----------------------------------------------------
+        # Copy or remap IC BC
+        #-----------------------------------------------------
         if cfg.copyICBC:
-            # copy files individually based on filename
+            # copy files on login node based on filename
             icbc_file_list = glob.glob(
                 os.path.join(cfg.input_root_icbc, cfg.latbc_prefix) +
-                (len(cfg.latbc_nameformat) - 2) * '?' + cfg.latbc_suffix)
+                '*' + cfg.latbc_suffix)
             icbc_file_list.sort()
             icbc_file_list.append(
                 os.path.join(cfg.input_root_icbc, cfg.inidata_filename))
             for latbc_file in icbc_file_list:
                 tools.copy_file(latbc_file, cfg.icon_input_icbc)
+        elif cfg.doFieldextra:
+            # run the fieldextra namelists for remapping
+            for runscript in cfg.icontools_runjobs:
+                logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
+                logfile_finish = os.path.join(cfg.log_finished_dir, 'prepare_data')
+                with open(os.path.join(cfg.case_dir, runscript)) as input_file:
+                    to_write = input_file.read()
+                output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
+                with open(output_run, "w") as outf:
+                    outf.write(
+                        to_write.format(cfg=cfg,
+                                        logfile=logfile,
+                                        logfile_finish=logfile_finish,
+                                        ))
+                exitcode = subprocess.call([
+                    "sbatch", "--wait",
+                    os.path.join(cfg.icon_work, "%s.job" % runscript)
+                ])
+                if exitcode != 0:
+                    raise RuntimeError(
+                        "sbatch returned exitcode {}".format(exitcode))
+                logging.info("%s successfully executed." % runscript)
 
         #-----------------------------------------------------
         # Get datafile lists for LBC (each at 00 UTC and others)
@@ -207,41 +231,40 @@ def main(starttime, hstart, hstop, cfg):
             datafile_list_rest = ' '.join([str(v) for v in datafile_list_rest])
             datafile_list_chem = ' '.join([str(v) for v in datafile_list_chem])
 
-        #-----------------------------------------------------
-        # Write and submit runscripts
-        #-----------------------------------------------------
-        for runscript in cfg.icontools_runjobs:
-            logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
-            logfile_finish = os.path.join(cfg.log_finished_dir, 'prepare_data')
-            with open(os.path.join(cfg.case_dir, runscript)) as input_file:
-                to_write = input_file.read()
-            output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
-            with open(output_run, "w") as outf:
-                outf.write(
-                    to_write.format(cfg=cfg,
-                                    logfile=logfile,
-                                    logfile_finish=logfile_finish,
-                                    datafile_list=datafile_list,
-                                    datafile_list_rest=datafile_list_rest,
-                                    datafile_list_chem=datafile_list_chem))
-            exitcode = subprocess.call([
-                "sbatch", "--wait",
-                os.path.join(cfg.icon_work, "%s.job" % runscript)
-            ])
-            if exitcode != 0:
-                raise RuntimeError(
-                    "sbatch returned exitcode {}".format(exitcode))
-            logging.info("%s successfully executed." % runscript)
+            #-----------------------------------------------------
+            # Write and submit runscripts
+            #-----------------------------------------------------
+            for runscript in cfg.icontools_runjobs:
+                logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
+                logfile_finish = os.path.join(cfg.log_finished_dir, 'prepare_data')
+                with open(os.path.join(cfg.case_dir, runscript)) as input_file:
+                    to_write = input_file.read()
+                output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
+                with open(output_run, "w") as outf:
+                    outf.write(
+                        to_write.format(cfg=cfg,
+                                        logfile=logfile,
+                                        logfile_finish=logfile_finish,
+                                        datafile_list=datafile_list,
+                                        datafile_list_rest=datafile_list_rest,
+                                        datafile_list_chem=datafile_list_chem))
+                exitcode = subprocess.call([
+                    "sbatch", "--wait",
+                    os.path.join(cfg.icon_work, "%s.job" % runscript)
+                ])
+                if exitcode != 0:
+                    raise RuntimeError(
+                        "sbatch returned exitcode {}".format(exitcode))
+                logging.info("%s successfully executed." % runscript)
 
-        #-----------------------------------------------------
-        # Add GEOSP to all meteo files
-        #-----------------------------------------------------
-        if cfg.doMeteo:
+            #-----------------------------------------------------
+            # Add GEOSP to all meteo files
+            #-----------------------------------------------------
             for time in tools.iter_hours(starttime, hstart, hstop,
                                          cfg.meteo_inc):
                 src_file = os.path.join(
                     cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
+                    time.strftime(cfg.meteo_nameformat) + cfg.meteo_suffix)
                 merged_file = os.path.join(
                     cfg.icon_input_icbc,
                     time.strftime(cfg.meteo_nameformat) + '_merged.nc')
@@ -261,22 +284,52 @@ def main(starttime, hstart, hstop, cfg):
                     tools.rename_file(merged_file, src_file)
                     logging.info("Added GEOSP to file {}".format(merged_file))
 
-        #-----------------------------------------------------
-        # In case of OEM: merge chem tracers with meteo-files
-        #-----------------------------------------------------
-        if cfg.target is tools.Target.ICONARTOEM:
-            for time in tools.iter_hours(starttime, hstart, hstop,
-                                         cfg.meteo_inc):
-                if time == starttime:
+            #-----------------------------------------------------
+            # In case of OEM: merge chem tracers with meteo-files
+            #-----------------------------------------------------
+            if cfg.target is tools.Target.ICONARTOEM:
+                for time in tools.iter_hours(starttime, hstart, hstop,
+                                             cfg.meteo_inc):
+                    if time == starttime:
+                        #------------
+                        # Merge IC:
+                        #------------
+                        meteo_file = os.path.join(
+                            cfg.icon_input_icbc,
+                            time.strftime(cfg.meteo_nameformat) + '.nc')
+                        chem_file = os.path.join(
+                            cfg.icon_input_icbc,
+                            time.strftime(cfg.chem_nameformat) + '.nc')
+                        merged_file = os.path.join(
+                            cfg.icon_input_icbc,
+                            time.strftime(cfg.meteo_nameformat) + '_merged.nc')
+                        ds_meteo = xarray.open_dataset(meteo_file)
+                        ds_chem = xarray.open_dataset(chem_file)
+                        # LNPS --> PS
+                        ds_chem['PS'] = ds_chem['LNPS']
+                        ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
+                        ds_chem['PS'] = ds_chem['PS'].squeeze(dim='lev_2')
+                        ds_chem['PS'].attrs["long_name"] = 'surface pressure'
+                        # merge:
+                        ds_merged = xarray.merge([ds_meteo, ds_chem],
+                                                 compat="override")
+                        #ds_merged.attrs = ds.attrs
+                        ds_merged.to_netcdf(merged_file)
+                        # Rename file to get original file name
+                        tools.rename_file(merged_file, meteo_file)
+                        tools.remove_file(chem_file)
+                        logging.info(
+                            "Added chemical tracer to file {}".format(merged_file))
+
                     #------------
-                    # Merge IC:
+                    # Merge LBC:
                     #------------
                     meteo_file = os.path.join(
                         cfg.icon_input_icbc,
-                        time.strftime(cfg.meteo_nameformat) + '.nc')
+                        time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
-                        time.strftime(cfg.chem_nameformat) + '.nc')
+                        time.strftime(cfg.chem_nameformat) + '_lbc.nc')
                     merged_file = os.path.join(
                         cfg.icon_input_icbc,
                         time.strftime(cfg.meteo_nameformat) + '_merged.nc')
@@ -285,8 +338,8 @@ def main(starttime, hstart, hstop, cfg):
                     # LNPS --> PS
                     ds_chem['PS'] = ds_chem['LNPS']
                     ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
-                    ds_chem['PS'] = ds_chem['PS'].squeeze(dim='lev_2')
                     ds_chem['PS'].attrs["long_name"] = 'surface pressure'
+                    ds_chem['TRCH4_chemtr'] = ds_chem['CH4_BG']
                     # merge:
                     ds_merged = xarray.merge([ds_meteo, ds_chem],
                                              compat="override")
@@ -297,36 +350,6 @@ def main(starttime, hstart, hstop, cfg):
                     tools.remove_file(chem_file)
                     logging.info(
                         "Added chemical tracer to file {}".format(merged_file))
-
-                #------------
-                # Merge LBC:
-                #------------
-                meteo_file = os.path.join(
-                    cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
-                chem_file = os.path.join(
-                    cfg.icon_input_icbc,
-                    time.strftime(cfg.chem_nameformat) + '_lbc.nc')
-                merged_file = os.path.join(
-                    cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo_nameformat) + '_merged.nc')
-                ds_meteo = xarray.open_dataset(meteo_file)
-                ds_chem = xarray.open_dataset(chem_file)
-                # LNPS --> PS
-                ds_chem['PS'] = ds_chem['LNPS']
-                ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
-                ds_chem['PS'].attrs["long_name"] = 'surface pressure'
-                ds_chem['TRCH4_chemtr'] = ds_chem['CH4_BG']
-                # merge:
-                ds_merged = xarray.merge([ds_meteo, ds_chem],
-                                         compat="override")
-                #ds_merged.attrs = ds.attrs
-                ds_merged.to_netcdf(merged_file)
-                # Rename file to get original file name
-                tools.rename_file(merged_file, meteo_file)
-                tools.remove_file(chem_file)
-                logging.info(
-                    "Added chemical tracer to file {}".format(merged_file))
 
     # If COSMO (and not ICON):
     else:

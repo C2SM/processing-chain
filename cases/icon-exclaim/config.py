@@ -1,6 +1,7 @@
 import os, glob
 """
 Configuration file for the 'icon-exclaim' case with ICON
+Using the input data for the CHplus0.2deg domain
 """
 
 # GENERAL SETTINGS ===========================================================
@@ -24,7 +25,7 @@ if compute_queue == "normal":
     icon_np_tot = 30
 elif compute_queue == "debug":
     icon_walltime = "00:30:00"
-    icon_np_tot = 10
+    icon_np_tot = 2
 else:
     logging.error("Unknown queue name: %s" % compute_queue)
     sys.exit(1)
@@ -46,40 +47,45 @@ exe_dir = os.path.join("/store/g142", user, "local/bin")
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
 # PRE-PROCESSING =============================================================
-input_root = os.path.join("/store/g142", user, "icon_data/cases/exclaim")
+input_root = os.path.join("/store/g142", user, "icon_input/cases/CHplus0.2deg")
 input_root_icbc = os.path.join(input_root, 'icbc')
 
-# meteo
+# Fieldextra: remap IC and BC to scratch
+doFieldextra = True
+icbc_tstart = 24 # silly fieldextra conventions
+icbc_tstop  = 48 # will fix this when bored
+icbc_incr = 1
+icbc_prefix = 'laf'
+icbc_nameformat = icbc_prefix + '%y%m%d%H'
+icbc_suffix = ''
+# IcBc: files are already remapped to the grid. Copy the file names below
+# (latbc_filename & inidata_filename) to icon_scratch/icbc
+copyICBC = False
+# Meteo (empa): when working with externally generated IC BC that need
+# converting with icontools
 doMeteo = False
-input_root_meteo = input_root_icbc  # this might actually be the default
-meteo_inc = 1
-meteo_prefix = 'efsf'
-meteo_nameformat = meteo_prefix + '%d%H%M%S'
-meteo_suffix = '_lbc.nc'
-
-# Ic Bc
-copyICBC = True
 
 # ICONTools ------------------------------------------------------------------
 # Icontools executables
-icontools_dir = glob.glob('/project/g110/spack-install/daint/icontools/c2sm-master/gcc/*/bin')[0]
-iconremap_bin = os.path.join(icontools_dir, "iconremap")
-iconsub_bin = os.path.join(icontools_dir, "iconsub")
+##icontools_dir = glob.glob('/project/g110/spack-install/daint/icontools/c2sm-master/gcc/*/bin')[0]
+##iconremap_bin = os.path.join(icontools_dir, "iconremap")
+##iconsub_bin = os.path.join(icontools_dir, "iconsub")
+fieldextra_dir = "/project/s83c/fieldextra/daint/bin"
+fieldextra_bin = os.path.join(fieldextra_dir, "fieldextra_gnu_opt_omp")
 
 icontools_runjobs = [
-    #'icontools_remap_ic_runjob.cfg',
-    #'icontools_remap_00_lbc_runjob.cfg',
-    #'icontools_remap_lbc_rest_runjob.cfg',
+        'fieldextra_remap_ic_runjob.cfg',
+        'fieldextra_remap_bc_runjob.cfg',
 ]
 
 # Input data for runscript----------------------------------------------------
 # Grid
 input_root_grid = os.path.join(input_root, 'grid')
 radiation_grid_filename = os.path.join(input_root_grid,
-                                       'ICON-1E_DOM01.parent.nc')
-dynamics_grid_filename = os.path.join(input_root_grid, 'ICON-1E_DOM01.nc')
+                                       'base_grid.nc')
+dynamics_grid_filename = os.path.join(input_root_grid, 'child_grid_DOM01.nc')
 map_file_latbc = os.path.join(input_root_grid, 'map_file.latbc')
-extpar_filename = os.path.join(input_root_grid, 'extpar_exclaim.nc')
+extpar_filename = os.path.join(input_root_grid, 'extpar_CHplus0.2deg.nc')
 lateral_boundary_grid = os.path.join(input_root_grid,
                                      'lateral_boundary.grid.nc')
 
@@ -94,14 +100,14 @@ input_root_mapping = os.path.join(input_root, 'mapping')
 map_file_ana = os.path.join(input_root_mapping, 'map_file.ana')
 
 # File names -----------------------------------------------------------------
-latbc_prefix = 'efsf'
-latbc_nameformat = '<ddhhmmss>'
+latbc_prefix = 'laf'
+latbc_nameformat = '<y><m><d><h>'
 latbc_suffix = '_lbc.nc'
 latbc_filename = latbc_prefix + latbc_nameformat + latbc_suffix
-inidata_filename = 'laf2021111812.nc'
+inidata_filename = 'laf2021060100.nc' # TODO make this automagic
 
-output_filename = "exclaim"
-filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
+output_filename = "CHplus0.2deg"
+filename_format = "<output_filename>_DOM<physdom>_<datetime>"
 
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
