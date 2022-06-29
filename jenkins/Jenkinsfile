@@ -103,6 +103,7 @@ pipeline {
                         source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
                         python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24'''
                     }
+                }
                 stage('test icon') {
                     environment {
                         PATH = "${WORKSPACE}/miniconda/bin:$PATH"
