@@ -140,8 +140,7 @@ output_levels = 20
 
 # POST_COSMO -----------------------------------------------------------------
 # Root directory where the output of the chain is copied to
-output_root = os.path.join("/scratch/snx3000", user, "processing_chain_output",
-                           casename)
+output_root = os.path.join(chain_src_dir, "output", casename)
 
 # VERIFY_CHAIN ---------------------------------------------------------------
 reference_dir = os.path.join(input_root, "reference_output")
