@@ -74,6 +74,19 @@ pipeline {
                         }
                     }
                 }
+                stage('install icontools') {
+                    steps {
+                        sh '''module load cray-python
+                        source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
+                        spack install -v icontools@c2sm-master'''
+                    }
+                    post {
+                        failure {
+                            echo 'Cleaning up workspace'
+                            deleteDir()
+                        }
+                    }
+                }
             }
             post {
                 failure {
