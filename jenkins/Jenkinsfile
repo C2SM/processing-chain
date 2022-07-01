@@ -133,7 +133,7 @@ pipeline {
             post {
                 failure {
                     echo 'Cleaning up workspace'
-                    deleteDir()
+                    //deleteDir()
                     script {
                         TestBadge.setStatus('failing')
                     }
