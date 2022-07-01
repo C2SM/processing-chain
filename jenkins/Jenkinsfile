@@ -26,6 +26,7 @@ pipeline {
                         sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
                         sh 'conda config --set always_yes yes --set changeps1 no'
                         sh 'conda config --add channels conda-forge'
+                        sh 'conda update -n base -c defaults conda'
                         sh 'conda env create -f env/environment.yml'
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                             conda activate proc-chain
