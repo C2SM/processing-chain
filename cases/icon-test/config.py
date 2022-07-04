@@ -82,6 +82,9 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 # Executable
 icon_bin = os.path.join(chain_src_dir, 'icon', 'bin', 'icon')
 
+# eccodes
+eccodes_dir = os.path.join(chain_src_dir, 'input', 'eccodes_definitions')
+
 # Icontools executables
 icontools_dir = os.popen('spack location -i icontools').read().strip()
 iconremap_bin = os.path.join(icontools_dir, "bin", "iconremap")
