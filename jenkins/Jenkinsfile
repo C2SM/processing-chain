@@ -26,6 +26,7 @@ pipeline {
                         sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
                         sh 'conda config --set always_yes yes --set changeps1 no'
                         sh 'conda config --add channels conda-forge'
+                        sh 'conda update -n base -c defaults conda'
                         sh 'conda env create -f env/environment.yml'
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                             conda activate proc-chain
@@ -76,9 +77,9 @@ pipeline {
                 }
                 stage('install icontools') {
                     steps {
-                        sh '''module load cray-python
+                        sh '''module load cray-python && module unload cray-libsci
                         source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
-                        spack install -v icontools@c2sm-master'''
+                        spack install -v icontools@c2sm-master%gcc'''
                     }
                     post {
                         failure {
@@ -132,7 +133,7 @@ pipeline {
             post {
                 failure {
                     echo 'Cleaning up workspace'
-                    deleteDir()
+                    //deleteDir()
                     script {
                         TestBadge.setStatus('failing')
                     }
