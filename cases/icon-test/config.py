@@ -86,9 +86,8 @@ icon_bin = os.path.join(chain_src_dir, 'icon', 'bin', 'icon')
 eccodes_dir = os.path.join(chain_src_dir, 'input', 'eccodes_definitions')
 
 # Icontools executables
-icontools_dir = os.popen('spack location -i icontools').read().strip()
-iconremap_bin = os.path.join(icontools_dir, "bin", "iconremap")
-iconsub_bin = os.path.join(icontools_dir, "bin", "iconsub")
+iconremap_bin = 'iconremap'
+iconsub_bin = 'iconsub'
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
