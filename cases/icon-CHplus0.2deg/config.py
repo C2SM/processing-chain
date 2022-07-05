@@ -80,7 +80,6 @@ input_root_grid = os.path.join(input_root, 'grid')
 radiation_grid_filename = os.path.join(input_root_grid,
                                        'base_grid.nc')
 dynamics_grid_filename = os.path.join(input_root_grid, 'child_grid_DOM01.nc')
-map_file_latbc = os.path.join(input_root_grid, 'map_file.latbc')
 extpar_filename = os.path.join(input_root_grid, 'extpar_CHplus0.2deg.nc')
 lateral_boundary_grid = os.path.join(input_root_grid,
                                      'lateral_boundary.grid.nc')
@@ -94,6 +93,7 @@ ecrad_data = os.path.join(input_root_rad, 'ecrad_data')
 # Mapping
 input_root_mapping = os.path.join(input_root, 'mapping')
 map_file_ana = os.path.join(input_root_mapping, 'map_file.ana')
+map_file_latbc = map_file_ana
 
 # File names -----------------------------------------------------------------
 latbc_prefix = 'laf'
