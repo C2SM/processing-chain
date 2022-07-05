@@ -77,8 +77,9 @@ download the necessary input data first (this may take some time):
 
     ./get_data.sh
 
-Furthermore, executables for COSMO-GHG and ICON are needed. COSMO-GHG
-can be installed via spack:
+Furthermore, executables for COSMO-GHG and ICON are needed. For COSMO-GHG,
+a spack instance needs to be initialized first. Then, COSMO-GHG can be 
+installed:
 
     source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
     spack installcosmo cosmo@empa-ghg%nvhpc cosmo_target=gpu +cppdycore
