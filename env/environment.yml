@@ -6,6 +6,7 @@ dependencies:
   - python=3.9
   - sphinx_rtd_theme
   - cdo
+  - nco
   - netcdf4
   - numpy
   - f90nml
