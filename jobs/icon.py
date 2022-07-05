@@ -73,10 +73,11 @@ def main(starttime, hstart, hstop, cfg):
     output_file = os.path.join(cfg.icon_work, "run_icon.job")
     with open(output_file, "w") as outf:
         outf.write(
-            to_write.format(cfg=cfg,
-                            #inidata_filename=inidata_filename,
-                            logfile=logfile,
-                            logfile_finish=logfile_finish))
+            to_write.format(
+                cfg=cfg,
+                #inidata_filename=inidata_filename,
+                logfile=logfile,
+                logfile_finish=logfile_finish))
 
     exitcode = subprocess.call(
         ["sbatch", "--wait",

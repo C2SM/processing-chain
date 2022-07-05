@@ -177,8 +177,8 @@ def main(starttime, hstart, hstop, cfg):
         if cfg.copyICBC:
             # copy files on login node based on filename
             icbc_file_list = glob.glob(
-                os.path.join(cfg.input_root_icbc, cfg.latbc_prefix) +
-                '*' + cfg.latbc_suffix)
+                os.path.join(cfg.input_root_icbc, cfg.latbc_prefix) + '*' +
+                cfg.latbc_suffix)
             icbc_file_list.sort()
             icbc_file_list.append(
                 os.path.join(cfg.input_root_icbc, cfg.inidata_filename))
@@ -188,16 +188,18 @@ def main(starttime, hstart, hstop, cfg):
             # run the fieldextra namelists for remapping
             for runscript in cfg.icontools_runjobs:
                 logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
-                logfile_finish = os.path.join(cfg.log_finished_dir, 'prepare_data')
+                logfile_finish = os.path.join(cfg.log_finished_dir,
+                                              'prepare_data')
                 with open(os.path.join(cfg.case_dir, runscript)) as input_file:
                     to_write = input_file.read()
                 output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
                 with open(output_run, "w") as outf:
                     outf.write(
-                        to_write.format(cfg=cfg,
-                                        logfile=logfile,
-                                        logfile_finish=logfile_finish,
-                                        ))
+                        to_write.format(
+                            cfg=cfg,
+                            logfile=logfile,
+                            logfile_finish=logfile_finish,
+                        ))
                 exitcode = subprocess.call([
                     "sbatch", "--wait",
                     os.path.join(cfg.icon_work, "%s.job" % runscript)
@@ -236,7 +238,8 @@ def main(starttime, hstart, hstop, cfg):
             #-----------------------------------------------------
             for runscript in cfg.icontools_runjobs:
                 logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
-                logfile_finish = os.path.join(cfg.log_finished_dir, 'prepare_data')
+                logfile_finish = os.path.join(cfg.log_finished_dir,
+                                              'prepare_data')
                 with open(os.path.join(cfg.case_dir, runscript)) as input_file:
                     to_write = input_file.read()
                 output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
@@ -318,8 +321,8 @@ def main(starttime, hstart, hstop, cfg):
                         # Rename file to get original file name
                         tools.rename_file(merged_file, meteo_file)
                         tools.remove_file(chem_file)
-                        logging.info(
-                            "Added chemical tracer to file {}".format(merged_file))
+                        logging.info("Added chemical tracer to file {}".format(
+                            merged_file))
 
                     #------------
                     # Merge LBC:
