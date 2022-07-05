@@ -24,9 +24,8 @@ $SCRATCH` and `pwd` at the command line to get to your personal scratch
 directory on Daint). When the command prompt asks for installation
 location, provide the path to your scratch and append `/miniconda3`.
 
-> **Note**: The default location would be on your /home directory, which
-> may lead to memory issues. (the default location would be on your home
-> directory, which may lead to memory issues).
+> **Note**: The default location would be on your `/home` directory, which
+> may lead to memory issues.
 
 To install the latest miniconda, type:
 
@@ -54,7 +53,7 @@ If you already have the environment but want to update it:
 
 ### 3\. Store user-specific data
 
-To register your email address and standard account, store them into
+To register your email address and standard project account, store them into
 these files within your home directory:
 
     echo <your_account_id> > ~/.acct
