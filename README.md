@@ -88,11 +88,15 @@ For ICON, use the following script:
 
     ./jenkins/scripts/create-icon-binary.sh
 
-Afterwards, type:
+Finally, to run the COSMO-GHG test case, type:
 
     python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24
 
-or:
+> **Note**: Be sure to have spack initialized via 
+> `source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh`
+> before you run COSMO jobs.
+
+For ICON, type:
 
     python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon
 
