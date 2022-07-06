@@ -24,7 +24,7 @@ $SCRATCH` and `pwd` at the command line to get to your personal scratch
 directory on Daint). When the command prompt asks for installation
 location, provide the path to your scratch and append `/miniconda3`.
 
-> **Note**: The default location would be on your `/home` directory, which
+> **Note**: The default location would be on your `$HOME` directory, which
 > may lead to memory issues.
 
 To install the latest miniconda, type:
@@ -72,8 +72,17 @@ line help to see the available arguments for the main script:
 
     python run_chain.py -h
 
-To run the example cases with their standard jobs, you will need to
-download the necessary input data first (this may take some time):
+To run the example cases with their standard jobs, please ensure
+that you clone the Processing Chain to `$SCRATCH`, as input and
+output data are stored in subdirectories of the chain itself.
+
+> **Note**: For your own setups, you can use the Processing Chain
+> on a backed-up file system like `/project` or `/store`. In that case,
+> adapt the configuration file `config.py` in your case folder in
+> a way that output files are written to a specified folder on `$SCRATCH`.
+
+For these test cases, the necessary input data can be obtained via
+the following script (this may take some time):
 
     ./get_data.sh
 
