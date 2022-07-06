@@ -25,11 +25,9 @@ constraint = 'mc'
 
 if constraint == 'gpu':
     ntasks_per_node = 12
-    mpich_cuda = (
-        'export MPICH_RDMA_ENABLED_CUDA=1\n'
-        'export MPICH_G2G_PIPELINE=256\n'
-        'export CRAY_CUDA_MPS=1\n'
-    )
+    mpich_cuda = ('export MPICH_RDMA_ENABLED_CUDA=1\n'
+                  'export MPICH_G2G_PIPELINE=256\n'
+                  'export CRAY_CUDA_MPS=1\n')
 elif constraint == 'mc':
     ntasks_per_node = 36
     mpich_cuda = ''
