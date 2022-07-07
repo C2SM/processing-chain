@@ -11,9 +11,6 @@ import time
 import shutil
 import argparse
 import csv
-import configparser
-
-settings = configparser.ConfigParser()
 
 import jobs
 from jobs import tools
@@ -236,11 +233,10 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     force : bool
         If True will do job regardless of completion status
     """
-    # Read global settings
-    settings_file = os.path.join(cfg.chain_src_dir, 'settings.ini')
-    if os.path.isfile(settings_file):
-        settings.read(settings_file)
-        mail_address = settings['User']['Mail']
+    # Read mail address
+    if os.path.exists(os.environ['HOME'] + '/.forward'):
+        with open(os.environ['HOME'] + '/.forward', 'r') as file:
+            mail_address = file.read().rstrip()
     else:
         mail_address = None
 
