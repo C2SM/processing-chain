@@ -5,13 +5,19 @@ Configuration file for the 'icon-test' case with ICON
 
 # GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
-target = 'icon'
-restart_step = 24  # hours
-
+if user == 'jenkins':
+    compute_account = 'g110'
+elif os.path.exists(os.environ['HOME'] + '/.acct'):
+    with open(os.environ['HOME'] + '/.acct', 'r') as file:
+        compute_account = file.read().rstrip()
+else:
+    compute_account = os.popen("id -gn").read().splitlines()[0]
 compute_host = 'daint'
 compute_queue = 'debug'  # 'normal' / 'debug'
-compute_account = 'em05'
 constraint = 'gpu'  # 'mc' / 'gpu'
+
+target = 'icon'
+restart_step = 24  # hours
 
 if constraint == 'gpu':
     ntasks_per_node = 12
@@ -26,19 +32,16 @@ casename = os.path.basename(os.path.dirname(path))
 chain_src_dir = os.getcwd()
 
 # Root directory of the working space of the chain
-work_root = os.environ['SCRATCH'] + "/processing_chain"
-
-# Directory where executables are stored
-exe_dir = "/store/empa/em05/executables"
+work_root = os.path.join(chain_src_dir, 'work')
 
 # Case directory
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
 # PRE-PROCESSING =============================================================
-input_root = '/store/empa/em05/input_icon_processing_chain_example/'
+input_root = os.path.join(chain_src_dir, 'input', 'icon')
 input_root_icbc = os.path.join(input_root, 'icbc')
 # meteo
-input_root_meteo = '/store/empa/em05/dbrunner/icon-art/meteo'
+input_root_meteo = os.path.join(chain_src_dir, 'input', 'meteo')
 meteo_prefix = 'ifs_'
 meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
@@ -77,13 +80,14 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin = os.path.join(exe_dir, "icon-kit-art_20211018")
+icon_bin = os.path.join(chain_src_dir, 'icon', 'bin', 'icon')
+
+# eccodes
+eccodes_dir = os.path.join(chain_src_dir, 'input', 'eccodes_definitions')
 
 # Icontools executables
-#icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
-icontools_dir = '/scratch/snx3000/msteiner/spack-stages/daint/spack-stage-icontools-master-t524rnfa5sfyn4rbvarypyzwae4jg46d/spack-src/icontools'
-iconremap_bin = os.path.join(icontools_dir, "iconremap")
-iconsub_bin = os.path.join(icontools_dir, "iconsub")
+iconremap_bin = 'iconremap'
+iconsub_bin = 'iconsub'
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
@@ -106,8 +110,7 @@ output_levels = 20
 
 # POST_COSMO -----------------------------------------------------------------
 # Root directory where the output of the chain is copied to
-output_root = os.path.join("/store/empa/em05/", user,
-                           "processing_chain_output", casename)
+output_root = os.path.join(chain_src_dir, "output", casename)
 
 # VERIFY_CHAIN ---------------------------------------------------------------
 reference_dir = os.path.join(input_root, "reference_output")
