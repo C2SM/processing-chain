@@ -253,7 +253,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'inidate', inidate)
     setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh)
     setattr(cfg, 'inidate_yyyymmdd_hh', inidate_yyyymmdd_hh)
-    setattr(cfg, 'inidate_yyyymmddhhmmss',inidate_yyyymmddhhmmss)
+    setattr(cfg, 'inidate_yyyymmddhhmmss', inidate_yyyymmddhhmmss)
     setattr(cfg, 'hstart', hstart)
     setattr(cfg, 'hstop', hstop)
     forecasttime = '%d' % (hstop - hstart)
