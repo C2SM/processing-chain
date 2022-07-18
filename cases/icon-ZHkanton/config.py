@@ -51,6 +51,16 @@ input_root_icbc = os.path.join(input_root, 'icbc')
 
 # Fieldextra: remap IC and BC to scratch
 doFieldextra = True
+<<<<<<< HEAD
+||||||| 6c15e57
+icbc_tstart = 24 # silly fieldextra conventions
+icbc_tstop  = 48 # will fix this when bored
+icbc_incr = 1
+=======
+icbc_tstart = 24  # silly fieldextra conventions
+icbc_tstop = 48  # will fix this when bored
+icbc_incr = 1
+>>>>>>> 26bed5e30ef760d1cd4656faa60fc625bfd38fa8
 icbc_prefix = 'laf'
 icbc_suffix = ''
 icbc_nameformat = icbc_prefix + '%y%m%d%H' + icbc_suffix # actually unused
@@ -67,15 +77,14 @@ fieldextra_dir = "/project/s83c/fieldextra/daint/bin"
 fieldextra_bin = os.path.join(fieldextra_dir, "fieldextra_gnu_opt_omp")
 
 icontools_runjobs = [
-        'fieldextra_remap_ic_runjob.cfg',
-        'fieldextra_remap_bc_runjob.cfg',
+    'fieldextra_remap_ic_runjob.cfg',
+    'fieldextra_remap_bc_runjob.cfg',
 ]
 
 # Input data for runscript----------------------------------------------------
 # Grid
 input_root_grid = os.path.join(input_root, 'grid')
-radiation_grid_filename = os.path.join(input_root_grid,
-                                       'base_grid.nc')
+radiation_grid_filename = os.path.join(input_root_grid, 'base_grid.nc')
 dynamics_grid_filename = os.path.join(input_root_grid, 'child_grid_DOM01.nc')
 extpar_filename = os.path.join(input_root_grid, 'extpar_ZHkanton.nc')
 lateral_boundary_grid = os.path.join(input_root_grid,
@@ -97,7 +106,7 @@ latbc_prefix = 'laf'
 latbc_nameformat = '<y><m><d><h>'
 latbc_suffix = '_lbc.nc'
 latbc_filename = latbc_prefix + latbc_nameformat + latbc_suffix
-inidata_filename = 'laf2021060100.nc' # TODO make this automagic
+inidata_filename = 'laf2021060100.nc'  # TODO make this automagic
 
 output_filename = "ZHkanton"
 filename_format = "<output_filename>_DOM<physdom>_<datetime>"
