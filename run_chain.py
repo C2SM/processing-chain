@@ -261,7 +261,8 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh)
     setattr(cfg, 'inidate_yyyymmdd_hh', inidate_yyyymmdd_hh)
     setattr(cfg, 'hstart', hstart)
-    setattr(cfg, 'hstop', hstop)
+    setattr(cfg, 'hstop', int(hstop))
+    setattr(cfg, 'dtime_latbc', cfg.icbc_incr*3600)
     forecasttime = '%d' % (hstop - hstart)
     inidate_int2lm_yyyymmddhh = (start_time +
                                  timedelta(hours=hstart)).strftime('%Y%m%d%H')
