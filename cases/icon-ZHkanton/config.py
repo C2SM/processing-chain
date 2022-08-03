@@ -53,8 +53,8 @@ input_root_icbc = os.path.join(input_root, 'icbc')
 doFieldextra = True
 icbc_prefix = 'laf'
 icbc_suffix = ''
-icbc_nameformat = icbc_prefix + '%y%m%d%H' + icbc_suffix # actually unused
-icbc_incr = 1 # hours between latbc files
+icbc_nameformat = icbc_prefix + '%y%m%d%H' + icbc_suffix  # actually unused
+icbc_incr = 1  # hours between latbc files
 # IcBc: files are already remapped to the grid. Copy the file names below
 # (latbc_filename & inidata_filename) to icon_scratch/icbc
 copyICBC = False
