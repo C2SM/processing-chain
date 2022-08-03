@@ -51,16 +51,6 @@ input_root_icbc = os.path.join(input_root, 'icbc')
 
 # Fieldextra: remap IC and BC to scratch
 doFieldextra = True
-<<<<<<< HEAD
-||||||| 6c15e57
-icbc_tstart = 24 # silly fieldextra conventions
-icbc_tstop  = 48 # will fix this when bored
-icbc_incr = 1
-=======
-icbc_tstart = 24  # silly fieldextra conventions
-icbc_tstop = 48  # will fix this when bored
-icbc_incr = 1
->>>>>>> 26bed5e30ef760d1cd4656faa60fc625bfd38fa8
 icbc_prefix = 'laf'
 icbc_suffix = ''
 icbc_nameformat = icbc_prefix + '%y%m%d%H' + icbc_suffix # actually unused
