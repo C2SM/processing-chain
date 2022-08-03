@@ -51,6 +51,7 @@ pipeline {
                         }
                     }
                 }
+                /*
                 stage('install cosmo-ghg') {
                     steps {
                         sh '''module load cray-python && module unload cray-libsci
@@ -64,6 +65,7 @@ pipeline {
                         }
                     }
                 }
+                */
                 stage('create icon binary') {
                     steps {
                         sh './jenkins/scripts/create-icon-binary.sh'
