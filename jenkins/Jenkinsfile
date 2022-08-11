@@ -45,6 +45,17 @@ pipeline {
                         }
                     }
                 }
+                stage('install cosmo-ghg') {
+                    steps {
+                        sh './jenkins/scripts/install_cosmo-ghg.sh''
+                    }
+                    post {
+                        failure {
+                            echo 'Cleaning up workspace'
+                            // deleteDir()
+                        }
+                    }
+                }
                 stage('create icon binary') {
                     steps {
                         sh './jenkins/scripts/create-icon-binary.sh'
