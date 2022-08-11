@@ -15,6 +15,7 @@ GIT_REMOTE='https://github.com/C2SM/spack-c2sm.git'
 
 SPACK_SPEC=$(cat cases/cosmo-ghg-11km-test/cosmo_spec)
 
+rm -fr spack-c2sm
 git clone -b ${SPACK_BRANCH} ${GIT_REMOTE}
 
 pushd spack-c2sm
