@@ -30,7 +30,7 @@ pipeline {
                     post {
                         failure {
                             echo 'Cleaning up workspace'
-                            deleteDir()
+                            // deleteDir()
                         }
                     }
                 }
@@ -41,7 +41,7 @@ pipeline {
                     post {
                         failure {
                             echo 'Cleaning up workspace'
-                            deleteDir()
+                            // deleteDir()
                         }
                     }
                 }
@@ -52,7 +52,7 @@ pipeline {
                     post {
                         failure {
                             echo 'Cleaning up workspace'
-                            deleteDir()
+                            // deleteDir()
                         }
                     }
                 }
@@ -86,7 +86,7 @@ pipeline {
             post {
                 failure {
                     echo 'Cleaning up workspace'
-                    deleteDir()
+                    // deleteDir()
                 }
             }
         }
