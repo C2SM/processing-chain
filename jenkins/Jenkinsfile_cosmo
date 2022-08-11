@@ -1,0 +1,27 @@
+pipeline {
+    environment {
+       EMAIL_TO_1 = 'michael.jaehn@c2sm.ethz.ch'
+    }
+    agent {
+        node {
+            label 'daint'
+        }
+    }
+    stages {
+        stage('Setup') {
+            parallel {
+                stage('install cosmo-ghg') {
+                    steps {
+                        sh './jenkins/scripts/install_cosmo-ghg.sh'
+                    }
+                    post {
+                        failure {
+                            echo 'Cleaning up workspace'
+                            // deleteDir()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
