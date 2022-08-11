@@ -114,10 +114,11 @@ vegetation_filename = 'VPRM_VegClasses_example_vprm.nc'
 int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = "test_domain.nc"
 
+# Read INT2LM spec
+with open('int2lm_spec', 'r') as file:
+    int2lm_spec = file.read().rstrip()
 # Executable
-#int2lm_bin = os.system("spack location -i int2lm@c2sm-master%nvhpc")
-int2lm_bin = os.popen(
-    'spack location -i int2lm@c2sm-master%nvhpc').read().strip() + '/bin'
+int2lm_bin = os.popen(int2lm_spec).read().strip() + '/bin'
 
 # Namelist and slurm runscript templates
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT.cfg' % (chain_src_dir, casename)
@@ -145,9 +146,11 @@ post_int2lm_species = ["CO2_BG"]
 
 # SIMULATION =================================================================
 # COSMO ----------------------------------------------------------------------
+# Read COSMO spec
+with open('cosmo_spec', 'r') as file:
+    cosmo_spec = file.read().rstrip()
 # Executable
-cosmo_bin = os.popen('spack location -i cosmo@empa-ghg%nvhpc').read().strip(
-) + '/bin/cosmo-ghg_gpu'
+cosmo_bin = os.popen(cosmo_spec).read().strip() + '/bin/cosmo-ghg_gpu'
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir, casename)
