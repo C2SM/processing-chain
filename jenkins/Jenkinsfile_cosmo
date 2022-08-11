@@ -36,7 +36,9 @@ pipeline {
             parallel {
                 stage('install cosmo-ghg') {
                     steps {
-                        sh './jenkins/scripts/install_cosmo-ghg.sh'
+                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                        conda activate proc-chain
+                        ./jenkins/scripts/install_cosmo-ghg.sh'''
                     }
                     post {
                         failure {
