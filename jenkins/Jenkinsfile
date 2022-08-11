@@ -16,7 +16,7 @@ pipeline {
                     }
                     steps {
                         sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-                        sh 'rm -fr $WORKSPACE/miniconda'
+                        sh 'rm -fr ${WORKSPACE}/miniconda'
                         sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
                         sh 'conda config --set always_yes yes --set changeps1 no'
                         sh 'conda config --add channels conda-forge'
@@ -47,7 +47,7 @@ pipeline {
                 }
                 stage('install cosmo-ghg') {
                     steps {
-                        sh './jenkins/scripts/install_cosmo-ghg.sh''
+                        sh './jenkins/scripts/install_cosmo-ghg.sh'
                     }
                     post {
                         failure {
@@ -78,7 +78,7 @@ pipeline {
                     steps {
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                         conda activate proc-chain
-                        source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
+                        source ${WORKSPACE}/spack-c2sm/spack/share/spack/setup-env.sh  
                         python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -f'''
                     }
                 }
@@ -89,7 +89,7 @@ pipeline {
                     steps {
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                         conda activate proc-chain
-                        source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
+                        source ${WORKSPACE}/spack-c2sm/spack/share/spack/setup-env.sh
                         python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon -f'''
                     }                     
                 }
