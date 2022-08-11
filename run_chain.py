@@ -234,7 +234,9 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         If True will do job regardless of completion status
     """
     # Read mail address
-    if os.path.exists(os.environ['HOME'] + '/.forward'):
+    if os.environ['USER'] == 'jenkins':
+        mail_address = None
+    elif os.path.exists(os.environ['HOME'] + '/.forward'):
         with open(os.environ['HOME'] + '/.forward', 'r') as file:
             mail_address = file.read().rstrip()
     else:
