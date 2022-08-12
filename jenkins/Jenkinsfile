@@ -1,6 +1,3 @@
-def BuildBadge = addEmbeddableBadgeConfiguration(id: "build", subject: "build")
-def TestBadge = addEmbeddableBadgeConfiguration(id: "test", subject: "test")
-
 pipeline {
     environment {
        EMAIL_TO_1 = 'michael.jaehn@c2sm.ethz.ch'
@@ -11,36 +8,33 @@ pipeline {
         }
     }
     stages {
-        stage('Setup') {
-            parallel {
-                stage('setup miniconda') {
-                    environment {
-                        PATH = "${WORKSPACE}/miniconda/bin:$PATH"
-                    }
-                    steps {
-                        script {
-                            BuildBadge.setStatus('running')
-                        }
-                        sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-                        sh 'rm -fr $WORKSPACE/miniconda'
-                        sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
-                        sh 'conda config --set always_yes yes --set changeps1 no'
-                        sh 'conda config --add channels conda-forge'
-                        sh 'conda update -n base -c defaults conda'
-                        sh 'conda env create -f env/environment.yml'
-                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                            conda activate proc-chain
-                            conda deactivate
-                            rm miniconda.sh'''
-                    }
-                    post {
-                        failure {
-                            echo 'Cleaning up workspace'
-                            deleteDir()
-                        }
-                    }
+        stage('Setup miniconda') {
+            environment {
+                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
+            }
+            steps {
+                sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
+                sh 'rm -fr ${WORKSPACE}/miniconda'
+                sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
+                sh 'conda config --set always_yes yes --set changeps1 no'
+                sh 'conda config --add channels conda-forge'
+                sh 'conda update -n base -c defaults conda'
+                sh 'conda env create -f env/environment.yml'
+                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                    conda activate proc-chain
+                    conda deactivate
+                    rm miniconda.sh'''
+            }
+            post {
+                failure {
+                    echo 'Cleaning up workspace'
+                    deleteDir()
                 }
-                stage('get data') {
+            }
+        }
+        stage('Preparation') {
+            parallel {
+                stage('Get data') {
                     steps {
                         sh './get_data.sh'
                     }
@@ -51,11 +45,11 @@ pipeline {
                         }
                     }
                 }
-                stage('install cosmo-ghg') {
+                stage('Build COSMO-GHG') {
                     steps {
-                        sh '''module load cray-python && module unload cray-libsci
-                        source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
-                        spack installcosmo -v cosmo@empa-ghg%nvhpc cosmo_target=gpu +cppdycore'''
+                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                        conda activate proc-chain
+                        ./jenkins/scripts/build_cosmo-ghg.sh'''
                     }
                     post {
                         failure {
@@ -64,71 +58,52 @@ pipeline {
                         }
                     }
                 }
-                stage('create icon binary') {
+                stage('Build ICON') {
                     steps {
-                        sh './jenkins/scripts/create-icon-binary.sh'
+                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                        conda activate proc-chain
+                        ./jenkins/scripts/build_icon.sh'''
                     }
                     post {
                         failure {
                             echo 'Cleaning up workspace'
                             deleteDir()
                         }
-                    }
-                }
-            }
-            post {
-                failure {
-                    script {
-                        BuildBadge.setStatus('failing')
-                    }
-                }
-                success {
-                    script {
-                        BuildBadge.setStatus('passing')
                     }
                 }
             }
         }
-        stage('Testing') {
-            parallel {
-                stage('test cosmo-ghg') {
-                    environment {
-                        PATH = "${WORKSPACE}/miniconda/bin:$PATH"
-                    }
-                    steps {
-                        script {
-                            TestBadge.setStatus('running')
-                        }
-                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                        conda activate proc-chain
-                        source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
-                        python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -f'''
-                    }
-                }
-                stage('test icon') {
-                    environment {
-                        PATH = "${WORKSPACE}/miniconda/bin:$PATH"
-                    }
-                    steps {
-                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                        conda activate proc-chain
-                        source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
-                        python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon -f'''
-                    }                     
-                }
+        stage('Test COSMO-GHG') {
+            environment {
+                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
+            }
+            steps {
+                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                conda activate proc-chain
+                source ${WORKSPACE}/spack-c2sm/spack/share/spack/setup-env.sh  
+                python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -f'''
             }
             post {
                 failure {
                     echo 'Cleaning up workspace'
                     deleteDir()
-                    script {
-                        TestBadge.setStatus('failing')
-                    }
                 }
-                success {
-                    script {
-                        TestBadge.setStatus('passing')
-                    }
+            }
+        }
+        stage('Test ICON') {
+            environment {
+                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
+            }
+            steps {
+                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                conda activate proc-chain
+                source ${WORKSPACE}/spack-c2sm/spack/share/spack/setup-env.sh
+                python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon -f'''
+            }                     
+            post {
+                failure {
+                    echo 'Cleaning up workspace'
+                    deleteDir()
                 }
             }
         }

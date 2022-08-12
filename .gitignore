@@ -4,5 +4,7 @@ docs/build/
 fieldextra.diagnostic
 input_processing-chain.tgz
 input/
+output/
 work/
 icon/
+spack-c2sm/
