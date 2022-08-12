@@ -8,7 +8,7 @@ pipeline {
         }
     }
     stages {
-        stage('setup miniconda') {
+        stage('Setup miniconda') {
             environment {
                 PATH = "${WORKSPACE}/miniconda/bin:$PATH"
             }
@@ -28,24 +28,24 @@ pipeline {
             post {
                 failure {
                     echo 'Cleaning up workspace'
-                    // deleteDir()
+                    deleteDir()
                 }
             }
         }
         stage('Preparation') {
             parallel {
-                stage('get data') {
+                stage('Get data') {
                     steps {
                         sh './get_data.sh'
                     }
                     post {
                         failure {
                             echo 'Cleaning up workspace'
-                            // deleteDir()
+                            deleteDir()
                         }
                     }
                 }
-                stage('build COSMO-GHG') {
+                stage('Build COSMO-GHG') {
                     steps {
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                         conda activate proc-chain
@@ -54,11 +54,11 @@ pipeline {
                     post {
                         failure {
                             echo 'Cleaning up workspace'
-                            // deleteDir()
+                            deleteDir()
                         }
                     }
                 }
-                stage('build ICON') {
+                stage('Build ICON') {
                     steps {
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                         conda activate proc-chain
@@ -67,7 +67,7 @@ pipeline {
                     post {
                         failure {
                             echo 'Cleaning up workspace'
-                            // deleteDir()
+                            deleteDir()
                         }
                     }
                 }
@@ -75,7 +75,7 @@ pipeline {
         }
         stage('Testing') {
             parallel {
-                stage('test COSMO-GHG') {
+                stage('Test COSMO-GHG') {
                     environment {
                         PATH = "${WORKSPACE}/miniconda/bin:$PATH"
                     }
@@ -86,7 +86,7 @@ pipeline {
                         python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -f'''
                     }
                 }
-                stage('test ICON') {
+                stage('Test ICON') {
                     environment {
                         PATH = "${WORKSPACE}/miniconda/bin:$PATH"
                     }
@@ -101,7 +101,7 @@ pipeline {
             post {
                 failure {
                     echo 'Cleaning up workspace'
-                    // deleteDir()
+                    deleteDir()
                 }
             }
         }
