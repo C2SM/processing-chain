@@ -8,32 +8,32 @@ pipeline {
         }
     }
     stages {
-        stage('Setup') {
-            parallel {
-                stage('setup miniconda') {
-                    environment {
-                        PATH = "${WORKSPACE}/miniconda/bin:$PATH"
-                    }
-                    steps {
-                        sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-                        sh 'rm -fr ${WORKSPACE}/miniconda'
-                        sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
-                        sh 'conda config --set always_yes yes --set changeps1 no'
-                        sh 'conda config --add channels conda-forge'
-                        sh 'conda update -n base -c defaults conda'
-                        sh 'conda env create -f env/environment.yml'
-                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                            conda activate proc-chain
-                            conda deactivate
-                            rm miniconda.sh'''
-                    }
-                    post {
-                        failure {
-                            echo 'Cleaning up workspace'
-                            // deleteDir()
-                        }
-                    }
+        stage('setup miniconda') {
+            environment {
+                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
+            }
+            steps {
+                sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
+                sh 'rm -fr ${WORKSPACE}/miniconda'
+                sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
+                sh 'conda config --set always_yes yes --set changeps1 no'
+                sh 'conda config --add channels conda-forge'
+                sh 'conda update -n base -c defaults conda'
+                sh 'conda env create -f env/environment.yml'
+                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                    conda activate proc-chain
+                    conda deactivate
+                    rm miniconda.sh'''
+            }
+            post {
+                failure {
+                    echo 'Cleaning up workspace'
+                    // deleteDir()
                 }
+            }
+        }
+        stage('Preparation') {
+            parallel {
                 stage('get data') {
                     steps {
                         sh './get_data.sh'
@@ -45,9 +45,11 @@ pipeline {
                         }
                     }
                 }
-                stage('install cosmo-ghg') {
+                stage('build COSMO-GHG') {
                     steps {
-                        sh './jenkins/scripts/install_cosmo-ghg.sh'
+                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                        conda activate proc-chain
+                        ./jenkins/scripts/build_cosmo-ghg.sh'''
                     }
                     post {
                         failure {
@@ -56,9 +58,11 @@ pipeline {
                         }
                     }
                 }
-                stage('create icon binary') {
+                stage('build ICON') {
                     steps {
-                        sh './jenkins/scripts/create-icon-binary.sh'
+                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                        conda activate proc-chain
+                        ./jenkins/scripts/build_icon.sh'''
                     }
                     post {
                         failure {
@@ -71,7 +75,7 @@ pipeline {
         }
         stage('Testing') {
             parallel {
-                stage('test cosmo-ghg') {
+                stage('test COSMO-GHG') {
                     environment {
                         PATH = "${WORKSPACE}/miniconda/bin:$PATH"
                     }
@@ -82,7 +86,7 @@ pipeline {
                         python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -f'''
                     }
                 }
-                stage('test icon') {
+                stage('test ICON') {
                     environment {
                         PATH = "${WORKSPACE}/miniconda/bin:$PATH"
                     }
