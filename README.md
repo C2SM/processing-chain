@@ -1,8 +1,5 @@
 # Processing Chain for COSMO and ICON Simulations
 
-[![Build Status](https://jenkins-mch.cscs.ch/buildStatus/icon?job=processing-chain-weekly)](https://jenkins-mch.cscs.ch/view/C2SM/job/processing-chain-weekly/)
-[![Test Status](https://jenkins-mch.cscs.ch/buildStatus/icon?job=processing-chain-weekly&config=test)](https://jenkins-mch.cscs.ch/view/C2SM/job/processing-chain-weekly/)
-
 The Processing Chain is a python script that prepares necessary input
 data, submits compute-jobs to the queue on Piz Daint and does
 post-processing steps. It supports different types of simulations,
