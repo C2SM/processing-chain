@@ -16,17 +16,8 @@ import jobs
 from jobs import tools
 
 default_jobs = {
-    tools.Target.COSMO: ["prepare_data", "int2lm", "cosmo", "post_cosmo"],
-    tools.Target.COSMOGHG: [
-        "prepare_data", "emissions", "biofluxes", "oae", "online_vprm",
-        "int2lm", "post_int2lm", "cosmo", "post_cosmo"
-    ],
-    tools.Target.COSMOART: [
-        "prepare_data", "emissions", "obs_nudging", "photo_rate", "int2lm",
-        "cosmo", "post_cosmo"
-    ],
     tools.Target.ICON: ["prepare_data", "icon"],
-    tools.Target.ICONART: ["prepare_data", "icon"],
+    tools.Target.ICONART: ["prepare_data_global", "icon_global"],
     tools.Target.ICONARTOEM: ["prepare_data", "oae", "icon"]
 }
 
@@ -70,8 +61,8 @@ def parse_arguments():
                  "given here. "
                  "If no jobs are given, the default that will be "
                  "executed is: COSMO: {} | COSMOART : {}".format(
-                     default_jobs[tools.Target.COSMO],
-                     default_jobs[tools.Target.COSMOART]))
+                     default_jobs[tools.Target.ICON],
+                     default_jobs[tools.Target.ICONART]))
     parser.add_argument("-j",
                         "--jobs",
                         nargs='*',
@@ -234,13 +225,13 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         If True will do job regardless of completion status
     """
     # Read mail address
-    if os.environ['USER'] == 'jenkins':
-        mail_address = None
-    elif os.path.exists(os.environ['HOME'] + '/.forward'):
-        with open(os.environ['HOME'] + '/.forward', 'r') as file:
-            mail_address = file.read().rstrip()
-    else:
-        mail_address = None
+    # if os.environ['USER'] == 'jenkins':
+    #     mail_address = None
+    # elif os.path.exists(os.environ['HOME'] + '/.forward'):
+    #     with open(os.environ['HOME'] + '/.forward', 'r') as file:
+    #         mail_address = file.read().rstrip()
+    # else:
+    mail_address = None
 
     # ini date and forecast time (ignore meteo times)
     inidate = int((start_time - datetime(1970, 1, 1)).total_seconds())
@@ -254,121 +245,86 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'inidate_yyyymmddhhmmss', inidate_yyyymmddhhmmss)
     setattr(cfg, 'hstart', hstart)
     setattr(cfg, 'hstop', hstop)
-    forecasttime = '%d' % (hstop - hstart)
-    inidate_int2lm_yyyymmddhh = (start_time +
-                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
-
-    if cfg.target.subtarget is tools.Subtarget.SPINUP:
-        if cfg.first_one:  # first run in spinup
-            chain_root_last_run = ''
-        else:  # consecutive runs in spinup
-            inidate_yyyymmddhh_spinup = (
-                start_time - timedelta(hours=cfg.spinup)).strftime('%Y%m%d%H')
-            setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh_spinup)
-            setattr(cfg, 'hstart', 0)
-            setattr(cfg, 'hstop', hstop + cfg.spinup)
-            forecasttime = '%d' % (hstop + cfg.spinup)
-            inidate_yyyymmddhh_last_run = (
-                start_time -
-                timedelta(hours=cfg.restart_step)).strftime('%Y%m%d%H')
-            if cfg.second_one:  # second run (i.e., get job_id from first run)
-                job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run, 0,
-                                                hstop)
-            else:  # all other runs
-                job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run,
-                                                0 - cfg.spinup, hstop)
-            chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                               job_id_last_run)
-
     setattr(cfg, 'forecasttime', forecasttime)
 
-    # int2lm processing always starts at hstart=0 and we modify inidate instead
-    setattr(cfg, 'inidate_int2lm_yyyymmddhh', inidate_int2lm_yyyymmddhh)
-    setattr(cfg, 'hstart_int2lm', '0')
-    setattr(cfg, 'hstop_int2lm', forecasttime)
+    # -- Initial and end date of the simulation
+    ini_datetime_string = (
+        start_time +
+        timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
+    end_datetime_string = (
+        start_time + timedelta(hours=hstart) +
+        timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
+    setattr(cfg, 'ini_datetime_string', ini_datetime_string)
+    setattr(cfg, 'end_datetime_string', end_datetime_string)
 
-    # chain
+    # -- Chain
     job_id = '%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
     chain_root = os.path.join(work_root, cfg.casename, job_id)
+    print(chain_root)
     setattr(cfg, 'chain_root', chain_root)
 
-    # INT2LM
-    setattr(cfg, 'int2lm_base', os.path.join(chain_root, 'int2lm'))
-    setattr(cfg, 'int2lm_input', os.path.join(chain_root, 'int2lm', 'input'))
-    setattr(cfg, 'int2lm_work', os.path.join(chain_root, 'int2lm', 'run'))
-    setattr(cfg, 'int2lm_output', os.path.join(chain_root, 'int2lm', 'output'))
+    # -- Set restart directories
+    job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh,
+                                    hstart - cfg.restart_step, hstart)
+    chain_root_last_run = os.path.join(work_root, cfg.casename,
+                                        job_id_last_run)
+ 
+    setattr(cfg, 'icon_restart_out',
+            os.path.join(chain_root, 'icon', 'restart'))
+    setattr(cfg, 'icon_restart_in',
+            os.path.join(chain_root_last_run, 'icon', 'restart'))
+            
+    # TODO: Set correct restart setting
+    setattr(cfg, 'lrestart', '.FALSE.')
 
-    # COSMO
-    setattr(cfg, 'cosmo_base', os.path.join(chain_root, 'cosmo'))
-    setattr(cfg, 'cosmo_input', os.path.join(chain_root, 'cosmo', 'input'))
-    setattr(cfg, 'cosmo_work', os.path.join(chain_root, 'cosmo', 'run'))
-    setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
-    setattr(cfg, 'cosmo_output_reduced',
-            os.path.join(chain_root, 'cosmo', 'output_reduced'))
-
-    # ICON
+    # -- ICON settings
     setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
     setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
-    setattr(cfg, 'icon_input_icbc',
-            os.path.join(chain_root, 'icon', 'input', 'icbc'))
-    setattr(cfg, 'icon_input_oae',
-            os.path.join(chain_root, 'icon', 'input', 'oae'))
     setattr(cfg, 'icon_input_grid',
             os.path.join(chain_root, 'icon', 'input', 'grid'))
-    setattr(cfg, 'icon_input_mapping',
-            os.path.join(chain_root, 'icon', 'input', 'mapping'))
+    setattr(cfg, 'icon_input_icbc',
+            os.path.join(chain_root, 'icon', 'input', 'icbc'))
     setattr(cfg, 'icon_input_rad',
             os.path.join(chain_root, 'icon', 'input', 'rad'))
     setattr(cfg, 'icon_input_xml',
             os.path.join(chain_root, 'icon', 'input', 'xml'))
     setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
     setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
-    setattr(cfg, 'icon_output_reduced',
-            os.path.join(chain_root, 'icon', 'output_reduced'))
-    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART \
-            or cfg.target is tools.Target.ICONARTOEM:
+
+    setattr(
+        cfg, 'dynamics_grid_filename_scratch',
+        os.path.join(cfg.icon_input_grid,
+                        os.path.basename(cfg.dynamics_grid_filename)))
+    setattr(
+        cfg, 'radiation_grid_filename_scratch',
+        os.path.join(cfg.icon_input_grid,
+                        os.path.basename(cfg.radiation_grid_filename)))
+    setattr(
+        cfg, 'extpar_filename_scratch',
+        os.path.join(cfg.icon_input_grid,
+                        os.path.basename(cfg.extpar_filename)))
+    setattr(
+        cfg, 'cldopt_filename_scratch',
+        os.path.join(cfg.icon_input_rad,
+                        os.path.basename(cfg.cldopt_filename)))
+    setattr(
+        cfg, 'lrtm_filename_scratch',
+        os.path.join(cfg.icon_input_rad,
+                        os.path.basename(cfg.lrtm_filename)))
+    setattr(
+        cfg, 'inicond_filename_scratch',
+        os.path.join(cfg.icon_input_icbc,
+                        os.path.basename(cfg.inicond_filename)))
+    if hasattr(cfg, 'chemtracer_xml_filename'):
         setattr(
-            cfg, 'radiation_grid_filename_scratch',
-            os.path.join(cfg.icon_input_grid,
-                         os.path.basename(cfg.radiation_grid_filename)))
+            cfg, 'chemtracer_xml_filename_scratch',
+            os.path.join(cfg.icon_input_xml,
+                            os.path.basename(cfg.chemtracer_xml_filename)))
+    if hasattr(cfg, 'pntSrc_xml_filename'):
         setattr(
-            cfg, 'dynamics_grid_filename_scratch',
-            os.path.join(cfg.icon_input_grid,
-                         os.path.basename(cfg.dynamics_grid_filename)))
-        setattr(
-            cfg, 'map_file_latbc_scratch',
-            os.path.join(cfg.icon_input_grid,
-                         os.path.basename(cfg.map_file_latbc)))
-        setattr(
-            cfg, 'extpar_filename_scratch',
-            os.path.join(cfg.icon_input_grid,
-                         os.path.basename(cfg.extpar_filename)))
-        setattr(cfg, 'lateral_boundary_grid_scratch',
-                os.path.join(cfg.icon_input_grid, 'lateral_boundary.grid.nc'))
-        setattr(cfg, 'lateral_boundary_grid_order',
-                os.path.join(cfg.icon_input_grid, 'lateral_boundary'))
-        setattr(
-            cfg, 'cldopt_filename_scratch',
-            os.path.join(cfg.icon_input_rad,
-                         os.path.basename(cfg.cldopt_filename)))
-        setattr(
-            cfg, 'lrtm_filename_scratch',
-            os.path.join(cfg.icon_input_rad,
-                         os.path.basename(cfg.lrtm_filename)))
-        setattr(
-            cfg, 'map_file_ana_scratch',
-            os.path.join(cfg.icon_input_mapping,
-                         os.path.basename(cfg.map_file_ana)))
-        if hasattr(cfg, 'chemtracer_xml_filename'):
-            setattr(
-                cfg, 'chemtracer_xml_filename_scratch',
-                os.path.join(cfg.icon_input_xml,
-                             os.path.basename(cfg.chemtracer_xml_filename)))
-        if hasattr(cfg, 'pntSrc_xml_filename'):
-            setattr(
-                cfg, 'pntSrc_xml_filename_scratch',
-                os.path.join(cfg.icon_input_xml,
-                             os.path.basename(cfg.pntSrc_xml_filename)))
+            cfg, 'pntSrc_xml_filename_scratch',
+            os.path.join(cfg.icon_input_xml,
+                            os.path.basename(cfg.pntSrc_xml_filename)))
 
     # OEM
     if cfg.target is tools.Target.ICONARTOEM:
@@ -419,103 +375,13 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                 os.path.join(cfg.icon_input_oae,
                              os.path.basename(cfg.oae_ens_lambda_nc)))
 
-    # Number of tracers
-    tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
-                                  'cosmo_tracers.csv')
-    if os.path.isfile(tracer_csvfile):
-        if cfg.target is tools.Target.COSMOGHG:
-            with open(tracer_csvfile, 'r') as csv_file:
-                reader = csv.DictReader(csv_file, delimiter=',')
-                reader = [r for r in reader if r[''] != '#']
-                setattr(cfg, 'in_tracers', len(reader))
-
-        # tracer_start namelist paramter for spinup simulation
-        if cfg.target.subtarget is tools.Subtarget.SPINUP:
-            if cfg.first_one:
-                setattr(cfg, 'tracer_start', 0)
-            else:
-                setattr(cfg, 'tracer_start', cfg.spinup)
-        else:
-            setattr(cfg, 'tracer_start', 0)
-
-    # constraint (gpu or mc)
-    if hasattr(cfg, 'constraint'):
-        assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
-                                                 "gpu or mc")
-    else:
-        # set default constraint
-        if cfg.target is tools.Target.COSMOART:
-            setattr(cfg, 'constraint', 'mc')
-        else:
-            setattr(cfg, 'constraint', 'gpu')
-
-    # asynchronous I/O
-    if hasattr(cfg, 'cfg.cosmo_np_io'):
-        if cfg.cosmo_np_io == 0:
-            setattr(cfg, 'lasync_io', '.FALSE.')
-            setattr(cfg, 'num_iope_percomm', 0)
-        else:
-            setattr(cfg, 'lasync_io', '.TRUE.')
-            setattr(cfg, 'num_iope_percomm', 1)
-
-    if cfg.target.subtarget is tools.Subtarget.SPINUP:
-        setattr(cfg, 'last_cosmo_output',
-                os.path.join(chain_root_last_run, 'cosmo', 'output'))
-        # No restart for spinup simulations (= default values for no restart)
-        setattr(cfg, 'cosmo_restart_out', '')
-        setattr(cfg, 'cosmo_restart_in', '')
-    elif cfg.target is not tools.Target.COSMOART:
-        job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh,
-                                        hstart - cfg.restart_step, hstart)
-        chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                           job_id_last_run)
-        # Set restart directories
-        setattr(cfg, 'cosmo_restart_out',
-                os.path.join(chain_root, 'cosmo', 'restart'))
-        setattr(cfg, 'cosmo_restart_in',
-                os.path.join(chain_root_last_run, 'cosmo', 'restart'))
-
-    if cfg.target is tools.Target.COSMOART:
-        # no restarts in cosmoart
-        setattr(cfg, 'restart_step', hstop - hstart)
-
-    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
-       cfg.target is tools.Target.ICONARTOEM:
-        ini_datetime_string = (
-            start_time +
-            timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
-        end_datetime_string = (
-            start_time + timedelta(hours=hstart) +
-            timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
-        setattr(cfg, 'ini_datetime_string', ini_datetime_string)
-        setattr(cfg, 'end_datetime_string', end_datetime_string)
-        # Set restart directories
-        setattr(cfg, 'icon_restart_out',
-                os.path.join(chain_root, 'icon', 'restart'))
-        setattr(cfg, 'icon_restart_in',
-                os.path.join(chain_root_last_run, 'icon', 'restart'))
-        # TODO: Set correct restart setting
-        setattr(cfg, 'lrestart', '.FALSE.')
-
-    # if nested run: use output of mother-simulation
-    if cfg.target is tools.Target.COSMOART and not os.path.isdir(
-            cfg.meteo_dir):
-        # if ifs_hres_dir doesn't point to a directory,
-        # it is the name of the mother run
-        mother_name = cfg.meteo_dir
-        cfg.meteo_dir = os.path.join(work_root, mother_name, job_id, 'cosmo',
-                                     'output')
-
-        cfg.meteo_inc = 1
-        cfg.meteo_prefix = 'lffd'
-
-    # logging
+    # -- logging
     log_working_dir = os.path.join(chain_root, 'checkpoints', 'working')
     log_finished_dir = os.path.join(chain_root, 'checkpoints', 'finished')
     setattr(cfg, 'log_working_dir', log_working_dir)
     setattr(cfg, 'log_finished_dir', log_finished_dir)
 
-    # create working dirs
+    # -- Create working dirs
     tools.create_dir(chain_root, "chain_root")
     tools.create_dir(log_working_dir, "log_working")
     tools.create_dir(log_finished_dir, "log_finished")
@@ -530,11 +396,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     for job in job_names:
 
         # mapping of scripts in jobs with their arguments
-
-        # if job == 'meteo':
-        #     job.meteo.main(start_time, hstart, hstop, cfg)
-        #     continue
-
         skip = False
 
         # if exists job is currently worked on or has been finished
@@ -745,38 +606,24 @@ if __name__ == '__main__':
         print("Starting chain for case {}, using {}".format(
             casename, cfg.target.name))
 
-        if cfg.target is tools.Target.COSMO or cfg.target is tools.Target.ICON or \
-           cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM or \
-           cfg.target is tools.Target.COSMOGHG:
-            if cfg.target.subtarget is tools.Subtarget.NONE:
-                restart_runs(work_root=cfg.work_root,
-                             cfg=cfg,
-                             start=start_time,
-                             hstart=args.hstart,
-                             hstop=args.hstop,
-                             job_names=args.job_list,
-                             force=args.force)
-            elif cfg.target.subtarget is tools.Subtarget.SPINUP:
-                restart_runs_spinup(work_root=cfg.work_root,
-                                    cfg=cfg,
-                                    start=start_time,
-                                    hstart=args.hstart,
-                                    hstop=args.hstop,
-                                    job_names=args.job_list,
-                                    force=args.force)
-            else:
-                raise RuntimeError("Unknown subtarget: {}".format(
-                    cfg.subtarget))
-        elif cfg.target is tools.Target.COSMOART:
-            # cosmoart can't do restarts
-            run_chain(work_root=cfg.work_root,
-                      cfg=cfg,
-                      start_time=start_time,
-                      hstart=args.hstart,
-                      hstop=args.hstop,
-                      job_names=args.job_list,
-                      force=args.force)
+        if cfg.target.subtarget is tools.Subtarget.NONE:
+            restart_runs(work_root=cfg.work_root,
+                            cfg=cfg,
+                            start=start_time,
+                            hstart=args.hstart,
+                            hstop=args.hstop,
+                            job_names=args.job_list,
+                            force=args.force)
+        elif cfg.target.subtarget is tools.Subtarget.SPINUP:
+            restart_runs_spinup(work_root=cfg.work_root,
+                                cfg=cfg,
+                                start=start_time,
+                                hstart=args.hstart,
+                                hstop=args.hstop,
+                                job_names=args.job_list,
+                                force=args.force)
         else:
-            raise RuntimeError("Unknown target: {}".format(cfg.target))
+            raise RuntimeError("Unknown subtarget: {}".format(
+                cfg.subtarget))
 
     print('>>> finished chain for good or bad! <<<')

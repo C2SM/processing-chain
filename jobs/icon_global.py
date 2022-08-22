@@ -57,17 +57,14 @@ def main(starttime, hstart, hstop, cfg):
     logging.info("Setup the namelist for an ICON run and "
                  "submit the job to the queue")
 
-    # Copy icon executable
+    # -- Copy icon executable
     execname = 'icon.exe'
     tools.copy_file(cfg.icon_bin, os.path.join(cfg.icon_work, execname))
 
-    # Get name if initial file
-    starttime_real = starttime + timedelta(hours=hstart)
-    inidata_filename = os.path.join(
-        cfg.icon_input_icbc,
-        starttime_real.strftime(cfg.meteo_nameformat) + '.nc')
+    # -- Get name if initial file
+    inidata_filename = os.path.join(cfg.icon_input_icbc, cfg.inicond_filename)
 
-    # Write run script (run_icon.job)
+    # -- Write run script (run_icon.job)
     with open(cfg.icon_runjob) as input_file:
         to_write = input_file.read()
     output_file = os.path.join(cfg.icon_work, "run_icon.job")
