@@ -82,6 +82,7 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
     tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
     tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
+    tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
     tools.create_dir(cfg.icon_output, "icon_output")
     tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
 
@@ -89,37 +90,43 @@ def main(starttime, hstart, hstop, cfg):
     # Copy files
     #-----------------------------------------------------
     # Copy grid files
-    tools.copy_file(cfg.dynamics_grid_filename,
+    tools.copy_file(cfg.DYNAMICS_GRID_FILENAME,
                     cfg.dynamics_grid_filename_scratch,
                     output_log=True)
-    tools.copy_file(cfg.radiation_grid_filename,
+    tools.copy_file(cfg.RADIATION_GRID_FILENAME,
                     cfg.radiation_grid_filename_scratch,
                     output_log=True)
-    tools.copy_file(cfg.extpar_filename,
+    tools.copy_file(cfg.EXTPAR_FILENAME,
                     cfg.extpar_filename_scratch,
                     output_log=True)
 
     # Copy radiation files
-    tools.copy_file(cfg.cldopt_filename,
+    tools.copy_file(cfg.CLDOPT_FILENAME,
                     cfg.cldopt_filename_scratch,
                     output_log=True)
-    tools.copy_file(cfg.lrtm_filename,
+    tools.copy_file(cfg.LRTM_FILENAME,
                     cfg.lrtm_filename_scratch,
                     output_log=True)
 
     # Copy icbc files
-    tools.copy_file(cfg.inicond_filename,
+    tools.copy_file(cfg.INICOND_FILENAME,
                     cfg.inicond_filename_scratch,
                     output_log=True)
 
     # Copy XML files
-    tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
-    if hasattr(cfg, 'chemtracer_xml_filename'):
-        tools.copy_file(cfg.chemtracer_xml_filename,
+    if hasattr(cfg, 'CHEMTRACER_XML_FILENAME'):
+        tools.copy_file(cfg.CHEMTRACER_XML_FILENAME,
                         cfg.chemtracer_xml_filename_scratch,
                         output_log=True)
 
-    if hasattr(cfg, 'pntSrc_xml_filename'):
-        tools.copy_file(cfg.pntSrc_xml_filename,
+    if hasattr(cfg, 'PNTSRC_XML_FILENAME'):
+        tools.copy_file(cfg.PNTSRC_XML_FILENAME,
                         cfg.pntSrc_xml_filename_scratch,
                         output_log=True)
+
+    # -- Restart file
+    if cfg.lrestart == '.TRUE.':
+        print('TEST')
+        print(cfg.restart_filename_scratch)
+        print(os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
+        os.symlink(cfg.restart_filename_scratch, os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))

@@ -1,111 +1,115 @@
 import os
+import logging
+import sys
+
 """
-Configuration file for the 'icon-art-jthanwer' case with ICON-ART
+Configuration file for the 'icon-art' case with ICON-ART
 """
 
-# ===========================================================
+# -----------------------------------------------------------
 # GENERAL SETTINGS
-# ===========================================================
-user = os.environ['USER']
+# -----------------------------------------------------------
+
+USER = os.environ['USER']
+COMPUTE_HOST = 'daint'
+COMPUTE_QUEUE = 'debug'  # 'normal' / 'debug'
+CONSTRAINT = 'mc'  # 'mc' / 'gpu'
 if os.path.exists(os.environ['HOME'] + '/.acct'):
     with open(os.environ['HOME'] + '/.acct', 'r') as file:
-        compute_account = file.read().rstrip()
+        COMPUTE_ACCOUNT = file.read().rstrip()
 else:
-    compute_account = os.popen("id -gn").read().splitlines()[0]
-compute_host = 'daint'
-compute_queue = 'debug'  # 'normal' / 'debug'
-constraint = 'mc'  # 'mc' / 'gpu'
+    COMPUTE_ACCOUNT = os.popen("id -gn").read().splitlines()[0]
 
-target = 'icon-art'
-
-# -- Number of hours simulated by one job / directory 
-restart_step = 72  # hours
+# -- Model to run
+TARGET = 'icon-art'
 
 # -- Number of tasks per node
-if constraint == 'gpu':
-    ntasks_per_node = 12
-elif constraint == 'mc':
-    ntasks_per_node = 36
+NTASKS_PER_NODE = 36 if CONSTRAINT == 'mc' else 12
 
 # -- case name = pathname in cases/
-path = os.path.realpath(__file__)
-casename = os.path.basename(os.path.dirname(path))
+CASENAME = os.path.basename(os.path.dirname(os.path.realpath(__file__)))
 
 # -- Root directory of the sourcecode of the chain (where run_chain.py is)
-chain_src_dir = os.getcwd()
+CHAIN_SRC_DIR = os.getcwd()
 
 # -- Root directory of the working space of the chain
-work_root = os.path.join(chain_src_dir, 'work')
+WORK_DIR = os.path.join(CHAIN_SRC_DIR, 'work')
 
 # -- Case directory
-case_dir = os.path.join(chain_src_dir, 'cases', casename)
+CASE_DIR = os.path.join(CHAIN_SRC_DIR, 'cases', CASENAME)
 
-# ===========================================================
+# -----------------------------------------------------------
 # -- INPUT DATA
-# ===========================================================
-input_root = '/scratch/snx3000/jthanwer/processing-chain/input/'
+# -----------------------------------------------------------
+
+INPUT_ROOT = '/scratch/snx3000/jthanwer/processing-chain/input/'
 
 # -- Initial conditions and boundary conditions
-input_root_icbc = os.path.join(input_root, 'icbc')
-inicond_filename = os.path.join(input_root_icbc, "ifs2icon_R2B04_DOM01.nc")
+INPUT_ROOT_ICBC = os.path.join(INPUT_ROOT, 'icbc')
+INICOND_FILENAME = '/users/jthanwer/scripts/create-inicond-era5/era2icon-R2B04_DOM01.nc'
 
 # -- Grid
-input_root_grid = os.path.join(input_root, 'grids')
-dynamics_grid_filename = os.path.join(input_root_grid, "iconR2B04-DOM01.nc")
-radiation_grid_filename = os.path.join(input_root_grid, "iconR2B03-DOM01_R.nc")
-extpar_filename = os.path.join(input_root_grid, "extpar_iconR2B04-DOM01_tmp.nc")
+INPUT_ROOT_GRID = os.path.join(INPUT_ROOT, 'grids')
+DYNAMICS_GRID_FILENAME = os.path.join(INPUT_ROOT_GRID, "iconR2B04-DOM01.nc")
+RADIATION_GRID_FILENAME = os.path.join(INPUT_ROOT_GRID, "iconR2B03-DOM01_R.nc")
+EXTPAR_FILENAME = os.path.join(INPUT_ROOT_GRID, "extpar_iconR2B04-DOM01.nc")
 
 # -- Radiation
-input_root_rad = os.path.join(input_root, 'rad')
-cldopt_filename = os.path.join(input_root_rad, 'ECHAM6_CldOptProps.nc')
-lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
+INPUT_ROOT_RAD = os.path.join(INPUT_ROOT, 'rad')
+CLDOPT_FILENAME = os.path.join(INPUT_ROOT_RAD, 'ECHAM6_CldOptProps.nc')
+LRTM_FILENAME = os.path.join(INPUT_ROOT_RAD, 'rrtmg_lw.nc')
 
 # -- ART settings
-input_root_tracers = os.path.join(input_root, 'XML')
-chemtracer_xml_filename = os.path.join(input_root_tracers, 'tracer_passive.xml')
-pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc_example.xml')
-art_input_folder = os.path.join(input_root, 'ART')
+INPUT_ROOT_TRACERS = os.path.join(INPUT_ROOT, 'XML')
+CHEMTRACER_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'tracer_passive.xml')
+PNTSRC_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'pntSrc_example.xml')
+ART_INPUT_FOLDER = os.path.join(INPUT_ROOT, 'ART')
 
-
-# ===========================================================
+# -----------------------------------------------------------
 # -- SIMULATION
-# ===========================================================
+# -----------------------------------------------------------
 
 # -- Executable
-icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon/', 'bin', 'icon')
+ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/icon/', 'bin', 'icon')
 
 # -- Paths for namelists and slurm runscript templates
-icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
-icon_namelist_master = os.path.join(case_dir, 'icon_master.namelist.cfg')
-icon_namelist_nwp = os.path.join(case_dir, 'icon_NAMELIST_NWP.cfg')
+ICON_RUNJOB = os.path.join(CASE_DIR, 'icon_runjob.cfg')
+
+# -- Number of hours simulated by one job / directory 
+RESTART_STEP = 3     # -- hours
+
+# -- Number of hours of spin-up before each restart
+SPINUP_TIME = 1      # -- hours
 
 # -- Walltimes and domain decomposition
-if compute_queue == "normal":
-    icon_walltime = "00:30:00"
-    icon_np_tot = 2
-elif compute_queue == "debug":
-    icon_walltime = "00:30:00"
-    icon_np_tot = 2
+if COMPUTE_QUEUE == "normal":
+    ICON_WALLTIME = "01:00:00"
+    ICON_NP_TOT = 2
+
+elif COMPUTE_QUEUE == "debug":
+    ICON_WALLTIME = "00:30:00"
+    ICON_NP_TOT = 1
+
 else:
-    logging.error("Unknown queue name: %s" % compute_queue)
+    logging.error("Unknown queue name: %s" % COMPUTE_QUEUE)
     sys.exit(1)
 
-# ===========================================================
+# -----------------------------------------------------------
 # POST-PROCESSING
-# ===========================================================
+# -----------------------------------------------------------
 
 # -- REDUCE_OUTPUT
-convert_gas = True
-output_levels = 20
+CONVERT_GAS = True
+OUTPUT_LEVELS = 20
 
 # -- Root directory where the output of the chain is copied to
-output_root = os.path.join(chain_src_dir, "output", casename)
+OUTPUT_ROOT = os.path.join(CHAIN_SRC_DIR, "output", CASENAME)
 
 # -- VERIFY_CHAIN
-reference_dir = os.path.join(input_root, "reference_output")
+REFERENCE_DIR = os.path.join(INPUT_ROOT, "reference_output")
 
 # If the output file that gets compared to the reference is not at the location
 # that post_icon copied it to, give the path to it here. Else leave it 'None'
 #output_dir = None
-output_dir = os.path.join(work_root, casename, '2018010100_0_24', 'icon', 'output')
+OUTPUT_DIR = os.path.join(WORK_DIR, CASENAME, '2018010100_0_24', 'icon', 'output')
 

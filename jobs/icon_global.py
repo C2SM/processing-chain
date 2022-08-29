@@ -30,7 +30,7 @@ def main(starttime, hstart, hstop, cfg):
     and ``cfg.icon_restart_out``).
 
     Copy the **ICON**-executable from
-    ``cfg.icon_bin`` to ``cfg.icon_work/icon.exe``.
+    ``cfg.ICON_BIN`` to ``cfg.icon_work/icon.exe``.
 
     Use the tracer-csv-file to append **ICON**-namelist file.
 
@@ -59,13 +59,13 @@ def main(starttime, hstart, hstop, cfg):
 
     # -- Copy icon executable
     execname = 'icon.exe'
-    tools.copy_file(cfg.icon_bin, os.path.join(cfg.icon_work, execname))
+    tools.copy_file(cfg.ICON_BIN, os.path.join(cfg.icon_work, execname))
 
     # -- Get name if initial file
-    inidata_filename = os.path.join(cfg.icon_input_icbc, cfg.inicond_filename)
+    inidata_filename = os.path.join(cfg.icon_input_icbc, cfg.INICOND_FILENAME)
 
     # -- Write run script (run_icon.job)
-    with open(cfg.icon_runjob) as input_file:
+    with open(cfg.ICON_RUNJOB) as input_file:
         to_write = input_file.read()
     output_file = os.path.join(cfg.icon_work, "run_icon.job")
     with open(output_file, "w") as outf:
@@ -80,10 +80,9 @@ def main(starttime, hstart, hstop, cfg):
          os.path.join(cfg.icon_work, 'run_icon.job')])
 
     # In case of ICON-ART, ignore the "invalid pointer" error on successful run
-    if cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONART:
-        if tools.grep("free(): invalid pointer", logfile)['success'] and \
-           tools.grep("clean-up finished", logfile)['success']:
-            exitcode = 0
+    if tools.grep("free(): invalid pointer", logfile)['success'] and \
+        tools.grep("clean-up finished", logfile)['success']:
+        exitcode = 0
 
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
