@@ -124,9 +124,28 @@ def main(starttime, hstart, hstop, cfg):
                         cfg.pntSrc_xml_filename_scratch,
                         output_log=True)
 
-    # -- Restart file
+    # -- If lrestart is True, create a symlink to the restart file
     if cfg.lrestart == '.TRUE.':
-        print('TEST')
-        print(cfg.restart_filename_scratch)
-        print(os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
         os.symlink(cfg.restart_filename_scratch, os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
+
+    # -- If not, create the inicond file with ERA5
+    else:
+
+        # -- Fetch ERA5 data
+        tools.fetch_era5(starttime + timedelta(hours=hstart), cfg.icon_input_icbc)
+
+        # -- Copy ERA5 processing script (icon_era5_inicond.job) in workdir
+        with open(cfg.ICON_INIJOB) as input_file:
+            to_write = input_file.read()
+        output_file = os.path.join(cfg.icon_input_icbc, "icon_era5_inicond.sh")
+        with open(output_file, "w") as outf:
+            outf.write(to_write.format(cfg=cfg))
+
+        # -- Copy mypartab in workdir
+        shutil.copy(os.path.join(os.path.dirname(cfg.ICON_INIJOB), 'mypartab'), os.path.join(cfg.icon_input_icbc, 'mypartab'))
+
+        # -- Run ERA5 processing script
+        process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')], stdout=subprocess.PIPE)
+        output, error = process.communicate()
+        print(output)
+        print(error)

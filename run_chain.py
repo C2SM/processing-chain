@@ -11,8 +11,8 @@ import sys
 import time
 import shutil
 import argparse
-import csv
-
+import cdsapi
+import subprocess
 import jobs
 from jobs import tools
 
@@ -21,7 +21,6 @@ default_jobs = {
     tools.Target.ICONART: ["prepare_data_global", "icon_global"],
     tools.Target.ICONARTOEM: ["prepare_data", "oae", "icon"]
 }
-
 
 def parse_arguments():
     """Parse the command line arguments given to this script
@@ -272,41 +271,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
     setattr(cfg, 'chain_root', chain_root)
 
     # -----------------------------------------------
-    # -- Restart directories and files
-    # -----------------------------------------------
-
-    # -- Directory to dump a potential restart at the end of the current simulation
-    setattr(cfg, 'lrestart', '.FALSE.')
-    setattr(cfg, 'icon_restart_out',
-            os.path.join(chain_root, 'icon', 'restart'))
-
-    # -- If this simulation is not a spinup, maybe there is a restart file somewhere
-    if not spinup:
-        job_id_spinup_run = 'spinup_%s_%d_%d' % (inidate_yyyymmddhh,
-                                    hstart - cfg.SPINUP_TIME, hstart)
-        chain_root_spinup_run = os.path.join(work_root, cfg.CASENAME, job_id_spinup_run)
-        setattr(cfg, 'icon_restart_in', os.path.join(chain_root_spinup_run, 'icon', 'restart'))
-
-
-        # -- If there is no spinup directory, try to use a restart file from a previous run
-        if not os.path.isdir(cfg.icon_restart_in):
-            job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh,
-                                            hstart - cfg.RESTART_STEP, hstart)
-            chain_root_last_run = os.path.join(work_root, cfg.CASENAME,
-                                            job_id_last_run)
-            setattr(cfg, 'icon_restart_in',
-                    os.path.join(chain_root_last_run, 'icon', 'restart'))  
- 
-        # -- Finally, set correct restart setting and symlink if one of the links defined above works
-        # -- (with a restart, inidatetime must be the very beginning of the simulation and not from the restart)
-        if os.path.isdir(cfg.icon_restart_in):
-            setattr(cfg, 'lrestart', '.TRUE.')
-            setattr(cfg, 'restart_filename_scratch', 
-                os.path.join(cfg.icon_restart_in, (start_time + 
-                timedelta(hours=hstart)).strftime('restart_%Y%m%dT%H%M%SZ.nc')))
-            setattr(cfg, 'ini_datetime_string',(start_time + timedelta(hours=hstart) - timedelta(hours=cfg.SPINUP_TIME)).strftime('%Y-%m-%dT%H:00:00Z'))
-
-    # -----------------------------------------------
     # -- ICON input data in workdir
     # -----------------------------------------------
 
@@ -360,6 +324,52 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
             os.path.join(cfg.icon_input_xml, os.path.basename(cfg.PNTSRC_XML_FILENAME))
             )
 
+
+    # -----------------------------------------------
+    # -- Restart directories and files
+    # -----------------------------------------------
+
+    # -- Directory to dump a potential restart at the end of the current simulation
+    setattr(cfg, 'lrestart', '.FALSE.')
+    setattr(cfg, 'icon_restart_out',
+            os.path.join(chain_root, 'icon', 'restart'))
+
+    # -- If this simulation is a spinup, must change the initial conditions
+    if spinup:
+        setattr(cfg, 'inicond_filename_scratch',
+            os.path.join(cfg.icon_input_icbc,
+                        (start_time + timedelta(hours=hstart)).strftime('era52icon_R2B04_DOM01_%Y%m%d%H')))
+
+
+    # -- If this simulation is not a spinup, maybe there is a restart file somewhere
+    else:
+        job_id_spinup_run = 'spinup_%s_%d_%d' % (inidate_yyyymmddhh,
+                                    hstart - cfg.SPINUP_TIME, hstart)
+        chain_root_spinup_run = os.path.join(work_root, cfg.CASENAME, job_id_spinup_run)
+        setattr(cfg, 'icon_restart_in', os.path.join(chain_root_spinup_run, 'icon', 'restart'))
+
+
+        # -- If there is no spinup directory, try to use a restart file from a previous run
+        if not os.path.isdir(cfg.icon_restart_in):
+            job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh,
+                                            hstart - cfg.RESTART_STEP, hstart)
+            chain_root_last_run = os.path.join(work_root, cfg.CASENAME,
+                                            job_id_last_run)
+            setattr(cfg, 'icon_restart_in',
+                    os.path.join(chain_root_last_run, 'icon', 'restart'))  
+ 
+        # -- Finally, set correct restart setting and symlink if one of the links defined above works
+        # -- (with a restart, inidatetime must be the very beginning of the simulation and not from the restart)
+        if os.path.isdir(cfg.icon_restart_in):
+            setattr(cfg, 'lrestart', '.TRUE.')
+            setattr(cfg, 'restart_filename_scratch', 
+                    os.path.join(cfg.icon_restart_in, (start_time + 
+                    timedelta(hours=hstart)).strftime('restart_%Y%m%dT%H%M%SZ.nc')))
+            setattr(cfg, 'ini_datetime_string',(start_time + 
+                    timedelta(hours=hstart) - 
+                    timedelta(hours=cfg.SPINUP_TIME)).strftime('%Y-%m-%dT%H:00:00Z'))
+
+
     # -----------------------------------------------
     # -- Create running and logging directories
     # -----------------------------------------------
@@ -391,24 +401,24 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
         skip = False
 
         # if exists job is currently worked on or has been finished
-        if os.path.exists(os.path.join(log_working_dir, job)):
-            if not force:
-                while True:
-                    if os.path.exists(os.path.join(log_finished_dir, job)):
-                        print('Skip "%s" for chain "%s"' % (job, job_id))
-                        skip = True
-                        break
-                    else:
-                        print('Wait for "%s" of chain "%s"' % (job, job_id))
-                        sys.stdout.flush()
-                        for _ in range(3000):
-                            time.sleep(0.1)
-            else:
-                os.remove(os.path.join(log_working_dir, job))
-                try:
-                    os.remove(os.path.join(log_finished_dir, job))
-                except FileNotFoundError:
-                    pass
+        # if os.path.exists(os.path.join(log_working_dir, job)):
+        #     if not force:
+        #         while True:
+        #             if os.path.exists(os.path.join(log_finished_dir, job)):
+        #                 print('Skip "%s" for chain "%s"' % (job, job_id))
+        #                 skip = True
+        #                 break
+        #             else:
+        #                 print('Wait for "%s" of chain "%s"' % (job, job_id))
+        #                 sys.stdout.flush()
+        #                 for _ in range(3000):
+        #                     time.sleep(0.1)
+        #     else:
+        #         os.remove(os.path.join(log_working_dir, job))
+        #         try:
+        #             os.remove(os.path.join(log_finished_dir, job))
+        #         except FileNotFoundError:
+        #             pass
 
         if not skip:
             print('Process "%s" for chain "%s"' % (job, job_id))
@@ -482,19 +492,12 @@ def restart_run(work_root, cfg, start, hstart, hstop, job_names, force):
         If True will do job regardless of completion status
     """
 
-    # -- If a spinup_time is set, adjust the start_time and the hstop
-    # start = start - timedelta(hours=cfg.SPINUP_TIME)
-
     # -- Loop over the time steps
     for time in tools.iter_hours(start, hstart, hstop, step=cfg.RESTART_STEP):
 
         sub_hstart = (time - start).total_seconds() / 3600.
         runtime = min(cfg.RESTART_STEP, hstop - sub_hstart)
         sub_hstop = sub_hstart + runtime
-
-        print(start)
-        print(sub_hstart)
-        print(sub_hstop)
 
         # -- Don't start the simulation with runtime equal to 0
         if runtime == 0:

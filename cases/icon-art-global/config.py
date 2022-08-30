@@ -74,6 +74,7 @@ ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/icon/', 'bin', 'icon')
 
 # -- Paths for namelists and slurm runscript templates
 ICON_RUNJOB = os.path.join(CASE_DIR, 'icon_runjob.cfg')
+ICON_INIJOB = os.path.join(CASE_DIR, 'icon_era5_inicond.sh')
 
 # -- Number of hours simulated by one job / directory 
 RESTART_STEP = 3     # -- hours
