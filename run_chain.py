@@ -2,17 +2,18 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
+from genericpath import isdir
 
 import importlib
 from itertools import chain
 import logging
+import glob
 import os
 import sys
 import time
 import shutil
 import argparse
-import cdsapi
-import subprocess
+import xarray as xr
 import jobs
 from jobs import tools
 
@@ -262,10 +263,10 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
     setattr(cfg, 'end_datetime_string', end_datetime_string)
 
     # -- Job/simulation ID and directory (spinups have different names from regular simulations)
-    if not spinup:
-        job_id = '%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
-    else:
+    if spinup:
         job_id = 'spinup_%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
+    else:
+        job_id = 'run_%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
 
     chain_root = os.path.join(work_root, cfg.CASENAME, job_id)
     setattr(cfg, 'chain_root', chain_root)
@@ -330,12 +331,12 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
     # -----------------------------------------------
 
     # -- Directory to dump a potential restart at the end of the current simulation
-    setattr(cfg, 'lrestart', '.FALSE.')
-    setattr(cfg, 'icon_restart_out',
-            os.path.join(chain_root, 'icon', 'restart'))
+    setattr(cfg, 'icon_restart_out', os.path.join(chain_root, 'icon', 'restart'))
 
     # -- If this simulation is a spinup, must change the initial conditions
     if spinup:
+        setattr(cfg, 'lrestart', '.FALSE.')
+        setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart))   
         setattr(cfg, 'inicond_filename_scratch',
             os.path.join(cfg.icon_input_icbc,
                         (start_time + timedelta(hours=hstart)).strftime('era52icon_R2B04_DOM01_%Y%m%d%H')))
@@ -343,31 +344,68 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
 
     # -- If this simulation is not a spinup, maybe there is a restart file somewhere
     else:
-        job_id_spinup_run = 'spinup_%s_%d_%d' % (inidate_yyyymmddhh,
-                                    hstart - cfg.SPINUP_TIME, hstart)
+        job_id_spinup_run = 'spinup_%s_%d_%d' % (inidate_yyyymmddhh, hstart - cfg.SPINUP_TIME, hstart)
+        job_id_last_run = 'run_%s_%d_%d' % (inidate_yyyymmddhh, hstart - cfg.RESTART_STEP, hstart)
+
         chain_root_spinup_run = os.path.join(work_root, cfg.CASENAME, job_id_spinup_run)
-        setattr(cfg, 'icon_restart_in', os.path.join(chain_root_spinup_run, 'icon', 'restart'))
+        chain_root_last_run = os.path.join(work_root, cfg.CASENAME, job_id_last_run)
 
-
-        # -- If there is no spinup directory, try to use a restart file from a previous run
-        if not os.path.isdir(cfg.icon_restart_in):
-            job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh,
-                                            hstart - cfg.RESTART_STEP, hstart)
-            chain_root_last_run = os.path.join(work_root, cfg.CASENAME,
-                                            job_id_last_run)
-            setattr(cfg, 'icon_restart_in',
-                    os.path.join(chain_root_last_run, 'icon', 'restart'))  
- 
-        # -- Finally, set correct restart setting and symlink if one of the links defined above works
-        # -- (with a restart, inidatetime must be the very beginning of the simulation and not from the restart)
-        if os.path.isdir(cfg.icon_restart_in):
-            setattr(cfg, 'lrestart', '.TRUE.')
-            setattr(cfg, 'restart_filename_scratch', 
-                    os.path.join(cfg.icon_restart_in, (start_time + 
-                    timedelta(hours=hstart)).strftime('restart_%Y%m%dT%H%M%SZ.nc')))
+        # -- If a spinup exists, then use the associated restart
+        if os.path.isdir(chain_root_spinup_run):
+            setattr(cfg, 'icon_restart_type', 'spinup')
+            setattr(cfg, 'icon_restart_in', os.path.join(chain_root_spinup_run, 'icon', 'restart'))
             setattr(cfg, 'ini_datetime_string',(start_time + 
                     timedelta(hours=hstart) - 
                     timedelta(hours=cfg.SPINUP_TIME)).strftime('%Y-%m-%dT%H:00:00Z'))
+
+
+            # -- If both directories exist, we must merge the data
+            if os.path.isdir(chain_root_last_run):
+                restart_name = (start_time + timedelta(hours=hstart)).strftime('restart_%Y%m%dT%H%M%SZ.nc')
+                spinup_filepath = os.path.join(cfg.icon_restart_in, restart_name)
+                run_filepath = os.path.join(chain_root_last_run, 'icon', 'restart', restart_name)
+
+                ds_spinup = xr.open_dataset(spinup_filepath)
+                ds_run = xr.open_dataset(run_filepath)
+
+                # -- Find the right names for the variables
+                for var in cfg.VARS_SPINUP_MERGE :
+                    var_spinup = [i for i in ds_spinup.data_vars.keys() if i.startswith(var)][0]
+                    var_run = [i for i in ds_run.data_vars.keys() if i.startswith(var)][0]
+                    ds_spinup[var_spinup] = ds_run[var_run]
+                
+                # -- Replace the restart file with the new dataset
+                os.remove(spinup_filepath)
+                ds_spinup.to_netcdf(spinup_filepath)
+
+
+        # -- If there is no spinup restart, then we have to use the restart from the last run
+        elif not os.path.isdir(chain_root_spinup_run) and os.path.isdir(chain_root_last_run):
+                setattr(cfg, 'icon_restart_type', 'previous_run')
+                setattr(cfg, 'icon_restart_in', os.path.join(chain_root_last_run, 'icon', 'restart')) 
+                setattr(cfg, 'ini_datetime_string', start_time.strftime('%Y-%m-%dT%H:00:00Z')) # -- TODO : retrieve the start_time from the config run ?
+                job_id_last_run = 'run_%s_%d_%d' % (inidate_yyyymmddhh,
+                                                hstart - cfg.RESTART_STEP, hstart)
+                chain_root_last_run = os.path.join(work_root, cfg.CASENAME,
+                                                job_id_last_run)
+
+
+        # -- If none exists, there is no restart at all
+        else:
+            setattr(cfg, 'lrestart', '.FALSE.')
+            setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart))   
+            setattr(cfg, 'icon_restart_type', None)
+
+
+        # Also ...
+        # -- If one of the directories exist, then we can use at least one restart
+        # -- (with a restart, inidatetime must be the very beginning of the simulation and not from the restart)
+        if os.path.isdir(chain_root_spinup_run) or os.path.isdir(chain_root_last_run):
+            setattr(cfg, 'lrestart', '.TRUE.')
+            setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart + cfg.SPINUP_TIME))   
+            setattr(cfg, 'restart_filename_scratch', 
+                    os.path.join(cfg.icon_restart_in, (start_time + 
+                    timedelta(hours=hstart)).strftime('restart_%Y%m%dT%H%M%SZ.nc')))
 
 
     # -----------------------------------------------
@@ -401,24 +439,24 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
         skip = False
 
         # if exists job is currently worked on or has been finished
-        # if os.path.exists(os.path.join(log_working_dir, job)):
-        #     if not force:
-        #         while True:
-        #             if os.path.exists(os.path.join(log_finished_dir, job)):
-        #                 print('Skip "%s" for chain "%s"' % (job, job_id))
-        #                 skip = True
-        #                 break
-        #             else:
-        #                 print('Wait for "%s" of chain "%s"' % (job, job_id))
-        #                 sys.stdout.flush()
-        #                 for _ in range(3000):
-        #                     time.sleep(0.1)
-        #     else:
-        #         os.remove(os.path.join(log_working_dir, job))
-        #         try:
-        #             os.remove(os.path.join(log_finished_dir, job))
-        #         except FileNotFoundError:
-        #             pass
+        if os.path.exists(os.path.join(log_working_dir, job)):
+            if not force:
+                while True:
+                    if os.path.exists(os.path.join(log_finished_dir, job)):
+                        print('Skip "%s" for chain "%s"' % (job, job_id))
+                        skip = True
+                        break
+                    else:
+                        print('Wait for "%s" of chain "%s"' % (job, job_id))
+                        sys.stdout.flush()
+                        for _ in range(3000):
+                            time.sleep(0.1)
+            else:
+                os.remove(os.path.join(log_working_dir, job))
+                try:
+                    os.remove(os.path.join(log_finished_dir, job))
+                except FileNotFoundError:
+                    pass
 
         if not skip:
             print('Process "%s" for chain "%s"' % (job, job_id))
@@ -492,6 +530,9 @@ def restart_run(work_root, cfg, start, hstart, hstop, job_names, force):
         If True will do job regardless of completion status
     """
 
+    # -- Maximum seconds of simulation for output 
+    setattr(cfg, 'output_writing_max', hstop - hstart + cfg.SPINUP_TIME)
+
     # -- Loop over the time steps
     for time in tools.iter_hours(start, hstart, hstop, step=cfg.RESTART_STEP):
 
@@ -525,9 +566,12 @@ def restart_run(work_root, cfg, start, hstart, hstop, job_names, force):
                   job_names=job_names,
                   spinup=False,
                   force=force)
-
+        
 
 if __name__ == '__main__':
+
+    timer_init = time.time()
+
     args = parse_arguments()
 
     # 'empty' config object to be overwritten by load_config_file
@@ -542,6 +586,10 @@ if __name__ == '__main__':
         print("Starting chain for case {}, using {}".format(
             casename, cfg.TARGET.name))
 
+        # -- Create the directory to gather all outputs
+        tools.create_dir(os.path.join(cfg.WORK_DIR, cfg.CASENAME, 'chain'), 'chain')
+
+        # -- Run the main code
         restart_run(work_root=cfg.WORK_DIR,
                         cfg=cfg,
                         start=start_time,
@@ -550,4 +598,14 @@ if __name__ == '__main__':
                         job_names=args.job_list,
                         force=args.force)
 
+        # -- Move all outputs from different restart steps into the same directory 'chain'
+        list_dirs = glob.glob(os.path.join(cfg.WORK_DIR, cfg.CASENAME, 'run_*'))
+        for direc in list_dirs:
+            if os.path.isdir(direc):
+                list_files = glob.glob(os.path.join(direc, 'icon', 'output', '*'))
+                for file in list_files:
+                    shutil.move(file, os.path.join(cfg.WORK_DIR, cfg.CASENAME, 'chain'))
+
     print('>>> finished chain for good or bad! <<<')
+    print("--- %s seconds ---" % (time.time() - timer_init))
+

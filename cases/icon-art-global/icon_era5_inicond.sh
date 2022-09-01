@@ -118,7 +118,7 @@ ncks -h -A dataland_out.nc era5_final.nc
 ncks -h -A -v SKT dataskt_out.nc era5_final.nc
 ncks -h -A -v FR_LAND LSM_out.nc era5_final.nc
 ncrename -h -v FR_LAND,LSM era5_final.nc
-rm dataland_out.nc
+rm dataland_out.nc LSM_out.nc
 
 # -- Rename dimensions and order alphabetically
 ncrename -h -d cell,ncells era5_final.nc

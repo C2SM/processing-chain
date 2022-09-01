@@ -395,7 +395,7 @@ def fetch_era5(date, dir2move):
 
     Parameters
     ----------
-    date : initial date that must be fetched
+    date : initial date to fetch
 
     """
 

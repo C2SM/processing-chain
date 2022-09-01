@@ -77,10 +77,20 @@ ICON_RUNJOB = os.path.join(CASE_DIR, 'icon_runjob.cfg')
 ICON_INIJOB = os.path.join(CASE_DIR, 'icon_era5_inicond.sh')
 
 # -- Number of hours simulated by one job / directory 
-RESTART_STEP = 3     # -- hours
+RESTART_STEP = 240    # -- hours
 
 # -- Number of hours of spin-up before each restart
-SPINUP_TIME = 1      # -- hours
+SPINUP_TIME = 24      # -- hours
+
+# -- Variables for which initial conditions from previous run must be used 
+VARS_SPINUP_MERGE = ['tracer1', 'tracer2', 'tracer3', 'tracer4']
+
+# -- Number of hours between two output data
+OUTPUT_WRITING_STEP = 1
+
+# -- Convert to seconds and calculate steps per output 
+# -- to have only one file per restart
+steps_per_output = max(int(RESTART_STEP / OUTPUT_WRITING_STEP) + 1, 1)
 
 # -- Walltimes and domain decomposition
 if COMPUTE_QUEUE == "normal":

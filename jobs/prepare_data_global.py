@@ -130,7 +130,6 @@ def main(starttime, hstart, hstop, cfg):
 
     # -- If not, create the inicond file with ERA5
     else:
-
         # -- Fetch ERA5 data
         tools.fetch_era5(starttime + timedelta(hours=hstart), cfg.icon_input_icbc)
 
@@ -147,5 +146,3 @@ def main(starttime, hstart, hstop, cfg):
         # -- Run ERA5 processing script
         process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')], stdout=subprocess.PIPE)
         output, error = process.communicate()
-        print(output)
-        print(error)
