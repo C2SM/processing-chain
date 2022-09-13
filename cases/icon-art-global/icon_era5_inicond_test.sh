@@ -49,11 +49,16 @@ cdo -L setctomiss,0. -gec,0.5 LSM_out_tmp.nc landmask_out.nc
 cdo setrtoc2,0.5,1.0,1,0 LSM_out_tmp.nc LSM_out.nc
 rm LSM_in.nc LSM_out_tmp.nc
 
+# -- Extract the soil type and remap it
+# -- TODO : better than nearest neighbour, distance weighted then integer approx ?
+cdo selname,SLT data_in.nc slt_in.nc
+cdo remapnn,triangular-grid.nc slt_in.nc slt_out.nc
+
 # -- Select surface sea variables defined only on sea
 ncks -h -v SST,CI data_in.nc datasea_in.nc
 
 # -- Select surface variables defined on both that must be remap differently on sea and on land
-ncks -h -v SKT,STL1,STL2,STL3,STL4,ALB_SNOW,W_SNOW,T_SNOW data_in.nc dataland_in.nc
+ncks -h -v SKT,STL1,STL2,STL3,STL4,SMIL1,SMIL2,SMIL3,SMIL4,ALB_SNOW,W_SNOW,T_SNOW data_in.nc dataland_in.nc
 
 # -----------------------------------------------------------------------------
 # -- Remap land and ocean area differently for variables
@@ -103,15 +108,15 @@ rm dataland_ocean_out.nc dataland_land_out.nc
 ncks -h -x -v SKT,STL1,STL2,STL3,STL4,SMIL1,SMIL2,SMIL3,SMIL4,ALB_SNOW,W_SNOW,T_SNOW,SST,CI,LSM data_in.nc datarest_in.nc
 
 # -- Remap
-cdo -s remapdis,triangular-grid.nc datarest_in.nc era5_final.nc
-rm datarest_in.nc
+cdo -s remapdis,triangular-grid.nc datarest_in.nc era5_nearfinal.nc
+rm data_in.nc datarest_in.nc
 
 # -- Merge remapped files plus land sea mask from EXTPAR
-ncks -h -A dataland_out.nc era5_final.nc
-ncks -h -A datasea_ocean_out.nc era5_final.nc
-ncks -h -A -v FR_LAND LSM_out.nc era5_final.nc
-ncrename -h -v FR_LAND,LSM era5_final.nc
-rm LSM_out.nc dataland_out.nc
+ncks -h -A dataland_out.nc era5_nearfinal.nc
+ncks -h -A datasea_ocean_out.nc era5_nearfinal.nc
+ncks -h -A -v FR_LAND LSM_out.nc era5_nearfinal.nc
+ncrename -h -v FR_LAND,LSM era5_nearfinal.nc
+rm LSM_out.nc
 
 # ------------------------------------------------------------------------
 # -- Convert the (former) SWVLi variables to real soil moisture indices
@@ -123,8 +128,9 @@ rm LSM_out.nc dataland_out.nc
 wiltingp=(0 0.059 0.151 0.133 0.279 0.335 0.267 0.151) # wilting point
 fieldcap=(0 0.244 0.347 0.383 0.448 0.541 0.663 0.347) # field capacity
 
-ncks -h -v SMIL1,SMIL2,SMIL3,SMIL4,SLT data_in.nc swvl.nc
-rm data_in.nc
+ncks -h -v SMIL1,SMIL2,SMIL3,SMIL4 dataland_out.nc swvl.nc
+ncks -h -A -v SLT slt_out.nc swvl.nc
+rm dataland_out.nc
 
 # -- Loop over the soil types and apply the right constants
 smi_equation=""
@@ -138,16 +144,12 @@ for ilev in {{1..4}}; do
 
 done
 
-cdo expr,"${{smi_equation}}" swvl.nc smil_in.nc
-rm swvl.nc
-
-# -- Remap SMIL variables
-cdo -s remapdis,triangular-grid.nc smil_in.nc smil_out.nc
-rm smil_in.nc
+cdo expr,"${{smi_equation}}" swvl.nc smil.nc
+rm slt_in.nc slt_out.nc swvl.nc
 
 # -- Overwrite the variables SMIL1,SMIL2,SMIL3,SMIL4
-ncks -A -v SMIL1,SMIL2,SMIL3,SMIL4 smil_out.nc era5_final.nc
-rm smil_out.nc
+cdo replace era5_nearfinal.nc smil.nc era5_final.nc
+rm era5_nearfinal.nc
 
 # --------------------------------------
 # -- Create the LNSP variable
@@ -159,6 +161,19 @@ cdo expr,'LNPS=ln(PS);' era5_final.nc tmp.nc
 # -- Put the new variable LNSP in the original file
 ncks -A -v LNPS tmp.nc era5_final.nc
 rm tmp.nc
+
+
+# ------------------------------------------------------------------------
+# -- Increase SST
+# ------------------------------------------------------------------------
+
+# -- Apply logarithm to surface pressure
+cdo expr,'SST=SST+10;' era5_final.nc tmp.nc
+
+# -- Overwrite SST in the original file
+ncks -A -v SST tmp.nc era5_final.nc
+rm tmp.nc
+
 
 # ---------------------------------
 # -- Post-processing
@@ -173,3 +188,5 @@ rm era5_final.nc
 # -- Clean the repository
 rm weights.nc
 rm triangular-grid.nc
+
+

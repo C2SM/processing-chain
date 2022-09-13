@@ -28,7 +28,7 @@ def iter_hours(starttime, hstart, hstop, step=1):
     """Return a generator that yields datetime-objects from 
     ``starttime + hstart`` up to (and possibly including) ``starttime + hstop`` 
     in ``step``-increments.
-    
+
     If no ```step`` is given, the stepsize is 1 hour
 
     Parameters
@@ -41,12 +41,12 @@ def iter_hours(starttime, hstart, hstop, step=1):
         Offset (in hours) from the starttime where the iteration stops
     step : int, optional
         Stepsize, defaults to 1
-        
+
     Yields
     ------
     datetime-object
         The next timepoint in the iteration
-        
+
     Examples
     --------
     If the timeperiod is divisible by the step, the last timepoint will be
@@ -83,11 +83,11 @@ def prepare_message(logfile_path):
     # Shorten big logfiles
     if len(message) > 4096:
         message = message[:2048] + \
-                  "\n\n--------------------------------------------------\n" + \
-                  "### Some lines are skipped here. Original logfile:\n" + \
-                  logfile_path + \
-                  "\n--------------------------------------------------\n\n" + \
-                  message[-2048:]
+            "\n\n--------------------------------------------------\n" + \
+            "### Some lines are skipped here. Original logfile:\n" + \
+            logfile_path + \
+            "\n--------------------------------------------------\n\n" + \
+            message[-2048:]
 
     return message
 
@@ -135,14 +135,14 @@ def change_logfile(filename):
 
 def create_dir(path, readable_name):
     """Create a directory at path, log failure using readable_name.
-    
+
     Use ``os.makedirs(path, exist_ok=True)`` to create all necessary 
     directories for ``path`` to point to a valid directory. Do nothing if the
     directory at ``path`` already exists.
-    
+
     If the directory can not be created, log an error-message logged and raise
     the exception.
-    
+
     Parameters
     ----------
     path : str
@@ -421,7 +421,7 @@ def fetch_era5(date, dir2move):
         'param': '75/76/130/131/132/133/135/246/247',
         'stream': 'oper',
         'type': 'an',
-        'grid': '1.0/1.0',             
+        'grid': '1.0/1.0',
     }, 'era5_ml.grib')
 
     # -- CI   : Sea Ice Cover                   - 31
@@ -430,32 +430,43 @@ def fetch_era5(date, dir2move):
     # -- SST  : Sea Surface Temperature         - 34
     # -- SWV1 : Volumetric soil water layer 1   - 39
     # -- SWV2 : Volumetric soil water layer 2   - 40
-    # -- SWV3 : Volumetric soil water layer 3   - 41 
+    # -- SWV3 : Volumetric soil water layer 3   - 41
     # -- SWV4 : Volumetric soil water layer 4   - 42
+    # -- SLT  : Soil type                       - 43
     # -- Z    : Geopotential                   - 129
-    # -- SP   : Surface pressure               - 134 --> Must be converted to logarithm
-    # -- STL1 : Soil temperature level 1       - 139 
+    # -- SP   : Surface pressure               - 134
+    # -- STL1 : Soil temperature level 1       - 139
     # -- SD   : Snow depth                     - 141
     # -- STL2 : Soil temperature level 2       - 170
     # -- LSM  : Land-Sea Mask                  - 172
-    # -- STL3 : Soil temperature level 3       - 183 
+    # -- STL3 : Soil temperature level 3       - 183
     # -- SRC  : Skin reservoir content         - 198
     # -- SKT  : Skin Temperature               - 235
-    # -- STL4 : Soil temperature level 4       - 236 
+    # -- STL4 : Soil temperature level 4       - 236
     # -- TSN  : Temperature of snow layer      - 238
 
-    c.retrieve('reanalysis-era5-complete', {
-        'class': 'ea',
-        'date': date.strftime('%Y-%m-%d'),
-        'time': date.strftime('%H:%M:%S'),
-        'expver': '1',
-        'levtype': 'sfc',
-        'param': '31.128/32.128/33.128/34.128/39.128/40.128/41.128/42.128/129.128/134.128/139.128/141.128/170.128/172.128/183.128/198.128/235.128/236.128/238.128',
-        'stream': 'oper',
-        'type': 'an',
-        'grid': '1.0/1.0',
-    }, 'era5_surf.grib')
+    # c.retrieve('reanalysis-era5-complete', {
+    #     'class': 'ea',   # -- designates Copernicus ERA5 in the archived data
+    #     'date': date.strftime('%Y-%m-%d'),
+    #     'time': date.strftime('%H:%M:%S'),
+    #     'expver': '1',   # -- Experiment or model version :  1 = Operational data, default
+    #     'levtype': 'sfc',
+    #     'param': '31.128/32.128/33.128/34.128/39.128/40.128/41.128/42.128/129.128/134.128/139.128/141.128/170.128/172.128/183.128/198.128/235.128/236.128/238.128',
+    #     'stream': 'oper',   # -- oper = HRES (reanalysis, sub-daily)
+    #     'type': 'an',  # -- Analysis, forecast, ensemble-mean or ensemble-standard-deviations
+    #     'grid': '1.0/1.0',  # -- Maximum is 0.1/0.1
+    # }, 'era5_surf.grib')
+
+    c.retrieve(
+        'reanalysis-era5-single-levels',
+        {
+            'product_type': 'reanalysis',
+            'param': '31/32/33/34/39/40/41/42/43/129/134/139/141/170/172/183/198/235/236/238',
+            'date': date.strftime('%Y-%m-%d'),
+            'time': date.strftime('%H:%M:%S'),
+            'grid': '1.0/1.0',
+        },
+        'era5_surf.grib')
 
     shutil.move('era5_ml.grib', os.path.join(dir2move, 'era5_ml.grib'))
     shutil.move('era5_surf.grib', os.path.join(dir2move, 'era5_surf.grib'))
-

@@ -62,7 +62,7 @@ def main(starttime, hstart, hstop, cfg):
      For nested runs (meteo files are cosmo-output: ``cfg.meteo_prefix == 
      'lffd'``), also the ``*c.nc``-file with constant parameters is copied.
 
-    
+
     Parameters
     ----------
     starttime : datetime-object
@@ -75,9 +75,9 @@ def main(starttime, hstart, hstop, cfg):
         Object holding all user-configuration parameters as attributes
     """
 
-    #-----------------------------------------------------
+    # -----------------------------------------------------
     # Create directories
-    #-----------------------------------------------------
+    # -----------------------------------------------------
     tools.create_dir(cfg.icon_work, "icon_work")
     tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
     tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
@@ -86,15 +86,12 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(cfg.icon_output, "icon_output")
     tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
 
-    #-----------------------------------------------------
+    # -----------------------------------------------------
     # Copy files
-    #-----------------------------------------------------
+    # -----------------------------------------------------
     # Copy grid files
     tools.copy_file(cfg.DYNAMICS_GRID_FILENAME,
                     cfg.dynamics_grid_filename_scratch,
-                    output_log=True)
-    tools.copy_file(cfg.RADIATION_GRID_FILENAME,
-                    cfg.radiation_grid_filename_scratch,
                     output_log=True)
     tools.copy_file(cfg.EXTPAR_FILENAME,
                     cfg.extpar_filename_scratch,
@@ -109,9 +106,10 @@ def main(starttime, hstart, hstop, cfg):
                     output_log=True)
 
     # Copy icbc files
-    tools.copy_file(cfg.INICOND_FILENAME,
-                    cfg.inicond_filename_scratch,
-                    output_log=True)
+    if not cfg.USE_ERA5_INICOND:
+        tools.copy_file(cfg.INICOND_FILENAME,
+                        cfg.inicond_filename_scratch,
+                        output_log=True)
 
     # Copy XML files
     if hasattr(cfg, 'CHEMTRACER_XML_FILENAME'):
@@ -129,7 +127,7 @@ def main(starttime, hstart, hstop, cfg):
         os.symlink(cfg.restart_filename_scratch, os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 
     # -- If not, create the inicond file with ERA5
-    else:
+    elif cfg.lrestart == '.FALSE.' and cfg.USE_ERA5_INICOND:
         # -- Fetch ERA5 data
         tools.fetch_era5(starttime + timedelta(hours=hstart), cfg.icon_input_icbc)
 

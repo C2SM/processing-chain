@@ -23,6 +23,7 @@ default_jobs = {
     tools.Target.ICONARTOEM: ["prepare_data", "oae", "icon"]
 }
 
+
 def parse_arguments():
     """Parse the command line arguments given to this script
 
@@ -241,7 +242,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
     # -- Set simulation parameters and working dir
     # -----------------------------------------------
 
-
     # ini date and forecast time (ignore meteo times)
     inidate = int((start_time - datetime(1970, 1, 1)).total_seconds())
     inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
@@ -256,7 +256,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
     setattr(cfg, 'hstop', hstop)
     setattr(cfg, 'forecasttime', forecasttime)
 
-    # -- Initial and end date of the simulation 
+    # -- Initial and end date of the simulation
     ini_datetime_string = (start_time + timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
     end_datetime_string = (start_time + timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
     setattr(cfg, 'ini_datetime_string', ini_datetime_string)
@@ -293,38 +293,33 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
     setattr(
         cfg, 'dynamics_grid_filename_scratch',
         os.path.join(cfg.icon_input_grid,
-                        os.path.basename(cfg.DYNAMICS_GRID_FILENAME)))
-    setattr(
-        cfg, 'radiation_grid_filename_scratch',
-        os.path.join(cfg.icon_input_grid,
-                        os.path.basename(cfg.RADIATION_GRID_FILENAME)))
+                     os.path.basename(cfg.DYNAMICS_GRID_FILENAME)))
     setattr(
         cfg, 'extpar_filename_scratch',
         os.path.join(cfg.icon_input_grid,
-                        os.path.basename(cfg.EXTPAR_FILENAME)))
+                     os.path.basename(cfg.EXTPAR_FILENAME)))
     setattr(
         cfg, 'cldopt_filename_scratch',
         os.path.join(cfg.icon_input_rad,
-                        os.path.basename(cfg.CLDOPT_FILENAME)))
+                     os.path.basename(cfg.CLDOPT_FILENAME)))
     setattr(
         cfg, 'lrtm_filename_scratch',
         os.path.join(cfg.icon_input_rad,
-                        os.path.basename(cfg.LRTM_FILENAME)))
+                     os.path.basename(cfg.LRTM_FILENAME)))
     setattr(
         cfg, 'inicond_filename_scratch',
         os.path.join(cfg.icon_input_icbc,
-                        os.path.basename(cfg.INICOND_FILENAME)))
+                     os.path.basename(cfg.INICOND_FILENAME)))
     if hasattr(cfg, 'CHEMTRACER_XML_FILENAME'):
         setattr(
             cfg, 'chemtracer_xml_filename_scratch',
             os.path.join(cfg.icon_input_xml, os.path.basename(cfg.CHEMTRACER_XML_FILENAME))
-            )
+        )
     if hasattr(cfg, 'PNTSRC_XML_FILENAME'):
         setattr(
             cfg, 'pntSrc_xml_filename_scratch',
             os.path.join(cfg.icon_input_xml, os.path.basename(cfg.PNTSRC_XML_FILENAME))
-            )
-
+        )
 
     # -----------------------------------------------
     # -- Restart directories and files
@@ -336,11 +331,11 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
     # -- If this simulation is a spinup, must change the initial conditions
     if spinup:
         setattr(cfg, 'lrestart', '.FALSE.')
-        setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart))   
-        setattr(cfg, 'inicond_filename_scratch',
-            os.path.join(cfg.icon_input_icbc,
-                        (start_time + timedelta(hours=hstart)).strftime('era52icon_R2B04_DOM01_%Y%m%d%H')))
-
+        setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart))
+        if cfg.USE_ERA5_INICOND:
+            setattr(cfg, 'inicond_filename_scratch',
+                    os.path.join(cfg.icon_input_icbc,
+                                 (start_time + timedelta(hours=hstart)).strftime('era52icon_R2B04_DOM01_%Y%m%d%H')))
 
     # -- If this simulation is not a spinup, maybe there is a restart file somewhere
     else:
@@ -354,12 +349,11 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
         if os.path.isdir(chain_root_spinup_run):
             setattr(cfg, 'icon_restart_type', 'spinup')
             setattr(cfg, 'icon_restart_in', os.path.join(chain_root_spinup_run, 'icon', 'restart'))
-            setattr(cfg, 'ini_datetime_string',(start_time + 
-                    timedelta(hours=hstart) - 
+            setattr(cfg, 'ini_datetime_string', (start_time +
+                    timedelta(hours=hstart) -
                     timedelta(hours=cfg.SPINUP_TIME)).strftime('%Y-%m-%dT%H:00:00Z'))
 
-
-            # -- If both directories exist, we must merge the data
+            # -- If both directories exist, we use only meteorogical data from spinup
             if os.path.isdir(chain_root_last_run):
                 restart_name = (start_time + timedelta(hours=hstart)).strftime('restart_%Y%m%dT%H%M%SZ.nc')
                 spinup_filepath = os.path.join(cfg.icon_restart_in, restart_name)
@@ -369,44 +363,41 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
                 ds_run = xr.open_dataset(run_filepath)
 
                 # -- Find the right names for the variables
-                for var in cfg.VARS_SPINUP_MERGE :
+                for var in cfg.VARS_SPINUP_MERGE:
                     var_spinup = [i for i in ds_spinup.data_vars.keys() if i.startswith(var)][0]
                     var_run = [i for i in ds_run.data_vars.keys() if i.startswith(var)][0]
-                    ds_spinup[var_spinup] = ds_run[var_run]
-                
+                    ds_spinup[var_spinup][:] = ds_run[var_run].data
+                    # ds_run[var_run][:] = ds_spinup[var_spinup].data
+
                 # -- Replace the restart file with the new dataset
                 os.remove(spinup_filepath)
                 ds_spinup.to_netcdf(spinup_filepath)
 
-
         # -- If there is no spinup restart, then we have to use the restart from the last run
         elif not os.path.isdir(chain_root_spinup_run) and os.path.isdir(chain_root_last_run):
-                setattr(cfg, 'icon_restart_type', 'previous_run')
-                setattr(cfg, 'icon_restart_in', os.path.join(chain_root_last_run, 'icon', 'restart')) 
-                setattr(cfg, 'ini_datetime_string', start_time.strftime('%Y-%m-%dT%H:00:00Z')) # -- TODO : retrieve the start_time from the config run ?
-                job_id_last_run = 'run_%s_%d_%d' % (inidate_yyyymmddhh,
+            setattr(cfg, 'icon_restart_type', 'previous_run')
+            setattr(cfg, 'icon_restart_in', os.path.join(chain_root_last_run, 'icon', 'restart'))
+            setattr(cfg, 'ini_datetime_string', start_time.strftime('%Y-%m-%dT%H:00:00Z'))  # -- TODO : retrieve the start_time from the config run ?
+            job_id_last_run = 'run_%s_%d_%d' % (inidate_yyyymmddhh,
                                                 hstart - cfg.RESTART_STEP, hstart)
-                chain_root_last_run = os.path.join(work_root, cfg.CASENAME,
-                                                job_id_last_run)
-
+            chain_root_last_run = os.path.join(work_root, cfg.CASENAME,
+                                               job_id_last_run)
 
         # -- If none exists, there is no restart at all
         else:
             setattr(cfg, 'lrestart', '.FALSE.')
-            setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart))   
+            setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart))
             setattr(cfg, 'icon_restart_type', None)
-
 
         # Also ...
         # -- If one of the directories exist, then we can use at least one restart
         # -- (with a restart, inidatetime must be the very beginning of the simulation and not from the restart)
         if os.path.isdir(chain_root_spinup_run) or os.path.isdir(chain_root_last_run):
             setattr(cfg, 'lrestart', '.TRUE.')
-            setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart + cfg.SPINUP_TIME))   
-            setattr(cfg, 'restart_filename_scratch', 
-                    os.path.join(cfg.icon_restart_in, (start_time + 
-                    timedelta(hours=hstart)).strftime('restart_%Y%m%dT%H%M%SZ.nc')))
-
+            setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart + cfg.SPINUP_TIME))
+            setattr(cfg, 'restart_filename_scratch',
+                    os.path.join(cfg.icon_restart_in, (start_time +
+                                                       timedelta(hours=hstart)).strftime('restart_%Y%m%dT%H%M%SZ.nc')))
 
     # -----------------------------------------------
     # -- Create running and logging directories
@@ -423,16 +414,10 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
     tools.create_dir(log_working_dir, "log_working")
     tools.create_dir(log_finished_dir, "log_finished")
 
-    # number of levels and switch for unit conversion for 'reduce_output' job
-    if not hasattr(cfg, 'OUTPUT_LEVELS'):
-        setattr(cfg, 'OUTPUT_LEVELS', -1)
-    if not hasattr(cfg, 'CONVERT_GAS'):
-        setattr(cfg, 'CONVERT_GAS', True)
-
     # ------------------------
     # Run jobs (if required)
     # ------------------------
-    
+
     for job in job_names:
 
         # mapping of scripts in jobs with their arguments
@@ -505,10 +490,10 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
 
 def restart_run(work_root, cfg, start, hstart, hstop, job_names, force):
     """Starts the subchains in the specified intervals.
-    
+
     Slices the total runtime of the chain according to ``cfg.RESTART_STEP``.
     Calls ``run_chain()`` for each step.
-    
+
     Parameters
     ----------
     work_root : str
@@ -530,7 +515,7 @@ def restart_run(work_root, cfg, start, hstart, hstop, job_names, force):
         If True will do job regardless of completion status
     """
 
-    # -- Maximum seconds of simulation for output 
+    # -- Maximum seconds of simulation for output
     setattr(cfg, 'output_writing_max', hstop - hstart + cfg.SPINUP_TIME)
 
     # -- Loop over the time steps
@@ -549,13 +534,13 @@ def restart_run(work_root, cfg, start, hstart, hstop, job_names, force):
         # -- Spinup run
         if cfg.SPINUP_TIME > 0:
             run_chain(work_root=work_root,
-                    cfg=cfg,
-                    start_time=start,
-                    hstart=sub_hstart - cfg.SPINUP_TIME,
-                    hstop=sub_hstart,
-                    job_names=job_names,
-                    spinup=True,
-                    force=force)
+                      cfg=cfg,
+                      start_time=start,
+                      hstart=sub_hstart - cfg.SPINUP_TIME,
+                      hstop=sub_hstart,
+                      job_names=job_names,
+                      spinup=True,
+                      force=force)
 
         # -- Real simulation
         run_chain(work_root=work_root,
@@ -566,7 +551,7 @@ def restart_run(work_root, cfg, start, hstart, hstop, job_names, force):
                   job_names=job_names,
                   spinup=False,
                   force=force)
-        
+
 
 if __name__ == '__main__':
 
@@ -591,12 +576,12 @@ if __name__ == '__main__':
 
         # -- Run the main code
         restart_run(work_root=cfg.WORK_DIR,
-                        cfg=cfg,
-                        start=start_time,
-                        hstart=args.hstart,
-                        hstop=args.hstop,
-                        job_names=args.job_list,
-                        force=args.force)
+                    cfg=cfg,
+                    start=start_time,
+                    hstart=args.hstart,
+                    hstop=args.hstop,
+                    job_names=args.job_list,
+                    force=args.force)
 
         # -- Move all outputs from different restart steps into the same directory 'chain'
         list_dirs = glob.glob(os.path.join(cfg.WORK_DIR, cfg.CASENAME, 'run_*'))
@@ -607,5 +592,8 @@ if __name__ == '__main__':
                     shutil.move(file, os.path.join(cfg.WORK_DIR, cfg.CASENAME, 'chain'))
 
     print('>>> finished chain for good or bad! <<<')
-    print("--- %s seconds ---" % (time.time() - timer_init))
-
+    eltime = time.time() - timer_init
+    eltime_hours = eltime // 3600
+    eltime_minutes = (eltime // 60) % 60
+    eltime_seconds = eltime % 60
+    print("--- %d hours, %d minutes, %d seconds ---" % (eltime_hours, eltime_minutes, eltime_seconds))

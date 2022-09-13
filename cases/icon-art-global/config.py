@@ -32,9 +32,6 @@ CASENAME = os.path.basename(os.path.dirname(os.path.realpath(__file__)))
 # -- Root directory of the sourcecode of the chain (where run_chain.py is)
 CHAIN_SRC_DIR = os.getcwd()
 
-# -- Root directory of the working space of the chain
-WORK_DIR = os.path.join(CHAIN_SRC_DIR, 'work')
-
 # -- Case directory
 CASE_DIR = os.path.join(CHAIN_SRC_DIR, 'cases', CASENAME)
 
@@ -50,9 +47,8 @@ INICOND_FILENAME = '/users/jthanwer/scripts/create-inicond-era5/era2icon-R2B04_D
 
 # -- Grid
 INPUT_ROOT_GRID = os.path.join(INPUT_ROOT, 'grids')
-DYNAMICS_GRID_FILENAME = os.path.join(INPUT_ROOT_GRID, "iconR2B04-DOM01.nc")
-RADIATION_GRID_FILENAME = os.path.join(INPUT_ROOT_GRID, "iconR2B03-DOM01_R.nc")
-EXTPAR_FILENAME = os.path.join(INPUT_ROOT_GRID, "extpar_iconR2B04-DOM01.nc")
+DYNAMICS_GRID_FILENAME = os.path.join(INPUT_ROOT_GRID, "iconR2B03-DOM01.nc")
+EXTPAR_FILENAME = os.path.join(INPUT_ROOT_GRID, "extpar_iconR2B03-DOM01.nc")
 
 # -- Radiation
 INPUT_ROOT_RAD = os.path.join(INPUT_ROOT, 'rad')
@@ -69,37 +65,42 @@ ART_INPUT_FOLDER = os.path.join(INPUT_ROOT, 'ART')
 # -- SIMULATION
 # -----------------------------------------------------------
 
+# -- Root directory of the working space of the chain
+WORK_DIR = os.path.join(CHAIN_SRC_DIR, 'simu-1month-r2b3-testconfig')
+
 # -- Executable
 ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/icon/', 'bin', 'icon')
 
 # -- Paths for namelists and slurm runscript templates
 ICON_RUNJOB = os.path.join(CASE_DIR, 'icon_runjob.cfg')
-ICON_INIJOB = os.path.join(CASE_DIR, 'icon_era5_inicond.sh')
+ICON_INIJOB = os.path.join(CASE_DIR, 'icon_era5_inicond_test.sh')
 
-# -- Number of hours simulated by one job / directory 
-RESTART_STEP = 240    # -- hours
+# -- Number of hours simulated by one job / directory
+RESTART_STEP = 720    # -- hours
 
 # -- Number of hours of spin-up before each restart
-SPINUP_TIME = 24      # -- hours
+SPINUP_TIME = 0      # -- hours
 
-# -- Variables for which initial conditions from previous run must be used 
+# -- Variables for which initial conditions from previous run must be used
 VARS_SPINUP_MERGE = ['tracer1', 'tracer2', 'tracer3', 'tracer4']
 
 # -- Number of hours between two output data
-OUTPUT_WRITING_STEP = 1
+OUTPUT_WRITING_STEP = 12
 
-# -- Convert to seconds and calculate steps per output 
-# -- to have only one file per restart
+# -- Number of steps per output
 steps_per_output = max(int(RESTART_STEP / OUTPUT_WRITING_STEP) + 1, 1)
+
+# -- Use ERA5 data for initial conditions. Else, use prescribed initial conditions above
+USE_ERA5_INICOND = False
 
 # -- Walltimes and domain decomposition
 if COMPUTE_QUEUE == "normal":
     ICON_WALLTIME = "01:00:00"
-    ICON_NP_TOT = 2
+    ICON_NP_TOT = 4
 
 elif COMPUTE_QUEUE == "debug":
     ICON_WALLTIME = "00:30:00"
-    ICON_NP_TOT = 1
+    ICON_NP_TOT = 2
 
 else:
     logging.error("Unknown queue name: %s" % COMPUTE_QUEUE)
@@ -108,19 +109,3 @@ else:
 # -----------------------------------------------------------
 # POST-PROCESSING
 # -----------------------------------------------------------
-
-# -- REDUCE_OUTPUT
-CONVERT_GAS = True
-OUTPUT_LEVELS = 20
-
-# -- Root directory where the output of the chain is copied to
-OUTPUT_ROOT = os.path.join(CHAIN_SRC_DIR, "output", CASENAME)
-
-# -- VERIFY_CHAIN
-REFERENCE_DIR = os.path.join(INPUT_ROOT, "reference_output")
-
-# If the output file that gets compared to the reference is not at the location
-# that post_icon copied it to, give the path to it here. Else leave it 'None'
-#output_dir = None
-OUTPUT_DIR = os.path.join(WORK_DIR, CASENAME, '2018010100_0_24', 'icon', 'output')
-
