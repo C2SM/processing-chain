@@ -106,9 +106,12 @@ ncks -h -x -v SKT,STL1,STL2,STL3,STL4,SMIL1,SMIL2,SMIL3,SMIL4,ALB_SNOW,W_SNOW,T_
 cdo -s remapdis,triangular-grid.nc datarest_in.nc era5_final.nc
 rm datarest_in.nc
 
+# -- Fill NaN values for SST and CI
+cdo setmisstodis -selname,SST,CI datasea_ocean_out.nc dataland_ocean_out_filled.nc
+
 # -- Merge remapped files plus land sea mask from EXTPAR
 ncks -h -A dataland_out.nc era5_final.nc
-ncks -h -A datasea_ocean_out.nc era5_final.nc
+ncks -h -A dataland_ocean_out_filled.nc era5_final.nc
 ncks -h -A -v FR_LAND LSM_out.nc era5_final.nc
 ncrename -h -v FR_LAND,LSM era5_final.nc
 rm LSM_out.nc dataland_out.nc
