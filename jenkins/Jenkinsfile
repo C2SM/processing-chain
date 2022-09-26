@@ -32,6 +32,17 @@ pipeline {
                 }
             }
         }
+        stage('Setup spack') {
+            steps {
+                sh './jenkins/scripts/setup-spack.sh'
+            }
+            post {
+                failure {
+                    echo 'Cleaning up workspace'
+                    deleteDir()
+                }
+            }
+        }
         stage('Preparation') {
             parallel {
                 stage('Get data') {
