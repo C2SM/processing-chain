@@ -85,7 +85,7 @@ with open(icon_spec_file, 'r') as file:
     icon_spec = file.read().rstrip()
 # Executable
 icon_bin = os.popen('spack location -i ' +
-                     icon_spec).read().strip() + '/bin/icon'
+                    icon_spec).read().strip() + '/bin/icon'
 
 # eccodes
 eccodes_dir = os.path.join(chain_src_dir, 'input', 'eccodes_definitions')
