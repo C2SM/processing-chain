@@ -83,16 +83,29 @@ the following script (this may take some time):
 
     ./get_data.sh
 
-Furthermore, executables for COSMO-GHG and ICON are needed. For COSMO-GHG,
+Furthermore, executables for COSMO-GHG and ICON are needed. For both COSMO-GHG and ICON,
 a spack instance needs to be initialized first. Then, COSMO-GHG can be 
 installed:
 
     source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
     spack installcosmo cosmo@empa-ghg%nvhpc cosmo_target=gpu +cppdycore
+    
+For ICON, type:
 
-For ICON, use the following script:
+    spack install icon@c2sm-master%nvhpc@21.3 icon_target=cpu +eccodes +ocean
+    
+> **Note**: For further information about building ICON or building software
+> with Spack in general, consider the 
+> [C2SM wiki page](https://wiki.c2sm.ethz.ch/MODELS/ICONIconModel) and the official 
+> [C2SM Spack Documentation](https://c2sm.github.io/spack-c2sm/QuickStart.html).
 
-    ./jenkins/scripts/create-icon-binary.sh
+Alternatively, you can use the following scripts:
+
+    ./jenkins/scripts/build_cosmo-ghg.sh
+    
+or
+
+    ./jenkins/scripts/build_icon.sh
 
 Finally, to run the COSMO-GHG test case, type:
 
@@ -100,7 +113,7 @@ Finally, to run the COSMO-GHG test case, type:
 
 > **Note**: Be sure to have spack initialized via 
 > `source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh`
-> before you run COSMO jobs.
+> before you run COSMO or ICON jobs.
 
 For ICON, type:
 
