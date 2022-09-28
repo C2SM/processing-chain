@@ -286,40 +286,35 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
             os.path.join(chain_root, 'icon', 'input', 'rad'))
     setattr(cfg, 'icon_input_xml',
             os.path.join(chain_root, 'icon', 'input', 'xml'))
+    setattr(cfg, 'icon_input_art',
+            os.path.join(chain_root, 'icon', 'input', 'art'))
     setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
     setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
 
     # -- Set attributes for input filenames
-    setattr(
-        cfg, 'dynamics_grid_filename_scratch',
-        os.path.join(cfg.icon_input_grid,
-                     os.path.basename(cfg.DYNAMICS_GRID_FILENAME)))
-    setattr(
-        cfg, 'extpar_filename_scratch',
-        os.path.join(cfg.icon_input_grid,
-                     os.path.basename(cfg.EXTPAR_FILENAME)))
-    setattr(
-        cfg, 'cldopt_filename_scratch',
-        os.path.join(cfg.icon_input_rad,
-                     os.path.basename(cfg.CLDOPT_FILENAME)))
-    setattr(
-        cfg, 'lrtm_filename_scratch',
-        os.path.join(cfg.icon_input_rad,
-                     os.path.basename(cfg.LRTM_FILENAME)))
-    setattr(
-        cfg, 'inicond_filename_scratch',
-        os.path.join(cfg.icon_input_icbc,
-                     os.path.basename(cfg.INICOND_FILENAME)))
+    setattr(cfg, 'dynamics_grid_filename_scratch',
+            os.path.join(cfg.icon_input_grid,
+                         os.path.basename(cfg.DYNAMICS_GRID_FILENAME)))
+    setattr(cfg, 'extpar_filename_scratch',
+            os.path.join(cfg.icon_input_grid,
+                         os.path.basename(cfg.EXTPAR_FILENAME)))
+    setattr(cfg, 'cldopt_filename_scratch',
+            os.path.join(cfg.icon_input_rad,
+                         os.path.basename(cfg.CLDOPT_FILENAME)))
+    setattr(cfg, 'lrtm_filename_scratch',
+            os.path.join(cfg.icon_input_rad,
+                         os.path.basename(cfg.LRTM_FILENAME)))
+    setattr(cfg, 'inicond_filename_scratch',
+            os.path.join(cfg.icon_input_icbc,
+                         os.path.basename(cfg.INICOND_FILENAME)))
+    setattr(cfg, 'map_file_nudging_scratch',
+            os.path.join(cfg.icon_input_icbc, os.path.basename(cfg.MAP_FILE_NUDGING)))
     if hasattr(cfg, 'CHEMTRACER_XML_FILENAME'):
-        setattr(
-            cfg, 'chemtracer_xml_filename_scratch',
-            os.path.join(cfg.icon_input_xml, os.path.basename(cfg.CHEMTRACER_XML_FILENAME))
-        )
+        setattr(cfg, 'chemtracer_xml_filename_scratch',
+                os.path.join(cfg.icon_input_xml, os.path.basename(cfg.CHEMTRACER_XML_FILENAME)))
     if hasattr(cfg, 'PNTSRC_XML_FILENAME'):
-        setattr(
-            cfg, 'pntSrc_xml_filename_scratch',
-            os.path.join(cfg.icon_input_xml, os.path.basename(cfg.PNTSRC_XML_FILENAME))
-        )
+        setattr(cfg, 'pntSrc_xml_filename_scratch',
+                os.path.join(cfg.icon_input_xml, os.path.basename(cfg.PNTSRC_XML_FILENAME)))
 
     # -----------------------------------------------
     # -- Restart directories and files
@@ -335,7 +330,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
         if cfg.USE_ERA5_INICOND:
             setattr(cfg, 'inicond_filename_scratch',
                     os.path.join(cfg.icon_input_icbc,
-                                 (start_time + timedelta(hours=hstart)).strftime('era52icon_R2B04_DOM01_%Y%m%d%H')))
+                                 (start_time + timedelta(hours=hstart)).strftime('era52icon_R2B04_DOM01_%Y%m%d%H.nc')))
 
     # -- If this simulation is not a spinup, maybe there is a restart file somewhere
     else:

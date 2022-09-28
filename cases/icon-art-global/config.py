@@ -43,8 +43,7 @@ INPUT_ROOT = '/scratch/snx3000/jthanwer/processing-chain/input/'
 
 # -- Initial conditions and boundary conditions
 INPUT_ROOT_ICBC = os.path.join(INPUT_ROOT, 'icbc')
-# INICOND_FILENAME = '/users/jthanwer/scripts/create-inicond-era5/era2icon-R2B04_DOM01.nc'
-INICOND_FILENAME = '/users/jthanwer/scripts/create-inicond-era5/era2icon-R2B04_DOM01.nc'
+INICOND_FILENAME = '/scratch/snx3000/jthanwer/processing-chain/input/icbc/era2icon_R2B03_2022060200.nc'
 
 # -- Grid
 INPUT_ROOT_GRID = os.path.join(INPUT_ROOT, 'grids')
@@ -56,39 +55,38 @@ INPUT_ROOT_RAD = os.path.join(INPUT_ROOT, 'rad')
 CLDOPT_FILENAME = os.path.join(INPUT_ROOT_RAD, 'ECHAM6_CldOptProps.nc')
 LRTM_FILENAME = os.path.join(INPUT_ROOT_RAD, 'rrtmg_lw.nc')
 
-# -- ART settings
+# -- ART
 INPUT_ROOT_TRACERS = os.path.join(INPUT_ROOT, 'XML')
 CHEMTRACER_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'tracer_passive.xml')
 PNTSRC_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'pntSrc_example.xml')
-ART_INPUT_FOLDER = os.path.join(INPUT_ROOT, 'ART')
+ART_INPUT_FOLDER = os.path.join(INPUT_ROOT, 'art')
+
+# -- Nudging
+MAP_FILE_NUDGING = os.path.join(INPUT_ROOT_ICBC, 'map_file.nudging')
+
 
 # -----------------------------------------------------------
 # -- SIMULATION
 # -----------------------------------------------------------
 
 # -- Root directory of the working space of the chain
-WORK_DIR = os.path.join(CHAIN_SRC_DIR, 'simu-r2b3-test-6')
+WORK_DIR = os.path.join(CHAIN_SRC_DIR, 'simu-2days-nudging')
 
 # -- Executable
 # ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/qcndg6qwq6e5gfutwoycqmwf2m4lvg7g/', 'bin', 'icon') # -- eccodes, ocean, noart
-# ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/x6pisrz7umszlrpnazse3cuosdxt45kt/', 'bin', 'icon') # -- art
+# ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/x6pisrz7umszlrpnazse3cuosdxt45kt/', 'bin', 'icon')  # -- art
 ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/icon/cpu/', 'bin', 'icon')  # -- art, dev-build
 
 # -- Paths for namelists and slurm runscript templates
 ICON_RUNJOB = os.path.join(CASE_DIR, 'icon_runjob.cfg')
 ICON_INIJOB = os.path.join(CASE_DIR, 'icon_era5_inicond.sh')
+ICON_NUDGINGJOB = os.path.join(CASE_DIR, 'icon_era5_nudging.sh')
 
 # -- Number of hours simulated by one job / directory
-RESTART_STEP = 2160    # -- hours
-
-# -- Number of hours of spin-up before each restart
-SPINUP_TIME = 0      # -- hours
-
-# -- Variables for which initial conditions from previous run must be used
-VARS_SPINUP_MERGE = ['tracer1', 'tracer2', 'tracer3', 'tracer4']
+RESTART_STEP = 240    # -- hours
 
 # -- Number of hours between two output data
-OUTPUT_WRITING_STEP = 48
+OUTPUT_WRITING_STEP = 1
 
 # -- Number of steps per output
 steps_per_output = max(int(RESTART_STEP / OUTPUT_WRITING_STEP) + 1, 1)
@@ -96,13 +94,29 @@ steps_per_output = max(int(RESTART_STEP / OUTPUT_WRITING_STEP) + 1, 1)
 # -- Use ERA5 data for initial conditions. Else, use prescribed initial conditions above
 USE_ERA5_INICOND = False
 
+# -- Use global nudging or not
+ERA5_GLOBAL_NUDGING = True
+nudge_type = 2 if ERA5_GLOBAL_NUDGING else 0
+
+# -- Time step for global nudging
+NUDGING_STEP = 12  # 12 hours
+nudging_step_seconds = NUDGING_STEP * 3600
+
+# ----------------------Deprecated ??-------------------------------------------
+# -- Number of hours of spin-up before each restart
+SPINUP_TIME = 0      # -- hours
+
+# -- Variables for which initial conditions from previous run must be used
+VARS_SPINUP_MERGE = ['tracer3.TL', 'tracer4.TL']
+# -----------------------------------------------------------------------------
+
 # -- Walltimes and domain decomposition
 if COMPUTE_QUEUE == "normal":
     ICON_WALLTIME = "01:00:00"
     ICON_NP_TOT = 4
 
 elif COMPUTE_QUEUE == "debug":
-    ICON_WALLTIME = "00:30:00"
+    ICON_WALLTIME = "00:15:00"
     ICON_NP_TOT = 2
 
 else:

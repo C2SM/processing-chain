@@ -25,6 +25,7 @@
 # 2021-11-12 Modified for ICON-ART-simulations (mjaehn)
 
 import os
+import glob
 import logging
 import shutil
 import subprocess
@@ -83,6 +84,7 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
     tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
     tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
+    tools.create_dir(cfg.icon_input_art, "icon_input_art")
     tools.create_dir(cfg.icon_output, "icon_output")
     tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
 
@@ -122,6 +124,18 @@ def main(starttime, hstart, hstop, cfg):
                         cfg.pntSrc_xml_filename_scratch,
                         output_log=True)
 
+    # Copy nudging data
+    if cfg.ERA5_GLOBAL_NUDGING:
+        tools.copy_file(cfg.MAP_FILE_NUDGING,
+                        cfg.map_file_nudging_scratch,
+                        output_log=True)
+
+    # Copy ART files
+    if hasattr(cfg, 'ART_INPUT_FOLDER'):
+        list_files = glob.glob(os.path.join(cfg.ART_INPUT_FOLDER, '*'))
+        for file in list_files:
+            tools.copy_file(file, cfg.icon_work)
+
     # -- If lrestart is True, create a symlink to the restart file
     if cfg.lrestart == '.TRUE.':
         os.symlink(cfg.restart_filename_scratch, os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
@@ -134,7 +148,7 @@ def main(starttime, hstart, hstop, cfg):
         # -- Copy ERA5 processing script (icon_era5_inicond.job) in workdir
         with open(cfg.ICON_INIJOB) as input_file:
             to_write = input_file.read()
-        output_file = os.path.join(cfg.icon_input_icbc, "icon_era5_inicond.sh")
+        output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')
         with open(output_file, "w") as outf:
             outf.write(to_write.format(cfg=cfg))
 
@@ -143,4 +157,36 @@ def main(starttime, hstart, hstop, cfg):
 
         # -- Run ERA5 processing script
         process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')], stdout=subprocess.PIPE)
-        output, error = process.communicate()
+        process.communicate()
+
+    # -- If global nudging, download and process ERA5 data
+    if cfg.ERA5_GLOBAL_NUDGING:
+
+        for time in tools.iter_hours(starttime, hstart, hstop, step=cfg.NUDGING_STEP):
+
+            # -- Give a name to the nudging file
+            timestr = time.strftime('%Y%m%d%H')
+            filename = 'era2icon_R2B03_{timestr}_nudging.nc'.format(timestr=timestr)
+
+            # -- If initial time, copy the initial conditions to be used as boundary conditions
+            if time == starttime and cfg.USE_ERA5_INICOND:
+                shutil.copy(cfg.inicond_filename_scratch, os.path.join(cfg.icon_input_icbc, filename))
+                continue
+
+            # -- Fetch ERA5 data
+            tools.fetch_era5_nudging(time, cfg.icon_input_icbc)
+
+            # -- Copy ERA5 processing script (icon_era5_nudging.job) in workdir
+            with open(cfg.ICON_NUDGINGJOB) as input_file:
+                to_write = input_file.read()
+            output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_nudging_{}.sh'.format(timestr))
+            with open(output_file, "w") as outf:
+                outf.write(to_write.format(cfg=cfg, filename=filename))
+
+            # -- Copy mypartab in workdir
+            if not os.path.exists(os.path.join(cfg.icon_input_icbc, 'mypartab')):
+                shutil.copy(os.path.join(os.path.dirname(cfg.ICON_INIJOB), 'mypartab'), os.path.join(cfg.icon_input_icbc, 'mypartab'))
+
+            # -- Run ERA5 processing script
+            process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_nudging_{}.sh'.format(timestr))], stdout=subprocess.PIPE)
+            process.communicate()
