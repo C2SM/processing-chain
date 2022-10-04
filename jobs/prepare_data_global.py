@@ -108,7 +108,7 @@ def main(starttime, hstart, hstop, cfg):
                     output_log=True)
 
     # Copy icbc files
-    if not cfg.USE_ERA5_INICOND:
+    if not cfg.ERA5_INICOND:
         tools.copy_file(cfg.INICOND_FILENAME,
                         cfg.inicond_filename_scratch,
                         output_log=True)
@@ -140,26 +140,39 @@ def main(starttime, hstart, hstop, cfg):
     if cfg.lrestart == '.TRUE.':
         os.symlink(cfg.restart_filename_scratch, os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 
-    # -- If not, create the inicond file with ERA5
-    elif cfg.lrestart == '.FALSE.' and cfg.USE_ERA5_INICOND:
+    # -- If not, create the inicond file with ERA5 and CAMS data
+    elif cfg.lrestart == '.FALSE.' and cfg.ERA5_INICOND:
         # -- Fetch ERA5 data
         tools.fetch_era5(starttime + timedelta(hours=hstart), cfg.icon_input_icbc)
 
         # -- Copy ERA5 processing script (icon_era5_inicond.job) in workdir
-        with open(cfg.ICON_INIJOB) as input_file:
+        with open(cfg.ICON_ERA5_INIJOB) as input_file:
             to_write = input_file.read()
         output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')
         with open(output_file, "w") as outf:
             outf.write(to_write.format(cfg=cfg))
 
         # -- Copy mypartab in workdir
-        shutil.copy(os.path.join(os.path.dirname(cfg.ICON_INIJOB), 'mypartab'), os.path.join(cfg.icon_input_icbc, 'mypartab'))
+        shutil.copy(os.path.join(os.path.dirname(cfg.ICON_ERA5_INIJOB), 'mypartab'), os.path.join(cfg.icon_input_icbc, 'mypartab'))
 
         # -- Run ERA5 processing script
         process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')], stdout=subprocess.PIPE)
         process.communicate()
 
-    # -- If global nudging, download and process ERA5 data
+        if cfg.CAMS_INICOND:
+
+            # -- Copy CAMS processing script (icon_era5_inicond.job) in workdir
+            with open(cfg.ICON_CAMS_INIJOB) as input_file:
+                to_write = input_file.read()
+            output_file = os.path.join(cfg.icon_input_icbc, 'icon_cams_inicond.sh')
+            with open(output_file, "w") as outf:
+                outf.write(to_write.format(cfg=cfg))
+
+            # -- Run ERA5 processing script
+            process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_cams_inicond.sh')], stdout=subprocess.PIPE)
+            process.communicate()
+
+    # -- If global nudging, download and process ERA5 and CAMS data
     if cfg.ERA5_GLOBAL_NUDGING:
 
         for time in tools.iter_hours(starttime, hstart, hstop, step=cfg.NUDGING_STEP):
@@ -169,7 +182,7 @@ def main(starttime, hstart, hstop, cfg):
             filename = 'era2icon_R2B03_{timestr}_nudging.nc'.format(timestr=timestr)
 
             # -- If initial time, copy the initial conditions to be used as boundary conditions
-            if time == starttime and cfg.USE_ERA5_INICOND:
+            if time == starttime and cfg.ERA5_INICOND:
                 shutil.copy(cfg.inicond_filename_scratch, os.path.join(cfg.icon_input_icbc, filename))
                 continue
 
@@ -177,7 +190,7 @@ def main(starttime, hstart, hstop, cfg):
             tools.fetch_era5_nudging(time, cfg.icon_input_icbc)
 
             # -- Copy ERA5 processing script (icon_era5_nudging.job) in workdir
-            with open(cfg.ICON_NUDGINGJOB) as input_file:
+            with open(cfg.ICON_ERA5_NUDGINGJOB) as input_file:
                 to_write = input_file.read()
             output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_nudging_{}.sh'.format(timestr))
             with open(output_file, "w") as outf:
@@ -185,8 +198,21 @@ def main(starttime, hstart, hstop, cfg):
 
             # -- Copy mypartab in workdir
             if not os.path.exists(os.path.join(cfg.icon_input_icbc, 'mypartab')):
-                shutil.copy(os.path.join(os.path.dirname(cfg.ICON_INIJOB), 'mypartab'), os.path.join(cfg.icon_input_icbc, 'mypartab'))
+                shutil.copy(os.path.join(os.path.dirname(cfg.ICON_ERA5_NUDGINGJOB), 'mypartab'), os.path.join(cfg.icon_input_icbc, 'mypartab'))
 
             # -- Run ERA5 processing script
             process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_nudging_{}.sh'.format(timestr))], stdout=subprocess.PIPE)
             process.communicate()
+
+            if cfg.CAMS_GLOBAL_NUDGING:
+
+                # -- Copy CAMS processing script (icon_cams_nudging.job) in workdir
+                with open(cfg.ICON_CAMS_NUDGINGJOB) as input_file:
+                    to_write = input_file.read()
+                output_file = os.path.join(cfg.icon_input_icbc, 'icon_cams_nudging_{}.sh'.format(timestr))
+                with open(output_file, "w") as outf:
+                    outf.write(to_write.format(cfg=cfg, filename=filename))
+
+                # -- Run ERA5 processing script
+                process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_cams_nudging_{}.sh'.format(timestr))], stdout=subprocess.PIPE)
+                process.communicate()

@@ -327,7 +327,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
     if spinup:
         setattr(cfg, 'lrestart', '.FALSE.')
         setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart))
-        if cfg.USE_ERA5_INICOND:
+        if cfg.ERA5_INICOND:
             setattr(cfg, 'inicond_filename_scratch',
                     os.path.join(cfg.icon_input_icbc,
                                  (start_time + timedelta(hours=hstart)).strftime('era52icon_R2B04_DOM01_%Y%m%d%H.nc')))

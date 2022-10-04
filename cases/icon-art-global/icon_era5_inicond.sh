@@ -20,7 +20,7 @@ cdo setpartabn,mypartab,convert era5_original.nc tmp.nc
 
 # -- Order the variables alphabetically 
 ncks tmp.nc data_in.nc
-rm tmp.nc era5_surf.nc era5_ml.nc
+rm tmp.nc era5_surf.nc era5_ml.nc era5_original.nc
 
 # ---------------------------------
 # -- Re-mapping
@@ -88,7 +88,7 @@ cdo div dataland_in.nc landmask_in.nc tmp1.nc
 cdo setmisstodis tmp1.nc tmp2.nc
 cdo remapdis,triangular-grid.nc tmp2.nc tmp3.nc
 cdo div tmp3.nc landmask_out.nc dataland_land_out.nc
-rm tmp*.nc landmask*.nc dataland_in.nc
+rm tmp*.nc landmask*.nc dataland_in.nc datasea_in.nc
 
 # -- merge remapped land and ocean part
 # --------------------------------------
@@ -108,6 +108,7 @@ rm datarest_in.nc
 
 # -- Fill NaN values for SST and CI
 cdo setmisstodis -selname,SST,CI datasea_ocean_out.nc dataland_ocean_out_filled.nc
+rm datasea_ocean_out.nc
 
 # -- Merge remapped files plus land sea mask from EXTPAR
 ncks -h -A dataland_out.nc era5_final.nc
