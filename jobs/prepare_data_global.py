@@ -30,7 +30,7 @@ import logging
 import shutil
 import subprocess
 from datetime import timedelta
-import xarray
+import xarray as xr
 from . import tools
 
 
@@ -76,6 +76,11 @@ def main(starttime, hstart, hstop, cfg):
         Object holding all user-configuration parameters as attributes
     """
 
+    time = starttime + timedelta(hours=hstart)
+    year = time.year
+    month = time.month 
+    day = time.day
+
     # -----------------------------------------------------
     # Create directories
     # -----------------------------------------------------
@@ -84,6 +89,8 @@ def main(starttime, hstart, hstop, cfg):
     tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
     tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
     tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
+    tools.create_dir(cfg.icon_input_oem, "icon_input_oem")
+    tools.create_dir(cfg.icon_input_chemistry, "icon_input_chemistry")
     tools.create_dir(cfg.icon_input_art, "icon_input_art")
     tools.create_dir(cfg.icon_output, "icon_output")
     tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
@@ -124,24 +131,72 @@ def main(starttime, hstart, hstop, cfg):
                         cfg.pntSrc_xml_filename_scratch,
                         output_log=True)
 
-    # Copy nudging data
+    # -- Copy nudging data
     if cfg.ERA5_GLOBAL_NUDGING:
         tools.copy_file(cfg.MAP_FILE_NUDGING,
                         cfg.map_file_nudging_scratch,
                         output_log=True)
 
-    # Copy ART files
-    if hasattr(cfg, 'ART_INPUT_FOLDER'):
-        list_files = glob.glob(os.path.join(cfg.ART_INPUT_FOLDER, '*'))
+    # -- Copy ART files
+    if hasattr(cfg, 'INPUT_ROOT_ART'):
+        list_files = glob.glob(os.path.join(cfg.INPUT_ROOT_ART, '*'))
         for file in list_files:
             tools.copy_file(file, cfg.icon_work)
+
+    # -- Set year-specific attributes and copy OEM files
+
+    setattr(cfg, 'oem_emis_filename_scratch',
+            os.path.join(cfg.icon_input_oem,
+                         os.path.basename(cfg.OEM_EMIS_FILENAME.format(year=year))))
+    setattr(cfg, 'oem_vertprof_filename_scratch',
+            os.path.join(cfg.icon_input_oem,
+                         os.path.basename(cfg.OEM_VERTPROF_FILENAME)))
+    setattr(cfg, 'oem_hourofday_filename_scratch',
+            os.path.join(cfg.icon_input_oem,
+                         os.path.basename(cfg.OEM_HOUROFDAY_FILENAME)))
+    setattr(cfg, 'oem_dayofweek_filename_scratch',
+            os.path.join(cfg.icon_input_oem,
+                         os.path.basename(cfg.OEM_DAYOFWEEK_FILENAME)))
+    setattr(cfg, 'oem_monthofyear_filename_scratch',
+            os.path.join(cfg.icon_input_oem,
+                         os.path.basename(cfg.OEM_MONTHOFYEAR_FILENAME)))
+
+    tools.copy_file(cfg.OEM_EMIS_FILENAME.format(year=year),
+                    cfg.oem_emis_filename_scratch,
+                    output_log=True)
+    tools.copy_file(cfg.OEM_VERTPROF_FILENAME,
+                    cfg.oem_vertprof_filename_scratch,
+                    output_log=True)
+    tools.copy_file(cfg.OEM_HOUROFDAY_FILENAME,
+                    cfg.oem_hourofday_filename_scratch,
+                    output_log=True)
+    tools.copy_file(cfg.OEM_DAYOFWEEK_FILENAME,
+                    cfg.oem_dayofweek_filename_scratch,
+                    output_log=True)
+    tools.copy_file(cfg.OEM_MONTHOFYEAR_FILENAME,
+                    cfg.oem_monthofyear_filename_scratch,
+                    output_log=True)
+
+    # -- Set OH attributes and copy file
+    setattr(cfg, 'oh_vmr_filename_scratch',
+            os.path.join(cfg.icon_input_chemistry,
+                         os.path.basename(cfg.OH_VMR_FILENAME)))
+
+    tools.copy_file(cfg.OH_VMR_FILENAME,
+                    cfg.oh_vmr_filename_scratch,
+                    output_log=True)
+
+
+    # -----------------------------------------------------
+    # Create meteorological initial conditions
+    # -----------------------------------------------------
 
     # -- If lrestart is True, create a symlink to the restart file
     if cfg.lrestart == '.TRUE.':
         os.symlink(cfg.restart_filename_scratch, os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 
-    # -- If not, create the inicond file with ERA5 and CAMS data
-    elif cfg.lrestart == '.FALSE.' and cfg.ERA5_INICOND:
+    # -- If not, download ERA5 data and create the inicond file
+    if cfg.ERA5_INICOND:
         # -- Fetch ERA5 data
         tools.fetch_era5(starttime + timedelta(hours=hstart), cfg.icon_input_icbc)
 
@@ -159,18 +214,36 @@ def main(starttime, hstart, hstop, cfg):
         process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')], stdout=subprocess.PIPE)
         process.communicate()
 
-        if cfg.CAMS_INICOND:
+    # -----------------------------------------------------
+    # Create tracer initial conditions
+    # -----------------------------------------------------
 
-            # -- Copy CAMS processing script (icon_era5_inicond.job) in workdir
-            with open(cfg.ICON_CAMS_INIJOB) as input_file:
-                to_write = input_file.read()
-            output_file = os.path.join(cfg.icon_input_icbc, 'icon_cams_inicond.sh')
-            with open(output_file, "w") as outf:
-                outf.write(to_write.format(cfg=cfg))
+    # -- Download and add CAMS data to the inicond file if needed
+    if cfg.SPECIES_INICOND:
 
-            # -- Run ERA5 processing script
-            process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_cams_inicond.sh')], stdout=subprocess.PIPE)
-            process.communicate()
+        # -- Check the extension of tracer variables in the restart file 
+        ext_restart = ''
+        if cfg.lrestart == '.TRUE.':
+            ds_restart = xr.open_dataset(cfg.restart_filename_scratch)
+            tracer_name = cfg.SPECIES2RESTART[0]
+            var_restart  = [var for var in ds_restart.data_vars.keys() if var.startswith(tracer_name)][0]
+            ext_restart = var_restart.replace(tracer_name, '')
+
+        # -- Copy the script for processing external tracer data in workdir
+        with open(cfg.ICON_SPECIES_INIJOB) as input_file:
+            to_write = input_file.read()
+        output_file = os.path.join(cfg.icon_input_icbc, 'icon_species_inicond.sh')
+        with open(output_file, "w") as outf:
+            time = starttime + timedelta(hours=hstart)
+            outf.write(to_write.format(cfg=cfg, ext_restart=ext_restart, year=year, month=month, day=day))
+
+        # -- Run ERA5 processing script
+        process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_species_inicond.sh')], stdout=subprocess.PIPE)
+        process.communicate()
+
+    # -----------------------------------------------------
+    # Create meteorological and tracer nudging conditions
+    # -----------------------------------------------------
 
     # -- If global nudging, download and process ERA5 and CAMS data
     if cfg.ERA5_GLOBAL_NUDGING:
@@ -204,10 +277,10 @@ def main(starttime, hstart, hstop, cfg):
             process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_nudging_{}.sh'.format(timestr))], stdout=subprocess.PIPE)
             process.communicate()
 
-            if cfg.CAMS_GLOBAL_NUDGING:
+            if cfg.SPECIES_GLOBAL_NUDGING:
 
                 # -- Copy CAMS processing script (icon_cams_nudging.job) in workdir
-                with open(cfg.ICON_CAMS_NUDGINGJOB) as input_file:
+                with open(cfg.ICON_SPECIES_NUDGINGJOB) as input_file:
                     to_write = input_file.read()
                 output_file = os.path.join(cfg.icon_input_icbc, 'icon_cams_nudging_{}.sh'.format(timestr))
                 with open(output_file, "w") as outf:
@@ -216,3 +289,4 @@ def main(starttime, hstart, hstop, cfg):
                 # -- Run ERA5 processing script
                 process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_cams_nudging_{}.sh'.format(timestr))], stdout=subprocess.PIPE)
                 process.communicate()
+
