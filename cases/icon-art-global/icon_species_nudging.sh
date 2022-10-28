@@ -50,6 +50,6 @@ cdo expr,'TRCO=QV / QV * 0.0000002;' {filename} tmp.nc
 ncks -A -v TRCO tmp.nc {filename}
 rm tmp.nc
 
-cdo expr,'TROH=QV / QV * 0.000004;' {cfg.inicond_filename_scratch} tmp.nc
-ncks -A -v TROH tmp.nc {cfg.inicond_filename_scratch}
+cdo expr,'TROH=QV / QV * 0.000004;' {filename} tmp.nc
+ncks -A -v TROH tmp.nc {filename}
 rm tmp.nc

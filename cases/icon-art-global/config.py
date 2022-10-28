@@ -56,15 +56,15 @@ ICON_SPECIES_INIJOB = os.path.join(CASE_DIR, 'icon_species_inicond.sh')
 ICON_SPECIES_NUDGINGJOB = os.path.join(CASE_DIR, 'icon_species_nudging.sh')
 
 # -- Number of hours simulated by one job / directory
-RESTART_STEP = 720    # -- hours
+RESTART_STEP = 1   # -- hours or Pandas frequency
 
 # -- Number of hours between two output data
-OUTPUT_WRITING_STEP = 0.25
+OUTPUT_WRITING_STEP = 12
 
 # -- Initial conditios
 ERA5_INICOND = False
 SPECIES_INICOND = True
-SPECIES2RESTART = ['TROH', 'TRCH4', 'TRCO']
+SPECIES2RESTART = ['TROH']
 
 # -- Nudging (meteorological and tracers)
 ERA5_GLOBAL_NUDGING = False
@@ -78,8 +78,8 @@ if COMPUTE_QUEUE == "normal":
     ICON_NP_TOT = 4
 
 elif COMPUTE_QUEUE == "debug":
-    ICON_WALLTIME = "00:30:00"
-    ICON_NP_TOT = 2
+    ICON_WALLTIME = "00:15:00"
+    ICON_NP_TOT = 1
 
 else:
     logging.error("Unknown queue name: %s" % COMPUTE_QUEUE)
@@ -94,7 +94,7 @@ INPUT_ROOT_ICBC = os.path.join(INPUT_ROOT, 'ICBC')
 INPUT_ROOT_GRID = os.path.join(INPUT_ROOT, 'GRIDS')
 INPUT_ROOT_RAD = os.path.join(INPUT_ROOT, 'RAD')
 INPUT_ROOT_OEM = os.path.join(INPUT_ROOT, 'OEM', 'SF6')
-INPUT_ROOT_CHEMISTRY = os.path.join(INPUT_ROOT, 'CHEMISTRY')
+INPUT_ROOT_CHEMISTRY = os.path.join(INPUT_ROOT, 'CHEMISTRY', 'OH_GCP2022_ORIGINAL')
 INPUT_ROOT_TRACERS = os.path.join(INPUT_ROOT, 'XML')
 INPUT_ROOT_ART = os.path.join(INPUT_ROOT, 'ART')
 
@@ -117,7 +117,7 @@ OEM_DAYOFWEEK_FILENAME = os.path.join(INPUT_ROOT_OEM, 'dayofweek.nc')
 OEM_MONTHOFYEAR_FILENAME = os.path.join(INPUT_ROOT_OEM, 'monthofyear.nc')
 
 # -- Chemistry (OH)
-OH_VMR_FILENAME = os.path.join(INPUT_ROOT_CHEMISTRY, 'oh_icon_137lev_vmr.nc')
+OH_MOLEC_FILENAME = os.path.join(INPUT_ROOT_CHEMISTRY, 'oh_gcp2022_icongrid.nc')
 
 # -- ART
 PNTSRC_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'point_sources.xml')
@@ -129,9 +129,6 @@ MAP_FILE_NUDGING = os.path.join(INPUT_ROOT_ICBC, 'map_file.nudging')
 # -----------------------------------------------------------
 # -- Additional settings derived from constants
 # -----------------------------------------------------------
-
-# -- Number of steps per output
-steps_per_output = max(int(RESTART_STEP / OUTPUT_WRITING_STEP) + 1, 1)
 
 # -- Nudge type (global or nothing)
 nudge_type = 2 if ERA5_GLOBAL_NUDGING else 0

@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
-from genericpath import isdir
 
 import importlib
-from itertools import chain
 import logging
 import glob
 import os
@@ -13,7 +11,7 @@ import sys
 import time
 import shutil
 import argparse
-import xarray as xr
+import pandas as pd
 import jobs
 from jobs import tools
 
@@ -330,24 +328,27 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
     setattr(cfg, 'icon_restart_out', os.path.join(chain_root, 'icon', 'restart'))
 
     # -- Maybe there is a restart file somewhere
-    job_id_last_run = 'run_%s_%d_%d' % (inidate_yyyymmddhh, hstart - cfg.RESTART_STEP, hstart)
-    chain_root_last_run = os.path.join(work_root, cfg.CASENAME, job_id_last_run)
+    chain_root_last_runs = glob.glob(os.path.join(work_root, cfg.CASENAME, 'run_%s_*_%d' % (inidate_yyyymmddhh, hstart)))
+    print(chain_root_last_runs)
+    # chain_root_last_run = os.path.join(work_root, cfg.CASENAME, job_id_last_run)
 
     # -- Use the restart from the last run if it exists
-    if os.path.isdir(chain_root_last_run):
+    try:
+        chain_root_last_run = chain_root_last_runs[0]
+        print(chain_root_last_run)
+        setattr(cfg, 'lrestart', '.TRUE.')
+        setattr(cfg, 'ini_datetime_string', start_time.strftime('%Y-%m-%dT%H:00:00Z'))  # -- TODO : retrieve the start_time from the config run ?
         setattr(cfg, 'icon_restart_type', 'previous_run')
         setattr(cfg, 'icon_restart_in', os.path.join(chain_root_last_run, 'icon', 'restart'))
-        setattr(cfg, 'ini_datetime_string', start_time.strftime('%Y-%m-%dT%H:00:00Z'))  # -- TODO : retrieve the start_time from the config run ?
-        setattr(cfg, 'lrestart', '.TRUE.')
         setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart))
         setattr(cfg, 'restart_filename_scratch',
                 os.path.join(cfg.icon_restart_in, (start_time +
                                                     timedelta(hours=hstart)).strftime('restart_%Y%m%dT%H%M%SZ.nc')))
 
     # -- If it does not exists, do not use the restart option
-    else:
-        setattr(cfg, 'icon_restart_type', None)
+    except IndexError:
         setattr(cfg, 'lrestart', '.FALSE.')
+        setattr(cfg, 'icon_restart_type', None)
         setattr(cfg, 'restart_time_interval', 'PT%dH' % (hstop - hstart))
 
 
@@ -470,18 +471,32 @@ def restart_run(work_root, cfg, start, hstart, hstop, job_names, force):
     # -- Maximum seconds of simulation for output
     setattr(cfg, 'output_writing_max', hstop - hstart)
 
-    # -- Loop over the time steps
-    for time in tools.iter_hours(start, hstart, hstop, step=cfg.RESTART_STEP):
+    datei = start + timedelta(hours=hstart)
+    datef = start + timedelta(hours=hstop)
 
-        sub_hstart = (time - start).total_seconds() / 3600.
-        runtime = min(cfg.RESTART_STEP, hstop - sub_hstart)
-        sub_hstop = sub_hstart + runtime
+    freq = cfg.RESTART_STEP if isinstance(cfg.RESTART_STEP, str) else '{}H'.format(cfg.RESTART_STEP)
+    steps = pd.date_range(datei, datef, freq=freq)
+    steps = steps.append(pd.DatetimeIndex([datef]))
+
+    for timei, timef in zip(steps[:-1], steps[1:]):
+
+        sub_hstart = (timei - datei).total_seconds() / 3600.
+        sub_hstop = (timef - datei).total_seconds() / 3600.
+
+        print(timei)
+        print(timef)
+        print(sub_hstart)
+        print(sub_hstop)
 
         # -- Don't start the simulation with runtime equal to 0
-        if runtime == 0:
+        if sub_hstart == sub_hstop:
             continue
 
-        print("Starting run with starttime {}".format(time))
+        # -- Number of steps per output
+        setattr(cfg, 'steps_per_output', 
+                max(int((sub_hstop - sub_hstart) / cfg.OUTPUT_WRITING_STEP) + 1, 1))
+
+        print("Starting run with starttime {}".format(timei))
 
         run_chain(work_root=work_root,
                   cfg=cfg,

@@ -31,7 +31,10 @@ import shutil
 import subprocess
 from datetime import timedelta
 import xarray as xr
+
 from . import tools
+from .tools.interpolate_data import create_oh_for_restart, create_oh_for_inicond
+from calendar import monthrange
 
 
 def main(starttime, hstart, hstop, cfg):
@@ -178,22 +181,18 @@ def main(starttime, hstart, hstop, cfg):
                     output_log=True)
 
     # -- Set OH attributes and copy file
-    setattr(cfg, 'oh_vmr_filename_scratch',
-            os.path.join(cfg.icon_input_chemistry,
-                         os.path.basename(cfg.OH_VMR_FILENAME)))
+    # setattr(cfg, 'oh_vmr_filename_scratch',
+    #         os.path.join(cfg.icon_input_chemistry,
+    #                      os.path.basename(cfg.OH_VMR_FILENAME)))
 
-    tools.copy_file(cfg.OH_VMR_FILENAME,
-                    cfg.oh_vmr_filename_scratch,
-                    output_log=True)
+    # tools.copy_file(cfg.OH_VMR_FILENAME,
+    #                 cfg.oh_vmr_filename_scratch,
+    #                 output_log=True)
 
 
     # -----------------------------------------------------
     # Create meteorological initial conditions
     # -----------------------------------------------------
-
-    # -- If lrestart is True, create a symlink to the restart file
-    if cfg.lrestart == '.TRUE.':
-        os.symlink(cfg.restart_filename_scratch, os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 
     # -- If not, download ERA5 data and create the inicond file
     if cfg.ERA5_INICOND:
@@ -221,25 +220,40 @@ def main(starttime, hstart, hstop, cfg):
     # -- Download and add CAMS data to the inicond file if needed
     if cfg.SPECIES_INICOND:
 
-        # -- Check the extension of tracer variables in the restart file 
-        ext_restart = ''
-        if cfg.lrestart == '.TRUE.':
+        if cfg.lrestart == '.FALSE.':
+
+            ext_restart = ''
+            filename = cfg.inicond_filename_scratch
+
+            # -- Copy the script for processing external tracer data in workdir
+            with open(cfg.ICON_SPECIES_INIJOB) as input_file:
+                to_write = input_file.read()
+            output_file = os.path.join(cfg.icon_input_icbc, 'icon_species_inicond.sh')
+            with open(output_file, "w") as outf:
+                time = starttime + timedelta(hours=hstart)
+                outf.write(to_write.format(cfg=cfg, filename=filename, ext_restart=ext_restart, year=year, month=month, day=day))
+
+            # -- Run ERA5 processing script
+            process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_species_inicond.sh')], stdout=subprocess.PIPE)
+            process.communicate()
+
+            # -- Create initial conditions for OH concentrations
+            if 'TROH' in cfg.SPECIES2RESTART:
+                create_oh_for_inicond(cfg, month)
+
+        else:
+
+            # -- Check the extension of tracer variables in the restart file 
             ds_restart = xr.open_dataset(cfg.restart_filename_scratch)
             tracer_name = cfg.SPECIES2RESTART[0]
             var_restart  = [var for var in ds_restart.data_vars.keys() if var.startswith(tracer_name)][0]
             ext_restart = var_restart.replace(tracer_name, '')
+            filename = cfg.restart_filename_scratch
 
-        # -- Copy the script for processing external tracer data in workdir
-        with open(cfg.ICON_SPECIES_INIJOB) as input_file:
-            to_write = input_file.read()
-        output_file = os.path.join(cfg.icon_input_icbc, 'icon_species_inicond.sh')
-        with open(output_file, "w") as outf:
-            time = starttime + timedelta(hours=hstart)
-            outf.write(to_write.format(cfg=cfg, ext_restart=ext_restart, year=year, month=month, day=day))
+            # -- Change OH concentrations in the restart file
+            if 'TROH' in cfg.SPECIES2RESTART:
+                create_oh_for_restart(cfg, month, ext_restart)
 
-        # -- Run ERA5 processing script
-        process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_species_inicond.sh')], stdout=subprocess.PIPE)
-        process.communicate()
 
     # -----------------------------------------------------
     # Create meteorological and tracer nudging conditions
@@ -289,4 +303,10 @@ def main(starttime, hstart, hstop, cfg):
                 # -- Run ERA5 processing script
                 process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_cams_nudging_{}.sh'.format(timestr))], stdout=subprocess.PIPE)
                 process.communicate()
+
+    # -----------------------------------------------------
+    # Create symlink to the restart file if lrestart is True
+    # -----------------------------------------------------
+    if cfg.lrestart == '.TRUE.':
+        os.symlink(cfg.restart_filename_scratch, os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 

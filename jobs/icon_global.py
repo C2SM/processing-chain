@@ -14,7 +14,6 @@
 import logging
 import os
 import subprocess
-from .tools import write_cosmo_input_ghg
 from . import tools
 from datetime import datetime, timedelta
 
