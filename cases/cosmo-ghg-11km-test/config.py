@@ -18,8 +18,8 @@ constraint = 'gpu'  # 'mc'
 
 target = 'cosmo-ghg'
 restart_step = 12  # hours
-#subtarget = 'spinup'
-#spinup = 6
+subtarget = 'spinup'
+spinup = 6
 
 if constraint == 'gpu':
     ntasks_per_node = 12
@@ -146,6 +146,7 @@ int2lm_np_tot = int2lm_np_x * int2lm_np_y
 # POST_INT2LM ----------------------------------------------------------------
 # Fields that are used as initial conditions
 post_int2lm_species = ["CO2_BG"]
+post_int2lm_species_spinup = ['CO2_BG', 'CO2_GPP', 'CO2_RA', 'CO2_A', 'CO2_GPP2', 'CO2_RA2', 'CO2_A2']
 
 # SIMULATION =================================================================
 # COSMO ----------------------------------------------------------------------
@@ -155,7 +156,8 @@ with open(cosmo_spec_file, 'r') as file:
     cosmo_spec = file.read().rstrip()
 # Executable
 cosmo_bin = os.popen('spack location -i ' +
-                     cosmo_spec).read().strip() + '/bin/cosmo-ghg_gpu'
+                     cosmo_spec).read().strip() + '/bin/cosmo-gpu'
+cosmo_bin = os.path.join(chain_src_dir, 'cosmo-ghg/cosmo/ACC/cosmo_gpu')
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir, casename)
