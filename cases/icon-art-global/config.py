@@ -56,15 +56,15 @@ ICON_SPECIES_INIJOB = os.path.join(CASE_DIR, 'icon_species_inicond.sh')
 ICON_SPECIES_NUDGINGJOB = os.path.join(CASE_DIR, 'icon_species_nudging.sh')
 
 # -- Number of hours simulated by one job / directory
-RESTART_STEP = 1   # -- hours or Pandas frequency
+RESTART_STEP = '1MS'   # -- hours or Pandas frequency
 
 # -- Number of hours between two output data
 OUTPUT_WRITING_STEP = 12
 
 # -- Initial conditios
 ERA5_INICOND = False
-SPECIES_INICOND = True
-SPECIES2RESTART = ['TROH']
+SPECIES_INICOND = False
+SPECIES2RESTART = []
 
 # -- Nudging (meteorological and tracers)
 ERA5_GLOBAL_NUDGING = False
@@ -74,11 +74,11 @@ NUDGING_STEP = 12
 
 # -- Walltimes and domain decomposition
 if COMPUTE_QUEUE == "normal":
-    ICON_WALLTIME = "01:00:00"
-    ICON_NP_TOT = 4
+    ICON_WALLTIME = "00:30:00"
+    ICON_NP_TOT = 2
 
 elif COMPUTE_QUEUE == "debug":
-    ICON_WALLTIME = "00:15:00"
+    ICON_WALLTIME = "00:30:00"
     ICON_NP_TOT = 1
 
 else:
@@ -120,8 +120,8 @@ OEM_MONTHOFYEAR_FILENAME = os.path.join(INPUT_ROOT_OEM, 'monthofyear.nc')
 OH_MOLEC_FILENAME = os.path.join(INPUT_ROOT_CHEMISTRY, 'oh_gcp2022_icongrid.nc')
 
 # -- ART
-PNTSRC_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'point_sources.xml')
-CHEMTRACER_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'tracers_SF6_OH.xml')
+PNTSRC_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'point-sources.xml')
+CHEMTRACER_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'tracers.xml')
 
 # -- Nudging
 MAP_FILE_NUDGING = os.path.join(INPUT_ROOT_ICBC, 'map_file.nudging')

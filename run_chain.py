@@ -329,8 +329,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
 
     # -- Maybe there is a restart file somewhere
     chain_root_last_runs = glob.glob(os.path.join(work_root, cfg.CASENAME, 'run_%s_*_%d' % (inidate_yyyymmddhh, hstart)))
-    print(chain_root_last_runs)
-    # chain_root_last_run = os.path.join(work_root, cfg.CASENAME, job_id_last_run)
 
     # -- Use the restart from the last run if it exists
     try:
