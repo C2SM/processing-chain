@@ -158,8 +158,7 @@ with open(cosmo_spec_file, 'r') as file:
     cosmo_spec = file.read().rstrip()
 # Executable
 cosmo_bin = os.popen('spack location -i ' +
-                     cosmo_spec).read().strip() + '/bin/cosmo-gpu'
-cosmo_bin = os.path.join(chain_src_dir, 'cosmo-ghg/cosmo/ACC/cosmo_gpu')
+                     cosmo_spec).read().strip() + '/bin/cosmo-ghg_gpu'
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir, casename)
