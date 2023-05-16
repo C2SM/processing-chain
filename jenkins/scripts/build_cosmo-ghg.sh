@@ -16,16 +16,16 @@ SPACK_SPEC=$(cat cases/cosmo-ghg-11km-test/cosmo_spec)
 BRANCH=6.0.2
 GIT_REMOTE=git@github.com:C2SM-RCM/cosmo-ghg.git
 
-# Remove icon folder (if existing)
-rm -fr src/cosmo-ghg
-
+pushd src
 # Activate spack
 . spack-c2sm/setup-env.sh
 
-pushd src
+# Remove cosmo-ghg folder (if existing)
+rm -fr cosmo-ghg
+
 # Clone cosmo-ghg
 git clone -b ${BRANCH} ${GIT_REMOTE}
-    pushd icon
+    pushd cosmo-ghg
     spack devbuildcosmo ${SPACK_SPEC}
     popd
 popd
