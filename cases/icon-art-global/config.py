@@ -46,9 +46,11 @@ WORK_DIR = os.path.join(CHAIN_SRC_DIR, 'work')
 # -- Executable
 # ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/qcndg6qwq6e5gfutwoycqmwf2m4lvg7g/', 'bin', 'icon') # -- eccodes, ocean, noart
 # ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/x6pisrz7umszlrpnazse3cuosdxt45kt/', 'bin', 'icon')  # -- art
-ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/icon/cpu/', 'bin', 'icon')  # -- art, dev-build
+# ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/icon-online-traj/cpu/', 'bin', 'icon')  # -- online-traj, cpu+art, dev-build
+ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/icon/cpu/', 'bin', 'icon')  #
 
 # -- Paths for namelists and slurm runscript templates
+# ICON_RUNJOB = os.path.join(CASE_DIR, 'icon_runjob_withoutart.cfg')
 ICON_RUNJOB = os.path.join(CASE_DIR, 'icon_runjob.cfg')
 ICON_ERA5_INIJOB = os.path.join(CASE_DIR, 'icon_era5_inicond.sh')
 ICON_ERA5_NUDGINGJOB = os.path.join(CASE_DIR, 'icon_era5_nudging.sh')
@@ -59,18 +61,21 @@ ICON_SPECIES_NUDGINGJOB = os.path.join(CASE_DIR, 'icon_species_nudging.sh')
 RESTART_STEP = '1MS'   # -- hours or Pandas frequency
 
 # -- Number of hours between two output data
-OUTPUT_WRITING_STEP = 12
+OUTPUT_WRITING_STEP = 12                               # -- TO MODIFY
 
 # -- Initial conditios
-ERA5_INICOND = False
-SPECIES_INICOND = False
-SPECIES2RESTART = []
+ERA5_INICOND = False                                     # -- TO MODIFY
+SPECIES_INICOND = True
+SPECIES2RESTART = ['TROH']
 
 # -- Nudging (meteorological and tracers)
 ERA5_GLOBAL_NUDGING = False
 SPECIES_GLOBAL_NUDGING = False
 SPECIES2NUDGE = []
 NUDGING_STEP = 12
+
+# -- Online trajectories
+ONLINE_TRAJ = True
 
 # -- Walltimes and domain decomposition
 if COMPUTE_QUEUE == "normal":
@@ -79,7 +84,7 @@ if COMPUTE_QUEUE == "normal":
 
 elif COMPUTE_QUEUE == "debug":
     ICON_WALLTIME = "00:30:00"
-    ICON_NP_TOT = 1
+    ICON_NP_TOT = 2
 
 else:
     logging.error("Unknown queue name: %s" % COMPUTE_QUEUE)
@@ -95,7 +100,8 @@ INPUT_ROOT_GRID = os.path.join(INPUT_ROOT, 'GRIDS')
 INPUT_ROOT_RAD = os.path.join(INPUT_ROOT, 'RAD')
 INPUT_ROOT_OEM = os.path.join(INPUT_ROOT, 'OEM', 'SF6')
 INPUT_ROOT_CHEMISTRY = os.path.join(INPUT_ROOT, 'CHEMISTRY', 'OH_GCP2022_ORIGINAL')
-INPUT_ROOT_TRACERS = os.path.join(INPUT_ROOT, 'XML')
+INPUT_ROOT_TRACERS = os.path.join(INPUT_ROOT, 'XML/examples')
+INPUT_ROOT_CONFIGS = os.path.join(INPUT_ROOT, 'CONFIGS')
 INPUT_ROOT_ART = os.path.join(INPUT_ROOT, 'ART')
 
 # -- Initial conditions and boundary conditions
@@ -110,22 +116,30 @@ CLDOPT_FILENAME = os.path.join(INPUT_ROOT_RAD, 'ECHAM6_CldOptProps.nc')
 LRTM_FILENAME = os.path.join(INPUT_ROOT_RAD, 'rrtmg_lw.nc')
 
 # -- OEM
-OEM_EMIS_FILENAME = os.path.join(INPUT_ROOT_OEM, 'OEM_SF6_{year}.nc')
+# OEM_EMIS_FILENAME = os.path.join(INPUT_ROOT_OEM, 'OEM_SF6_{year}.nc')
 OEM_VERTPROF_FILENAME = os.path.join(INPUT_ROOT_OEM, 'vertical_profiles.nc')
 OEM_HOUROFDAY_FILENAME = os.path.join(INPUT_ROOT_OEM, 'hourofday.nc')
 OEM_DAYOFWEEK_FILENAME = os.path.join(INPUT_ROOT_OEM, 'dayofweek.nc')
 OEM_MONTHOFYEAR_FILENAME = os.path.join(INPUT_ROOT_OEM, 'monthofyear.nc')
 
 # -- Chemistry (OH)
-OH_MOLEC_FILENAME = os.path.join(INPUT_ROOT_CHEMISTRY, 'oh_gcp2022_icongrid.nc')
+OH_MOLEC_FILENAME = os.path.join(INPUT_ROOT_CHEMISTRY, 'oh_gcp2022_icongrid.nc') # -- TO MODIFY
 
 # -- ART
-PNTSRC_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'point-sources.xml')
-CHEMTRACER_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'tracers.xml')
+# PNTSRC_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'chemistry_lt/point-sources.xml')
+# BOUNDCOND_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'boundary-conditions.xml')
+# CHEMTRACER_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'chemistry_lt/tracers.xml')
+
+PNTSRC_XML_FILENAME = os.path.join(INPUT_ROOT_CONFIGS, 'CONFIG2/point-sources.xml') # -- TO MODIFY
+BOUNDCOND_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'boundary-conditions.xml')
+CHEMTRACER_XML_FILENAME = os.path.join(INPUT_ROOT_CONFIGS, 'CONFIG2/tracers.xml') # -- TO MODIFY
 
 # -- Nudging
 MAP_FILE_NUDGING = os.path.join(INPUT_ROOT_ICBC, 'map_file.nudging')
 
+# -- Online trajectories
+ONLINE_TRAJ_FILENAME = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ONLINE_TRAJ/startf_traj_dom1.nc'
+ONLINE_TRAJ_TABLE2MOMENT = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ONLINE_TRAJ/dmin_wetgrowth_lookup.nc'
 # -----------------------------------------------------------
 # -- Additional settings derived from constants
 # -----------------------------------------------------------
@@ -136,5 +150,8 @@ nudge_type = 2 if ERA5_GLOBAL_NUDGING else 0
 # -- Time step for global nudging in seconds
 nudging_step_seconds = NUDGING_STEP * 3600
 
-# --  Prescribed initial conditions for CH4 and CO
+# --  Prescribed initial conditions for CH4, CO and/or OH
 iart_init_gas = 4 if SPECIES_INICOND else 0
+
+# -- Online trajectories
+online_traj_scratch = '.TRUE.' if ONLINE_TRAJ else '.FALSE'

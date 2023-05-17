@@ -319,6 +319,15 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, spinup, forc
     if hasattr(cfg, 'PNTSRC_XML_FILENAME'):
         setattr(cfg, 'pntSrc_xml_filename_scratch',
                 os.path.join(cfg.icon_input_xml, os.path.basename(cfg.PNTSRC_XML_FILENAME)))
+    if hasattr(cfg, 'BOUNDCOND_XML_FILENAME'):
+        setattr(cfg, 'boundcond_xml_filename_scratch',
+                os.path.join(cfg.icon_input_xml, os.path.basename(cfg.BOUNDCOND_XML_FILENAME)))
+        
+    # -- Set attributes for online trajectories files
+    if cfg.ONLINE_TRAJ:
+        if hasattr(cfg, 'ONLINE_TRAJ_FILENAME',):
+            setattr(cfg, 'online_traj_filename_scratch',
+                    os.path.join(cfg.icon_work, os.path.basename(cfg.ONLINE_TRAJ_FILENAME)))
 
     # -----------------------------------------------
     # -- Restart directories and files
@@ -505,6 +514,15 @@ def restart_run(work_root, cfg, start, hstart, hstop, job_names, force):
                   spinup=False,
                   force=force)
 
+        # -- Move all outputs from different restart steps into the same directory 'chain'
+        list_files = glob.glob(os.path.join(cfg.icon_output, '*'))
+        for file in list_files:
+            shutil.move(file, os.path.join(cfg.WORK_DIR, cfg.CASENAME, 'chain'))
+
+        list_files = glob.glob(os.path.join(cfg.icon_work, 'traj_*'))
+        for file in list_files:
+            shutil.move(file, os.path.join(cfg.WORK_DIR, cfg.CASENAME, 'chain'))
+
 
 if __name__ == '__main__':
 
@@ -536,13 +554,6 @@ if __name__ == '__main__':
                     job_names=args.job_list,
                     force=args.force)
 
-        # -- Move all outputs from different restart steps into the same directory 'chain'
-        list_dirs = glob.glob(os.path.join(cfg.WORK_DIR, cfg.CASENAME, 'run_*'))
-        for direc in list_dirs:
-            if os.path.isdir(direc):
-                list_files = glob.glob(os.path.join(direc, 'icon', 'output', '*'))
-                for file in list_files:
-                    shutil.move(file, os.path.join(cfg.WORK_DIR, cfg.CASENAME, 'chain'))
 
     print('>>> finished chain for good or bad! <<<')
     eltime = time.time() - timer_init

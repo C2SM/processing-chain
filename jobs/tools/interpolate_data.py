@@ -5,7 +5,6 @@ import scipy
 
 from .constants import *
 
-
 def vertical_interp(pres_in, pres_out):
     nvertin, nptsin = pres_in.shape
     nvertout, nptsout = pres_out.shape

@@ -7,9 +7,8 @@ import os
 import shutil
 import time
 import sys
-import cdsapi
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from enum import Enum, auto
 
 def iter_hours(starttime, hstart, hstop, step=1):

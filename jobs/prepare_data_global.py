@@ -34,6 +34,7 @@ import xarray as xr
 
 from . import tools
 from .tools.interpolate_data import create_oh_for_restart, create_oh_for_inicond
+from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 from calendar import monthrange
 
 
@@ -134,6 +135,11 @@ def main(starttime, hstart, hstop, cfg):
                         cfg.pntSrc_xml_filename_scratch,
                         output_log=True)
 
+    if hasattr(cfg, 'BOUNDCOND_XML_FILENAME'):
+        tools.copy_file(cfg.BOUNDCOND_XML_FILENAME,
+                        cfg.boundcond_xml_filename_scratch,
+                        output_log=True)
+
     # -- Copy nudging data
     if cfg.ERA5_GLOBAL_NUDGING:
         tools.copy_file(cfg.MAP_FILE_NUDGING,
@@ -146,39 +152,46 @@ def main(starttime, hstart, hstop, cfg):
         for file in list_files:
             tools.copy_file(file, cfg.icon_work)
 
+    # -- Copy Online-Trajectories files
+    if cfg.ONLINE_TRAJ:
+        tools.copy_file(cfg.ONLINE_TRAJ_FILENAME,
+                        cfg.online_traj_filename_scratch,
+                        output_log=True)
+        tools.copy_file(cfg.ONLINE_TRAJ_TABLE2MOMENT,
+                        cfg.icon_work)
     # -- Set year-specific attributes and copy OEM files
 
-    setattr(cfg, 'oem_emis_filename_scratch',
-            os.path.join(cfg.icon_input_oem,
-                         os.path.basename(cfg.OEM_EMIS_FILENAME.format(year=year))))
-    setattr(cfg, 'oem_vertprof_filename_scratch',
-            os.path.join(cfg.icon_input_oem,
-                         os.path.basename(cfg.OEM_VERTPROF_FILENAME)))
-    setattr(cfg, 'oem_hourofday_filename_scratch',
-            os.path.join(cfg.icon_input_oem,
-                         os.path.basename(cfg.OEM_HOUROFDAY_FILENAME)))
-    setattr(cfg, 'oem_dayofweek_filename_scratch',
-            os.path.join(cfg.icon_input_oem,
-                         os.path.basename(cfg.OEM_DAYOFWEEK_FILENAME)))
-    setattr(cfg, 'oem_monthofyear_filename_scratch',
-            os.path.join(cfg.icon_input_oem,
-                         os.path.basename(cfg.OEM_MONTHOFYEAR_FILENAME)))
+    # setattr(cfg, 'oem_emis_filename_scratch',
+    #         os.path.join(cfg.icon_input_oem,
+    #                      os.path.basename(cfg.OEM_EMIS_FILENAME.format(year=year))))
+    # setattr(cfg, 'oem_vertprof_filename_scratch',
+    #         os.path.join(cfg.icon_input_oem,
+    #                      os.path.basename(cfg.OEM_VERTPROF_FILENAME)))
+    # setattr(cfg, 'oem_hourofday_filename_scratch',
+    #         os.path.join(cfg.icon_input_oem,
+    #                      os.path.basename(cfg.OEM_HOUROFDAY_FILENAME)))
+    # setattr(cfg, 'oem_dayofweek_filename_scratch',
+    #         os.path.join(cfg.icon_input_oem,
+    #                      os.path.basename(cfg.OEM_DAYOFWEEK_FILENAME)))
+    # setattr(cfg, 'oem_monthofyear_filename_scratch',
+    #         os.path.join(cfg.icon_input_oem,
+    #                      os.path.basename(cfg.OEM_MONTHOFYEAR_FILENAME)))
 
-    tools.copy_file(cfg.OEM_EMIS_FILENAME.format(year=year),
-                    cfg.oem_emis_filename_scratch,
-                    output_log=True)
-    tools.copy_file(cfg.OEM_VERTPROF_FILENAME,
-                    cfg.oem_vertprof_filename_scratch,
-                    output_log=True)
-    tools.copy_file(cfg.OEM_HOUROFDAY_FILENAME,
-                    cfg.oem_hourofday_filename_scratch,
-                    output_log=True)
-    tools.copy_file(cfg.OEM_DAYOFWEEK_FILENAME,
-                    cfg.oem_dayofweek_filename_scratch,
-                    output_log=True)
-    tools.copy_file(cfg.OEM_MONTHOFYEAR_FILENAME,
-                    cfg.oem_monthofyear_filename_scratch,
-                    output_log=True)
+    # tools.copy_file(cfg.OEM_EMIS_FILENAME.format(year=year),
+    #                 cfg.oem_emis_filename_scratch,
+    #                 output_log=True)
+    # tools.copy_file(cfg.OEM_VERTPROF_FILENAME,
+    #                 cfg.oem_vertprof_filename_scratch,
+    #                 output_log=True)
+    # tools.copy_file(cfg.OEM_HOUROFDAY_FILENAME,
+    #                 cfg.oem_hourofday_filename_scratch,
+    #                 output_log=True)
+    # tools.copy_file(cfg.OEM_DAYOFWEEK_FILENAME,
+    #                 cfg.oem_dayofweek_filename_scratch,
+    #                 output_log=True)
+    # tools.copy_file(cfg.OEM_MONTHOFYEAR_FILENAME,
+    #                 cfg.oem_monthofyear_filename_scratch,
+    #                 output_log=True)
 
     # -- Set OH attributes and copy file
     # setattr(cfg, 'oh_vmr_filename_scratch',
@@ -195,9 +208,9 @@ def main(starttime, hstart, hstop, cfg):
     # -----------------------------------------------------
 
     # -- If not, download ERA5 data and create the inicond file
-    if cfg.ERA5_INICOND:
+    if cfg.ERA5_INICOND and cfg.lrestart == '.FALSE.':
         # -- Fetch ERA5 data
-        tools.fetch_era5(starttime + timedelta(hours=hstart), cfg.icon_input_icbc)
+        fetch_era5(starttime + timedelta(hours=hstart), cfg.icon_input_icbc)
 
         # -- Copy ERA5 processing script (icon_era5_inicond.job) in workdir
         with open(cfg.ICON_ERA5_INIJOB) as input_file:
@@ -274,7 +287,7 @@ def main(starttime, hstart, hstop, cfg):
                 continue
 
             # -- Fetch ERA5 data
-            tools.fetch_era5_nudging(time, cfg.icon_input_icbc)
+            fetch_era5_nudging(time, cfg.icon_input_icbc)
 
             # -- Copy ERA5 processing script (icon_era5_nudging.job) in workdir
             with open(cfg.ICON_ERA5_NUDGINGJOB) as input_file:
