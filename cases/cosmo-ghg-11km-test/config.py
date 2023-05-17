@@ -115,7 +115,8 @@ int2lm_extpar_dir = os.path.join(input_root, 'extpar')
 int2lm_extpar_file = "test_domain.nc"
 
 # Executable
-int2lm_bin = os.path.join(chain_src_dir, 'src', 'int2lm', 'test', 'testsuite', 'int2lm')
+int2lm_bin = os.path.join(chain_src_dir, 'src', 'int2lm', 'test', 'testsuite',
+                          'int2lm')
 
 # Namelist and slurm runscript templates
 int2lm_namelist = '%s/cases/%s/int2lm_INPUT.cfg' % (chain_src_dir, casename)
@@ -147,7 +148,8 @@ post_int2lm_species_spinup = [
 # SIMULATION =================================================================
 # COSMO ----------------------------------------------------------------------
 # Executable
-cosmo_bin = os.path.join(chain_src_dir, 'src', 'cosmo-ghg', 'bin', 'cosmo-ghg_gpu')
+cosmo_bin = os.path.join(chain_src_dir, 'src', 'cosmo-ghg', 'bin',
+                         'cosmo-ghg_gpu')
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir, casename)
