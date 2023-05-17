@@ -18,8 +18,8 @@ constraint = 'gpu'  # 'mc'
 
 target = 'cosmo-ghg'
 restart_step = 12  # hours
-#subtarget = 'spinup'
-#spinup = 6
+subtarget = 'spinup'
+spinup = 6
 
 if constraint == 'gpu':
     ntasks_per_node = 12
@@ -140,6 +140,9 @@ int2lm_np_tot = int2lm_np_x * int2lm_np_y
 # POST_INT2LM ----------------------------------------------------------------
 # Fields that are used as initial conditions
 post_int2lm_species = ["CO2_BG"]
+post_int2lm_species_spinup = [
+    'CO2_BG', 'CO2_GPP', 'CO2_RA', 'CO2_A', 'CO2_GPP2', 'CO2_RA2', 'CO2_A2'
+]
 
 # SIMULATION =================================================================
 # COSMO ----------------------------------------------------------------------
