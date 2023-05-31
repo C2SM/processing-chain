@@ -63,7 +63,8 @@ def main(starttime, hstart, hstop, cfg):
 
     # Get name of initial file
     if hasattr(cfg, 'INICOND_FILENAME'):
-        inidata_filename = os.path.join(cfg.icon_input_icbc, cfg.INICOND_FILENAME)
+        inidata_filename = os.path.join(cfg.icon_input_icbc,
+                                        cfg.INICOND_FILENAME)
     else:
         starttime_real = starttime + timedelta(hours=hstart)
         inidata_filename = os.path.join(
