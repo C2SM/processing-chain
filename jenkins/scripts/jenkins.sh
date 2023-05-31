@@ -11,6 +11,9 @@ conda activate proc-chain
 # Preparation
 ./get_data.sh
 
+# Build int2lm
+./jenkins/scripts/build_int2lm.sh
+
 # Build COSMO-GHG
 ./jenkins/scripts/build_cosmo-ghg.sh
 

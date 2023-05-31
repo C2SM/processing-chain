@@ -17,10 +17,10 @@ pushd src
 # Activate spack
 . spack-c2sm/setup-env.sh
 
-# Remove cosmo-ghg folder (if existing)
+# Remove int2lm folder (if existing)
 rm -fr int2lm
 
-# Clone cosmo-ghg
+# Clone and build int2lm
 git clone -b ${BRANCH} ${GIT_REMOTE}
     pushd int2lm
     spack dev-build int2lm @dev-build %nvhpc

@@ -56,6 +56,19 @@ pipeline {
                         }
                     }
                 }
+                stage('Build int2lm') {
+                    steps {
+                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                        conda activate proc-chain
+                        ./jenkins/scripts/build_int2lm.sh'''
+                    }
+                    post {
+                        failure {
+                            echo 'Cleaning up workspace'
+                            deleteDir()
+                        }
+                    }
+                }
                 stage('Build COSMO-GHG') {
                     steps {
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
