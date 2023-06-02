@@ -148,8 +148,8 @@ post_int2lm_species_spinup = [
 # SIMULATION =================================================================
 # COSMO ----------------------------------------------------------------------
 # Executable
-cosmo_bin = os.path.join(chain_src_dir, 'src', 'cosmo-ghg', 'bin',
-                         'cosmo-ghg_gpu')
+cosmo_bin = os.path.join(chain_src_dir, 'src', 'cosmo-ghg', 'cosmo', 'ACC',
+                         'cosmo_gpu')
 
 # Namelists and slurm runscript templates
 cosmo_namelist = '%s/cases/%s/cosmo_INPUT_' % (chain_src_dir, casename)
