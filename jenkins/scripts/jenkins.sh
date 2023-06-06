@@ -3,6 +3,7 @@
 set -e -x
 
 # Activate conda environment
+eval "$(conda shell.bash hook)"
 conda activate proc-chain
 
 # Setup spack
