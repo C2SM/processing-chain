@@ -3,8 +3,7 @@
 set -e -x
 
 # Activate conda environment
-#eval "$(conda shell.bash hook)"
-#conda activate proc-chain
+conda activate proc-chain
 
 # Setup spack
 if [[ -d src/spack-c2sm ]]; then
@@ -49,8 +48,12 @@ else
 fi
 
 # Test COSMO-GHG
-echo running cosmo-ghg test case...
-python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -f
+if [[ -f work/cosmo-ghg-11km-test/2015010112_-6_12/checkpoints/finished/post_cosmo ]]; then
+  echo cosmo-ghg test case already finished - skipping test.
+else
+  echo running cosmo-ghg test case...
+  python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -f
+fi
 
 # Test ICON
 echo running icon test case...
