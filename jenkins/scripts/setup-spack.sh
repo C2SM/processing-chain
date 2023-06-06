@@ -20,3 +20,5 @@ git clone --depth 1 --recurse-submodules --shallow-submodules -b ${BRANCH} ${GIT
 . spack-c2sm/setup-env.sh
 popd
 
+spack install icontools
+
