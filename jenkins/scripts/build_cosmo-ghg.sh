@@ -21,7 +21,7 @@ pushd src
 rm -fr cosmo-ghg
 
 # Clone cosmo-ghg
-git clone -b ${BRANCH} ${GIT_REMOTE}
+git clone --depth 1 -b ${BRANCH} ${GIT_REMOTE}
     pushd cosmo-ghg
     spack devbuildcosmo cosmo @develop %nvhpc cosmo_target=gpu ^mpich%nvhpc
     popd

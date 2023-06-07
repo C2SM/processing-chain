@@ -21,7 +21,7 @@ pushd src
 rm -fr int2lm
 
 # Clone and build int2lm
-git clone -b ${BRANCH} ${GIT_REMOTE}
+git clone --depth 1 -b ${BRANCH} ${GIT_REMOTE}
     pushd int2lm
     spack dev-build int2lm @dev-build %nvhpc
     popd
