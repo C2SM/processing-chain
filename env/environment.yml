@@ -16,3 +16,4 @@ dependencies:
   - sphinx
   - pillow
   - xarray
+  - dask
