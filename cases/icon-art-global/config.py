@@ -1,7 +1,6 @@
 import os
 import logging
 import sys
-
 """
 Configuration file for the 'icon-art-global' case with ICON-ART
 """
@@ -35,7 +34,6 @@ chain_src_dir = os.getcwd()
 # -- Case directory
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
-
 # -----------------------------------------------------------
 # -- SIMULATION
 # -----------------------------------------------------------
@@ -47,7 +45,8 @@ work_dir = os.path.join(chain_src_dir, 'work')
 # icon_bin = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/qcndg6qwq6e5gfutwoycqmwf2m4lvg7g/', 'bin', 'icon') # -- eccodes, ocean, noart
 # icon_bin = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/x6pisrz7umszlrpnazse3cuosdxt45kt/', 'bin', 'icon')  # -- art
 # icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon-online-traj/cpu/', 'bin', 'icon')  # -- online-traj, cpu+art, dev-build
-icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon/cpu/', 'bin', 'icon')  #
+icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon/cpu/', 'bin',
+                        'icon')  #
 
 # -- Paths for namelists and slurm runscript templates
 # icon_runjob = os.path.join(case_dir, 'icon_runjob_withoutart.cfg')
@@ -58,13 +57,13 @@ icon_species_inijob = os.path.join(case_dir, 'icon_species_inicond.sh')
 icon_species_nudgingjob = os.path.join(case_dir, 'icon_species_nudging.sh')
 
 # -- Number of hours simulated by one job / directory
-restart_step = '1MS'   # -- hours or Pandas frequency
+restart_step = '1MS'  # -- hours or Pandas frequency
 
 # -- Number of hours between two output data
-output_writing_step = 12                               # -- TO MODIFY
+output_writing_step = 12  # -- TO MODIFY
 
 # -- Initial conditios
-era5_inicond = False                                     # -- TO MODIFY
+era5_inicond = False  # -- TO MODIFY
 species_inicond = True
 species2restart = ['TROH']
 
@@ -99,7 +98,8 @@ input_root_icbc = os.path.join(input_root, 'ICBC')
 input_root_grid = os.path.join(input_root, 'GRIDS')
 input_root_rad = os.path.join(input_root, 'RAD')
 input_root_oem = os.path.join(input_root, 'OEM', 'SF6')
-input_root_chemistry = os.path.join(input_root, 'CHEMISTRY', 'OH_GCP2022_ORIGINAL')
+input_root_chemistry = os.path.join(input_root, 'CHEMISTRY',
+                                    'OH_GCP2022_ORIGINAL')
 input_root_tracers = os.path.join(input_root, 'XML/examples')
 input_root_configs = os.path.join(input_root, 'CONFIGS')
 input_root_art = os.path.join(input_root, 'ART')
@@ -123,16 +123,20 @@ oem_dayofweek_filename = os.path.join(input_root_oem, 'dayofweek.nc')
 oem_monthofyear_filename = os.path.join(input_root_oem, 'monthofyear.nc')
 
 # -- Chemistry (OH)
-oh_molec_filename = os.path.join(input_root_chemistry, 'oh_gcp2022_icongrid.nc') # -- TO MODIFY
+oh_molec_filename = os.path.join(input_root_chemistry,
+                                 'oh_gcp2022_icongrid.nc')  # -- TO MODIFY
 
 # -- ART
 # pntsrc_xml_filename = os.path.join(input_root_tracers, 'chemistry_lt/point-sources.xml')
 # boundcond_xml_filename = os.path.join(input_root_tracers, 'boundary-conditions.xml')
 # chemtracer_xml_filename = os.path.join(input_root_tracers, 'chemistry_lt/tracers.xml')
 
-pntsrc_xml_filename = os.path.join(input_root_configs, 'CONFIG2/point-sources.xml') # -- TO MODIFY
-boundcond_xml_filename = os.path.join(input_root_tracers, 'boundary-conditions.xml')
-chemtracer_xml_filename = os.path.join(input_root_configs, 'CONFIG2/tracers.xml') # -- TO MODIFY
+pntsrc_xml_filename = os.path.join(input_root_configs,
+                                   'CONFIG2/point-sources.xml')  # -- TO MODIFY
+boundcond_xml_filename = os.path.join(input_root_tracers,
+                                      'boundary-conditions.xml')
+chemtracer_xml_filename = os.path.join(input_root_configs,
+                                       'CONFIG2/tracers.xml')  # -- TO MODIFY
 
 # -- Nudging
 map_file_nudging = os.path.join(input_root_icbc, 'map_file.nudging')
