@@ -25,11 +25,12 @@
 # 2021-11-12 Modified for ICON-ART-simulations (mjaehn)
 
 import os
+import glob
 import logging
 import shutil
 import subprocess
 from datetime import timedelta
-import xarray
+import xarray as xr
 from . import tools
 from .tools.interpolate_data import create_oh_for_restart, create_oh_for_inicond
 from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
@@ -83,6 +84,10 @@ def main(starttime, hstart, hstop, cfg):
         logging.info('ICON input data (IC/BC)')
 
         starttime_real = starttime + timedelta(hours=hstart)
+        time = starttime + timedelta(hours=hstart)
+        year = time.year
+        month = time.month 
+        day = time.day
 
         #-----------------------------------------------------
         # Create directories
@@ -127,7 +132,8 @@ def main(starttime, hstart, hstop, cfg):
                         output_log=True)
 
         # Copy tracer data in case of ART
-        if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM:
+        if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM or\
+            cfg.target is tools.Target.ICONARTGLOBAL:
             tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
             if hasattr(cfg, 'chemtracer_xml_filename'):
                 tools.copy_file(cfg.chemtracer_xml_filename,
@@ -138,8 +144,150 @@ def main(starttime, hstart, hstop, cfg):
                                 cfg.pntSrc_xml_filename_scratch,
                                 output_log=True)
 
-        if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM:
+        # Copy data for global ICON-ART
+        if cfg.target is tools.Target.ICONARTGLOBAL:
+            if hasattr(cfg, 'boundcond_xml_filename'):
+                tools.copy_file(cfg.boundcond_xml_filename,
+                                cfg.boundcond_xml_filename_scratch,
+                                output_log=True)
 
+            # -- Copy nudging data
+            if cfg.era5_global_nudging:
+                tools.copy_file(cfg.map_file_nudging,
+                                cfg.map_file_nudging_scratch,
+                                output_log=True)
+
+            # -- Copy ART files
+            if hasattr(cfg, 'input_root_art'):
+                list_files = glob.glob(os.path.join(cfg.input_root_art, '*'))
+                for file in list_files:
+                    tools.copy_file(file, cfg.icon_work)
+
+            # -- Copy Online-Trajectories files
+            if cfg.online_traj:
+                tools.copy_file(cfg.online_traj_filename,
+                                cfg.online_traj_filename_scratch,
+                                output_log=True)
+                tools.copy_file(cfg.online_traj_table2moment,
+                                cfg.icon_work)
+            
+            # -- If not, download ERA5 data and create the inicond file
+            if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
+                # -- Fetch ERA5 data
+                fetch_era5(starttime + timedelta(hours=hstart), cfg.icon_input_icbc)
+
+                # -- Copy ERA5 processing script (icon_era5_inicond.job) in workdir
+                with open(cfg.icon_era5_inijob) as input_file:
+                    to_write = input_file.read()
+                output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')
+                with open(output_file, "w") as outf:
+                    outf.write(to_write.format(cfg=cfg))
+
+                # -- Copy mypartab in workdir
+                shutil.copy(os.path.join(os.path.dirname(cfg.icon_era5_inijob), 'mypartab'), os.path.join(cfg.icon_input_icbc, 'mypartab'))
+
+                # -- Run ERA5 processing script
+                process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')], stdout=subprocess.PIPE)
+                process.communicate()
+
+            # -----------------------------------------------------
+            # Create tracer initial conditions
+            # -----------------------------------------------------
+
+            # -- Download and add CAMS data to the inicond file if needed
+            if cfg.species_inicond:
+
+                if cfg.lrestart == '.FALSE.':
+
+                    ext_restart = ''
+                    filename = cfg.inicond_filename_scratch
+
+                    # -- Copy the script for processing external tracer data in workdir
+                    with open(cfg.icon_species_inijob) as input_file:
+                        to_write = input_file.read()
+                    output_file = os.path.join(cfg.icon_input_icbc, 'icon_species_inicond.sh')
+                    with open(output_file, "w") as outf:
+                        time = starttime + timedelta(hours=hstart)
+                        outf.write(to_write.format(cfg=cfg, filename=filename, ext_restart=ext_restart, year=year, month=month, day=day))
+
+                    # -- Run ERA5 processing script
+                    process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_species_inicond.sh')], stdout=subprocess.PIPE)
+                    process.communicate()
+
+                    # -- Create initial conditions for OH concentrations
+                    if 'TROH' in cfg.species2restart:
+                        create_oh_for_inicond(cfg, month)
+
+                else:
+
+                    # -- Check the extension of tracer variables in the restart file 
+                    ds_restart = xr.open_dataset(cfg.restart_filename_scratch)
+                    tracer_name = cfg.species2restart[0]
+                    var_restart  = [var for var in ds_restart.data_vars.keys() if var.startswith(tracer_name)][0]
+                    ext_restart = var_restart.replace(tracer_name, '')
+                    filename = cfg.restart_filename_scratch
+
+                    # -- Change OH concentrations in the restart file
+                    if 'TROH' in cfg.species2restart:
+                        create_oh_for_restart(cfg, month, ext_restart)
+
+
+            # -----------------------------------------------------
+            # Create meteorological and tracer nudging conditions
+            # -----------------------------------------------------
+
+            # -- If global nudging, download and process ERA5 and CAMS data
+            if cfg.era5_global_nudging:
+
+                for time in tools.iter_hours(starttime, hstart, hstop, step=cfg.nudging_step):
+
+                    # -- Give a name to the nudging file
+                    timestr = time.strftime('%Y%m%d%H')
+                    filename = 'era2icon_R2B03_{timestr}_nudging.nc'.format(timestr=timestr)
+
+                    # -- If initial time, copy the initial conditions to be used as boundary conditions
+                    if time == starttime and cfg.era5_inicond:
+                        shutil.copy(cfg.inicond_filename_scratch, os.path.join(cfg.icon_input_icbc, filename))
+                        continue
+
+                    # -- Fetch ERA5 data
+                    fetch_era5_nudging(time, cfg.icon_input_icbc)
+
+                    # -- Copy ERA5 processing script (icon_era5_nudging.job) in workdir
+                    with open(cfg.icon_era5_nudgingjob) as input_file:
+                        to_write = input_file.read()
+                    output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_nudging_{}.sh'.format(timestr))
+                    with open(output_file, "w") as outf:
+                        outf.write(to_write.format(cfg=cfg, filename=filename))
+
+                    # -- Copy mypartab in workdir
+                    if not os.path.exists(os.path.join(cfg.icon_input_icbc, 'mypartab')):
+                        shutil.copy(os.path.join(os.path.dirname(cfg.icon_era5_nudgingjob), 'mypartab'), os.path.join(cfg.icon_input_icbc, 'mypartab'))
+
+                    # -- Run ERA5 processing script
+                    process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_nudging_{}.sh'.format(timestr))], stdout=subprocess.PIPE)
+                    process.communicate()
+
+                    if cfg.species_global_nudging:
+
+                        # -- Copy CAMS processing script (icon_cams_nudging.job) in workdir
+                        with open(cfg.icon_species_nudgingjob) as input_file:
+                            to_write = input_file.read()
+                        output_file = os.path.join(cfg.icon_input_icbc, 'icon_cams_nudging_{}.sh'.format(timestr))
+                        with open(output_file, "w") as outf:
+                            outf.write(to_write.format(cfg=cfg, filename=filename))
+
+                        # -- Run ERA5 processing script
+                        process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_cams_nudging_{}.sh'.format(timestr))], stdout=subprocess.PIPE)
+                        process.communicate()
+
+            # -----------------------------------------------------
+            # Create symlink to the restart file if lrestart is True
+            # -----------------------------------------------------
+            if cfg.lrestart == '.TRUE.':
+                os.symlink(cfg.restart_filename_scratch, os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
+
+        # Copy data for ICON-ART-OEM
         if cfg.target is tools.Target.ICONARTOEM:
             tools.copy_file(
                 os.path.join(cfg.oae_dir, cfg.oae_gridded_emissions_nc),
@@ -171,108 +319,139 @@ def main(starttime, hstart, hstop, cfg):
                     os.path.join(cfg.oae_dir, cfg.oae_ens_lambda_nc),
                     cfg.oae_ens_lambda_nc_scratch)
 
-        #-----------------------------------------------------
-        # Get datafile lists for LBC (each at 00 UTC and others)
-        #-----------------------------------------------------
-        datafile_list = []
-        datafile_list_rest = []
-        datafile_list_chem = []
-        for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-            meteo_file = os.path.join(cfg.icon_input_icbc,
-                                      time.strftime(cfg.meteo_nameformat))
-            if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM:
-                chem_file = os.path.join(cfg.icon_input_icbc,
-                                         time.strftime(cfg.chem_nameformat))
-                datafile_list_chem.append(chem_file + cfg.chem_suffix)
-            if meteo_file.endswith('00'):
-                datafile_list.append(meteo_file + cfg.meteo_suffix)
-            else:
-                datafile_list_rest.append(meteo_file + cfg.meteo_suffix)
-        datafile_list = ' '.join([str(v) for v in datafile_list])
-        datafile_list_rest = ' '.join([str(v) for v in datafile_list_rest])
-        datafile_list_chem = ' '.join([str(v) for v in datafile_list_chem])
+        if cfg.target is not tools.Target.ICONARTGLOBAL:
+            #-----------------------------------------------------
+            # Get datafile lists for LBC (each at 00 UTC and others)
+            #-----------------------------------------------------
+            datafile_list = []
+            datafile_list_rest = []
+            datafile_list_chem = []
+            for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+                meteo_file = os.path.join(cfg.icon_input_icbc,
+                                        time.strftime(cfg.meteo_nameformat))
+                if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM:
+                    chem_file = os.path.join(cfg.icon_input_icbc,
+                                            time.strftime(cfg.chem_nameformat))
+                    datafile_list_chem.append(chem_file + cfg.chem_suffix)
+                if meteo_file.endswith('00'):
+                    datafile_list.append(meteo_file + cfg.meteo_suffix)
+                else:
+                    datafile_list_rest.append(meteo_file + cfg.meteo_suffix)
+            datafile_list = ' '.join([str(v) for v in datafile_list])
+            datafile_list_rest = ' '.join([str(v) for v in datafile_list_rest])
+            datafile_list_chem = ' '.join([str(v) for v in datafile_list_chem])
 
-        #-----------------------------------------------------
-        # Write and submit runscripts
-        #-----------------------------------------------------
-        for runscript in cfg.icontools_runjobs:
-            logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
-            logfile_finish = os.path.join(cfg.log_finished_dir, 'prepare_data')
-            with open(os.path.join(cfg.case_dir, runscript)) as input_file:
-                to_write = input_file.read()
-            output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
-            with open(output_run, "w") as outf:
-                outf.write(
-                    to_write.format(cfg=cfg,
-                                    logfile=logfile,
-                                    logfile_finish=logfile_finish,
-                                    datafile_list=datafile_list,
-                                    datafile_list_rest=datafile_list_rest,
-                                    datafile_list_chem=datafile_list_chem))
-            exitcode = subprocess.call([
-                "sbatch", "--wait",
-                os.path.join(cfg.icon_work, "%s.job" % runscript)
-            ])
-            if exitcode != 0:
-                raise RuntimeError(
-                    "sbatch returned exitcode {}".format(exitcode))
-            logging.info("%s successfully executed." % runscript)
+            #-----------------------------------------------------
+            # Write and submit runscripts
+            #-----------------------------------------------------
+            for runscript in cfg.icontools_runjobs:
+                logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
+                logfile_finish = os.path.join(cfg.log_finished_dir, 'prepare_data')
+                with open(os.path.join(cfg.case_dir, runscript)) as input_file:
+                    to_write = input_file.read()
+                output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
+                with open(output_run, "w") as outf:
+                    outf.write(
+                        to_write.format(cfg=cfg,
+                                        logfile=logfile,
+                                        logfile_finish=logfile_finish,
+                                        datafile_list=datafile_list,
+                                        datafile_list_rest=datafile_list_rest,
+                                        datafile_list_chem=datafile_list_chem))
+                exitcode = subprocess.call([
+                    "sbatch", "--wait",
+                    os.path.join(cfg.icon_work, "%s.job" % runscript)
+                ])
+                if exitcode != 0:
+                    raise RuntimeError(
+                        "sbatch returned exitcode {}".format(exitcode))
+                logging.info("%s successfully executed." % runscript)
 
-        #-----------------------------------------------------
-        # Add GEOSP to all meteo files
-        #-----------------------------------------------------
-        for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
-            src_file = os.path.join(
-                cfg.icon_input_icbc,
-                time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
-            merged_file = os.path.join(
-                cfg.icon_input_icbc,
-                time.strftime(cfg.meteo_nameformat) + '_merged.nc')
-            ds = xarray.open_dataset(src_file)
-            # Load GEOSP-dataset as ds_geosp at time 00:
-            if (time.hour == 0):
-                da_geosp = ds['GEOSP']
-            # Merge GEOSP-dataset with other timesteps
-            elif (time.hour != 0):
-                # Change values of time dimension to current time
-                da_geosp = da_geosp.assign_coords(time=[time])
-                # Merge GEOSP into temporary file
-                ds_merged = xarray.merge([ds, da_geosp])
-                ds_merged.attrs = ds.attrs
-                ds_merged.to_netcdf(merged_file)
-                # Rename file to get original file name
-                tools.rename_file(merged_file, src_file)
-                logging.info("Added GEOSP to file {}".format(merged_file))
+            #-----------------------------------------------------
+            # Add GEOSP to all meteo files
+            #-----------------------------------------------------
+            for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+                src_file = os.path.join(
+                    cfg.icon_input_icbc,
+                    time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
+                merged_file = os.path.join(
+                    cfg.icon_input_icbc,
+                    time.strftime(cfg.meteo_nameformat) + '_merged.nc')
+                ds = xr.open_dataset(src_file)
+                # Load GEOSP-dataset as ds_geosp at time 00:
+                if (time.hour == 0):
+                    da_geosp = ds['GEOSP']
+                # Merge GEOSP-dataset with other timesteps
+                elif (time.hour != 0):
+                    # Change values of time dimension to current time
+                    da_geosp = da_geosp.assign_coords(time=[time])
+                    # Merge GEOSP into temporary file
+                    ds_merged = xr.merge([ds, da_geosp])
+                    ds_merged.attrs = ds.attrs
+                    ds_merged.to_netcdf(merged_file)
+                    # Rename file to get original file name
+                    tools.rename_file(merged_file, src_file)
+                    logging.info("Added GEOSP to file {}".format(merged_file))
 
-        #-----------------------------------------------------
-        # In case of OEM: merge chem tracers with meteo-files
-        #-----------------------------------------------------
-        if cfg.target is tools.Target.ICONARTOEM:
-            for time in tools.iter_hours(starttime, hstart, hstop,
-                                         cfg.meteo_inc):
-                if time == starttime:
+            #-----------------------------------------------------
+            # In case of OEM: merge chem tracers with meteo-files
+            #-----------------------------------------------------
+            if cfg.target is tools.Target.ICONARTOEM:
+                for time in tools.iter_hours(starttime, hstart, hstop,
+                                            cfg.meteo_inc):
+                    if time == starttime:
+                        #------------
+                        # Merge IC:
+                        #------------
+                        meteo_file = os.path.join(
+                            cfg.icon_input_icbc,
+                            time.strftime(cfg.meteo_nameformat) + '.nc')
+                        chem_file = os.path.join(
+                            cfg.icon_input_icbc,
+                            time.strftime(cfg.chem_nameformat) + '.nc')
+                        merged_file = os.path.join(
+                            cfg.icon_input_icbc,
+                            time.strftime(cfg.meteo_nameformat) + '_merged.nc')
+                        ds_meteo = xr.open_dataset(meteo_file)
+                        ds_chem = xr.open_dataset(chem_file)
+                        # LNPS --> PS
+                        ds_chem['PS'] = ds_chem['LNPS']
+                        ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
+                        ds_chem['PS'] = ds_chem['PS'].squeeze(dim='lev_2')
+                        ds_chem['PS'].attrs["long_name"] = 'surface pressure'
+                        # merge:
+                        ds_merged = xr.merge([ds_meteo, ds_chem],
+                                                compat="override")
+                        #ds_merged.attrs = ds.attrs
+                        ds_merged.to_netcdf(merged_file)
+                        # Rename file to get original file name
+                        tools.rename_file(merged_file, meteo_file)
+                        tools.remove_file(chem_file)
+                        logging.info(
+                            "Added chemical tracer to file {}".format(merged_file))
+
                     #------------
-                    # Merge IC:
+                    # Merge LBC:
                     #------------
                     meteo_file = os.path.join(
                         cfg.icon_input_icbc,
-                        time.strftime(cfg.meteo_nameformat) + '.nc')
+                        time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
-                        time.strftime(cfg.chem_nameformat) + '.nc')
+                        time.strftime(cfg.chem_nameformat) + '_lbc.nc')
                     merged_file = os.path.join(
                         cfg.icon_input_icbc,
                         time.strftime(cfg.meteo_nameformat) + '_merged.nc')
-                    ds_meteo = xarray.open_dataset(meteo_file)
-                    ds_chem = xarray.open_dataset(chem_file)
+                    ds_meteo = xr.open_dataset(meteo_file)
+                    ds_chem = xr.open_dataset(chem_file)
                     # LNPS --> PS
                     ds_chem['PS'] = ds_chem['LNPS']
                     ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
-                    ds_chem['PS'] = ds_chem['PS'].squeeze(dim='lev_2')
                     ds_chem['PS'].attrs["long_name"] = 'surface pressure'
+                    ds_chem['TRCH4_chemtr'] = ds_chem['CH4_BG']
                     # merge:
-                    ds_merged = xarray.merge([ds_meteo, ds_chem],
-                                             compat="override")
+                    ds_merged = xr.merge([ds_meteo, ds_chem],
+                                            compat="override")
                     #ds_merged.attrs = ds.attrs
                     ds_merged.to_netcdf(merged_file)
                     # Rename file to get original file name
@@ -280,36 +459,6 @@ def main(starttime, hstart, hstop, cfg):
                     tools.remove_file(chem_file)
                     logging.info(
                         "Added chemical tracer to file {}".format(merged_file))
-
-                #------------
-                # Merge LBC:
-                #------------
-                meteo_file = os.path.join(
-                    cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
-                chem_file = os.path.join(
-                    cfg.icon_input_icbc,
-                    time.strftime(cfg.chem_nameformat) + '_lbc.nc')
-                merged_file = os.path.join(
-                    cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo_nameformat) + '_merged.nc')
-                ds_meteo = xarray.open_dataset(meteo_file)
-                ds_chem = xarray.open_dataset(chem_file)
-                # LNPS --> PS
-                ds_chem['PS'] = ds_chem['LNPS']
-                ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
-                ds_chem['PS'].attrs["long_name"] = 'surface pressure'
-                ds_chem['TRCH4_chemtr'] = ds_chem['CH4_BG']
-                # merge:
-                ds_merged = xarray.merge([ds_meteo, ds_chem],
-                                         compat="override")
-                #ds_merged.attrs = ds.attrs
-                ds_merged.to_netcdf(merged_file)
-                # Rename file to get original file name
-                tools.rename_file(merged_file, meteo_file)
-                tools.remove_file(chem_file)
-                logging.info(
-                    "Added chemical tracer to file {}".format(merged_file))
 
     # If COSMO (and not ICON):
     else:
