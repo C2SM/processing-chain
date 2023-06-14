@@ -1,161 +1,161 @@
 import os
 import logging
 import sys
+
 """
-Configuration file for the 'icon-art' case with ICON-ART
+Configuration file for the 'icon-art-global' case with ICON-ART
 """
 
 # -----------------------------------------------------------
 # GENERAL SETTINGS
 # -----------------------------------------------------------
 
-USER = os.environ['USER']
-COMPUTE_HOST = 'daint'
-COMPUTE_QUEUE = 'debug'  # 'normal' / 'debug'
-CONSTRAINT = 'mc'  # 'mc' / 'gpu'
+user = os.environ['USER']
+compute_host = 'daint'
+compute_queue = 'debug'  # 'normal' / 'debug'
+constraint = 'mc'  # 'mc' / 'gpu'
 if os.path.exists(os.environ['HOME'] + '/.acct'):
     with open(os.environ['HOME'] + '/.acct', 'r') as file:
-        COMPUTE_ACCOUNT = file.read().rstrip()
+        compute_account = file.read().rstrip()
 else:
-    COMPUTE_ACCOUNT = os.popen("id -gn").read().splitlines()[0]
+    compute_account = os.popen("id -gn").read().splitlines()[0]
 
 # -- Model to run
-TARGET = 'icon-art'
+target = 'icon-art'
 
 # -- Number of tasks per node
-NTASKS_PER_NODE = 36 if CONSTRAINT == 'mc' else 12
+ntasks_per_node = 36 if constraint == 'mc' else 12
 
 # -- case name = pathname in cases/
-CASENAME = os.path.basename(os.path.dirname(os.path.realpath(__file__)))
+casename = os.path.basename(os.path.dirname(os.path.realpath(__file__)))
 
 # -- Root directory of the sourcecode of the chain (where run_chain.py is)
-CHAIN_SRC_DIR = os.getcwd()
+chain_src_dir = os.getcwd()
 
 # -- Case directory
-CASE_DIR = os.path.join(CHAIN_SRC_DIR, 'cases', CASENAME)
+case_dir = os.path.join(chain_src_dir, 'cases', casename)
+
 
 # -----------------------------------------------------------
 # -- SIMULATION
 # -----------------------------------------------------------
 
 # -- Root directory of the working space of the chain
-WORK_DIR = os.path.join(CHAIN_SRC_DIR, 'work')
+work_dir = os.path.join(chain_src_dir, 'work')
 
 # -- Executable
-# ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/qcndg6qwq6e5gfutwoycqmwf2m4lvg7g/', 'bin', 'icon') # -- eccodes, ocean, noart
-# ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/x6pisrz7umszlrpnazse3cuosdxt45kt/', 'bin', 'icon')  # -- art
-# ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/icon-online-traj/cpu/', 'bin', 'icon')  # -- online-traj, cpu+art, dev-build
-ICON_BIN = os.path.join('/scratch/snx3000/jthanwer/icon/cpu/', 'bin',
-                        'icon')  #
+# icon_bin = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/qcndg6qwq6e5gfutwoycqmwf2m4lvg7g/', 'bin', 'icon') # -- eccodes, ocean, noart
+# icon_bin = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/x6pisrz7umszlrpnazse3cuosdxt45kt/', 'bin', 'icon')  # -- art
+# icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon-online-traj/cpu/', 'bin', 'icon')  # -- online-traj, cpu+art, dev-build
+icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon/cpu/', 'bin', 'icon')  #
 
 # -- Paths for namelists and slurm runscript templates
-# ICON_RUNJOB = os.path.join(CASE_DIR, 'icon_runjob_withoutart.cfg')
-ICON_RUNJOB = os.path.join(CASE_DIR, 'icon_runjob.cfg')
-ICON_ERA5_INIJOB = os.path.join(CASE_DIR, 'icon_era5_inicond.sh')
-ICON_ERA5_NUDGINGJOB = os.path.join(CASE_DIR, 'icon_era5_nudging.sh')
-ICON_SPECIES_INIJOB = os.path.join(CASE_DIR, 'icon_species_inicond.sh')
-ICON_SPECIES_NUDGINGJOB = os.path.join(CASE_DIR, 'icon_species_nudging.sh')
+# icon_runjob = os.path.join(case_dir, 'icon_runjob_withoutart.cfg')
+icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
+icon_era5_inijob = os.path.join(case_dir, 'icon_era5_inicond.sh')
+icon_era5_nudgingjob = os.path.join(case_dir, 'icon_era5_nudging.sh')
+icon_species_inijob = os.path.join(case_dir, 'icon_species_inicond.sh')
+icon_species_nudgingjob = os.path.join(case_dir, 'icon_species_nudging.sh')
 
 # -- Number of hours simulated by one job / directory
-RESTART_STEP = '1MS'  # -- hours or Pandas frequency
+restart_step = '1MS'   # -- hours or Pandas frequency
 
 # -- Number of hours between two output data
-OUTPUT_WRITING_STEP = 12  # -- TO MODIFY
+output_writing_step = 12                               # -- TO MODIFY
 
 # -- Initial conditios
-ERA5_INICOND = False  # -- TO MODIFY
-SPECIES_INICOND = True
-SPECIES2RESTART = ['TROH']
+era5_inicond = False                                     # -- TO MODIFY
+species_inicond = True
+species2restart = ['TROH']
 
 # -- Nudging (meteorological and tracers)
-ERA5_GLOBAL_NUDGING = False
-SPECIES_GLOBAL_NUDGING = False
-SPECIES2NUDGE = []
-NUDGING_STEP = 12
+era5_global_nudging = False
+species_global_nudging = False
+species2nudge = []
+nudging_step = 12
 
 # -- Online trajectories
-ONLINE_TRAJ = True
+online_traj = True
 
 # -- Walltimes and domain decomposition
-if COMPUTE_QUEUE == "normal":
-    ICON_WALLTIME = "00:30:00"
-    ICON_NP_TOT = 2
+if compute_queue == "normal
 
-elif COMPUTE_QUEUE == "debug":
-    ICON_WALLTIME = "00:30:00"
-    ICON_NP_TOT = 2
+":
+    icon_walltime = "00:30:00"
+    icon_np_tot = 2
+
+elif compute_queue == "debug":
+    icon_walltime = "00:30:00"
+    icon_np_tot = 2
 
 else:
-    logging.error("Unknown queue name: %s" % COMPUTE_QUEUE)
+    logging.error("Unknown queue name: %s" % compute_queue)
     sys.exit(1)
 
 # -----------------------------------------------------------
 # -- INPUT DATA
 # -----------------------------------------------------------
 
-INPUT_ROOT = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/'
-INPUT_ROOT_ICBC = os.path.join(INPUT_ROOT, 'ICBC')
-INPUT_ROOT_GRID = os.path.join(INPUT_ROOT, 'GRIDS')
-INPUT_ROOT_RAD = os.path.join(INPUT_ROOT, 'RAD')
-INPUT_ROOT_OEM = os.path.join(INPUT_ROOT, 'OEM', 'SF6')
-INPUT_ROOT_CHEMISTRY = os.path.join(INPUT_ROOT, 'CHEMISTRY',
-                                    'OH_GCP2022_ORIGINAL')
-INPUT_ROOT_TRACERS = os.path.join(INPUT_ROOT, 'XML/examples')
-INPUT_ROOT_CONFIGS = os.path.join(INPUT_ROOT, 'CONFIGS')
-INPUT_ROOT_ART = os.path.join(INPUT_ROOT, 'ART')
+input_root = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/'
+input_root_icbc = os.path.join(input_root, 'ICBC')
+input_root_grid = os.path.join(input_root, 'GRIDS')
+input_root_rad = os.path.join(input_root, 'RAD')
+input_root_oem = os.path.join(input_root, 'OEM', 'SF6')
+input_root_chemistry = os.path.join(input_root, 'CHEMISTRY', 'OH_GCP2022_ORIGINAL')
+input_root_tracers = os.path.join(input_root, 'XML/examples')
+input_root_configs = os.path.join(input_root, 'CONFIGS')
+input_root_art = os.path.join(input_root, 'ART')
 
 # -- Initial conditions and boundary conditions
-INICOND_FILENAME = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ICBC/era2icon_R2B03_2022060200.nc'
+inicond_filename = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ICBC/era2icon_R2B03_2022060200.nc'
 
 # -- Grid
-DYNAMICS_GRID_FILENAME = os.path.join(INPUT_ROOT_GRID, "iconR2B03-DOM01.nc")
-EXTPAR_FILENAME = os.path.join(INPUT_ROOT_GRID, "extpar_iconR2B03-DOM01.nc")
+dynamics_grid_filename = os.path.join(input_root_grid, "iconR2B03-DOM01.nc")
+extpar_filename = os.path.join(input_root_grid, "extpar_iconR2B03-DOM01.nc")
 
 # -- Radiation
-CLDOPT_FILENAME = os.path.join(INPUT_ROOT_RAD, 'ECHAM6_CldOptProps.nc')
-LRTM_FILENAME = os.path.join(INPUT_ROOT_RAD, 'rrtmg_lw.nc')
+cldopt_filename = os.path.join(input_root_rad, 'ECHAM6_CldOptProps.nc')
+lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
 
 # -- OEM
-# OEM_EMIS_FILENAME = os.path.join(INPUT_ROOT_OEM, 'OEM_SF6_{year}.nc')
-OEM_VERTPROF_FILENAME = os.path.join(INPUT_ROOT_OEM, 'vertical_profiles.nc')
-OEM_HOUROFDAY_FILENAME = os.path.join(INPUT_ROOT_OEM, 'hourofday.nc')
-OEM_DAYOFWEEK_FILENAME = os.path.join(INPUT_ROOT_OEM, 'dayofweek.nc')
-OEM_MONTHOFYEAR_FILENAME = os.path.join(INPUT_ROOT_OEM, 'monthofyear.nc')
+# oem_emis_filename = os.path.join(input_root_oem, 'OEM_SF6_{year}.nc')
+oem_vertprof_filename = os.path.join(input_root_oem, 'vertical_profiles.nc')
+oem_hourofday_filename = os.path.join(input_root_oem, 'hourofday.nc')
+oem_dayofweek_filename = os.path.join(input_root_oem, 'dayofweek.nc')
+oem_monthofyear_filename = os.path.join(input_root_oem, 'monthofyear.nc')
 
 # -- Chemistry (OH)
-OH_MOLEC_FILENAME = os.path.join(INPUT_ROOT_CHEMISTRY,
-                                 'oh_gcp2022_icongrid.nc')  # -- TO MODIFY
+oh_molec_filename = os.path.join(input_root_chemistry, 'oh_gcp2022_icongrid.nc') # -- TO MODIFY
 
 # -- ART
-# PNTSRC_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'chemistry_lt/point-sources.xml')
-# BOUNDCOND_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'boundary-conditions.xml')
-# CHEMTRACER_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS, 'chemistry_lt/tracers.xml')
+# pntsrc_xml_filename = os.path.join(input_root_tracers, 'chemistry_lt/point-sources.xml')
+# boundcond_xml_filename = os.path.join(input_root_tracers, 'boundary-conditions.xml')
+# chemtracer_xml_filename = os.path.join(input_root_tracers, 'chemistry_lt/tracers.xml')
 
-PNTSRC_XML_FILENAME = os.path.join(INPUT_ROOT_CONFIGS,
-                                   'CONFIG2/point-sources.xml')  # -- TO MODIFY
-BOUNDCOND_XML_FILENAME = os.path.join(INPUT_ROOT_TRACERS,
-                                      'boundary-conditions.xml')
-CHEMTRACER_XML_FILENAME = os.path.join(INPUT_ROOT_CONFIGS,
-                                       'CONFIG2/tracers.xml')  # -- TO MODIFY
+pntsrc_xml_filename = os.path.join(input_root_configs, 'CONFIG2/point-sources.xml') # -- TO MODIFY
+boundcond_xml_filename = os.path.join(input_root_tracers, 'boundary-conditions.xml')
+chemtracer_xml_filename = os.path.join(input_root_configs, 'CONFIG2/tracers.xml') # -- TO MODIFY
 
 # -- Nudging
-MAP_FILE_NUDGING = os.path.join(INPUT_ROOT_ICBC, 'map_file.nudging')
+map_file_nudging = os.path.join(input_root_icbc, 'map_file.nudging')
 
 # -- Online trajectories
-ONLINE_TRAJ_FILENAME = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ONLINE_TRAJ/startf_traj_dom1.nc'
-ONLINE_TRAJ_TABLE2MOMENT = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ONLINE_TRAJ/dmin_wetgrowth_lookup.nc'
+online_traj_filename = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ONLINE_TRAJ/startf_traj_dom1.nc'
+online_traj_table2moment = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ONLINE_TRAJ/dmin_wetgrowth_lookup.nc'
 # -----------------------------------------------------------
 # -- Additional settings derived from constants
 # -----------------------------------------------------------
 
-# -- Nudge type (global or nothing)
-nudge_type = 2 if ERA5_GLOBAL_NUDGING else 0
+# -- Nudge type (
+
+global or nothing)
+nudge_type = 2 if era5_global_nudging else 0
 
 # -- Time step for global nudging in seconds
-nudging_step_seconds = NUDGING_STEP * 3600
+nudging_step_seconds = nudging_step * 3600
 
 # --  Prescribed initial conditions for CH4, CO and/or OH
-iart_init_gas = 4 if SPECIES_INICOND else 0
+iart_init_gas = 4 if species_inicond else 0
 
 # -- Online trajectories
-online_traj_scratch = '.TRUE.' if ONLINE_TRAJ else '.FALSE'
+online_traj_scratch = '.TRUE.' if online_traj else '.FALSE.'
