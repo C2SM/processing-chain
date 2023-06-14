@@ -36,6 +36,7 @@ from .tools.interpolate_data import create_oh_for_restart, create_oh_for_inicond
 from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 from calendar import monthrange
 
+
 def main(starttime, hstart, hstop, cfg):
     """
     **ICON** (if ``cfg.target`` is ``tools.Target.ICON``)
@@ -86,7 +87,7 @@ def main(starttime, hstart, hstop, cfg):
         starttime_real = starttime + timedelta(hours=hstart)
         time = starttime + timedelta(hours=hstart)
         year = time.year
-        month = time.month 
+        month = time.month
         day = time.day
 
         #-----------------------------------------------------
@@ -168,26 +169,34 @@ def main(starttime, hstart, hstop, cfg):
                 tools.copy_file(cfg.online_traj_filename,
                                 cfg.online_traj_filename_scratch,
                                 output_log=True)
-                tools.copy_file(cfg.online_traj_table2moment,
-                                cfg.icon_work)
-            
+                tools.copy_file(cfg.online_traj_table2moment, cfg.icon_work)
+
             # -- If not, download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
                 # -- Fetch ERA5 data
-                fetch_era5(starttime + timedelta(hours=hstart), cfg.icon_input_icbc)
+                fetch_era5(starttime + timedelta(hours=hstart),
+                           cfg.icon_input_icbc)
 
                 # -- Copy ERA5 processing script (icon_era5_inicond.job) in workdir
                 with open(cfg.icon_era5_inijob) as input_file:
                     to_write = input_file.read()
-                output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')
+                output_file = os.path.join(cfg.icon_input_icbc,
+                                           'icon_era5_inicond.sh')
                 with open(output_file, "w") as outf:
                     outf.write(to_write.format(cfg=cfg))
 
                 # -- Copy mypartab in workdir
-                shutil.copy(os.path.join(os.path.dirname(cfg.icon_era5_inijob), 'mypartab'), os.path.join(cfg.icon_input_icbc, 'mypartab'))
+                shutil.copy(
+                    os.path.join(os.path.dirname(cfg.icon_era5_inijob),
+                                 'mypartab'),
+                    os.path.join(cfg.icon_input_icbc, 'mypartab'))
 
                 # -- Run ERA5 processing script
-                process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')], stdout=subprocess.PIPE)
+                process = subprocess.Popen([
+                    "bash",
+                    os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')
+                ],
+                                           stdout=subprocess.PIPE)
                 process.communicate()
 
             # -----------------------------------------------------
@@ -205,13 +214,25 @@ def main(starttime, hstart, hstop, cfg):
                     # -- Copy the script for processing external tracer data in workdir
                     with open(cfg.icon_species_inijob) as input_file:
                         to_write = input_file.read()
-                    output_file = os.path.join(cfg.icon_input_icbc, 'icon_species_inicond.sh')
+                    output_file = os.path.join(cfg.icon_input_icbc,
+                                               'icon_species_inicond.sh')
                     with open(output_file, "w") as outf:
                         time = starttime + timedelta(hours=hstart)
-                        outf.write(to_write.format(cfg=cfg, filename=filename, ext_restart=ext_restart, year=year, month=month, day=day))
+                        outf.write(
+                            to_write.format(cfg=cfg,
+                                            filename=filename,
+                                            ext_restart=ext_restart,
+                                            year=year,
+                                            month=month,
+                                            day=day))
 
                     # -- Run ERA5 processing script
-                    process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_species_inicond.sh')], stdout=subprocess.PIPE)
+                    process = subprocess.Popen([
+                        "bash",
+                        os.path.join(cfg.icon_input_icbc,
+                                     'icon_species_inicond.sh')
+                    ],
+                                               stdout=subprocess.PIPE)
                     process.communicate()
 
                     # -- Create initial conditions for OH concentrations
@@ -220,17 +241,19 @@ def main(starttime, hstart, hstop, cfg):
 
                 else:
 
-                    # -- Check the extension of tracer variables in the restart file 
+                    # -- Check the extension of tracer variables in the restart file
                     ds_restart = xr.open_dataset(cfg.restart_filename_scratch)
                     tracer_name = cfg.species2restart[0]
-                    var_restart  = [var for var in ds_restart.data_vars.keys() if var.startswith(tracer_name)][0]
+                    var_restart = [
+                        var for var in ds_restart.data_vars.keys()
+                        if var.startswith(tracer_name)
+                    ][0]
                     ext_restart = var_restart.replace(tracer_name, '')
                     filename = cfg.restart_filename_scratch
 
                     # -- Change OH concentrations in the restart file
                     if 'TROH' in cfg.species2restart:
                         create_oh_for_restart(cfg, month, ext_restart)
-
 
             # -----------------------------------------------------
             # Create meteorological and tracer nudging conditions
@@ -239,15 +262,21 @@ def main(starttime, hstart, hstop, cfg):
             # -- If global nudging, download and process ERA5 and CAMS data
             if cfg.era5_global_nudging:
 
-                for time in tools.iter_hours(starttime, hstart, hstop, step=cfg.nudging_step):
+                for time in tools.iter_hours(starttime,
+                                             hstart,
+                                             hstop,
+                                             step=cfg.nudging_step):
 
                     # -- Give a name to the nudging file
                     timestr = time.strftime('%Y%m%d%H')
-                    filename = 'era2icon_R2B03_{timestr}_nudging.nc'.format(timestr=timestr)
+                    filename = 'era2icon_R2B03_{timestr}_nudging.nc'.format(
+                        timestr=timestr)
 
                     # -- If initial time, copy the initial conditions to be used as boundary conditions
                     if time == starttime and cfg.era5_inicond:
-                        shutil.copy(cfg.inicond_filename_scratch, os.path.join(cfg.icon_input_icbc, filename))
+                        shutil.copy(
+                            cfg.inicond_filename_scratch,
+                            os.path.join(cfg.icon_input_icbc, filename))
                         continue
 
                     # -- Fetch ERA5 data
@@ -256,16 +285,28 @@ def main(starttime, hstart, hstop, cfg):
                     # -- Copy ERA5 processing script (icon_era5_nudging.job) in workdir
                     with open(cfg.icon_era5_nudgingjob) as input_file:
                         to_write = input_file.read()
-                    output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_nudging_{}.sh'.format(timestr))
+                    output_file = os.path.join(
+                        cfg.icon_input_icbc,
+                        'icon_era5_nudging_{}.sh'.format(timestr))
                     with open(output_file, "w") as outf:
                         outf.write(to_write.format(cfg=cfg, filename=filename))
 
                     # -- Copy mypartab in workdir
-                    if not os.path.exists(os.path.join(cfg.icon_input_icbc, 'mypartab')):
-                        shutil.copy(os.path.join(os.path.dirname(cfg.icon_era5_nudgingjob), 'mypartab'), os.path.join(cfg.icon_input_icbc, 'mypartab'))
+                    if not os.path.exists(
+                            os.path.join(cfg.icon_input_icbc, 'mypartab')):
+                        shutil.copy(
+                            os.path.join(
+                                os.path.dirname(cfg.icon_era5_nudgingjob),
+                                'mypartab'),
+                            os.path.join(cfg.icon_input_icbc, 'mypartab'))
 
                     # -- Run ERA5 processing script
-                    process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_nudging_{}.sh'.format(timestr))], stdout=subprocess.PIPE)
+                    process = subprocess.Popen([
+                        "bash",
+                        os.path.join(cfg.icon_input_icbc,
+                                     'icon_era5_nudging_{}.sh'.format(timestr))
+                    ],
+                                               stdout=subprocess.PIPE)
                     process.communicate()
 
                     if cfg.species_global_nudging:
@@ -273,19 +314,29 @@ def main(starttime, hstart, hstop, cfg):
                         # -- Copy CAMS processing script (icon_cams_nudging.job) in workdir
                         with open(cfg.icon_species_nudgingjob) as input_file:
                             to_write = input_file.read()
-                        output_file = os.path.join(cfg.icon_input_icbc, 'icon_cams_nudging_{}.sh'.format(timestr))
+                        output_file = os.path.join(
+                            cfg.icon_input_icbc,
+                            'icon_cams_nudging_{}.sh'.format(timestr))
                         with open(output_file, "w") as outf:
-                            outf.write(to_write.format(cfg=cfg, filename=filename))
+                            outf.write(
+                                to_write.format(cfg=cfg, filename=filename))
 
                         # -- Run ERA5 processing script
-                        process = subprocess.Popen(["bash", os.path.join(cfg.icon_input_icbc, 'icon_cams_nudging_{}.sh'.format(timestr))], stdout=subprocess.PIPE)
+                        process = subprocess.Popen([
+                            "bash",
+                            os.path.join(
+                                cfg.icon_input_icbc,
+                                'icon_cams_nudging_{}.sh'.format(timestr))
+                        ],
+                                                   stdout=subprocess.PIPE)
                         process.communicate()
 
             # -----------------------------------------------------
             # Create symlink to the restart file if lrestart is True
             # -----------------------------------------------------
             if cfg.lrestart == '.TRUE.':
-                os.symlink(cfg.restart_filename_scratch, os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
+                os.symlink(cfg.restart_filename_scratch,
+                           os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 
         # Copy data for ICON-ART-OEM
         if cfg.target is tools.Target.ICONARTOEM:
@@ -326,12 +377,14 @@ def main(starttime, hstart, hstop, cfg):
             datafile_list = []
             datafile_list_rest = []
             datafile_list_chem = []
-            for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+            for time in tools.iter_hours(starttime, hstart, hstop,
+                                         cfg.meteo_inc):
                 meteo_file = os.path.join(cfg.icon_input_icbc,
-                                        time.strftime(cfg.meteo_nameformat))
+                                          time.strftime(cfg.meteo_nameformat))
                 if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM:
-                    chem_file = os.path.join(cfg.icon_input_icbc,
-                                            time.strftime(cfg.chem_nameformat))
+                    chem_file = os.path.join(
+                        cfg.icon_input_icbc,
+                        time.strftime(cfg.chem_nameformat))
                     datafile_list_chem.append(chem_file + cfg.chem_suffix)
                 if meteo_file.endswith('00'):
                     datafile_list.append(meteo_file + cfg.meteo_suffix)
@@ -346,7 +399,8 @@ def main(starttime, hstart, hstop, cfg):
             #-----------------------------------------------------
             for runscript in cfg.icontools_runjobs:
                 logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
-                logfile_finish = os.path.join(cfg.log_finished_dir, 'prepare_data')
+                logfile_finish = os.path.join(cfg.log_finished_dir,
+                                              'prepare_data')
                 with open(os.path.join(cfg.case_dir, runscript)) as input_file:
                     to_write = input_file.read()
                 output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
@@ -370,7 +424,8 @@ def main(starttime, hstart, hstop, cfg):
             #-----------------------------------------------------
             # Add GEOSP to all meteo files
             #-----------------------------------------------------
-            for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+            for time in tools.iter_hours(starttime, hstart, hstop,
+                                         cfg.meteo_inc):
                 src_file = os.path.join(
                     cfg.icon_input_icbc,
                     time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
@@ -398,7 +453,7 @@ def main(starttime, hstart, hstop, cfg):
             #-----------------------------------------------------
             if cfg.target is tools.Target.ICONARTOEM:
                 for time in tools.iter_hours(starttime, hstart, hstop,
-                                            cfg.meteo_inc):
+                                             cfg.meteo_inc):
                     if time == starttime:
                         #------------
                         # Merge IC:
@@ -421,14 +476,14 @@ def main(starttime, hstart, hstop, cfg):
                         ds_chem['PS'].attrs["long_name"] = 'surface pressure'
                         # merge:
                         ds_merged = xr.merge([ds_meteo, ds_chem],
-                                                compat="override")
+                                             compat="override")
                         #ds_merged.attrs = ds.attrs
                         ds_merged.to_netcdf(merged_file)
                         # Rename file to get original file name
                         tools.rename_file(merged_file, meteo_file)
                         tools.remove_file(chem_file)
-                        logging.info(
-                            "Added chemical tracer to file {}".format(merged_file))
+                        logging.info("Added chemical tracer to file {}".format(
+                            merged_file))
 
                     #------------
                     # Merge LBC:
@@ -451,7 +506,7 @@ def main(starttime, hstart, hstop, cfg):
                     ds_chem['TRCH4_chemtr'] = ds_chem['CH4_BG']
                     # merge:
                     ds_merged = xr.merge([ds_meteo, ds_chem],
-                                            compat="override")
+                                         compat="override")
                     #ds_merged.attrs = ds.attrs
                     ds_merged.to_netcdf(merged_file)
                     # Rename file to get original file name
