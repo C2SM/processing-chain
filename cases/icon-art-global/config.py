@@ -21,7 +21,7 @@ else:
     compute_account = os.popen("id -gn").read().splitlines()[0]
 
 # -- Model to run
-target = 'icon-art'
+target = 'icon-art-global'
 
 # -- Number of tasks per node
 ntasks_per_node = 36 if constraint == 'mc' else 12
@@ -78,9 +78,7 @@ nudging_step = 12
 online_traj = True
 
 # -- Walltimes and domain decomposition
-if compute_queue == "normal
-
-":
+if compute_queue == "normal":
     icon_walltime = "00:30:00"
     icon_np_tot = 2
 
@@ -146,9 +144,7 @@ online_traj_table2moment = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ONLINE_TRA
 # -- Additional settings derived from constants
 # -----------------------------------------------------------
 
-# -- Nudge type (
-
-global or nothing)
+# -- Nudge type (global or nothing)
 nudge_type = 2 if era5_global_nudging else 0
 
 # -- Time step for global nudging in seconds
