@@ -21,7 +21,7 @@ if [[ $size -gt 40000000000 ]]; then
   echo input data already present - skipping download...
 else
   echo downloading input data...
-  ./get_data.sh
+  ./jenkins/scripts/get_data.sh
 fi
 
 # Build int2lm
