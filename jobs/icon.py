@@ -14,7 +14,6 @@
 import logging
 import os
 import subprocess
-from .tools import write_cosmo_input_ghg
 from . import tools
 from datetime import datetime, timedelta
 
@@ -62,9 +61,9 @@ def main(starttime, hstart, hstop, cfg):
     tools.copy_file(cfg.icon_bin, os.path.join(cfg.icon_work, execname))
 
     # Get name of initial file
-    if hasattr(cfg, 'INICOND_FILENAME'):
+    if hasattr(cfg, 'inicond_filename'):
         inidata_filename = os.path.join(cfg.icon_input_icbc,
-                                        cfg.INICOND_FILENAME)
+                                        cfg.inicond_filename)
     else:
         starttime_real = starttime + timedelta(hours=hstart)
         inidata_filename = os.path.join(
@@ -87,7 +86,8 @@ def main(starttime, hstart, hstop, cfg):
          os.path.join(cfg.icon_work, 'run_icon.job')])
 
     # In case of ICON-ART, ignore the "invalid pointer" error on successful run
-    if cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONART:
+    if cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONART or \
+        cfg.target is tools.Target.ICONARTGLOBAL:
         if tools.grep("free(): invalid pointer", logfile)['success'] and \
            tools.grep("clean-up finished", logfile)['success']:
             exitcode = 0
