@@ -180,7 +180,7 @@ def check_model_variant(cfg):
     model_info = models[cfg.model]
     variants = model_info['variants']
     if cfg.variant not in variants:
-        raise ValueError("Invalid variant for COSMO: {}".format(variant_str))
+        raise ValueError(f"Invalid variant for {cfg.model}: {variant_str}")
 
 
 def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
