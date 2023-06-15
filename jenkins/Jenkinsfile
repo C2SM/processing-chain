@@ -47,7 +47,7 @@ pipeline {
             parallel {
                 stage('Get data') {
                     steps {
-                        sh './get_data.sh'
+                        sh './jenkins/scripts/get_data.sh'
                     }
                     post {
                         failure {
