@@ -412,10 +412,11 @@ def main(starttime, hstart, hstop, cfg):
                                         datafile_list=datafile_list,
                                         datafile_list_rest=datafile_list_rest,
                                         datafile_list_chem=datafile_list_chem))
-                exitcode = subprocess.call([
+                result = subprocess.run([
                     "sbatch", "--wait",
                     os.path.join(cfg.icon_work, "%s.job" % runscript)
                 ])
+                exitcode = result.returncode
                 if exitcode != 0:
                     raise RuntimeError(
                         "sbatch returned exitcode {}".format(exitcode))

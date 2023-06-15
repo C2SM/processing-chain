@@ -127,9 +127,10 @@ def main(starttime, hstart, hstop, cfg):
                             ))
                     # Execute fieldextra
                     with open(logfile, "a+") as log:
-                        exitcode = subprocess.call(
+                        result = subprocess.run(
                             [cfg.fieldextra_bin, output_file_merge],
                             stdout=log)
+                        exitcode = result.returncode
                     if exitcode != 0:
                         raise RuntimeError(
                             "Fieldextra returned exitcode {}".format(exitcode))
@@ -205,8 +206,9 @@ def main(starttime, hstart, hstop, cfg):
                             logfile=logfile,
                             logfile_finish=logfile_finish))
 
-    exitcode = subprocess.call(
+    result = subprocess.run(
         ["sbatch", "--wait",
          os.path.join(cfg.cosmo_work, 'run.job')])
+    exitcode = result.returncode
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))

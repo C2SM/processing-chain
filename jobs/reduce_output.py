@@ -3,14 +3,13 @@
 
 import logging
 import os
+import sys
 import shutil
 import datetime as dt
 import glob
 import netCDF4 as nc
 import subprocess
 import numpy as np
-import time
-import resource
 from datetime import datetime
 import math
 
@@ -122,7 +121,7 @@ def main(starttime, hstart, hstop, cfg):
     logfile = os.path.join(cfg.log_working_dir, 'reduce_output')
     logging.info('Submitting job to the queue...')
 
-    exitcode = subprocess.call([
+    result = subprocess.run([
         "sbatch", '--output=' + logfile, '--open-mode=append', '--wait',
         bash_file, py_file, cosmo_output, output_path, str_startdate,
         str_enddate,
@@ -130,6 +129,7 @@ def main(starttime, hstart, hstop, cfg):
         str(output_step), alternate_csv_file,
         str(cfg.convert_gas)
     ])
+    exitcode = result.returncode
 
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))

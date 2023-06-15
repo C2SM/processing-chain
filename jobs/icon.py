@@ -15,7 +15,7 @@ import logging
 import os
 import subprocess
 from . import tools
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
 def main(starttime, hstart, hstop, cfg):
@@ -81,9 +81,10 @@ def main(starttime, hstart, hstop, cfg):
                             logfile=logfile,
                             logfile_finish=logfile_finish))
 
-    exitcode = subprocess.call(
+    result = subprocess.run(
         ["sbatch", "--wait",
          os.path.join(cfg.icon_work, 'run_icon.job')])
+    exitcode = result.returncode
 
     # In case of ICON-ART, ignore the "invalid pointer" error on successful run
     if cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONART or \

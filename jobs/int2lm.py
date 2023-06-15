@@ -14,8 +14,6 @@ import logging
 import shutil
 from . import tools
 import subprocess
-import sys
-import importlib
 from datetime import datetime
 
 
@@ -140,8 +138,9 @@ def main(starttime, hstart, hstop, cfg):
                             logfile_finish=logfile_finish))
 
     # Submit job
-    exitcode = subprocess.call(
+    result = subprocess.run(
         ["sbatch", "--wait",
          os.path.join(cfg.int2lm_work, "run.job")])
+    exitcode = result.returncode
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
