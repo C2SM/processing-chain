@@ -11,24 +11,10 @@ import time
 import shutil
 import argparse
 import csv
+import yaml
 
 import jobs
 from jobs import tools
-
-default_jobs = {
-    tools.Target.COSMO: ["prepare_data", "int2lm", "cosmo", "post_cosmo"],
-    tools.Target.COSMOGHG: [
-        "prepare_data", "emissions", "biofluxes", "oae", "online_vprm",
-        "int2lm", "post_int2lm", "cosmo", "post_cosmo"
-    ],
-    tools.Target.COSMOART: [
-        "prepare_data", "emissions", "obs_nudging", "photo_rate", "int2lm",
-        "cosmo", "post_cosmo"
-    ],
-    tools.Target.ICON: ["prepare_data", "icon"],
-    tools.Target.ICONART: ["prepare_data", "icon"],
-    tools.Target.ICONARTOEM: ["prepare_data", "oae", "icon"]
-}
 
 
 def parse_arguments():
@@ -160,41 +146,41 @@ def load_config_file(casename, cfg):
     return cfg
 
 
-def set_simulation_type(cfg):
-    """Detect the chain target and if there is a subtarget.
+def check_model_variant(cfg):
+    """Checks the model and if there is a variant.
 
-    Check if a target was provided in the config-object. If no target is
-    provided, set the target to cosmo in the config-object.
+    Check if a model was provided in the config-object. If no model is
+    provided, set the model to cosmo in the config-object.
 
-    Check if a subtarget was provided in the config-object. Subtargets
+    Check if a variant was provided in the config-object. Variants
     provide a way to customize the behaviour of the processing chain
     for different types of simulations.
 
-    Raise a RuntimeError if an unsupported target or subtarget is given in cfg.
-    You can add targets and subtargets in the jobs/tools/__init__.py file.
-
-    Translates the target and subtarget from string to enum.
+    Raise a RuntimeError if an unsupported model or variant is given in cfg.
+    You can add models and variants in the config/models.yaml file.
 
     Parameters
     ----------
     cfg : config-object
     """
-    default = 'cosmo'
-    target_str = getattr(cfg, 'target', default)
-    try:
-        target_enum = tools.str_to_enum[target_str.lower()]
-    except KeyError:
-        raise ValueError("The target of the chain must be one of {}".format(
-            list(tools.str_to_enum.keys())))
-    setattr(cfg, 'target', target_enum)
+    if hasattr(cfg, 'model')
+        model_str = getattr(cfg, 'model')
+    else:
+        raise RuntimeError("Variable 'model' not set in config.")
+    
+    variant_str = getattr(cfg, 'variant', 'none')
 
-    subtarget_str = getattr(cfg, 'subtarget', 'none')
-    try:
-        subtarget_enum = tools.str_to_enum[subtarget_str.lower()]
-    except KeyError:
-        raise ValueError("The target of the chain must be one of {}".format(
-            list(tools.str_to_enum.keys())))
-    setattr(cfg.target, 'subtarget', subtarget_enum)
+    with open('config/models.yaml') as file:
+        model_config = yaml.safe_load(file)
+
+    models = model_config['models']
+    if cfg.model not in models:
+        raise ValueError("Invalid model: {}".format(model_str))
+
+    model_info = models[cfg.model]
+    variants = model_info['variants']
+    if cfg.variant not in variants:
+        raise ValueError("Invalid variant for COSMO: {}".format(variant_str))
 
 
 def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
@@ -258,7 +244,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     inidate_int2lm_yyyymmddhh = (start_time +
                                  timedelta(hours=hstart)).strftime('%Y%m%d%H')
 
-    if cfg.target.subtarget is tools.Subtarget.SPINUP:
+    if cfg.model.variant is tools.Submodel.SPINUP:
         if cfg.first_one:  # first run in spinup
             chain_root_last_run = ''
         else:  # consecutive runs in spinup
@@ -325,8 +311,8 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
     setattr(cfg, 'icon_output_reduced',
             os.path.join(chain_root, 'icon', 'output_reduced'))
-    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART \
-            or cfg.target is tools.Target.ICONARTOEM:
+    if cfg.model is tools.Target.ICON or cfg.model is tools.Target.ICONART \
+            or cfg.model is tools.Target.ICONARTOEM:
         setattr(
             cfg, 'radiation_grid_filename_scratch',
             os.path.join(cfg.icon_input_grid,
@@ -371,7 +357,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                              os.path.basename(cfg.pntSrc_xml_filename)))
 
     # OEM
-    if cfg.target is tools.Target.ICONARTOEM:
+    if cfg.model is tools.Target.ICONARTOEM:
         setattr(
             cfg, 'oae_gridded_emissions_nc_scratch',
             os.path.join(cfg.icon_input_oae,
@@ -423,14 +409,14 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                   'cosmo_tracers.csv')
     if os.path.isfile(tracer_csvfile):
-        if cfg.target is tools.Target.COSMOGHG:
+        if cfg.model is tools.Target.COSMOGHG:
             with open(tracer_csvfile, 'r') as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=',')
                 reader = [r for r in reader if r[''] != '#']
                 setattr(cfg, 'in_tracers', len(reader))
 
         # tracer_start namelist paramter for spinup simulation
-        if cfg.target.subtarget is tools.Subtarget.SPINUP:
+        if cfg.model.variant is tools.Submodel.SPINUP:
             if cfg.first_one:
                 setattr(cfg, 'tracer_start', 0)
             else:
@@ -444,7 +430,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                                                  "gpu or mc")
     else:
         # set default constraint
-        if cfg.target is tools.Target.COSMOART:
+        if cfg.model is tools.Target.COSMOART:
             setattr(cfg, 'constraint', 'mc')
         else:
             setattr(cfg, 'constraint', 'gpu')
@@ -458,13 +444,13 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
             setattr(cfg, 'lasync_io', '.TRUE.')
             setattr(cfg, 'num_iope_percomm', 1)
 
-    if cfg.target.subtarget is tools.Subtarget.SPINUP:
+    if cfg.model.variant is tools.Submodel.SPINUP:
         setattr(cfg, 'last_cosmo_output',
                 os.path.join(chain_root_last_run, 'cosmo', 'output'))
         # No restart for spinup simulations (= default values for no restart)
         setattr(cfg, 'cosmo_restart_out', '')
         setattr(cfg, 'cosmo_restart_in', '')
-    elif cfg.target is not tools.Target.COSMOART:
+    elif cfg.model is not tools.Target.COSMOART:
         job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh,
                                         hstart - cfg.restart_step, hstart)
         chain_root_last_run = os.path.join(work_root, cfg.casename,
@@ -475,12 +461,12 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         setattr(cfg, 'cosmo_restart_in',
                 os.path.join(chain_root_last_run, 'cosmo', 'restart'))
 
-    if cfg.target is tools.Target.COSMOART:
+    if cfg.model is tools.Target.COSMOART:
         # no restarts in cosmoart
         setattr(cfg, 'restart_step', hstop - hstart)
 
-    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
-       cfg.target is tools.Target.ICONARTOEM:
+    if cfg.model is tools.Target.ICON or cfg.model is tools.Target.ICONART or \
+       cfg.model is tools.Target.ICONARTOEM:
         ini_datetime_string = (
             start_time +
             timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
@@ -498,7 +484,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         setattr(cfg, 'lrestart', '.FALSE.')
 
     # if nested run: use output of mother-simulation
-    if cfg.target is tools.Target.COSMOART and not os.path.isdir(
+    if cfg.model is tools.Target.COSMOART and not os.path.isdir(
             cfg.meteo_dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
@@ -738,17 +724,17 @@ if __name__ == '__main__':
     for casename in args.casenames:
         cfg = load_config_file(casename=casename, cfg=cfg)
         start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
-        set_simulation_type(cfg)
+        check_model_variant(cfg)
         if args.job_list is None:
-            args.job_list = default_jobs[cfg.target]
+            args.job_list = default_jobs[cfg.model]
 
         print("Starting chain for case {}, using {}".format(
-            casename, cfg.target.name))
+            casename, cfg.model.name))
 
-        if cfg.target is tools.Target.COSMO or cfg.target is tools.Target.ICON or \
-           cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM or \
-           cfg.target is tools.Target.COSMOGHG:
-            if cfg.target.subtarget is tools.Subtarget.NONE:
+        if cfg.model is tools.Target.COSMO or cfg.model is tools.Target.ICON or \
+           cfg.model is tools.Target.ICONART or cfg.model is tools.Target.ICONARTOEM or \
+           cfg.model is tools.Target.COSMOGHG:
+            if cfg.model.variant is tools.Submodel.NONE:
                 restart_runs(work_root=cfg.work_root,
                              cfg=cfg,
                              start=start_time,
@@ -756,7 +742,7 @@ if __name__ == '__main__':
                              hstop=args.hstop,
                              job_names=args.job_list,
                              force=args.force)
-            elif cfg.target.subtarget is tools.Subtarget.SPINUP:
+            elif cfg.model.variant is tools.Submodel.SPINUP:
                 restart_runs_spinup(work_root=cfg.work_root,
                                     cfg=cfg,
                                     start=start_time,
@@ -765,9 +751,9 @@ if __name__ == '__main__':
                                     job_names=args.job_list,
                                     force=args.force)
             else:
-                raise RuntimeError("Unknown subtarget: {}".format(
-                    cfg.subtarget))
-        elif cfg.target is tools.Target.COSMOART:
+                raise RuntimeError("Unknown variant: {}".format(
+                    cfg.variant))
+        elif cfg.model is tools.Target.COSMOART:
             # cosmoart can't do restarts
             run_chain(work_root=cfg.work_root,
                       cfg=cfg,
@@ -777,6 +763,6 @@ if __name__ == '__main__':
                       job_names=args.job_list,
                       force=args.force)
         else:
-            raise RuntimeError("Unknown target: {}".format(cfg.target))
+            raise RuntimeError("Unknown model: {}".format(cfg.model))
 
     print('>>> finished chain for good or bad! <<<')

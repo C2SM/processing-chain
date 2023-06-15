@@ -262,52 +262,6 @@ def remove_file(dest_path, output_log=False):
     logging.info("Removed {}".format(dest_path))
 
 
-class Target(Enum):
-    COSMO = auto()
-    COSMOART = auto()
-    COSMOGHG = auto()
-    ICON = auto()
-    ICONART = auto()
-    ICONARTOEM = auto()
-    ICONARTGLOBAL = auto()
-
-
-class Subtarget(Enum):
-    NONE = auto()
-    SPINUP = auto()
-
-
-str_to_enum = {
-    'cosmo': Target.COSMO,
-    'cosmo-art': Target.COSMOART,
-    'cosmo-ghg': Target.COSMOGHG,
-    'icon': Target.ICON,
-    'icon-art': Target.ICONART,
-    'icon-art-oem': Target.ICONARTOEM,
-    'icon-art-global': Target.ICONARTGLOBAL,
-    'none': Subtarget.NONE,
-    'spinup': Subtarget.SPINUP,
-}
-
-
-def check_target(cfg, target=Target.COSMO):
-    """Check that the target specified in cfg matched the prescribed target.
-
-    Check that cfg.target == target. If not, raises a RuntimeError.
-
-    Parameters
-    ----------
-    cfg : config-object
-
-    target : Target enum
-        Prescribed target
-    """
-    if not cfg.target is target:
-        raise RuntimeError("The target specified in the configuration file "
-                           "is {}, but the job only applies to {}.".format(
-                               cfg.target.name, target.name))
-
-
 def levenshtein(s1, s2):
     """Return the levenshtein distance ("edit distance") between s1 and s2.
 
