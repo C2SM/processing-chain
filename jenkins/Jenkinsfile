@@ -56,6 +56,19 @@ pipeline {
                         }
                     }
                 }
+                stage('Build int2lm') {
+                    steps {
+                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                        conda activate proc-chain
+                        ./jenkins/scripts/build_int2lm.sh'''
+                    }
+                    post {
+                        failure {
+                            echo 'Cleaning up workspace'
+                            deleteDir()
+                        }
+                    }
+                }
                 stage('Build COSMO-GHG') {
                     steps {
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
@@ -91,7 +104,7 @@ pipeline {
             steps {
                 sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                 conda activate proc-chain
-                source ${WORKSPACE}/spack-c2sm/spack/share/spack/setup-env.sh  
+                . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
                 python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -f'''
             }
             post {
@@ -108,7 +121,7 @@ pipeline {
             steps {
                 sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                 conda activate proc-chain
-                source ${WORKSPACE}/spack-c2sm/spack/share/spack/setup-env.sh
+                . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
                 python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon -f'''
             }                     
             post {
