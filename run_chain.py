@@ -165,7 +165,7 @@ def check_model_variant(cfg):
         model_str = getattr(cfg, 'model')
     else:
         raise RuntimeError("Variable 'model' not set in config.")
-    
+
     variant_str = getattr(cfg, 'variant', 'none')
 
     with open('config/models.yaml') as file:
@@ -482,8 +482,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         setattr(cfg, 'lrestart', '.FALSE.')
 
     # if nested run: use output of mother-simulation
-    if cfg.model is tools.Target.COSMOART and not os.path.isdir(
-            cfg.meteo_dir):
+    if cfg.model is tools.Target.COSMOART and not os.path.isdir(cfg.meteo_dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
         mother_name = cfg.meteo_dir
@@ -751,8 +750,7 @@ if __name__ == '__main__':
                                     job_names=args.job_list,
                                     force=args.force)
             else:
-                raise RuntimeError("Unknown variant: {}".format(
-                    cfg.variant))
+                raise RuntimeError("Unknown variant: {}".format(cfg.variant))
         elif cfg.model is tools.Target.COSMOART:
             # cosmoart can't do restarts
             run_chain(work_root=cfg.work_root,
