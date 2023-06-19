@@ -335,7 +335,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 os.symlink(cfg.restart_filename_scratch,
                            os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 
-        else: # non-global ICON-ART
+        else:  # non-global ICON-ART
             # Copy data for ICON-ART-OEM
             if cfg.model == 'icon-art-oem':
                 tools.copy_file(
@@ -361,8 +361,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                         os.path.join(cfg.oae_dir, cfg.oae_hourofyear_nc),
                         cfg.oae_hourofyear_nc_scratch)
                 if hasattr(cfg, 'oae_ens_reg_nc'):
-                    tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_ens_reg_nc),
-                                    cfg.oae_ens_reg_nc_scratch)
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_ens_reg_nc),
+                        cfg.oae_ens_reg_nc_scratch)
                 if hasattr(cfg, 'oae_ens_lambda_nc'):
                     tools.copy_file(
                         os.path.join(cfg.oae_dir, cfg.oae_ens_lambda_nc),
@@ -375,9 +376,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             datafile_list_rest = []
             datafile_list_chem = []
             for time in tools.iter_hours(starttime, hstart, hstop,
-                                            cfg.meteo_inc):
+                                         cfg.meteo_inc):
                 meteo_file = os.path.join(cfg.icon_input_icbc,
-                                            time.strftime(cfg.meteo_nameformat))
+                                          time.strftime(cfg.meteo_nameformat))
                 if cfg.model == 'icon-art' or cfg.model == 'icon-art-oem':
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
@@ -397,7 +398,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             for runscript in cfg.icontools_runjobs:
                 logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
                 logfile_finish = os.path.join(cfg.log_finished_dir,
-                                                'prepare_data')
+                                              'prepare_data')
                 with open(os.path.join(cfg.case_dir, runscript)) as input_file:
                     to_write = input_file.read()
                 output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
@@ -423,7 +424,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             # Add GEOSP to all meteo files
             #-----------------------------------------------------
             for time in tools.iter_hours(starttime, hstart, hstop,
-                                            cfg.meteo_inc):
+                                         cfg.meteo_inc):
                 src_file = os.path.join(
                     cfg.icon_input_icbc,
                     time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
@@ -451,7 +452,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             #-----------------------------------------------------
             if cfg.model == 'icon-art-oem':
                 for time in tools.iter_hours(starttime, hstart, hstop,
-                                                cfg.meteo_inc):
+                                             cfg.meteo_inc):
                     if time == starttime:
                         #------------
                         # Merge IC:
@@ -474,7 +475,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                         ds_chem['PS'].attrs["long_name"] = 'surface pressure'
                         # merge:
                         ds_merged = xr.merge([ds_meteo, ds_chem],
-                                                compat="override")
+                                             compat="override")
                         #ds_merged.attrs = ds.attrs
                         ds_merged.to_netcdf(merged_file)
                         # Rename file to get original file name
@@ -504,7 +505,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     ds_chem['TRCH4_chemtr'] = ds_chem['CH4_BG']
                     # merge:
                     ds_merged = xr.merge([ds_meteo, ds_chem],
-                                            compat="override")
+                                         compat="override")
                     #ds_merged.attrs = ds.attrs
                     ds_merged.to_netcdf(merged_file)
                     # Rename file to get original file name
