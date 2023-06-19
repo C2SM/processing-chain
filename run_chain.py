@@ -144,8 +144,8 @@ def load_config_file(casename, cfg):
     return cfg
 
 
-def check_model_variant(cfg):
-    """Checks the model and if there is a variant.
+def check_model_set_variant(cfg):
+    """Checks the model and sets its variant.
 
     Check if a model was provided in the config-object. If no model is
     provided, set the model to cosmo in the config-object.
@@ -165,8 +165,6 @@ def check_model_variant(cfg):
         model_str = getattr(cfg, 'model')
     else:
         raise RuntimeError("Variable 'model' not set in config.")
-    
-    variant_str = getattr(cfg, 'variant', 'none')
 
     with open('config/models.yaml') as file:
         model_config = yaml.safe_load(file)
@@ -175,10 +173,14 @@ def check_model_variant(cfg):
     if cfg.model not in models:
         raise ValueError("Invalid model: {}".format(model_str))
 
-    model_info = models[cfg.model]
-    variants = model_info['variants']
-    if cfg.variant not in variants:
-        raise ValueError(f"Invalid variant for {cfg.model}: {variant_str}")
+    if hasattr(cfg, 'variant'):
+        variants = models[cfg.model]['variants']
+        if cfg.variant not in variants:
+            raise ValueError(f"Invalid variant for {cfg.model}: {variant}")
+    else:
+        setattr(cfg, 'variant', None)
+
+    return cfg
 
 
 def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
@@ -722,19 +724,16 @@ if __name__ == '__main__':
     for casename in args.casenames:
         cfg = load_config_file(casename=casename, cfg=cfg)
         start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
-        check_model_variant(cfg)
+        cfg = check_model_set_variant(cfg)
         if args.job_list is None:
             with open('config/models.yaml') as file:
                 model_config = yaml.safe_load(file)
             args.job_list = model_config['models'][cfg.model]['variants']
 
-        print("Starting chain for case {}, using {}".format(
-            casename, cfg.model.name))
+        print(f"Starting chain for case {casename} and model {cfg.model}")
 
-        if cfg.model is tools.Target.COSMO or cfg.model is tools.Target.ICON or \
-           cfg.model is tools.Target.ICONART or cfg.model is tools.Target.ICONARTOEM or \
-           cfg.model is tools.Target.COSMOGHG:
-            if cfg.model.variant is tools.variant.NONE:
+        if model_config['models'][cfg.model]['restarts']:
+            if cfg.model.variant is None:
                 restart_runs(work_root=cfg.work_root,
                              cfg=cfg,
                              start=start_time,
@@ -742,7 +741,7 @@ if __name__ == '__main__':
                              hstop=args.hstop,
                              job_names=args.job_list,
                              force=args.force)
-            elif cfg.model.variant is tools.variant.SPINUP:
+            elif cfg.model.variant == 'spinup':
                 restart_runs_spinup(work_root=cfg.work_root,
                                     cfg=cfg,
                                     start=start_time,
@@ -751,9 +750,8 @@ if __name__ == '__main__':
                                     job_names=args.job_list,
                                     force=args.force)
             else:
-                raise RuntimeError("Unknown variant: {}".format(
-                    cfg.variant))
-        elif cfg.model is tools.Target.COSMOART:
+                raise RuntimeError(f"Unknown variant: {cfg.variant}")
+        else:
             # cosmoart can't do restarts
             run_chain(work_root=cfg.work_root,
                       cfg=cfg,
@@ -762,7 +760,5 @@ if __name__ == '__main__':
                       hstop=args.hstop,
                       job_names=args.job_list,
                       force=args.force)
-        else:
-            raise RuntimeError("Unknown model: {}".format(cfg.model))
 
     print('>>> finished chain for good or bad! <<<')

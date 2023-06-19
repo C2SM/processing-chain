@@ -343,3 +343,6 @@ def check_job_completion(log_finished_dir, job, waittime=3000):
                 time.sleep(0.1)
         else:
             break
+
+def check_model(model, model_list):
+    pass

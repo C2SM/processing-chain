@@ -1,25 +1,32 @@
 models:
     cosmo:
         jobs: ['prepare_data', 'int2lm', 'cosmo', 'post_cosmo']
-        variants: ['none', 'spinup']
+        variants: ['spinup']
+        restarts: True
     cosmo-ghg:
         jobs: ['prepare_data', 'emissions', 'biofluxes', 'oae', 'online_vprm',
                'int2lm', 'post_int2lm', 'cosmo', 'post_cosmo']
-        variants: ['none', 'spinup']
+        variants: ['spinup']
+        restarts: True
     cosmo-art:
         jobs: ['prepare_data', 'emissions', 'obs_nudging', 'photo_rate',
                'int2lm', 'cosmo', 'post_cosmo']
-        variants: ['none', 'spinup']
+        variants: ['spinup']
+        restarts: False
     icon:
         jobs: ['prepare_data', 'icon']
-        variants: ['none']
+        variants: []
+        restarts: True
     icon-art:
         jobs: ['prepare_data', 'icon']
-        variants: ['none']
+        variants: []
+        restarts: True
     icon-art-global:
         jobs: ['prepare_data', 'icon']
-        variants: ['none']
+        variants: []
+        restarts: True
     icon-art-oem:
         jobs: ['prepare_data', 'icon']
-        variants: ['none']
+        variants: []
+        restarts: True
 
