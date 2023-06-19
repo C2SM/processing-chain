@@ -39,7 +39,7 @@ from calendar import monthrange
 
 def main(starttime, hstart, hstop, cfg):
     """
-    **ICON** (if ``cfg.target`` is ``tools.Target.ICON``)
+    **ICON** (if ``cfg.model`` is ``tools.Target.ICON``)
 
      Create necessary directories ``cfg.icon_input_icbc``
      and ''cfg.icon_work''
@@ -79,9 +79,7 @@ def main(starttime, hstart, hstop, cfg):
         Object holding all user-configuration parameters as attributes
     """
 
-    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
-       cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONARTGLOBAL:
-
+    if cfg.model.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
 
         starttime_real = starttime + timedelta(hours=hstart)
@@ -133,8 +131,7 @@ def main(starttime, hstart, hstop, cfg):
                         output_log=True)
 
         # Copy tracer data in case of ART
-        if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM or\
-            cfg.target is tools.Target.ICONARTGLOBAL:
+        if cfg.model.startswith('icon-art'):
             tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
             if hasattr(cfg, 'chemtracer_xml_filename'):
                 tools.copy_file(cfg.chemtracer_xml_filename,
@@ -146,7 +143,7 @@ def main(starttime, hstart, hstop, cfg):
                                 output_log=True)
 
         # Copy data for global ICON-ART
-        if cfg.target is tools.Target.ICONARTGLOBAL:
+        if cfg.model == 'icon-art-global':
             if hasattr(cfg, 'boundcond_xml_filename'):
                 tools.copy_file(cfg.boundcond_xml_filename,
                                 cfg.boundcond_xml_filename_scratch,
@@ -338,39 +335,39 @@ def main(starttime, hstart, hstop, cfg):
                 os.symlink(cfg.restart_filename_scratch,
                            os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 
-        # Copy data for ICON-ART-OEM
-        if cfg.target is tools.Target.ICONARTOEM:
-            tools.copy_file(
-                os.path.join(cfg.oae_dir, cfg.oae_gridded_emissions_nc),
-                cfg.oae_gridded_emissions_nc_scratch)
-            tools.copy_file(
-                os.path.join(cfg.oae_dir, cfg.oae_vertical_profiles_nc),
-                cfg.oae_vertical_profiles_nc_scratch)
-            if hasattr(cfg, 'oae_hourofday_nc'):
+        else: # non-global ICON-ART
+            # Copy data for ICON-ART-OEM
+            if cfg.model == 'icon-art-oem':
                 tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_hourofday_nc),
-                    cfg.oae_hourofday_nc_scratch)
-            if hasattr(cfg, 'oae_dayofweek_nc'):
+                    os.path.join(cfg.oae_dir, cfg.oae_gridded_emissions_nc),
+                    cfg.oae_gridded_emissions_nc_scratch)
                 tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_dayofweek_nc),
-                    cfg.oae_dayofweek_nc_scratch)
-            if hasattr(cfg, 'oae_monthofyear_nc'):
-                tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_monthofyear_nc),
-                    cfg.oae_monthofyear_nc_scratch)
-            if hasattr(cfg, 'oae_hourofyear_nc'):
-                tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_hourofyear_nc),
-                    cfg.oae_hourofyear_nc_scratch)
-            if hasattr(cfg, 'oae_ens_reg_nc'):
-                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_ens_reg_nc),
-                                cfg.oae_ens_reg_nc_scratch)
-            if hasattr(cfg, 'oae_ens_lambda_nc'):
-                tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_ens_lambda_nc),
-                    cfg.oae_ens_lambda_nc_scratch)
+                    os.path.join(cfg.oae_dir, cfg.oae_vertical_profiles_nc),
+                    cfg.oae_vertical_profiles_nc_scratch)
+                if hasattr(cfg, 'oae_hourofday_nc'):
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_hourofday_nc),
+                        cfg.oae_hourofday_nc_scratch)
+                if hasattr(cfg, 'oae_dayofweek_nc'):
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_dayofweek_nc),
+                        cfg.oae_dayofweek_nc_scratch)
+                if hasattr(cfg, 'oae_monthofyear_nc'):
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_monthofyear_nc),
+                        cfg.oae_monthofyear_nc_scratch)
+                if hasattr(cfg, 'oae_hourofyear_nc'):
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_hourofyear_nc),
+                        cfg.oae_hourofyear_nc_scratch)
+                if hasattr(cfg, 'oae_ens_reg_nc'):
+                    tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_ens_reg_nc),
+                                    cfg.oae_ens_reg_nc_scratch)
+                if hasattr(cfg, 'oae_ens_lambda_nc'):
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_ens_lambda_nc),
+                        cfg.oae_ens_lambda_nc_scratch)
 
-        if cfg.target is not tools.Target.ICONARTGLOBAL:
             #-----------------------------------------------------
             # Get datafile lists for LBC (each at 00 UTC and others)
             #-----------------------------------------------------
@@ -378,10 +375,10 @@ def main(starttime, hstart, hstop, cfg):
             datafile_list_rest = []
             datafile_list_chem = []
             for time in tools.iter_hours(starttime, hstart, hstop,
-                                         cfg.meteo_inc):
+                                            cfg.meteo_inc):
                 meteo_file = os.path.join(cfg.icon_input_icbc,
-                                          time.strftime(cfg.meteo_nameformat))
-                if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM:
+                                            time.strftime(cfg.meteo_nameformat))
+                if cfg.model == 'icon-art' or cfg.model == 'icon-art-oem':
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
                         time.strftime(cfg.chem_nameformat))
@@ -400,7 +397,7 @@ def main(starttime, hstart, hstop, cfg):
             for runscript in cfg.icontools_runjobs:
                 logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
                 logfile_finish = os.path.join(cfg.log_finished_dir,
-                                              'prepare_data')
+                                                'prepare_data')
                 with open(os.path.join(cfg.case_dir, runscript)) as input_file:
                     to_write = input_file.read()
                 output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
@@ -426,7 +423,7 @@ def main(starttime, hstart, hstop, cfg):
             # Add GEOSP to all meteo files
             #-----------------------------------------------------
             for time in tools.iter_hours(starttime, hstart, hstop,
-                                         cfg.meteo_inc):
+                                            cfg.meteo_inc):
                 src_file = os.path.join(
                     cfg.icon_input_icbc,
                     time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
@@ -452,9 +449,9 @@ def main(starttime, hstart, hstop, cfg):
             #-----------------------------------------------------
             # In case of OEM: merge chem tracers with meteo-files
             #-----------------------------------------------------
-            if cfg.target is tools.Target.ICONARTOEM:
+            if cfg.model == 'icon-art-oem':
                 for time in tools.iter_hours(starttime, hstart, hstop,
-                                             cfg.meteo_inc):
+                                                cfg.meteo_inc):
                     if time == starttime:
                         #------------
                         # Merge IC:
@@ -477,7 +474,7 @@ def main(starttime, hstart, hstop, cfg):
                         ds_chem['PS'].attrs["long_name"] = 'surface pressure'
                         # merge:
                         ds_merged = xr.merge([ds_meteo, ds_chem],
-                                             compat="override")
+                                                compat="override")
                         #ds_merged.attrs = ds.attrs
                         ds_merged.to_netcdf(merged_file)
                         # Rename file to get original file name
@@ -507,7 +504,7 @@ def main(starttime, hstart, hstop, cfg):
                     ds_chem['TRCH4_chemtr'] = ds_chem['CH4_BG']
                     # merge:
                     ds_merged = xr.merge([ds_meteo, ds_chem],
-                                         compat="override")
+                                            compat="override")
                     #ds_merged.attrs = ds.attrs
                     ds_merged.to_netcdf(merged_file)
                     # Rename file to get original file name
@@ -609,7 +606,7 @@ def main(starttime, hstart, hstop, cfg):
 
         # Other IC/BC data
         inv_to_process = []
-        if cfg.target is tools.Target.COSMOGHG:
+        if cfg.model == 'cosmo-ghg':
             try:
                 CAMS = dict(fullname="CAMS",
                             nickname="cams",
@@ -630,7 +627,7 @@ def main(starttime, hstart, hstop, cfg):
                 inv_to_process.append(CT)
             except AttributeError:
                 pass
-        elif cfg.target is tools.Target.COSMOART:
+        elif cfg.model == 'cosmo-art':
             try:
                 MOZART = dict(fullname='MOZART',
                               nickname='mozart',
@@ -645,7 +642,7 @@ def main(starttime, hstart, hstop, cfg):
             except AttributeError:
                 pass
 
-        if cfg.target is tools.Target.COSMOGHG or cfg.target is tools.Target.COSMOART:
+        if cfg.model == 'cosmo-ghg' or cfg.model == 'cosmo-art':
             logging.info("Processing " +
                          ", ".join([i["fullname"]
                                     for i in inv_to_process]) + " data")

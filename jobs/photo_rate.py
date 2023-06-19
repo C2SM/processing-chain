@@ -27,7 +27,7 @@ def main(starttime, hstart, hstop, cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    tools.check_target(cfg, tools.Target.COSMOART)
+    tools.check_model(cfg, 'cosmo-art')
 
     logging.info("Copying photolysis-rate file from {} to {}".format(
         cfg.photo_rate_file,

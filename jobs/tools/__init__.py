@@ -18,7 +18,7 @@ from . import vprmsplit
 from . import write_int2lm_input_art
 #from . import write_cosmo_input_ghg
 from . import mozart2int2lm
-from .check_target import check_target
+from .check_model import check_model
 from . import comp_nc
 from . import helper
 

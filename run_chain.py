@@ -344,7 +344,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names, f
                 os.path.join(chain_root, 'icon', 'output_reduced'))
 
         for varname in cfg.input_files:
-            file_info = input_files[varname]
+            file_info = cfg.input_files[varname]
             setattr(
                 cfg, f'{varname}_scratch',
                 os.path.join(cfg.icon_input_base, file_info[1], file_info[0])
@@ -400,7 +400,6 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names, f
         mother_name = cfg.meteo_dir
         cfg.meteo_dir = os.path.join(work_root, mother_name, job_id, 'cosmo',
                                      'output')
-
         cfg.meteo_inc = 1
         cfg.meteo_prefix = 'lffd'
 

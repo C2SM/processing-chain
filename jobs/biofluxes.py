@@ -39,7 +39,7 @@ def main(starttime, hstart, hstop, cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    tools.check_target(cfg, tools.Target.COSMOGHG)
+    tools.check_model(cfg, 'cosmo-ghg')
 
     scratch_path = os.path.join(cfg.int2lm_input, 'vprm')
 
