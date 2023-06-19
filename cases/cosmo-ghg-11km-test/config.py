@@ -16,9 +16,9 @@ compute_host = 'daint'
 compute_queue = 'debug'  # 'normal'
 constraint = 'gpu'  # 'mc'
 
-target = 'cosmo-ghg'
+model = 'cosmo-ghg'
 restart_step = 12  # hours
-subtarget = 'spinup'
+variant = 'spinup'
 spinup = 6
 
 if constraint == 'gpu':

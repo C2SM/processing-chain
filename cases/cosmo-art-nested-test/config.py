@@ -14,7 +14,7 @@ compute_host = 'daint'
 compute_queue = 'normal'
 
 # Controls which flavor of cosmo is used to do the simulation.
-target = 'cosmo-art'
+model = 'cosmo-art'
 
 # case name = pathname in cases/
 path = os.path.realpath(__file__)

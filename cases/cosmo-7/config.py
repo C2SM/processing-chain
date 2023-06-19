@@ -12,9 +12,9 @@ not_config = list(locals().keys())
 
 print(sys.argv)
 
-target = 'cosmo'
+model = 'cosmo'
 restart_step = 24
-subtarget = 'spinup'
+variant = 'spinup'
 spinup = 0
 
 compute_host = 'daint'

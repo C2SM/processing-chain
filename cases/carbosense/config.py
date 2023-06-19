@@ -2,9 +2,9 @@ import os
 
 # GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
-target = 'cosmo-ghg'
+model = 'cosmo-ghg'
 restart_step = 24  # hours
-#subtarget = 'spinup'
+#variant = 'spinup'
 #spinup = 6
 
 compute_host = 'daint'

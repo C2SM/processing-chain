@@ -54,10 +54,8 @@ def parse_arguments():
                  "job for int2lm. "
                  "Jobs are executed in the order in which they are "
                  "given here. "
-                 "If no jobs are given, the default that will be "
-                 "executed is: COSMO: {} | COSMOART : {}".format(
-                     default_jobs[tools.Target.COSMO],
-                     default_jobs[tools.Target.COSMOART]))
+                 "If no jobs are given, default jobs will be executed"
+                 "as defined in config/models.yaml.")
     parser.add_argument("-j",
                         "--jobs",
                         nargs='*',
@@ -163,7 +161,7 @@ def check_model_variant(cfg):
     ----------
     cfg : config-object
     """
-    if hasattr(cfg, 'model')
+    if hasattr(cfg, 'model'):
         model_str = getattr(cfg, 'model')
     else:
         raise RuntimeError("Variable 'model' not set in config.")
@@ -244,7 +242,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     inidate_int2lm_yyyymmddhh = (start_time +
                                  timedelta(hours=hstart)).strftime('%Y%m%d%H')
 
-    if cfg.model.variant is tools.Submodel.SPINUP:
+    if cfg.model.variant is tools.variant.SPINUP:
         if cfg.first_one:  # first run in spinup
             chain_root_last_run = ''
         else:  # consecutive runs in spinup
@@ -416,7 +414,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                 setattr(cfg, 'in_tracers', len(reader))
 
         # tracer_start namelist paramter for spinup simulation
-        if cfg.model.variant is tools.Submodel.SPINUP:
+        if cfg.model.variant is tools.variant.SPINUP:
             if cfg.first_one:
                 setattr(cfg, 'tracer_start', 0)
             else:
@@ -444,7 +442,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
             setattr(cfg, 'lasync_io', '.TRUE.')
             setattr(cfg, 'num_iope_percomm', 1)
 
-    if cfg.model.variant is tools.Submodel.SPINUP:
+    if cfg.model.variant is tools.variant.SPINUP:
         setattr(cfg, 'last_cosmo_output',
                 os.path.join(chain_root_last_run, 'cosmo', 'output'))
         # No restart for spinup simulations (= default values for no restart)
@@ -726,7 +724,9 @@ if __name__ == '__main__':
         start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
         check_model_variant(cfg)
         if args.job_list is None:
-            args.job_list = default_jobs[cfg.model]
+            with open('config/models.yaml') as file:
+                model_config = yaml.safe_load(file)
+            args.job_list = model_config['models'][cfg.model]['variants']
 
         print("Starting chain for case {}, using {}".format(
             casename, cfg.model.name))
@@ -734,7 +734,7 @@ if __name__ == '__main__':
         if cfg.model is tools.Target.COSMO or cfg.model is tools.Target.ICON or \
            cfg.model is tools.Target.ICONART or cfg.model is tools.Target.ICONARTOEM or \
            cfg.model is tools.Target.COSMOGHG:
-            if cfg.model.variant is tools.Submodel.NONE:
+            if cfg.model.variant is tools.variant.NONE:
                 restart_runs(work_root=cfg.work_root,
                              cfg=cfg,
                              start=start_time,
@@ -742,7 +742,7 @@ if __name__ == '__main__':
                              hstop=args.hstop,
                              job_names=args.job_list,
                              force=args.force)
-            elif cfg.model.variant is tools.Submodel.SPINUP:
+            elif cfg.model.variant is tools.variant.SPINUP:
                 restart_runs_spinup(work_root=cfg.work_root,
                                     cfg=cfg,
                                     start=start_time,

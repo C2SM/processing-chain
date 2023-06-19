@@ -14,7 +14,7 @@ compute_host = 'daint'
 compute_queue = 'debug'  # 'normal' / 'debug'
 constraint = 'mc'  # 'mc' / 'gpu'
 
-target = 'icon-art-oem'
+model = 'icon-art-oem'
 restart_step = 24  # hours
 
 if constraint == 'gpu':

@@ -20,7 +20,7 @@ else:
     compute_account = os.popen("id -gn").read().splitlines()[0]
 
 # -- Model to run
-target = 'icon-art-global'
+model = 'icon-art-global'
 
 # -- Number of tasks per node
 ntasks_per_node = 36 if constraint == 'mc' else 12
