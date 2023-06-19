@@ -143,23 +143,23 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 (str(starttime), str(startfiletime)))
 
     # No restarts for COSMO-ART and for simulations with spinup
-    if cfg.target is not tools.Target.COSMOART and \
-       cfg.target.subtarget is not tools.Subtarget.SPINUP:
+    if 'restart' in model_cfg['models'][cfg.model]['features'] and \
+       cfg.variant != 'spinup':
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
     # Copy cosmo executable
-    execname = cfg.target.name.lower()
+    execname = cfg.model.lower()
     tools.copy_file(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, execname))
     setattr(cfg, "execname", execname)
 
     # Prepare namelist and submit job
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                   'cosmo_tracers.csv')
-    if cfg.target is tools.Target.COSMO:
+    if cfg.model == 'cosmo':
         namelist_names = ['ORG', 'IO', 'DYN', 'PHY', 'DIA', 'ASS', 'SAT']
-    elif cfg.target is tools.Target.COSMOGHG:
+    elif cfg.model == 'cosmo-ghg':
         namelist_names = ['AF', 'ORG', 'IO', 'DYN', 'GHG', 'PHY', 'DIA', 'ASS']
-    elif cfg.target is tools.Target.COSMOART:
+    elif cfg.model == 'cosmo-art':
         namelist_names = [
             'ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO', 'ORG', 'PHY'
         ]
@@ -174,7 +174,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
         output_file = os.path.join(cfg.cosmo_work, "INPUT_" + section)
         with open(output_file, "w") as outf:
-            if cfg.target.subtarget is tools.Subtarget.SPINUP:
+            if cfg.variant == 'spinup':
                 # no restarts
                 to_write = to_write.format(cfg=cfg,
                                            restart_start=12,
@@ -190,7 +190,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
     # Append INPUT_GHG namelist with tracer definitions from csv file
     if os.path.isfile(tracer_csvfile):
-        if cfg.target is tools.Target.COSMOGHG:
+        if cfg.model == 'cosmo-ghg':
             input_ghg_filename = os.path.join(cfg.cosmo_work, 'INPUT_GHG')
 
             write_cosmo_input_ghg.main(tracer_csvfile, input_ghg_filename, cfg)

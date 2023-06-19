@@ -90,7 +90,7 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
     logging.info("OK")
 
     # Meteo spinup simulation with tracer recycling
-    if cfg.target.subtarget is tools.Subtarget.SPINUP and \
+    if cfg.variant == 'spinup' and \
     hasattr(cfg, 'post_int2lm_species_spinup') and not cfg.first_one:
         var_list = cfg.post_int2lm_species_spinup
         logging.info(
