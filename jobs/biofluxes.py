@@ -20,7 +20,7 @@ import shutil
 from . import tools
 
 
-def main(starttime, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """Prepare the biofluxes-files for the simulation.
 
     Only necessary for **COSMO** simulations.
@@ -62,6 +62,6 @@ def main(starttime, hstart, hstop, cfg):
             tools.copy_file(filename, scratch_path)
 
             if not os.path.isfile(filename_sc):
-                loggig.error(
+                logging.error(
                     "Splitting or copying of GPP or/and RA files to scratch failed."
                 )

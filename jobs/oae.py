@@ -8,7 +8,7 @@ import logging
 from . import tools
 
 
-def main(starttime, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """Copy emission and profile files to the **cosmo** or **icon** input
     directory.
 
@@ -50,8 +50,7 @@ def main(starttime, hstart, hstop, cfg):
         raise RuntimeError("At least one of (hod/dow/moy) or (hoy) netcdfs "
                            " have to be given for online emissions")
 
-    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
-       cfg.target is tools.Target.ICONARTOEM:
+    if cfg.model.startswith('icon'):
         input_dir = cfg.icon_input
     else:
         input_dir = cfg.cosmo_input

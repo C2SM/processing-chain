@@ -37,7 +37,7 @@ from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 from calendar import monthrange
 
 
-def main(starttime, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """
     **ICON** (if ``cfg.model`` is ``tools.Target.ICON``)
 

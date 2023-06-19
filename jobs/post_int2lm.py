@@ -15,7 +15,7 @@ import netCDF4 as nc
 from . import tools
 
 
-def main(start_time, hstart, hstop, cfg):
+def main(start_time, hstart, hstop, cfg, model_cfg):
     """Combine multiple **int2lm** tracer-output files into a single one for
     **COSMO**.
 

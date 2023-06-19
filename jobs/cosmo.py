@@ -19,7 +19,7 @@ from . import tools
 from datetime import datetime, timedelta
 
 
-def main(starttime, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """Setup the namelists for a **COSMO** tracer run and submit the job to
     the queue
 
