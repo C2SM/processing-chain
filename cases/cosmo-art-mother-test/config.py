@@ -30,7 +30,7 @@ work_root = os.path.join(chain_src_dir, 'work')
 # INPUT ====================================================================== #
 
 # METEO ---------------------------------------------------------------------- #
-# meteo files (either path to intput dir or name of mother run)
+# meteo files (either path to input dir or name of mother run)
 meteo_dir = os.path.join(input_root, 'meteo')
 meteo_prefix = "eas"
 meteo_nameformat = meteo_prefix + '%Y%m%d%H'

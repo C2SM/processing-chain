@@ -30,8 +30,8 @@ work_root = os.path.join(chain_src_dir, 'work')
 # INPUT ====================================================================== #
 
 # METEO ---------------------------------------------------------------------- #
-# meteo files (either path to intput dir or name of mother run)
-meteo_dir = "example_cosmoart_mother"
+# meteo files (either path to input dir or name of mother run)
+meteo_dir = "cosmo-art-mother-test"
 meteo_prefix = "eas"
 meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 

@@ -125,11 +125,8 @@ int2lm_runjob = '%s/cases/%s/int2lm_runjob.cfg' % (chain_src_dir, casename)
 # Walltimes
 if compute_queue == "normal":
     int2lm_walltime = "01:00:00"
-elif compute_queue == "debug":
-    int2lm_walltime = "00:30:00"
 else:
-    logging.error("Unset queue name: %s" % compute_queue)
-    sys.exit(1)
+    int2lm_walltime = "00:30:00"
 
 # Domain decomposition
 int2lm_nodes = 2
@@ -160,13 +157,10 @@ if compute_queue == "normal":
     cosmo_walltime = "00:30:00"
     cosmo_np_x = 6
     cosmo_np_y = 4
-elif compute_queue == "debug":
+else:
     cosmo_walltime = "00:30:00"
     cosmo_np_x = 4
     cosmo_np_y = 3
-else:
-    logging.error("Unknown queue name: %s" % compute_queue)
-    sys.exit(1)
 
 # Total node count
 cosmo_np_io = 0
