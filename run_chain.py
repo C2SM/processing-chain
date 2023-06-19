@@ -180,7 +180,8 @@ def check_model_set_variant(model_cfg, cfg):
     return cfg
 
 
-def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names, force):
+def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
+              force):
     """Run chain ignoring already finished jobs.
 
     Sets configuration values derived from user-provided ones, for example the
@@ -270,13 +271,15 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names, f
     chain_root = os.path.join(work_root, cfg.casename, job_id)
     setattr(cfg, 'chain_root', chain_root)
 
-    if cfg.model.startswith('cosmo'): 
+    if cfg.model.startswith('cosmo'):
         # TODO: refactor
         # INT2LM
         setattr(cfg, 'int2lm_base', os.path.join(chain_root, 'int2lm'))
-        setattr(cfg, 'int2lm_input', os.path.join(chain_root, 'int2lm', 'input'))
+        setattr(cfg, 'int2lm_input', os.path.join(chain_root, 'int2lm',
+                                                  'input'))
         setattr(cfg, 'int2lm_work', os.path.join(chain_root, 'int2lm', 'run'))
-        setattr(cfg, 'int2lm_output', os.path.join(chain_root, 'int2lm', 'output'))
+        setattr(cfg, 'int2lm_output',
+                os.path.join(chain_root, 'int2lm', 'output'))
 
         # int2lm processing always starts at hstart=0 and we modify inidate instead
         setattr(cfg, 'inidate_int2lm_yyyymmddhh', inidate_int2lm_yyyymmddhh)
@@ -287,14 +290,15 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names, f
         setattr(cfg, 'cosmo_base', os.path.join(chain_root, 'cosmo'))
         setattr(cfg, 'cosmo_input', os.path.join(chain_root, 'cosmo', 'input'))
         setattr(cfg, 'cosmo_work', os.path.join(chain_root, 'cosmo', 'run'))
-        setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
+        setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo',
+                                                  'output'))
         setattr(cfg, 'cosmo_output_reduced',
                 os.path.join(chain_root, 'cosmo', 'output_reduced'))
 
         # Number of tracers
         if 'tracers' in model_cfg['models'][cfg.model]['features']:
-            tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
-                                          'cosmo_tracers.csv')
+            tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases',
+                                          cfg.casename, 'cosmo_tracers.csv')
             if os.path.isfile(tracer_csvfile):
                 with open(tracer_csvfile, 'r') as csv_file:
                     reader = csv.DictReader(csv_file, delimiter=',')
@@ -323,7 +327,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names, f
 
     # ICON
     # TODO: refactor
-    if cfg.model.startswith('icon'): 
+    if cfg.model.startswith('icon'):
         setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
         setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
         setattr(cfg, 'icon_input_icbc',
@@ -347,8 +351,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names, f
             file_info = input_files[varname]
             setattr(
                 cfg, f'{varname}_scratch',
-                os.path.join(cfg.icon_input_base, file_info[1], file_info[0])
-            )
+                os.path.join(cfg.icon_input_base, file_info[1], file_info[0]))
 
         ini_datetime_string = (
             start_time +
@@ -394,7 +397,8 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names, f
         setattr(cfg, 'restart_step', hstop - hstart)
 
     # if nested run: use output of mother-simulation
-    if model_cfg['models'][cfg.model]['jobs'] and not os.path.isdir(cfg.meteo_dir):
+    if model_cfg['models'][cfg.model]['jobs'] and not os.path.isdir(
+            cfg.meteo_dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
         mother_name = cfg.meteo_dir
@@ -490,7 +494,8 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names, f
                 raise RuntimeError(subject)
 
 
-def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names, force):
+def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
+                 force):
     """Starts the subchains in the specified intervals.
     
     Slices the total runtime of the chain according to ``cfg.restart_step``.
@@ -536,8 +541,8 @@ def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names, for
                   force=force)
 
 
-def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
-                        force):
+def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop,
+                        job_names, force):
     """Starts the subchains in the specified intervals.
     
     Slices the total runtime of the chain according to ``cfg.restart_step``.
