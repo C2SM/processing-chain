@@ -165,6 +165,11 @@ def check_model_set_variant(cfg):
         model_str = getattr(cfg, 'model')
     else:
         raise RuntimeError("Variable 'model' not set in config.")
+<<<<<<< HEAD
+=======
+
+    variant_str = getattr(cfg, 'variant', 'none')
+>>>>>>> 8ec9d98eb81052cef5ac3461cb389dd01394565e
 
     with open('config/models.yaml') as file:
         model_config = yaml.safe_load(file)
@@ -484,8 +489,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         setattr(cfg, 'lrestart', '.FALSE.')
 
     # if nested run: use output of mother-simulation
-    if cfg.model is tools.Target.COSMOART and not os.path.isdir(
-            cfg.meteo_dir):
+    if cfg.model is tools.Target.COSMOART and not os.path.isdir(cfg.meteo_dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
         mother_name = cfg.meteo_dir
