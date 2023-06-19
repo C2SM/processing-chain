@@ -65,7 +65,8 @@ input_files = {
     'radiation_grid_filename': ['VERIFY_DOM_DOM01.parent.nc', 'grid'],
     'dynamics_grid_filename': ['VERIFY_DOM_DOM01.nc', 'grid'],
     'map_file_latbc': ['map_file.latbc', 'grid'],
-    'extpar_filename': ['external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc', 'grid'],
+    'extpar_filename':
+    ['external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc', 'grid'],
     'cldopt_filename': ['rrtm_cldopt.nc', 'rad'],
     'lrtm_filename': ['rrtmg_lw.nc', 'rad'],
     'map_file_ana': ['map_file.ana', 'mapping'],
