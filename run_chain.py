@@ -165,11 +165,6 @@ def check_model_set_variant(cfg):
         model_str = getattr(cfg, 'model')
     else:
         raise RuntimeError("Variable 'model' not set in config.")
-<<<<<<< HEAD
-=======
-
-    variant_str = getattr(cfg, 'variant', 'none')
->>>>>>> 8ec9d98eb81052cef5ac3461cb389dd01394565e
 
     with open('config/models.yaml') as file:
         model_config = yaml.safe_load(file)
