@@ -353,8 +353,8 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         setattr(cfg, 'restart_step', hstop - hstart)
 
     # if nested run: use output of mother-simulation
-    if 'nesting' in model_cfg['models'][cfg.model]['features'] and not os.path.isdir(
-            cfg.meteo_dir):
+    if 'nesting' in model_cfg['models'][
+            cfg.model]['features'] and not os.path.isdir(cfg.meteo_dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
         mother_name = cfg.meteo_dir
@@ -387,9 +387,8 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
 
         for varname in cfg.input_files:
             file_info = cfg.input_files[varname]
-            setattr(
-                cfg, f'{varname}_scratch',
-                os.path.join(cfg.icon_input, file_info[1], file_info[0]))
+            setattr(cfg, f'{varname}_scratch',
+                    os.path.join(cfg.icon_input, file_info[1], file_info[0]))
 
         ini_datetime_string = (
             start_time +
