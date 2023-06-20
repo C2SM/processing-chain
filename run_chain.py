@@ -325,50 +325,6 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                 setattr(cfg, 'lasync_io', '.TRUE.')
                 setattr(cfg, 'num_iope_percomm', 1)
 
-    # ICON
-    # TODO: refactor
-    if cfg.model.startswith('icon'):
-        setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
-        setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
-        setattr(cfg, 'icon_input_icbc',
-                os.path.join(chain_root, 'icon', 'input', 'icbc'))
-        setattr(cfg, 'icon_input_oae',
-                os.path.join(chain_root, 'icon', 'input', 'oae'))
-        setattr(cfg, 'icon_input_grid',
-                os.path.join(chain_root, 'icon', 'input', 'grid'))
-        setattr(cfg, 'icon_input_mapping',
-                os.path.join(chain_root, 'icon', 'input', 'mapping'))
-        setattr(cfg, 'icon_input_rad',
-                os.path.join(chain_root, 'icon', 'input', 'rad'))
-        setattr(cfg, 'icon_input_xml',
-                os.path.join(chain_root, 'icon', 'input', 'xml'))
-        setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
-        setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
-        setattr(cfg, 'icon_output_reduced',
-                os.path.join(chain_root, 'icon', 'output_reduced'))
-
-        for varname in cfg.input_files:
-            file_info = cfg.input_files[varname]
-            setattr(
-                cfg, f'{varname}_scratch',
-                os.path.join(cfg.icon_input_base, file_info[1], file_info[0]))
-
-        ini_datetime_string = (
-            start_time +
-            timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
-        end_datetime_string = (
-            start_time + timedelta(hours=hstart) +
-            timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
-        setattr(cfg, 'ini_datetime_string', ini_datetime_string)
-        setattr(cfg, 'end_datetime_string', end_datetime_string)
-        # Set restart directories
-        setattr(cfg, 'icon_restart_out',
-                os.path.join(chain_root, 'icon', 'restart'))
-        setattr(cfg, 'icon_restart_in',
-                os.path.join(chain_root_last_run, 'icon', 'restart'))
-        # TODO: Set correct restart setting
-        setattr(cfg, 'lrestart', '.FALSE.')
-
     # constraint (gpu or mc)
     if hasattr(cfg, 'constraint'):
         assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
@@ -397,7 +353,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         setattr(cfg, 'restart_step', hstop - hstart)
 
     # if nested run: use output of mother-simulation
-    if model_cfg['models'][cfg.model]['jobs'] and not os.path.isdir(
+    if 'nesting' in model_cfg['models'][cfg.model]['features'] and not os.path.isdir(
             cfg.meteo_dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
@@ -406,6 +362,50 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                                      'output')
         cfg.meteo_inc = 1
         cfg.meteo_prefix = 'lffd'
+
+    # ICON
+    # TODO: refactor
+    if cfg.model.startswith('icon'):
+        setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
+        setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
+        setattr(cfg, 'icon_input_icbc',
+                os.path.join(chain_root, 'icon', 'input', 'icbc'))
+        setattr(cfg, 'icon_input_oae',
+                os.path.join(chain_root, 'icon', 'input', 'oae'))
+        setattr(cfg, 'icon_input_grid',
+                os.path.join(chain_root, 'icon', 'input', 'grid'))
+        setattr(cfg, 'icon_input_mapping',
+                os.path.join(chain_root, 'icon', 'input', 'mapping'))
+        setattr(cfg, 'icon_input_rad',
+                os.path.join(chain_root, 'icon', 'input', 'rad'))
+        setattr(cfg, 'icon_input_xml',
+                os.path.join(chain_root, 'icon', 'input', 'xml'))
+        setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
+        setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
+        setattr(cfg, 'icon_output_reduced',
+                os.path.join(chain_root, 'icon', 'output_reduced'))
+
+        for varname in cfg.input_files:
+            file_info = cfg.input_files[varname]
+            setattr(
+                cfg, f'{varname}_scratch',
+                os.path.join(cfg.icon_input, file_info[1], file_info[0]))
+
+        ini_datetime_string = (
+            start_time +
+            timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
+        end_datetime_string = (
+            start_time + timedelta(hours=hstart) +
+            timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
+        setattr(cfg, 'ini_datetime_string', ini_datetime_string)
+        setattr(cfg, 'end_datetime_string', end_datetime_string)
+        # Set restart directories
+        setattr(cfg, 'icon_restart_out',
+                os.path.join(chain_root, 'icon', 'restart'))
+        setattr(cfg, 'icon_restart_in',
+                os.path.join(chain_root_last_run, 'icon', 'restart'))
+        # TODO: Set correct restart setting
+        setattr(cfg, 'lrestart', '.FALSE.')
 
     # logging
     log_working_dir = os.path.join(chain_root, 'checkpoints', 'working')
@@ -532,6 +532,7 @@ def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
         print("Starting run with starttime {}".format(time))
 
         run_chain(work_root=work_root,
+                  model_cfg=model_cfg,
                   cfg=cfg,
                   start_time=start,
                   hstart=sub_hstart,
