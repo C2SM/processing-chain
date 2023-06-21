@@ -65,6 +65,7 @@ input_files = {
     'radiation_grid_filename': ['VERIFY_DOM_DOM01.parent.nc', 'grid'],
     'dynamics_grid_filename': ['VERIFY_DOM_DOM01.nc', 'grid'],
     'map_file_latbc': ['map_file.latbc', 'grid'],
+    'lateral_boundary_grid': ['lateral_boundary.grid.nc', 'grid'],
     'extpar_filename':
     ['external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc', 'grid'],
     'cldopt_filename': ['rrtm_cldopt.nc', 'rad'],
@@ -77,6 +78,8 @@ inidata_filename = "ifs_init_2018010100.nc"
 
 output_filename = "NWP_LAM"
 filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
+
+lateral_boundary_grid_order = 'lateral_boundary'
 
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
