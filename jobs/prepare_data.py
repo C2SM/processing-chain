@@ -85,10 +85,6 @@ def main(starttime, hstart, hstop, cfg):
         logging.info('ICON input data (IC/BC)')
 
         starttime_real = starttime + timedelta(hours=hstart)
-        time = starttime + timedelta(hours=hstart)
-        year = time.year
-        month = time.month
-        day = time.day
 
         #-----------------------------------------------------
         # Create directories
@@ -174,7 +170,7 @@ def main(starttime, hstart, hstop, cfg):
             # -- If not, download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
                 # -- Fetch ERA5 data
-                fetch_era5(starttime + timedelta(hours=hstart),
+                fetch_era5(starttime_real,
                            cfg.icon_input_icbc)
 
                 # -- Copy ERA5 processing script (icon_era5_inicond.job) in workdir
@@ -217,14 +213,13 @@ def main(starttime, hstart, hstop, cfg):
                     output_file = os.path.join(cfg.icon_input_icbc,
                                                'icon_species_inicond.sh')
                     with open(output_file, "w") as outf:
-                        time = starttime + timedelta(hours=hstart)
                         outf.write(
                             to_write.format(cfg=cfg,
                                             filename=filename,
                                             ext_restart=ext_restart,
-                                            year=year,
-                                            month=month,
-                                            day=day))
+                                            year=starttime_real.year,
+                                            month=starttime_real.month,
+                                            day=starttime_real.day))
 
                     # -- Run ERA5 processing script
                     process = subprocess.Popen([
@@ -237,7 +232,7 @@ def main(starttime, hstart, hstop, cfg):
 
                     # -- Create initial conditions for OH concentrations
                     if 'TROH' in cfg.species2restart:
-                        create_oh_for_inicond(cfg, month)
+                        create_oh_for_inicond(cfg, starttime_real.month)
 
                 else:
 
@@ -253,7 +248,7 @@ def main(starttime, hstart, hstop, cfg):
 
                     # -- Change OH concentrations in the restart file
                     if 'TROH' in cfg.species2restart:
-                        create_oh_for_restart(cfg, month, ext_restart)
+                        create_oh_for_restart(cfg, starttime_real.month, ext_restart)
 
             # -----------------------------------------------------
             # Create meteorological and tracer nudging conditions
