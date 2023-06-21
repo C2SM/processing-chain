@@ -87,8 +87,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     exitcode = result.returncode
 
     # In case of ICON-ART, ignore the "invalid pointer" error on successful run
-    if cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONART or \
-        cfg.target is tools.Target.ICONARTGLOBAL:
+    if cfg.model.startswith('icon-art'):
         if tools.grep("free(): invalid pointer", logfile)['success'] and \
            tools.grep("clean-up finished", logfile)['success']:
             exitcode = 0
