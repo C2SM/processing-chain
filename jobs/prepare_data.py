@@ -105,11 +105,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         #-----------------------------------------------------
         for varname in cfg.input_files:
             file_info = cfg.input_files[varname]
-            tools.copy_file(cfg[varname]
-                            cfg[varname+'_scratch']
+            varname_scratch = varname + '_scratch'
+            tools.copy_file(getattr(cfg, varname),
+                            getattr(cfg, varname_scratch),
                             output_log=True)
 
-            # -- If not, download ERA5 data and create the inicond file
+        if cfg.model == 'icon-art-global':
+            # -- Download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
                 # -- Fetch ERA5 data
                 fetch_era5(starttime + timedelta(hours=hstart),

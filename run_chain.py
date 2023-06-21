@@ -387,6 +387,8 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
 
         for varname in cfg.input_files:
             file_info = cfg.input_files[varname]
+            setattr(cfg, varname,
+                    os.path.join(cfg.input_root, file_info[1], file_info[0]))
             setattr(cfg, f'{varname}_scratch',
                     os.path.join(cfg.icon_input, file_info[1], file_info[0]))
 
