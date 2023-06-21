@@ -170,8 +170,7 @@ def main(starttime, hstart, hstop, cfg):
             # -- If not, download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
                 # -- Fetch ERA5 data
-                fetch_era5(starttime_real,
-                           cfg.icon_input_icbc)
+                fetch_era5(starttime_real, cfg.icon_input_icbc)
 
                 # -- Copy ERA5 processing script (icon_era5_inicond.job) in workdir
                 with open(cfg.icon_era5_inijob) as input_file:
@@ -248,7 +247,8 @@ def main(starttime, hstart, hstop, cfg):
 
                     # -- Change OH concentrations in the restart file
                     if 'TROH' in cfg.species2restart:
-                        create_oh_for_restart(cfg, starttime_real.month, ext_restart)
+                        create_oh_for_restart(cfg, starttime_real.month,
+                                              ext_restart)
 
             # -----------------------------------------------------
             # Create meteorological and tracer nudging conditions
