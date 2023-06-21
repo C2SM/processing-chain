@@ -113,9 +113,6 @@ if compute_queue == "normal":
 elif compute_queue == "debug":
     icon_walltime = "00:30:00"
     icon_np_tot = 10
-else:
-    logging.error("Unknown queue name: %s" % compute_queue)
-    sys.exit(1)
 
 # POST-PROCESSING ============================================================
 # REDUCE_OUTPUT --------------------------------------------------------------

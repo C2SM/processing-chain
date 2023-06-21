@@ -1,6 +1,4 @@
 import os
-import logging
-import sys
 """
 Configuration file for the 'icon-art-global' case with ICON-ART
 """
@@ -84,10 +82,6 @@ if compute_queue == "normal":
 elif compute_queue == "debug":
     icon_walltime = "00:30:00"
     icon_np_tot = 2
-
-else:
-    logging.error("Unknown queue name: %s" % compute_queue)
-    sys.exit(1)
 
 # -----------------------------------------------------------
 # -- INPUT DATA
