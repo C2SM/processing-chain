@@ -75,7 +75,6 @@ input_files = {
     'map_file_ana': ['map_file.ana', 'mapping'],
 }
 
-
 # File names -----------------------------------------------------------------
 latbc_filename = "ifs_<y><m><d><h>_lbc.nc"
 inidata_prefix = "ifs_init_"
