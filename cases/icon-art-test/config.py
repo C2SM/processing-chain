@@ -11,8 +11,8 @@ if os.path.exists(os.environ['HOME'] + '/.acct'):
 else:
     compute_account = os.popen("id -gn").read().splitlines()[0]
 compute_host = 'daint'
-compute_queue = 'debug'  # 'normal' / 'debug'
-constraint = 'mc'  # 'mc' / 'gpu'
+compute_queue = 'normal'  # 'normal' / 'debug'
+constraint = 'gpu'  # 'mc' / 'gpu'
 
 model = 'icon-art'
 restart_step = 24  # hours
