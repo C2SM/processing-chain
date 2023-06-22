@@ -64,12 +64,12 @@ input_root_rad = os.path.join(input_root, 'rad')
 input_root_mapping = os.path.join(input_root, 'mapping')
 
 input_files = {
-    'radiation_grid_filename': ['testcase_DOM01.parent.nc', 'grids'],
-    'dynamics_grid_filename': ['testcase_DOM01.nc', 'grids'],
-    'map_file_latbc': ['map_file.latbc', 'grids'],
-    'lateral_boundary_grid': ['lateral_boundary.grid.nc', 'grids'],
+    'radiation_grid_filename': ['testcase_DOM01.parent.nc', 'grid'],
+    'dynamics_grid_filename': ['testcase_DOM01.nc', 'grid'],
+    'map_file_latbc': ['map_file.latbc', 'grid'],
+    'lateral_boundary_grid': ['lateral_boundary.grid.nc', 'grid'],
     'extpar_filename':
-    ['external_parameter_icon_testcase_DOM01_tiles.nc', 'grids'],
+    ['external_parameter_icon_testcase_DOM01_tiles.nc', 'grid'],
     'cldopt_filename': ['rrtm_cldopt.nc', 'rad'],
     'lrtm_filename': ['rrtmg_lw.nc', 'rad'],
     'map_file_ana': ['map_file.ana', 'mapping'],
