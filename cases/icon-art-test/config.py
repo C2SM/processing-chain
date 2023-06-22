@@ -32,16 +32,14 @@ chain_src_dir = os.getcwd()
 # Root directory of the working space of the chain
 work_root = os.path.join(chain_src_dir, 'work')
 
-# Directory where executables are stored
-exe_dir = "/store/empa/em05/executables"
-
 # Case directory
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
 # PREPARE_DATA ---------------------------------------------------------------
-input_root = '/store/empa/em05/input_iconart_processing_chain_example/'
-
-input_root_meteo = '/store/empa/em05/input_iconart_processing_chain_example/meteo'
+input_root = os.path.join(chain_src_dir, 'input', 'icon-art')
+input_root_icbc = os.path.join(input_root, 'icbc')
+# meteo
+input_root_meteo = os.path.join(chain_src_dir, 'input', 'meteo')
 meteo_prefix = 'ifs_'
 meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
@@ -58,27 +56,25 @@ icontools_runjobs = [
     'icontools_remap_lbc_rest_runjob.cfg',
 ]
 
-# Icontools executables
-#icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
-icontools_dir = '/scratch/snx3000/msteiner/spack-stages/daint/spack-stage-icontools-master-t524rnfa5sfyn4rbvarypyzwae4jg46d/spack-src/icontools'
-iconremap_bin = os.path.join(icontools_dir, "iconremap")
-iconsub_bin = os.path.join(icontools_dir, "iconsub")
-
 # Input data for runscript----------------------------------------------------
 # Grid
-input_root_grid = os.path.join(input_root, 'grids')
-radiation_grid_filename = os.path.join(input_root_grid,
-                                       "testcase_DOM01.parent.nc")
-dynamics_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.nc")
-map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
-extpar_filename = os.path.join(
-    input_root_grid, "external_parameter_icon_testcase_DOM01_tiles.nc")
-input_root_rad = os.path.join(input_root, 'rad')
-cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
-lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
 
+input_root_grid = os.path.join(input_root, 'grid')
+input_root_rad = os.path.join(input_root, 'rad')
 input_root_mapping = os.path.join(input_root, 'mapping')
-map_file_ana = os.path.join(input_root_mapping, "map_file.ana")
+
+input_files = {
+    'radiation_grid_filename': ['testcase_DOM01.parent.nc', 'grids'],
+    'dynamics_grid_filename': ['testcase_DOM01.nc', 'grids'],
+    'map_file_latbc': ['map_file.latbc', 'grids'],
+    'lateral_boundary_grid': ['lateral_boundary.grid.nc', 'grids'],
+    'extpar_filename':
+    ['external_parameter_icon_testcase_DOM01_tiles.nc', 'grids'],
+    'cldopt_filename': ['rrtm_cldopt.nc', 'rad'],
+    'lrtm_filename': ['rrtmg_lw.nc', 'rad'],
+    'map_file_ana': ['map_file.ana', 'mapping'],
+}
+
 
 # File names -----------------------------------------------------------------
 latbc_filename = "ifs_<y><m><d><h>_lbc.nc"
@@ -88,6 +84,8 @@ inidata_filename_suffix = ".nc"
 
 output_filename = "icon-art-test"
 filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
+
+lateral_boundary_grid_order = 'lateral_boundary'
 
 # ART settings----------------------------------------------------------------
 input_root_tracers = os.path.join(input_root, 'XML')
@@ -99,12 +97,17 @@ art_input_folder = os.path.join(input_root, 'ART')
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin = os.path.join(exe_dir, "icon-kit-art_20211018")
+icon_bin = os.path.join(chain_src_dir, 'src', 'icon-art', 'bin', 'icon')
+
+# eccodes
+eccodes_dir = os.path.join(chain_src_dir, 'input', 'eccodes_definitions')
+
+# Icontools executables
+iconremap_bin = 'iconremap'
+iconsub_bin = 'iconsub'
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
-icon_namelist_master = os.path.join(case_dir, 'icon_master.namelist.cfg')
-icon_namelist_nwp = os.path.join(case_dir, 'icon_NAMELIST_NWP.cfg')
 
 # Walltimes and domain decomposition
 if compute_queue == "normal":
