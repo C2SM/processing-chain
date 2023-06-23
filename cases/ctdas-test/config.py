@@ -13,8 +13,8 @@ constraint = 'mc'  # 'mc' / 'gpu'
 Init_from_ICON = False
 
 target = 'icon-art-oem'
-restart_step = 2*8760  # hours
-restart_cycle_window = 60*60*24*10 #10 days in sec
+restart_step = 2 * 8760  # hours
+restart_cycle_window = 60 * 60 * 24 * 10  #10 days in sec
 
 if constraint == 'gpu':
     ntasks_per_node = 12
@@ -83,12 +83,14 @@ input_root = '/store/empa/em05/input_iconart_processing_chain_example/'
 input_root_grid_icon = '/users/ekoene/CTDAS_inputs/'
 radiation_grid_filename = os.path.join(input_root_grid_icon,
                                        "icon_europe_DOM01.parent.nc")
-dynamics_grid_filename = os.path.join(input_root_grid_icon, "icon_europe_DOM01.nc")
+dynamics_grid_filename = os.path.join(input_root_grid_icon,
+                                      "icon_europe_DOM01.nc")
 
 input_root_mapping = '/users/ekoene/CTDAS_inputs'
 map_file_ana = os.path.join(input_root_mapping, "map_file.ana")
 map_file_latbc = os.path.join(input_root_mapping, "map_file.latbc")
-extpar_filename = os.path.join(input_root_grid_icon, "icon_extpar_EriksGrid.nc")
+extpar_filename = os.path.join(input_root_grid_icon,
+                               "icon_extpar_EriksGrid.nc")
 input_root_rad = os.path.join(input_root, 'rad')
 cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
 lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
@@ -114,9 +116,8 @@ pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc_example.xml')
 # pntSrc_xml_filename = os.path.join(input_root_tracers, 'vprm_ensemble_co2_icos_cities_full_restart.xml')
 art_input_folder = '/scratch/snx3000/nponomar/ICON_ctdas_msteiner/ART'
 # THESE TWO MUST BE AVAILABLE ON SCRATCH!
-vprm_regions_synth_nc = '/scratch/snx3000/ekoene/lambdaregions.nc' 
+vprm_regions_synth_nc = '/scratch/snx3000/ekoene/lambdaregions.nc'
 vprm_lambdas_synth_nc = '/scratch/snx3000/ekoene/prior_all_ones.nc'
-
 
 # OAE ------------------------------------------------------------------------
 # Online anthropogenic emissions
@@ -137,7 +138,7 @@ vprm_coeffs_nc = 'VPRM_indices_ICON.nc'
 ctdas_restart = False
 ctdas_BG_run = False
 # CTDAS cycle length in days
-ctdas_cycle = int(restart_cycle_window/60/60/24)
+ctdas_cycle = int(restart_cycle_window / 60 / 60 / 24)
 ctdas_nlag = 2
 ctdas_tracer = 'co2'
 # CTDAS number of regions and cells->regions file
@@ -159,7 +160,7 @@ ctdas_datadir = '/scratch/snx3000/ekoene/ICOS_extracted/2018/'
 # CTDAS localization setting
 ctdas_system_localization = 'spatial'
 # CTDAS statevector length for one window
-ctdas_nparameters = 2*ctdas_nreg_params+8 # 2 (A , VPRM) * ctdas_nreg_params + ctdas_bg_params
+ctdas_nparameters = 2 * ctdas_nreg_params + 8  # 2 (A , VPRM) * ctdas_nreg_params + ctdas_bg_params
 # Extraction template
 ctdas_extract_template = '/scratch/snx3000/ekoene/processing-chain/cases/VPRM_EU_ERA5_22/extract_template_icos_EU'
 # ICON runscript template
@@ -168,9 +169,9 @@ ctdas_ICON_template = '/scratch/snx3000/ekoene/processing-chain/cases/VPRM_EU_ER
 ctdas_sbatch_extract_template = '/scratch/snx3000/ekoene/processing-chain/cases/VPRM_EU_ERA5_22/sbatch_extract_template'
 # Full path to possibly time-varying emissionsgrid (if not time-varying, supply a filename without {}!)
 ctdas_oae_grid = "/scratch/snx3000/ekoene/inventories/INV_{}.nc"
-ctdas_oae_grid_fname = '%Y%m%d' # Specifies the naming scheme to use for the emission grids
+ctdas_oae_grid_fname = '%Y%m%d'  # Specifies the naming scheme to use for the emission grids
 # Spinup time length
-ctdas_restart_init_time = 60*60*24 # 1 day in seconds
+ctdas_restart_init_time = 60 * 60 * 24  # 1 day in seconds
 # Restart file for the first simulation
 ctdas_first_restart_init = '/scratch/snx3000/ekoene/processing-chain/work/VPRM_EU_ERA5_22/2018010100_0_240/icon/output_INIT'
 # Number of vertical levels
@@ -179,7 +180,6 @@ nvlev = 60
 ctdas_obsoperator_home = '/scratch/snx3000/msteiner/ctdas_test/exec/da/rc/stilt'
 ctdas_obsoperator_rc = os.path.join(ctdas_obsoperator_home, 'stilt_0.rc')
 ctdas_regtype = 'olson19_oif30'
-
 
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------

@@ -6,7 +6,6 @@ Created on Mon Nov 29 19:38:13 2021
 @author: stem
 """
 
-
 #%%
 """Import"""
 from shapely.geometry import Point, Polygon
@@ -23,42 +22,42 @@ from unidecode import unidecode
 
 #%%
 
-mountain_stations = ['Jungfraujoch_5',
-                        'Monte Cimone_8',
-                        'Puy de Dome_10', 
-                        'Pic du Midi_28',
-                        'Zugspitze_3',
-                        'Hohenpeissenberg_50',
-                        'Hohenpeissenberg_93',
-                        'Hohenpeissenberg_131',
-                        'Schauinsland_12',
-                        'Plateau Rosa_10',
-                        'Laegern-Hochwacht_32'] 
-
+mountain_stations = [
+    'Jungfraujoch_5', 'Monte Cimone_8', 'Puy de Dome_10', 'Pic du Midi_28',
+    'Zugspitze_3', 'Hohenpeissenberg_50', 'Hohenpeissenberg_93',
+    'Hohenpeissenberg_131', 'Schauinsland_12', 'Plateau Rosa_10',
+    'Laegern-Hochwacht_32'
+]
 """Interpolation function"""
-    
+
+
 # def intp_icon_data(args):
-def intp_icon_data(iloc, gridinfo, datainfo, latitudes, longitudes, asl, elev, station_name):
+def intp_icon_data(iloc, gridinfo, datainfo, latitudes, longitudes, asl, elev,
+                   station_name):
 
     nn_sel = np.zeros(gridinfo.nn)
-    u=np.zeros(gridinfo.nn)
-    
-    R = 6373.0 # approximate radius of earth in km
-    
-    
-    if (radians(longitudes[iloc])<np.nanmin(gridinfo.clon)) or (radians(longitudes[iloc])>np.nanmax(gridinfo.clon)):
+    u = np.zeros(gridinfo.nn)
+
+    R = 6373.0  # approximate radius of earth in km
+
+    if (radians(longitudes[iloc]) < np.nanmin(gridinfo.clon)) or (radians(
+            longitudes[iloc]) > np.nanmax(gridinfo.clon)):
         u[:] = np.nan
-        return np.zeros((gridinfo.nn)), np.zeros((gridinfo.nn)).astype(int), np.zeros((gridinfo.nn)).astype(int), nn_sel[:], u[:]
-    
-    
-    if (radians(latitudes[iloc])<np.nanmin(gridinfo.clat)) or (radians(latitudes[iloc])>np.nanmax(gridinfo.clat)):
+        return np.zeros((gridinfo.nn)), np.zeros(
+            (gridinfo.nn)).astype(int), np.zeros(
+                (gridinfo.nn)).astype(int), nn_sel[:], u[:]
+
+    if (radians(latitudes[iloc]) < np.nanmin(gridinfo.clat)) or (radians(
+            latitudes[iloc]) > np.nanmax(gridinfo.clat)):
         u[:] = np.nan
-        return np.zeros((gridinfo.nn)), np.zeros((gridinfo.nn)).astype(int), np.zeros((gridinfo.nn)).astype(int), nn_sel[:], u[:]
+        return np.zeros((gridinfo.nn)), np.zeros(
+            (gridinfo.nn)).astype(int), np.zeros(
+                (gridinfo.nn)).astype(int), nn_sel[:], u[:]
 
     #%
     lat1 = radians(latitudes[iloc])
     lon1 = radians(longitudes[iloc])
-    
+
     #%
     """FIND 4 CLOSEST CENTERS"""
     distances = np.zeros((len(gridinfo.clon)))
@@ -70,21 +69,23 @@ def intp_icon_data(iloc, gridinfo, datainfo, latitudes, longitudes, asl, elev, s
         a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
         c = 2 * atan2(sqrt(a), sqrt(1 - a))
         distances[icell] = R * c
-    nn_sel[:] = [x for _, x in sorted(zip(distances,np.arange(len(gridinfo.clon))))][0:gridinfo.nn]
-    nn_sel=nn_sel.astype(int)
+    nn_sel[:] = [
+        x for _, x in sorted(zip(distances, np.arange(len(gridinfo.clon))))
+    ][0:gridinfo.nn]
+    nn_sel = nn_sel.astype(int)
     #print('---nn_sel:',nn_sel)
     #print('---distances[0:gridinfo.nn]:',distances[0:gridinfo.nn])
-    u[:] = [1./distances[y] for y in nn_sel]
-    print('---distances:',[distances[y] for y in nn_sel])
-    print('---weights:',u)
-    
+    u[:] = [1. / distances[y] for y in nn_sel]
+    print('---distances:', [distances[y] for y in nn_sel])
+    print('---weights:', u)
+
     #%
     """Calculate vertical interpolation factor"""
-    idx_above = -1*np.ones((len(nn_sel))).astype(int)
-    idx_below = -1*np.ones((len(nn_sel))).astype(int)
+    idx_above = -1 * np.ones((len(nn_sel))).astype(int)
+    idx_below = -1 * np.ones((len(nn_sel))).astype(int)
     target_asl = np.zeros((len(nn_sel)))
     for nnidx in np.arange(len(nn_sel)):
-        model_topo = datainfo.z_ifc[-1,nn_sel[nnidx]]
+        model_topo = datainfo.z_ifc[-1, nn_sel[nnidx]]
         print(station_name[iloc])
         if station_name[iloc] not in mountain_stations:
             print('not a mountain station')
@@ -92,42 +93,46 @@ def intp_icon_data(iloc, gridinfo, datainfo, latitudes, longitudes, asl, elev, s
         else:
             print('mountain station')
             target_asl[nnidx] = asl[iloc] + elev[iloc]
-        for i_mc,mc in enumerate(datainfo.z_mc[:,nn_sel[nnidx]]):
+        for i_mc, mc in enumerate(datainfo.z_mc[:, nn_sel[nnidx]]):
             # if mc>=asl[iloc]:
-            if mc>=target_asl[nnidx]:
+            if mc >= target_asl[nnidx]:
                 idx_above[nnidx] = i_mc
             else:
                 idx_below[nnidx] = i_mc
                 break
-    
-    
+
     #in case of data point below lowest midlevel:
     for nnidx in np.arange(len(nn_sel)):
-        if idx_below[nnidx]==-1:
+        if idx_below[nnidx] == -1:
             idx_below[nnidx] = idx_above[nnidx]
-    if any(np.ravel([idx_above,idx_below])<0):
+    if any(np.ravel([idx_above, idx_below]) < 0):
         print("At least one nearest neigbor has no valid height levels")
-        u[:] = np.nan #-999.
-        return np.zeros((gridinfo.nn)), np.zeros((gridinfo.nn)).astype(int), np.zeros((gridinfo.nn)).astype(int), nn_sel[:], u
-    
+        u[:] = np.nan  #-999.
+        return np.zeros((gridinfo.nn)), np.zeros(
+            (gridinfo.nn)).astype(int), np.zeros(
+                (gridinfo.nn)).astype(int), nn_sel[:], u
+
     vert_scaling_fact = np.zeros((len(nn_sel)))
     for nnidx in np.arange(len(nn_sel)):
         if idx_below[nnidx] != idx_above[nnidx]:
-            vert_scaling_fact[nnidx] = (target_asl[nnidx]-datainfo.z_mc[idx_below[nnidx],nn_sel[nnidx]])/(datainfo.z_mc[idx_above[nnidx],nn_sel[nnidx]]-datainfo.z_mc[idx_below[nnidx],nn_sel[nnidx]])
+            vert_scaling_fact[nnidx] = (
+                target_asl[nnidx] -
+                datainfo.z_mc[idx_below[nnidx], nn_sel[nnidx]]) / (
+                    datainfo.z_mc[idx_above[nnidx], nn_sel[nnidx]] -
+                    datainfo.z_mc[idx_below[nnidx], nn_sel[nnidx]])
         else:
             vert_scaling_fact[nnidx] = 0.
-                                                                                              
-    print('---idx above:',idx_above)
-    print('---idx below:',idx_below)
-    print('---vert_scaling_fact:',vert_scaling_fact)
-    
+
+    print('---idx above:', idx_above)
+    print('---idx below:', idx_below)
+    print('---vert_scaling_fact:', vert_scaling_fact)
+
     #%
 
     return vert_scaling_fact, idx_below, idx_above, nn_sel[:], u
 
 
 #%%
-    
 """Paths, Variables and Constants"""
 
 ICON_grid = '{cfg.dynamics_grid_filename}'
@@ -136,34 +141,57 @@ DATA_path = '{icon_path}'
 starttime = '{start}'
 enddtime = '{end}'
 obs_dir = '{stationdir}'
-nlev = {cfg.nvlev} #number of vertical levels
-nneighb = {nneighb} #number of nearest neighbors to consider
+nlev = {cfg.nvlev}  #number of vertical levels
+nneighb = {nneighb}  #number of nearest neighbors to consider
 
 #%%
-
 """Variables to extract"""
 
 n_member = {cfg.ctdas_optimizer_nmembers}
 
-meta = {{ 
-        'TRCO2_A': {{'offset': 0.}},
-        'TRCO2_BG': {{'offset': 0.}},
-        'CO2_RA': {{'offset': 0.}},
-        'CO2_GPP': {{'offset': 0.}},
-        'u': {{'offset': 0.}},
-        'v': {{'offset': 0.}},
-        'qv': {{'offset': 0.}},
-        'temp': {{'offset': 0.}},
-        'biosink_chemtr': {{'offset': 0.}},
-        'biosource_all_chemtr': {{'offset': 0.}},
-        'TRCO2_A-ENS': {{'offset': 0, 'ensemble': n_member}},
-        }}
+meta = {{
+    'TRCO2_A': {{
+        'offset': 0.
+    }},
+    'TRCO2_BG': {{
+        'offset': 0.
+    }},
+    'CO2_RA': {{
+        'offset': 0.
+    }},
+    'CO2_GPP': {{
+        'offset': 0.
+    }},
+    'u': {{
+        'offset': 0.
+    }},
+    'v': {{
+        'offset': 0.
+    }},
+    'qv': {{
+        'offset': 0.
+    }},
+    'temp': {{
+        'offset': 0.
+    }},
+    'biosink_chemtr': {{
+        'offset': 0.
+    }},
+    'biosource_all_chemtr': {{
+        'offset': 0.
+    }},
+    'TRCO2_A-ENS': {{
+        'offset': 0,
+        'ensemble': n_member
+    }},
+}}
 
 #%%
-
 """Get grid data"""
 
-fh_grid = Dataset(ICON_grid,'r')
+fh_grid = Dataset(ICON_grid, 'r')
+
+
 class gridinfo:
     clon_vertices = np.array(fh_grid.variables['clon_vertices'])
     clat_vertices = np.array(fh_grid.variables['clat_vertices'])
@@ -175,22 +203,20 @@ class gridinfo:
     clon = np.array(fh_grid.variables['clon'])
     clat = np.array(fh_grid.variables['clat'])
     ncells = len(fh_grid.dimensions['cell'])
-    nn=nneighb
+    nn = nneighb
+
 
 #%%
-    
 """Times"""
 
-firstfile=True
-startdate = datetime.datetime.strptime(starttime,'%Y-%m-%d %H:%M:%S')
-enddate = datetime.datetime.strptime(enddtime,'%Y-%m-%d %H:%M:%S')
+firstfile = True
+startdate = datetime.datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
+enddate = datetime.datetime.strptime(enddtime, '%Y-%m-%d %H:%M:%S')
 delta = datetime.timedelta(hours=1)
 looptime = startdate
 
 #%%
-
 """Get locations of measurement stations"""
-
 
 longitudes = []
 latitudes = []
@@ -203,17 +229,17 @@ for ncfile in os.listdir(obs_dir):
     if not ncfile.endswith('.nc'): continue
 
     infile = os.path.join(obs_dir, ncfile)
-    
+
     f = xr.open_dataset(infile)
     stationnames = f.Stations_names.values
     st_ind = np.arange(len(stationnames))
     for x in st_ind:
-        latitudes.append(f.Lat[x].values) 
+        latitudes.append(f.Lat[x].values)
         obsnames.append(unidecode(str(f.Stations_names[x].values)))
         longitudes.append(f.Lon[x].values)
         asl.append(f.Stations_masl[x])
         elev.append(f.Stations_elev[x])
-print("Found %i locations."%(len(latitudes)))
+print("Found %i locations." % (len(latitudes)))
 
 # """Add 5 missing stations"""
 # missing_longitudes = [-1.15, 4.93, 0.23, 8.4, 8.18]
@@ -228,73 +254,82 @@ print("Found %i locations."%(len(latitudes)))
 # print("Added %i missing locations."%(len(missing_longitudes)))
 
 #%%
-
 """Initialize output variables"""
-n_det = int(np.nansum([1 for var in meta.keys() if 'ensemble' not in meta[var]]))
+n_det = int(
+    np.nansum([1 for var in meta.keys() if 'ensemble' not in meta[var]]))
 n_ens = int(np.nansum([1 for var in meta.keys() if 'ensemble' in meta[var]]))
-intp_ICON_data_det = np.zeros((n_det,len(latitudes),0))
-maxmem=0
+intp_ICON_data_det = np.zeros((n_det, len(latitudes), 0))
+maxmem = 0
 for var in meta.keys():
     if 'ensemble' in meta[var]:
-        if meta[var]['ensemble']>maxmem:
-            maxmem=meta[var]['ensemble']
-maxmem=int(maxmem)
-intp_ICON_data_ens = np.zeros((n_ens,maxmem,len(latitudes),0))
+        if meta[var]['ensemble'] > maxmem:
+            maxmem = meta[var]['ensemble']
+maxmem = int(maxmem)
+intp_ICON_data_ens = np.zeros((n_ens, maxmem, len(latitudes), 0))
 #%%
-
 """Loop over Data Files (=timesteps)"""
-def process_data(index, gridinfo, datainfo, latitudes, longitudes, asl, elev, obsnames, results):
-    result = intp_icon_data(index, gridinfo, datainfo, latitudes, longitudes, asl, elev, obsnames)
+
+
+def process_data(index, gridinfo, datainfo, latitudes, longitudes, asl, elev,
+                 obsnames, results):
+    result = intp_icon_data(index, gridinfo, datainfo, latitudes, longitudes,
+                            asl, elev, obsnames)
     results.append((index, result))
+
 
 datetime_list = []
 print('======================================')
 date_idx = 0
 while looptime <= enddate:
 
-    intp_ICON_data_det = np.concatenate(( intp_ICON_data_det,np.zeros((n_det,len(latitudes),1)) ),axis=2)
-    intp_ICON_data_ens = np.concatenate(( intp_ICON_data_ens,np.zeros((n_ens,maxmem,len(latitudes),1)) ),axis=3)
-            
-    timestring = datetime.datetime.strftime(looptime,'%Y-%m-%dT%H')
+    intp_ICON_data_det = np.concatenate(
+        (intp_ICON_data_det, np.zeros((n_det, len(latitudes), 1))), axis=2)
+    intp_ICON_data_ens = np.concatenate(
+        (intp_ICON_data_ens, np.zeros((n_ens, maxmem, len(latitudes), 1))),
+        axis=3)
+
+    timestring = datetime.datetime.strftime(looptime, '%Y-%m-%dT%H')
     datetime_list.append(timestring)
-    DATA_file = os.path.join(DATA_path,'%s_%s:00:00.000.nc' %(fname_base,timestring))
+    DATA_file = os.path.join(DATA_path,
+                             '%s_%s:00:00.000.nc' % (fname_base, timestring))
 
-    print('extracting from %s'%(DATA_file), flush=True)
+    print('extracting from %s' % (DATA_file), flush=True)
 
-    
-    fh_data = Dataset(DATA_file,'r')
-    
+    fh_data = Dataset(DATA_file, 'r')
+
     class datainfo:
         z_mc = np.array(fh_data.variables['z_mc'])
         z_ifc = np.array(fh_data.variables['z_ifc'])
-        
-        
-    ICON_data_det = np.zeros(( n_det, nlev, gridinfo.ncells ))
-    ICON_data_ens = np.zeros(( n_ens, maxmem, nlev, gridinfo.ncells ))
+
+    ICON_data_det = np.zeros((n_det, nlev, gridinfo.ncells))
+    ICON_data_ens = np.zeros((n_ens, maxmem, nlev, gridinfo.ncells))
     ivar = 0
     for var in meta.keys():
         if not 'ensemble' in meta[var]:
-            ICON_data_det[ivar,...] = np.array(fh_data.variables[var]) - meta[var]['offset']
-            ivar+=1
+            ICON_data_det[ivar, ...] = np.array(
+                fh_data.variables[var]) - meta[var]['offset']
+            ivar += 1
     ivar = 0
     for var in meta.keys():
         if 'ensemble' in meta[var]:
-#            for iens in np.arange(n_member):
+            #            for iens in np.arange(n_member):
             for iens in np.arange(meta[var]['ensemble']):
-                varnc = var.split('-')[0]+'-%.3i'%(iens+1)
-                ICON_data_ens[ivar,iens,...] = np.array(fh_data.variables[varnc]) - meta[var]['offset']
-            ivar+=1
+                varnc = var.split('-')[0] + '-%.3i' % (iens + 1)
+                ICON_data_ens[ivar, iens, ...] = np.array(
+                    fh_data.variables[varnc]) - meta[var]['offset']
+            ivar += 1
 #%%
-        
-    """Since the stations don't walk around, I only call the function at the first timestep"""  
-    
+    """Since the stations don't walk around, I only call the function at the first timestep"""
+
     if looptime == startdate:
         manager = Manager()
         results = manager.list()
         processes = []
 
         for i in range(len(latitudes)):
-            p = Process(target=process_data, args=(i, gridinfo, datainfo, latitudes, longitudes, asl, elev, obsnames, results))
+            p = Process(target=process_data,
+                        args=(i, gridinfo, datainfo, latitudes, longitudes,
+                              asl, elev, obsnames, results))
             processes.append(p)
             p.start()
 
@@ -308,19 +343,18 @@ while looptime <= enddate:
         sorted_results = [result for _, result in results]
         vsf, idxb, idxa, neighbours, u_ret = zip(*sorted_results)
 
-        
     vsf = np.array(vsf)
     idxb = np.array(idxb, dtype=int)
     idxa = np.array(idxa, dtype=int)
     neighbours = np.array(neighbours, dtype=int)
     u_ret = np.array(u_ret)
 
-    #Do the interpolation 
+    #Do the interpolation
     for iloc in np.arange(len(latitudes)):
 
         ###First, the deterministic values:
         ##First, the vertical interpolation:
-        vert_intp_data = np.zeros(( n_det, len(idxb[iloc]) ))
+        vert_intp_data = np.zeros((n_det, len(idxb[iloc])))
         for nn in np.arange(len(idxb[iloc])):
             vert_intp_data[:,nn] = ICON_data_det[:,idxb[iloc,nn],neighbours[iloc,nn]] + vsf[iloc,nn]*(ICON_data_det[:,idxa[iloc,nn],neighbours[iloc,nn]] \
                                       -ICON_data_det[:,idxb[iloc,nn],neighbours[iloc,nn]])
@@ -328,15 +362,22 @@ while looptime <= enddate:
         #intp_ICON_data_det[:,iloc,date_idx] = u_ret[iloc,0]*vert_intp_data[:,0]+u_ret[iloc,1]*vert_intp_data[:,1] \
         #                    +u_ret[iloc,2]*vert_intp_data[:,2]
         #
-        intp_ICON_data_det[:,iloc,date_idx] = np.nansum([w*vert_intp_data[:,i] for i,w in enumerate(u_ret[iloc,:])],axis=0)/np.nansum(u_ret[iloc,:]) 
+        intp_ICON_data_det[:, iloc, date_idx] = np.nansum(
+            [w * vert_intp_data[:, i] for i, w in enumerate(u_ret[iloc, :])],
+            axis=0) / np.nansum(u_ret[iloc, :])
         ###Second, the ensemble values:
-        vert_intp_data = np.zeros(( n_ens, maxmem, len(idxb[iloc]) ))
+        vert_intp_data = np.zeros((n_ens, maxmem, len(idxb[iloc])))
         for nn in np.arange(len(idxb[iloc])):
             vert_intp_data[:,:,nn] = ICON_data_ens[:,:,idxb[iloc,nn],neighbours[iloc,nn]] + vsf[iloc,nn]*(ICON_data_ens[:,:,idxa[iloc,nn],neighbours[iloc,nn]] \
                                       -ICON_data_ens[:,:,idxb[iloc,nn],neighbours[iloc,nn]])
         #intp_ICON_data_ens[:,:,iloc,date_idx] = u_ret[iloc,0]*vert_intp_data[:,:,0]+u_ret[iloc,1]*vert_intp_data[:,:,1] \
         #                    +u_ret[iloc,2]*vert_intp_data[:,:,2]
-        intp_ICON_data_ens[:,:,iloc,date_idx] = np.nansum([w*vert_intp_data[:,:,i] for i,w in enumerate(u_ret[iloc,:])],axis=0)/np.nansum(u_ret[iloc,:])
+        intp_ICON_data_ens[:, :, iloc, date_idx] = np.nansum(
+            [
+                w * vert_intp_data[:, :, i]
+                for i, w in enumerate(u_ret[iloc, :])
+            ],
+            axis=0) / np.nansum(u_ret[iloc, :])
 #%%
     """Update time"""
     looptime += delta
@@ -350,22 +391,24 @@ with Dataset("{extracted_file}", mode='w') as ofile:
 
     oname = ofile.createVariable('site_name', str, ('sites'))
     otimes = ofile.createVariable('time', np.unicode_, ('time'))
-   
+
     ivar = 0
     for var in meta.keys():
         if 'ensemble' not in meta[var]:
-            ovar = ofile.createVariable(var, np.float32, ('sites','time'))
-            ovar[:,:] = intp_ICON_data_det[ivar,:,:]
-            ivar+=1
-    ivar=0
+            ovar = ofile.createVariable(var, np.float32, ('sites', 'time'))
+            ovar[:, :] = intp_ICON_data_det[ivar, :, :]
+            ivar += 1
+    ivar = 0
     for var in meta.keys():
         if 'ensemble' in meta[var]:
-            oens = ofile.createDimension('ens_%.2i'%(ivar+1), meta[var]['ensemble'])
-            varnc = var.split('-')[0]+'_ENS'
-            ovar = ofile.createVariable(varnc, np.float32, ('ens_%.2i'%(ivar+1),'sites','time'))
-            ovar[:,:,:] = intp_ICON_data_ens[ivar,0:meta[var]['ensemble'],:,:]
-            ivar+=1
+            oens = ofile.createDimension('ens_%.2i' % (ivar + 1),
+                                         meta[var]['ensemble'])
+            varnc = var.split('-')[0] + '_ENS'
+            ovar = ofile.createVariable(
+                varnc, np.float32, ('ens_%.2i' % (ivar + 1), 'sites', 'time'))
+            ovar[:, :, :] = intp_ICON_data_ens[ivar,
+                                               0:meta[var]['ensemble'], :, :]
+            ivar += 1
 
-    
     oname[:] = np.array(stationnames[:])
     otimes[:] = np.array(datetime_list)
