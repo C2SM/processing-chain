@@ -58,10 +58,6 @@ icontools_runjobs = [
 # Input data for runscript----------------------------------------------------
 # Grid
 
-input_root_grid = os.path.join(input_root, 'grid')
-input_root_rad = os.path.join(input_root, 'rad')
-input_root_mapping = os.path.join(input_root, 'mapping')
-
 input_files = {
     'radiation_grid_filename': ['testcase_DOM01.parent.nc', 'grid'],
     'dynamics_grid_filename': ['testcase_DOM01.nc', 'grid'],
@@ -72,6 +68,8 @@ input_files = {
     'cldopt_filename': ['rrtm_cldopt.nc', 'rad'],
     'lrtm_filename': ['rrtmg_lw.nc', 'rad'],
     'map_file_ana': ['map_file.ana', 'mapping'],
+    'chemtracer_xml_filename': ['tracers_oh_pntsrc.xml', 'xml'],
+    'pntSrc_xml_filename': ['pntSrc_example.xml', 'xml']
 }
 
 # File names -----------------------------------------------------------------
@@ -86,10 +84,6 @@ filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 lateral_boundary_grid_order = 'lateral_boundary'
 
 # ART settings----------------------------------------------------------------
-input_root_tracers = os.path.join(input_root, 'XML')
-chemtracer_xml_filename = os.path.join(input_root_tracers,
-                                       'tracers_oh_pntsrc.xml')
-pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc_example.xml')
 art_input_folder = os.path.join(input_root, 'ART')
 
 # SIMULATION =================================================================
