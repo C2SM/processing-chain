@@ -37,7 +37,6 @@ case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
 # PREPARE_DATA ---------------------------------------------------------------
 input_root = os.path.join(chain_src_dir, 'input', 'icon-art')
-input_root_icbc = os.path.join(input_root, 'icbc')
 # meteo
 input_root_meteo = os.path.join(chain_src_dir, 'input', 'meteo')
 meteo_prefix = 'ifs_'
