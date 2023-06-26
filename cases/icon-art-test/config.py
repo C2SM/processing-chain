@@ -68,8 +68,8 @@ input_files = {
     'cldopt_filename': ['rrtm_cldopt.nc', 'rad'],
     'lrtm_filename': ['rrtmg_lw.nc', 'rad'],
     'map_file_ana': ['map_file.ana', 'mapping'],
-    'chemtracer_xml_filename': ['tracers_oh_pntsrc.xml', 'xml'],
-    'pntSrc_xml_filename': ['pntSrc_example.xml', 'xml']
+    'chemtracer_xml_filename': ['tracers_oh_pntsrc.xml', 'XML'],
+    'pntSrc_xml_filename': ['pntSrc_example.xml', 'XML']
 }
 
 # File names -----------------------------------------------------------------

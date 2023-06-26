@@ -379,7 +379,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         setattr(cfg, 'icon_input_rad',
                 os.path.join(chain_root, 'icon', 'input', 'rad'))
         setattr(cfg, 'icon_input_xml',
-                os.path.join(chain_root, 'icon', 'input', 'xml'))
+                os.path.join(chain_root, 'icon', 'input', 'XML'))
         setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
         setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
         setattr(cfg, 'icon_output_reduced',
