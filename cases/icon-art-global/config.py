@@ -45,7 +45,8 @@ work_root = os.path.join(chain_src_dir, 'work')
 # icon_bin = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/qcndg6qwq6e5gfutwoycqmwf2m4lvg7g/', 'bin', 'icon') # -- eccodes, ocean, noart
 # icon_bin = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/x6pisrz7umszlrpnazse3cuosdxt45kt/', 'bin', 'icon')  # -- art
 # icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon-online-traj/cpu/', 'bin', 'icon')  # -- online-traj, cpu+art, dev-build
-icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon-proc-chain/cpu/', 'bin', 'icon')  #
+icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon-proc-chain/cpu/',
+                        'bin', 'icon')  #
 
 # -- Paths for namelists and slurm runscript templates
 # icon_runjob = os.path.join(case_dir, 'icon_runjob_withoutart.cfg')

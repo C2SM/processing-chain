@@ -169,7 +169,7 @@ def main(starttime, hstart, hstop, cfg):
 
             # -- If not, download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
-                
+
                 # -- Fetch ERA5 data
                 fetch_era5(starttime_real, cfg.icon_input_icbc)
 

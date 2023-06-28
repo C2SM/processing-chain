@@ -335,7 +335,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         setattr(
             cfg, 'dynamics_grid_filename_scratch',
             os.path.join(cfg.icon_input_grid,
-                         os.path.basename(cfg.dynamics_grid_filename)))   
+                         os.path.basename(cfg.dynamics_grid_filename)))
         setattr(
             cfg, 'extpar_filename_scratch',
             os.path.join(cfg.icon_input_grid,
@@ -362,25 +362,26 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                 cfg, 'pntSrc_xml_filename_scratch',
                 os.path.join(cfg.icon_input_xml,
                              os.path.basename(cfg.pntSrc_xml_filename)))
-            
-        
+
         if cfg.target is tools.Target.ICONARTGLOBAL:
-            setattr(cfg, 'inicond_filename_scratch',
+            setattr(
+                cfg, 'inicond_filename_scratch',
                 os.path.join(cfg.icon_input_icbc,
                              os.path.basename(cfg.inicond_filename)))
-            setattr(cfg, 'map_file_nudging_scratch',
-                os.path.join(cfg.icon_input_icbc, 
+            setattr(
+                cfg, 'map_file_nudging_scratch',
+                os.path.join(cfg.icon_input_icbc,
                              os.path.basename(cfg.map_file_nudging)))
 
         else:
             setattr(
                 cfg, 'map_file_latbc_scratch',
                 os.path.join(cfg.icon_input_grid,
-                            os.path.basename(cfg.map_file_latbc)))
+                             os.path.basename(cfg.map_file_latbc)))
             setattr(
                 cfg, 'map_file_ana_scratch',
                 os.path.join(cfg.icon_input_mapping,
-                            os.path.basename(cfg.map_file_ana)))  
+                             os.path.basename(cfg.map_file_ana)))
 
     # OEM
     if cfg.target is tools.Target.ICONARTOEM:
