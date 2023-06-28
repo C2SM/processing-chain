@@ -108,12 +108,15 @@ def main(starttime, hstart, hstop, cfg):
         tools.copy_file(cfg.dynamics_grid_filename,
                         cfg.dynamics_grid_filename_scratch,
                         output_log=True)
-        tools.copy_file(cfg.map_file_latbc,
-                        cfg.map_file_latbc_scratch,
-                        output_log=True)
+
         tools.copy_file(cfg.extpar_filename,
                         cfg.extpar_filename_scratch,
                         output_log=True)
+
+        if cfg.target is not tools.Target.ICONARTGLOBAL:
+            tools.copy_file(cfg.map_file_latbc,
+                            cfg.map_file_latbc_scratch,
+                            output_log=True)
 
         # Copy radiation files
         tools.copy_file(cfg.cldopt_filename,
@@ -124,13 +127,15 @@ def main(starttime, hstart, hstop, cfg):
                         output_log=True)
 
         # Copy mapping file
-        tools.copy_file(cfg.map_file_ana,
-                        cfg.map_file_ana_scratch,
-                        output_log=True)
+        if cfg.target is not tools.Target.ICONARTGLOBAL:
+            tools.copy_file(cfg.map_file_ana,
+                            cfg.map_file_ana_scratch,
+                            output_log=True)
 
         # Copy tracer data in case of ART
         if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM or\
             cfg.target is tools.Target.ICONARTGLOBAL:
+
             tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
             if hasattr(cfg, 'chemtracer_xml_filename'):
                 tools.copy_file(cfg.chemtracer_xml_filename,
@@ -143,10 +148,6 @@ def main(starttime, hstart, hstop, cfg):
 
         # Copy data for global ICON-ART
         if cfg.target is tools.Target.ICONARTGLOBAL:
-            if hasattr(cfg, 'boundcond_xml_filename'):
-                tools.copy_file(cfg.boundcond_xml_filename,
-                                cfg.boundcond_xml_filename_scratch,
-                                output_log=True)
 
             # -- Copy nudging data
             if cfg.era5_global_nudging:
@@ -160,15 +161,15 @@ def main(starttime, hstart, hstop, cfg):
                 for file in list_files:
                     tools.copy_file(file, cfg.icon_work)
 
-            # -- Copy Online-Trajectories files
-            if cfg.online_traj:
-                tools.copy_file(cfg.online_traj_filename,
-                                cfg.online_traj_filename_scratch,
+            # -- Copy inicond file
+            if not cfg.era5_inicond:
+                tools.copy_file(cfg.inicond_filename,
+                                cfg.inicond_filename_scratch,
                                 output_log=True)
-                tools.copy_file(cfg.online_traj_table2moment, cfg.icon_work)
 
             # -- If not, download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
+                
                 # -- Fetch ERA5 data
                 fetch_era5(starttime_real, cfg.icon_input_icbc)
 
