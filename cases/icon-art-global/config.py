@@ -47,7 +47,6 @@ work_dir = os.path.join(chain_src_dir, 'work')
 icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon/cpu/', 'bin',
                         'icon')  #
 
-
 # -- Paths for namelists and slurm runscript templates
 # icon_runjob = os.path.join(case_dir, 'icon_runjob_withoutart.cfg')
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
