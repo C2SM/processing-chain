@@ -14,9 +14,8 @@
 import logging
 import os
 import subprocess
-from .tools import write_cosmo_input_ghg
 from . import tools
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
 def main(starttime, hstart, hstop, cfg):
@@ -61,11 +60,15 @@ def main(starttime, hstart, hstop, cfg):
     execname = 'icon.exe'
     tools.copy_file(cfg.icon_bin, os.path.join(cfg.icon_work, execname))
 
-    # Get name if initial file
-    starttime_real = starttime + timedelta(hours=hstart)
-    inidata_filename = os.path.join(
-        cfg.icon_input_icbc,
-        starttime_real.strftime(cfg.meteo_nameformat) + '.nc')
+    # Get name of initial file
+    if hasattr(cfg, 'inicond_filename'):
+        inidata_filename = os.path.join(cfg.icon_input_icbc,
+                                        cfg.inicond_filename)
+    else:
+        starttime_real = starttime + timedelta(hours=hstart)
+        inidata_filename = os.path.join(
+            cfg.icon_input_icbc,
+            starttime_real.strftime(cfg.meteo_nameformat) + '.nc')
 
     # Write run script (run_icon.job)
     with open(cfg.icon_runjob) as input_file:
@@ -78,12 +81,14 @@ def main(starttime, hstart, hstop, cfg):
                             logfile=logfile,
                             logfile_finish=logfile_finish))
 
-    exitcode = subprocess.call(
+    result = subprocess.run(
         ["sbatch", "--wait",
          os.path.join(cfg.icon_work, 'run_icon.job')])
+    exitcode = result.returncode
 
     # In case of ICON-ART, ignore the "invalid pointer" error on successful run
-    if cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONART:
+    if cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONART or \
+        cfg.target is tools.Target.ICONARTGLOBAL:
         if tools.grep("free(): invalid pointer", logfile)['success'] and \
            tools.grep("clean-up finished", logfile)['success']:
             exitcode = 0

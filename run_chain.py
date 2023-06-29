@@ -27,6 +27,7 @@ default_jobs = {
     ],
     tools.Target.ICON: ["prepare_data", "icon"],
     tools.Target.ICONART: ["prepare_data", "icon"],
+    tools.Target.ICONARTGLOBAL: ["prepare_data", "icon"],
     tools.Target.ICONARTOEM: ["prepare_data", "oae", "icon"]
 }
 
@@ -326,7 +327,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     setattr(cfg, 'icon_output_reduced',
             os.path.join(chain_root, 'icon', 'output_reduced'))
     if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART \
-            or cfg.target is tools.Target.ICONARTOEM:
+            or cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONARTGLOBAL:
         setattr(
             cfg, 'radiation_grid_filename_scratch',
             os.path.join(cfg.icon_input_grid,
@@ -335,10 +336,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
             cfg, 'dynamics_grid_filename_scratch',
             os.path.join(cfg.icon_input_grid,
                          os.path.basename(cfg.dynamics_grid_filename)))
-        setattr(
-            cfg, 'map_file_latbc_scratch',
-            os.path.join(cfg.icon_input_grid,
-                         os.path.basename(cfg.map_file_latbc)))
         setattr(
             cfg, 'extpar_filename_scratch',
             os.path.join(cfg.icon_input_grid,
@@ -355,10 +352,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
             cfg, 'lrtm_filename_scratch',
             os.path.join(cfg.icon_input_rad,
                          os.path.basename(cfg.lrtm_filename)))
-        setattr(
-            cfg, 'map_file_ana_scratch',
-            os.path.join(cfg.icon_input_mapping,
-                         os.path.basename(cfg.map_file_ana)))
         if hasattr(cfg, 'chemtracer_xml_filename'):
             setattr(
                 cfg, 'chemtracer_xml_filename_scratch',
@@ -369,6 +362,26 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                 cfg, 'pntSrc_xml_filename_scratch',
                 os.path.join(cfg.icon_input_xml,
                              os.path.basename(cfg.pntSrc_xml_filename)))
+
+        if cfg.target is tools.Target.ICONARTGLOBAL:
+            setattr(
+                cfg, 'inicond_filename_scratch',
+                os.path.join(cfg.icon_input_icbc,
+                             os.path.basename(cfg.inicond_filename)))
+            setattr(
+                cfg, 'map_file_nudging_scratch',
+                os.path.join(cfg.icon_input_icbc,
+                             os.path.basename(cfg.map_file_nudging)))
+
+        else:
+            setattr(
+                cfg, 'map_file_latbc_scratch',
+                os.path.join(cfg.icon_input_grid,
+                             os.path.basename(cfg.map_file_latbc)))
+            setattr(
+                cfg, 'map_file_ana_scratch',
+                os.path.join(cfg.icon_input_mapping,
+                             os.path.basename(cfg.map_file_ana)))
 
     # OEM
     if cfg.target is tools.Target.ICONARTOEM:
@@ -480,7 +493,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         setattr(cfg, 'restart_step', hstop - hstart)
 
     if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
-       cfg.target is tools.Target.ICONARTOEM:
+       cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONARTGLOBAL:
         ini_datetime_string = (
             start_time +
             timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
@@ -747,7 +760,7 @@ if __name__ == '__main__':
 
         if cfg.target is tools.Target.COSMO or cfg.target is tools.Target.ICON or \
            cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM or \
-           cfg.target is tools.Target.COSMOGHG:
+           cfg.target is tools.Target.ICONARTGLOBAL or cfg.target is tools.Target.COSMOGHG:
             if cfg.target.subtarget is tools.Subtarget.NONE:
                 restart_runs(work_root=cfg.work_root,
                              cfg=cfg,

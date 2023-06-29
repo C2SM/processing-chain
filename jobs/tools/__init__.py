@@ -269,6 +269,7 @@ class Target(Enum):
     ICON = auto()
     ICONART = auto()
     ICONARTOEM = auto()
+    ICONARTGLOBAL = auto()
 
 
 class Subtarget(Enum):
@@ -283,6 +284,7 @@ str_to_enum = {
     'icon': Target.ICON,
     'icon-art': Target.ICONART,
     'icon-art-oem': Target.ICONARTOEM,
+    'icon-art-global': Target.ICONARTGLOBAL,
     'none': Subtarget.NONE,
     'spinup': Subtarget.SPINUP,
 }
