@@ -157,7 +157,7 @@ def create_oh_for_inicond(cfg, month):
     temp_era5 = ds_inicond['T']
     nlevels = len(temp_era5.lev)
 
-    ds = xr.open_dataset(cfg.OH_MOLEC_FILENAME)
+    ds = xr.open_dataset(cfg.oh_molec_filename)
     oh = ds['OH'][month - 1]
     pres_surf = ds['PSURF'][month - 1]
     pmid_transcom = compute_pmid_transcom(oh, ds['A'], ds['B'], pres_surf)

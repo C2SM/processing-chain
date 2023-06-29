@@ -18,6 +18,7 @@ else:
     compute_account = os.popen("id -gn").read().splitlines()[0]
 
 # -- Model to run
+
 model = 'icon-art-global'
 
 # -- Number of tasks per node
@@ -46,6 +47,7 @@ work_dir = os.path.join(chain_src_dir, 'work')
 icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon/cpu/', 'bin',
                         'icon')  #
 
+
 # -- Paths for namelists and slurm runscript templates
 # icon_runjob = os.path.join(case_dir, 'icon_runjob_withoutart.cfg')
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
@@ -55,7 +57,7 @@ icon_species_inijob = os.path.join(case_dir, 'icon_species_inicond.sh')
 icon_species_nudgingjob = os.path.join(case_dir, 'icon_species_nudging.sh')
 
 # -- Number of hours simulated by one job / directory
-restart_step = '1MS'  # -- hours or Pandas frequency
+restart_step = 24  # -- hours or Pandas frequency
 
 # -- Number of hours between two output data
 output_writing_step = 12  # -- TO MODIFY
@@ -70,9 +72,6 @@ era5_global_nudging = False
 species_global_nudging = False
 species2nudge = []
 nudging_step = 12
-
-# -- Online trajectories
-online_traj = True
 
 # -- Walltimes and domain decomposition
 if compute_queue == "normal":
@@ -103,6 +102,7 @@ inicond_filename = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ICBC/era2icon_R2B0
 
 # -- Grid
 dynamics_grid_filename = os.path.join(input_root_grid, "iconR2B03-DOM01.nc")
+radiation_grid_filename = os.path.join(input_root_grid, "iconR2B03-DOM01.nc")
 extpar_filename = os.path.join(input_root_grid, "extpar_iconR2B03-DOM01.nc")
 
 # -- Radiation
@@ -121,11 +121,7 @@ oh_molec_filename = os.path.join(input_root_chemistry,
                                  'oh_gcp2022_icongrid.nc')  # -- TO MODIFY
 
 # -- ART
-# pntsrc_xml_filename = os.path.join(input_root_tracers, 'chemistry_lt/point-sources.xml')
-# boundcond_xml_filename = os.path.join(input_root_tracers, 'boundary-conditions.xml')
-# chemtracer_xml_filename = os.path.join(input_root_tracers, 'chemistry_lt/tracers.xml')
-
-pntsrc_xml_filename = os.path.join(input_root_configs,
+pntSrc_xml_filename = os.path.join(input_root_configs,
                                    'CONFIG2/point-sources.xml')  # -- TO MODIFY
 boundcond_xml_filename = os.path.join(input_root_tracers,
                                       'boundary-conditions.xml')
@@ -135,9 +131,6 @@ chemtracer_xml_filename = os.path.join(input_root_configs,
 # -- Nudging
 map_file_nudging = os.path.join(input_root_icbc, 'map_file.nudging')
 
-# -- Online trajectories
-online_traj_filename = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ONLINE_TRAJ/startf_traj_dom1.nc'
-online_traj_table2moment = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ONLINE_TRAJ/dmin_wetgrowth_lookup.nc'
 # -----------------------------------------------------------
 # -- Additional settings derived from constants
 # -----------------------------------------------------------
@@ -150,6 +143,3 @@ nudging_step_seconds = nudging_step * 3600
 
 # --  Prescribed initial conditions for CH4, CO and/or OH
 iart_init_gas = 4 if species_inicond else 0
-
-# -- Online trajectories
-online_traj_scratch = '.TRUE.' if online_traj else '.FALSE.'

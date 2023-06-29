@@ -3,7 +3,7 @@
 cd {cfg.icon_input_icbc}
 
 
-species2restart=($(echo {cfg.SPECIES2RESTART} | tr -d '[],'))
+species2restart=($(echo {cfg.species2restart} | tr -d '[],'))
 
 
 if [[ {cfg.lrestart} == '.FALSE.' ]]; then

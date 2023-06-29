@@ -364,7 +364,6 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         cfg.meteo_prefix = 'lffd'
 
     # ICON
-    # TODO: refactor
     if cfg.model.startswith('icon'):
         setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
         setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
@@ -391,7 +390,6 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                     os.path.join(cfg.input_root, file_info[1], file_info[0]))
             setattr(cfg, f'{varname}_scratch',
                     os.path.join(cfg.icon_input, file_info[1], file_info[0]))
-
         ini_datetime_string = (
             start_time +
             timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
