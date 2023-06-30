@@ -69,7 +69,12 @@ input_files = {
     'lrtm_filename': ['rrtmg_lw.nc', 'rad'],
     'map_file_ana': ['map_file.ana', 'mapping'],
     'chemtracer_xml_filename': ['tracers_oh_pntsrc.xml', 'XML'],
-    'pntSrc_xml_filename': ['pntSrc_example.xml', 'XML']
+    'pntSrc_xml_filename': ['pntSrc_example.xml', 'XML'],
+    'oae_gridded_emissions_nc': ['tno_3cat.nc', 'OEM'],
+    'oae_vertical_profiles_nc': ['vertical_profiles.nc', 'OEM'],
+    'oae_hourofday_nc': ['hourofday.nc', 'OEM'],
+    'oae_dayofweek_nc': ['dayofweek.nc', 'OEM'],
+    'oae_monthofyear_nc': ['monthofyear.nc', 'OEM'],
 }
 
 # File names -----------------------------------------------------------------

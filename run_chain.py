@@ -370,7 +370,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         setattr(cfg, 'icon_input_icbc',
                 os.path.join(chain_root, 'icon', 'input', 'icbc'))
         setattr(cfg, 'icon_input_oae',
-                os.path.join(chain_root, 'icon', 'input', 'oae'))
+                os.path.join(chain_root, 'icon', 'input', 'OEM'))
         setattr(cfg, 'icon_input_grid',
                 os.path.join(chain_root, 'icon', 'input', 'grid'))
         setattr(cfg, 'icon_input_mapping',
