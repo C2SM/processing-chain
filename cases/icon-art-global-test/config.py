@@ -9,8 +9,8 @@ Configuration file for the 'icon-art-global' case with ICON-ART
 
 user = os.environ['USER']
 compute_host = 'daint'
-compute_queue = 'debug'  # 'normal' / 'debug'
-constraint = 'mc'  # 'mc' / 'gpu'
+compute_queue = 'normal'  # 'normal' / 'debug'
+constraint = 'gpu'  # 'mc' / 'gpu'
 if os.path.exists(os.environ['HOME'] + '/.acct'):
     with open(os.environ['HOME'] + '/.acct', 'r') as file:
         compute_account = file.read().rstrip()
@@ -38,14 +38,10 @@ case_dir = os.path.join(chain_src_dir, 'cases', casename)
 # -----------------------------------------------------------
 
 # -- Root directory of the working space of the chain
-work_dir = os.path.join(chain_src_dir, 'work')
+work_root = os.path.join(chain_src_dir, 'work')
 
 # -- Executable
-# icon_bin = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/qcndg6qwq6e5gfutwoycqmwf2m4lvg7g/', 'bin', 'icon') # -- eccodes, ocean, noart
-# icon_bin = os.path.join('/scratch/snx3000/jthanwer/spack-install/daint/icon/c2sm-master/gcc/x6pisrz7umszlrpnazse3cuosdxt45kt/', 'bin', 'icon')  # -- art
-# icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon-online-traj/cpu/', 'bin', 'icon')  # -- online-traj, cpu+art, dev-build
-icon_bin = os.path.join('/scratch/snx3000/jthanwer/icon/cpu/', 'bin',
-                        'icon')  #
+icon_bin = os.path.join(chain_src_dir, 'src', 'icon-art', 'bin', 'icon')
 
 # -- Paths for namelists and slurm runscript templates
 # icon_runjob = os.path.join(case_dir, 'icon_runjob_withoutart.cfg')
@@ -76,7 +72,6 @@ nudging_step = 12
 if compute_queue == "normal":
     icon_walltime = "00:30:00"
     icon_np_tot = 2
-
 elif compute_queue == "debug":
     icon_walltime = "00:30:00"
     icon_np_tot = 2
@@ -85,50 +80,20 @@ elif compute_queue == "debug":
 # -- INPUT DATA
 # -----------------------------------------------------------
 
-input_root = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/'
-input_root_icbc = os.path.join(input_root, 'ICBC')
-input_root_grid = os.path.join(input_root, 'GRIDS')
-input_root_rad = os.path.join(input_root, 'RAD')
-input_root_oem = os.path.join(input_root, 'OEM', 'SF6')
-input_root_chemistry = os.path.join(input_root, 'CHEMISTRY',
-                                    'OH_GCP2022_ORIGINAL')
-input_root_tracers = os.path.join(input_root, 'XML/examples')
-input_root_configs = os.path.join(input_root, 'CONFIGS')
-input_root_art = os.path.join(input_root, 'ART')
-
-# -- Initial conditions and boundary conditions
-inicond_filename = '/scratch/snx3000/jthanwer/DATA/ICON_INPUT/ICBC/era2icon_R2B03_2022060200.nc'
-
-# -- Grid
-dynamics_grid_filename = os.path.join(input_root_grid, "iconR2B03-DOM01.nc")
-radiation_grid_filename = os.path.join(input_root_grid, "iconR2B03-DOM01.nc")
-extpar_filename = os.path.join(input_root_grid, "extpar_iconR2B03-DOM01.nc")
-
-# -- Radiation
-cldopt_filename = os.path.join(input_root_rad, 'ECHAM6_CldOptProps.nc')
-lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
-
-# -- OEM
-# oem_emis_filename = os.path.join(input_root_oem, 'OEM_SF6_{year}.nc')
-oem_vertprof_filename = os.path.join(input_root_oem, 'vertical_profiles.nc')
-oem_hourofday_filename = os.path.join(input_root_oem, 'hourofday.nc')
-oem_dayofweek_filename = os.path.join(input_root_oem, 'dayofweek.nc')
-oem_monthofyear_filename = os.path.join(input_root_oem, 'monthofyear.nc')
-
-# -- Chemistry (OH)
-oh_molec_filename = os.path.join(input_root_chemistry,
-                                 'oh_gcp2022_icongrid.nc')  # -- TO MODIFY
-
-# -- ART
-pntSrc_xml_filename = os.path.join(input_root_configs,
-                                   'CONFIG2/point-sources.xml')  # -- TO MODIFY
-boundcond_xml_filename = os.path.join(input_root_tracers,
-                                      'boundary-conditions.xml')
-chemtracer_xml_filename = os.path.join(input_root_configs,
-                                       'CONFIG2/tracers.xml')  # -- TO MODIFY
-
-# -- Nudging
-map_file_nudging = os.path.join(input_root_icbc, 'map_file.nudging')
+input_root = os.path.join(chain_src_dir, 'input', 'icon-art-global')
+input_files = {
+    'inicond_filename': ['era2icon_R2B03_2022060200.nc', 'icbc'],
+    'map_file_nudging': ['map_file.nudging', 'icbc'],
+    'dynamics_grid_filename':["iconR2B03-DOM01.nc", 'grid'],
+    'radiation_grid_filename':["iconR2B03-DOM01.nc", 'grid'],
+    'extpar_filename': ["extpar_iconR2B03-DOM01.nc", 'grid'],
+    'cldopt_filename': ['ECHAM6_CldOptProps.nc', 'rad'], 
+    'lrtm_filename': ['rrtmg_lw.nc', 'rad'],
+    'oh_molec_filename': ['oh_gcp2022_icongrid.nc', 'chemistry'],
+    'pntSrc_xml_filename': ['point-sources.xml', 'config'],
+    'boundcond_xml_filename': ['boundary-conditions.xml', 'tracers'],
+    'chemtracer_xml_filename': ['tracers.xml', 'config'],
+}
 
 # -----------------------------------------------------------
 # -- Additional settings derived from constants
