@@ -84,10 +84,10 @@ input_root = os.path.join(chain_src_dir, 'input', 'icon-art-global')
 input_files = {
     'inicond_filename': ['era2icon_R2B03_2022060200.nc', 'icbc'],
     'map_file_nudging': ['map_file.nudging', 'icbc'],
-    'dynamics_grid_filename':["iconR2B03-DOM01.nc", 'grid'],
-    'radiation_grid_filename':["iconR2B03-DOM01.nc", 'grid'],
+    'dynamics_grid_filename': ["iconR2B03-DOM01.nc", 'grid'],
+    'radiation_grid_filename': ["iconR2B03-DOM01.nc", 'grid'],
     'extpar_filename': ["extpar_iconR2B03-DOM01.nc", 'grid'],
-    'cldopt_filename': ['ECHAM6_CldOptProps.nc', 'rad'], 
+    'cldopt_filename': ['ECHAM6_CldOptProps.nc', 'rad'],
     'lrtm_filename': ['rrtmg_lw.nc', 'rad'],
     'oh_molec_filename': ['oh_gcp2022_icongrid.nc', 'chemistry'],
     'pntSrc_xml_filename': ['point-sources.xml', 'config'],
