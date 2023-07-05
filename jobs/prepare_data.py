@@ -88,20 +88,18 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         # Create directories
         #-----------------------------------------------------
         tools.create_dir(cfg.icon_work, "icon_work")
-        tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
-        tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
-        tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping")
-        tools.create_dir(cfg.icon_input_oae, "icon_input_oem")
-        tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
         tools.create_dir(cfg.icon_output, "icon_output")
         tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
-        if cfg.model.startswith('icon-art'):
-            tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
 
         #-----------------------------------------------------
-        # Copy files
+        # Create directories and copy input files
         #-----------------------------------------------------
         for varname in cfg.input_files:
+            file_info = cfg.input_files[varname]
+            input_dir = os.path.join(cfg.chain_root, 'icon', 'input', file_info[1])
+            input_dir_name = 'icon_input_' + file_info[1]
+            setattr(cfg, input_dir_name, input_dir)
+            tools.create_dir(input_dir, input_dir_name)
             varname_scratch = varname + '_scratch'
             tools.copy_file(getattr(cfg, varname),
                             getattr(cfg, varname_scratch),

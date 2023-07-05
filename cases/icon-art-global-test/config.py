@@ -43,6 +43,9 @@ work_root = os.path.join(chain_src_dir, 'work')
 # -- Executable
 icon_bin = os.path.join(chain_src_dir, 'src', 'icon-art', 'bin', 'icon')
 
+# eccodes
+eccodes_dir = os.path.join(chain_src_dir, 'input', 'eccodes_definitions')
+
 # -- Paths for namelists and slurm runscript templates
 # icon_runjob = os.path.join(case_dir, 'icon_runjob_withoutart.cfg')
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
@@ -79,8 +82,10 @@ elif compute_queue == "debug":
 # -----------------------------------------------------------
 # -- INPUT DATA
 # -----------------------------------------------------------
+# ART settings-----------------------------------------------
+input_root = os.path.join(chain_src_dir, 'input', model)
+art_input_folder = os.path.join(input_root, 'art')
 
-input_root = os.path.join(chain_src_dir, 'input', 'icon-art-global')
 input_files = {
     'inicond_filename': ['era2icon_R2B03_2022060200.nc', 'icbc'],
     'map_file_nudging': ['map_file.nudging', 'icbc'],
@@ -91,7 +96,6 @@ input_files = {
     'lrtm_filename': ['rrtmg_lw.nc', 'rad'],
     'oh_molec_filename': ['oh_gcp2022_icongrid.nc', 'chemistry'],
     'pntSrc_xml_filename': ['point-sources.xml', 'config'],
-    'boundcond_xml_filename': ['boundary-conditions.xml', 'tracers'],
     'chemtracer_xml_filename': ['tracers.xml', 'config'],
 }
 
