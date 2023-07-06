@@ -88,11 +88,12 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         # Create directories
         #-----------------------------------------------------
         tools.create_dir(cfg.icon_work, "icon_work")
+        tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
         tools.create_dir(cfg.icon_output, "icon_output")
         tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
 
         #-----------------------------------------------------
-        # Create directories and copy input files
+        # Create input directories and copy files
         #-----------------------------------------------------
         for varname in cfg.input_files:
             file_info = cfg.input_files[varname]
