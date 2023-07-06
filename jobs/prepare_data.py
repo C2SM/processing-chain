@@ -97,7 +97,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         #-----------------------------------------------------
         for varname in cfg.input_files:
             file_info = cfg.input_files[varname]
-            input_dir = os.path.join(cfg.chain_root, 'icon', 'input', file_info[1])
+            input_dir = os.path.join(cfg.chain_root, 'icon', 'input',
+                                     file_info[1])
             input_dir_name = 'icon_input_' + file_info[1]
             setattr(cfg, input_dir_name, input_dir)
             tools.create_dir(input_dir, input_dir_name)
