@@ -275,39 +275,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                            os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 
         else:  # non-global ICON-ART
-            # Copy data for ICON-ART-OEM
-            if cfg.model == 'icon-art-oem':
-                tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_gridded_emissions_nc),
-                    cfg.oae_gridded_emissions_nc_scratch)
-                tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_vertical_profiles_nc),
-                    cfg.oae_vertical_profiles_nc_scratch)
-                if hasattr(cfg, 'oae_hourofday_nc'):
-                    tools.copy_file(
-                        os.path.join(cfg.oae_dir, cfg.oae_hourofday_nc),
-                        cfg.oae_hourofday_nc_scratch)
-                if hasattr(cfg, 'oae_dayofweek_nc'):
-                    tools.copy_file(
-                        os.path.join(cfg.oae_dir, cfg.oae_dayofweek_nc),
-                        cfg.oae_dayofweek_nc_scratch)
-                if hasattr(cfg, 'oae_monthofyear_nc'):
-                    tools.copy_file(
-                        os.path.join(cfg.oae_dir, cfg.oae_monthofyear_nc),
-                        cfg.oae_monthofyear_nc_scratch)
-                if hasattr(cfg, 'oae_hourofyear_nc'):
-                    tools.copy_file(
-                        os.path.join(cfg.oae_dir, cfg.oae_hourofyear_nc),
-                        cfg.oae_hourofyear_nc_scratch)
-                if hasattr(cfg, 'oae_ens_reg_nc'):
-                    tools.copy_file(
-                        os.path.join(cfg.oae_dir, cfg.oae_ens_reg_nc),
-                        cfg.oae_ens_reg_nc_scratch)
-                if hasattr(cfg, 'oae_ens_lambda_nc'):
-                    tools.copy_file(
-                        os.path.join(cfg.oae_dir, cfg.oae_ens_lambda_nc),
-                        cfg.oae_ens_lambda_nc_scratch)
-
             #-----------------------------------------------------
             # Get datafile lists for LBC (each at 00 UTC and others)
             #-----------------------------------------------------
@@ -387,10 +354,55 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     logging.info("Added GEOSP to file {}".format(merged_file))
 
             #-----------------------------------------------------
-            # In case of OEM: merge chem tracers with meteo-files
+            # Add Q (copy of QV) to initial file
             #-----------------------------------------------------
+            if cfg.model.startswith('icon-art'):
+                meteo_file = os.path.join(cfg.icon_input_icbc,
+                             starttime.strftime(cfg.meteo_nameformat) + '.nc')
+                merged_file = os.path.join(cfg.icon_input_icbc,
+                              starttime.strftime(cfg.meteo_nameformat) 
+                              + '_merged.nc')
+                ds = xr.open_dataset(meteo_file)
+                ds['Q'] = ds['QV']
+                ds.to_netcdf(merged_file)
+                tools.rename_file(merged_file, meteo_file)
+                logging.info("Added Q to file {}".format(meteo_file))
 
+            #-----------------------------------------------------
+            # In case of OEM: Copy data and merge chem tracers with meteo-files
+            #-----------------------------------------------------
             if cfg.model == 'icon-art-oem':
+                tools.copy_file(
+                    os.path.join(cfg.oae_dir, cfg.oae_gridded_emissions_nc),
+                    cfg.oae_gridded_emissions_nc_scratch)
+                tools.copy_file(
+                    os.path.join(cfg.oae_dir, cfg.oae_vertical_profiles_nc),
+                    cfg.oae_vertical_profiles_nc_scratch)
+                if hasattr(cfg, 'oae_hourofday_nc'):
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_hourofday_nc),
+                        cfg.oae_hourofday_nc_scratch)
+                if hasattr(cfg, 'oae_dayofweek_nc'):
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_dayofweek_nc),
+                        cfg.oae_dayofweek_nc_scratch)
+                if hasattr(cfg, 'oae_monthofyear_nc'):
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_monthofyear_nc),
+                        cfg.oae_monthofyear_nc_scratch)
+                if hasattr(cfg, 'oae_hourofyear_nc'):
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_hourofyear_nc),
+                        cfg.oae_hourofyear_nc_scratch)
+                if hasattr(cfg, 'oae_ens_reg_nc'):
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_ens_reg_nc),
+                        cfg.oae_ens_reg_nc_scratch)
+                if hasattr(cfg, 'oae_ens_lambda_nc'):
+                    tools.copy_file(
+                        os.path.join(cfg.oae_dir, cfg.oae_ens_lambda_nc),
+                        cfg.oae_ens_lambda_nc_scratch)
+
                 for time in tools.iter_hours(starttime, hstart, hstop,
                                              cfg.meteo_inc):
                     if time == starttime:
