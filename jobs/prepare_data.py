@@ -357,11 +357,12 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             # Add Q (copy of QV) to initial file
             #-----------------------------------------------------
             if cfg.model.startswith('icon-art'):
-                meteo_file = os.path.join(cfg.icon_input_icbc,
-                             starttime.strftime(cfg.meteo_nameformat) + '.nc')
-                merged_file = os.path.join(cfg.icon_input_icbc,
-                              starttime.strftime(cfg.meteo_nameformat) 
-                              + '_merged.nc')
+                meteo_file = os.path.join(
+                    cfg.icon_input_icbc,
+                    starttime.strftime(cfg.meteo_nameformat) + '.nc')
+                merged_file = os.path.join(
+                    cfg.icon_input_icbc,
+                    starttime.strftime(cfg.meteo_nameformat) + '_merged.nc')
                 ds = xr.open_dataset(meteo_file)
                 ds['Q'] = ds['QV']
                 ds.to_netcdf(merged_file)
