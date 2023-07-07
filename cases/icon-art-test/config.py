@@ -5,26 +5,25 @@ Configuration file for the 'icon-art-test' case with ICON-ART
 
 # GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
-if os.path.exists(os.environ['HOME'] + '/.acct'):
+if user == 'jenkins':
+    compute_account = 'g110'
+elif os.path.exists(os.environ['HOME'] + '/.acct'):
     with open(os.environ['HOME'] + '/.acct', 'r') as file:
         compute_account = file.read().rstrip()
 else:
     compute_account = os.popen("id -gn").read().splitlines()[0]
 compute_host = 'daint'
-compute_queue = 'normal'  # 'normal' / 'debug'
-constraint = 'gpu'  # 'mc' / 'gpu'
+compute_queue = 'normal'
+constraint = 'gpu'  # 'mc'
 
 model = 'icon-art'
 restart_step = 24  # hours
 
-if constraint == 'gpu':
-    ntasks_per_node = 12
-elif constraint == 'mc':
-    ntasks_per_node = 36
+# Number of tasks per node
+ntasks_per_node = 36 if constraint == 'mc' else 12
 
-# case name = pathname in cases/
-path = os.path.realpath(__file__)
-casename = os.path.basename(os.path.dirname(path))
+# Case name = pathname in cases/
+casename = os.path.basename(os.path.dirname(os.path.realpath(__file__)))
 
 # Root directory of the sourcecode of the chain (where run_chain.py is)
 chain_src_dir = os.getcwd()
@@ -35,7 +34,7 @@ work_root = os.path.join(chain_src_dir, 'work')
 # Case directory
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
-# PREPARE_DATA ---------------------------------------------------------------
+# PRE-PROCESSING =============================================================
 input_root = os.path.join(chain_src_dir, 'input', model)
 # meteo
 input_root_meteo = os.path.join(chain_src_dir, 'input', 'meteo')
