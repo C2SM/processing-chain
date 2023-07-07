@@ -13,7 +13,7 @@ elif os.path.exists(os.environ['HOME'] + '/.acct'):
 else:
     compute_account = os.popen("id -gn").read().splitlines()[0]
 compute_host = 'daint'
-compute_queue = 'normal' 
+compute_queue = 'normal'
 constraint = 'gpu'  # 'mc' / 'gpu'
 
 model = 'icon'
