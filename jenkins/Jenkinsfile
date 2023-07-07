@@ -95,6 +95,19 @@ pipeline {
                         }
                     }
                 }
+                stage('Build ICON-ART') {
+                    steps {
+                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                        conda activate proc-chain
+                        ./jenkins/scripts/build_icon-art.sh'''
+                    }
+                    post {
+                        failure {
+                            echo 'Cleaning up workspace'
+                            deleteDir()
+                        }
+                    }
+                }
             }
         }
         stage('Test COSMO-GHG') {
@@ -105,7 +118,7 @@ pipeline {
                 sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                 conda activate proc-chain
                 . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
-                python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -f'''
+                ./jenkins/scripts/test_cosmo-ghg.sh'''
             }
             post {
                 failure {
@@ -122,7 +135,24 @@ pipeline {
                 sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                 conda activate proc-chain
                 . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
-                python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon -f'''
+                ./jenkins/scripts/test_icon.sh'''
+            }                     
+            post {
+                failure {
+                    echo 'Cleaning up workspace'
+                    deleteDir()
+                }
+            }
+        }
+        stage('Test ICON-ART (global)') {
+            environment {
+                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
+            }
+            steps {
+                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                conda activate proc-chain
+                . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
+                ./jenkins/scripts/test_icon-art-global.sh'''
             }                     
             post {
                 failure {
