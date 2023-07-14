@@ -1,6 +1,6 @@
 import os
 """
-Configuration file for the 'icon-art-test' case with ICON-ART
+Configuration file for the 'icon-art-oem-test' case with ICON-ART
 """
 
 # GENERAL SETTINGS ===========================================================
@@ -16,7 +16,7 @@ compute_host = 'daint'
 compute_queue = 'normal'
 constraint = 'gpu'  # 'mc'
 
-model = 'icon-art'
+model = 'icon-art-oem'
 restart_step = 24  # hours
 
 # Number of tasks per node
@@ -37,7 +37,7 @@ case_dir = os.path.join(chain_src_dir, 'cases', casename)
 # PRE-PROCESSING =============================================================
 input_root = os.path.join(chain_src_dir, 'input', model)
 # meteo
-input_root_meteo = os.path.join(chain_src_dir, 'input', 'meteo')
+input_root_meteo = os.path.join(input_root, 'meteo')
 meteo_prefix = 'ifs_'
 meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
@@ -52,6 +52,8 @@ icontools_runjobs = [
     'icontools_remap_ic_runjob.cfg',
     'icontools_remap_00_lbc_runjob.cfg',
     'icontools_remap_lbc_rest_runjob.cfg',
+    'icontools_remap_ic_chem_runjob.cfg',
+    'icontools_remap_lbc_chem_runjob.cfg',
 ]
 
 # Input data for runscript----------------------------------------------------
@@ -82,7 +84,7 @@ inidata_prefix = "ifs_init_"
 inidata_nameformat = inidata_prefix + '%Y%m%d%H'
 inidata_filename_suffix = ".nc"
 
-output_filename = "icon-art-test"
+output_filename = "icon-art-oem-test"
 filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 
 lateral_boundary_grid_order = 'lateral_boundary'
