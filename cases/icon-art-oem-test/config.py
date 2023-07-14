@@ -45,9 +45,9 @@ meteo_inc = 3
 
 input_root_chem = os.path.join(input_root, 'chem')
 input_root_icbc = os.path.join(input_root, 'icbc')
-chem_prefix = 'cams_gqpe'
-chem_nameformat = chem_prefix + '_%Y%m%d_%H'
-chem_suffix = '.nc'
+chem_prefix = 'cams_gqpe_'
+chem_nameformat = chem_prefix + '%Y%m%d_%H'
+chem_suffix = '.grb'
 
 icontools_runjobs = [
     'icontools_remap_ic_runjob.cfg',

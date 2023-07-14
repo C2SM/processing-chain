@@ -322,7 +322,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     os.path.join(cfg.icon_work, "%s.job" % runscript)
                 ])
                 exitcode = result.returncode
-                logging.info(f'EXITCODE: {exitcode}')
                 if exitcode != 0:
                     raise RuntimeError(
                         "sbatch returned exitcode {}".format(exitcode))
