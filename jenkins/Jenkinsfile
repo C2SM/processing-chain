@@ -95,11 +95,11 @@ pipeline {
                         }
                     }
                 }
-                stage('Build ICON-ART') {
+                stage('Build ICON-ART-OEM') {
                     steps {
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                         conda activate proc-chain
-                        ./jenkins/scripts/build_icon-art.sh'''
+                        ./jenkins/scripts/build_icon-art-oem.sh'''
                     }
                     post {
                         failure {

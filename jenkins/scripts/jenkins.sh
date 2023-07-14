@@ -53,7 +53,7 @@ if [[ -f src/icon-art/bin/icon ]]; then
   echo icon-art executable already exists - skipping build.
 else
   echo building icon-art...
-  ./jenkins/scripts/build_icon-art.sh
+  ./jenkins/scripts/build_icon-art-oem.sh
 fi
 
 # Test COSMO-GHG
