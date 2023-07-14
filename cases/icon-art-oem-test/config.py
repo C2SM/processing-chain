@@ -43,6 +43,7 @@ meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
 meteo_inc = 3
 
+input_root_chem = os.path.join(input_root, 'chem')
 input_root_icbc = os.path.join(input_root, 'icbc')
 chem_prefix = 'cams_gqpe'
 chem_nameformat = chem_prefix + '_%Y%m%d_%H'
