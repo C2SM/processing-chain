@@ -10,7 +10,7 @@ function error {
 # Check if script is called correctly
 [[ $(git rev-parse --show-toplevel 2>/dev/null) = $(pwd) ]] || error "$0 not launched from toplevel of repository"
 
-BRANCH=v0.18.1.5
+BRANCH=main
 GIT_REMOTE=https://github.com/C2SM/spack-c2sm.git
 
 rm -fr src/spack-c2sm
