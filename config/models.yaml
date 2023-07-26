@@ -4,7 +4,7 @@ models:
         variants: ['spinup']
         features: ['restart']
     cosmo-ghg:
-        jobs: ['prepare_data', 'emissions', 'biofluxes', 'oae', 'online_vprm',
+        jobs: ['prepare_data', 'emissions', 'biofluxes', 'oem', 'online_vprm',
                'int2lm', 'post_int2lm', 'cosmo', 'post_cosmo']
         variants: ['spinup']
         features: ['restart', 'tracers']
