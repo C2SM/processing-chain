@@ -163,7 +163,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         namelist_names = [
             'ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO', 'ORG', 'PHY'
         ]
-        if hasattr(cfg, 'oae_dir'):
+        if hasattr(cfg, 'oem_dir'):
             # When doing online emissions in COSMO-ART, an additional
             # namelist is required
             namelist_names += ['OAE']
