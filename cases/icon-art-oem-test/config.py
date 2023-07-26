@@ -72,11 +72,11 @@ input_files = {
     'map_file_ana': ['map_file.ana', 'mapping'],
     'chemtracer_xml_filename': ['tracers_oh_pntsrc.xml', 'XML'],
     'pntSrc_xml_filename': ['pntSrc_example.xml', 'XML'],
-    'oae_gridded_emissions_nc': ['tno_3cat.nc', 'OEM'],
-    'oae_vertical_profiles_nc': ['vertical_profiles.nc', 'OEM'],
-    'oae_hourofday_nc': ['hourofday.nc', 'OEM'],
-    'oae_dayofweek_nc': ['dayofweek.nc', 'OEM'],
-    'oae_monthofyear_nc': ['monthofyear.nc', 'OEM'],
+    'oem_gridded_emissions_nc': ['tno_3cat.nc', 'OEM'],
+    'oem_vertical_profiles_nc': ['vertical_profiles.nc', 'OEM'],
+    'oem_hourofday_nc': ['hourofday.nc', 'OEM'],
+    'oem_dayofweek_nc': ['dayofweek.nc', 'OEM'],
+    'oem_monthofyear_nc': ['monthofyear.nc', 'OEM'],
 }
 
 # File names -----------------------------------------------------------------

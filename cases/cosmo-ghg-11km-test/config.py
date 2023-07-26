@@ -90,13 +90,13 @@ emis_gridname = "co2_"
 
 # OAE ------------------------------------------------------------------------
 # Online anthropogenic emissions
-oae_dir = os.path.join(input_root, 'oae')
-oae_gridded_emissions_nc = 'emissions.nc'
-oae_vertical_profiles_nc = 'vertical_profiles.nc'
-oae_hourofday_nc = 'hourofday.nc'
-oae_hourofyear_nc = 'hourofyear.nc'
-oae_dayofweek_nc = 'dayofweek.nc'
-oae_monthofyear_nc = 'monthofyear.nc'
+oem_dir = os.path.join(input_root, 'oem')
+oem_gridded_emissions_nc = 'emissions.nc'
+oem_vertical_profiles_nc = 'vertical_profiles.nc'
+oem_hourofday_nc = 'hourofday.nc'
+oem_hourofyear_nc = 'hourofyear.nc'
+oem_dayofweek_nc = 'dayofweek.nc'
+oem_monthofyear_nc = 'monthofyear.nc'
 
 # BIOFLUXES ------------------------------------------------------------------
 # VPRM biogenic fluxes for offline VPRM
