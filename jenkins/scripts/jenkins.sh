@@ -53,7 +53,7 @@ if [[ -f src/icon-art/bin/icon ]]; then
   echo icon-art executable already exists - skipping build.
 else
   echo building icon-art...
-  ./jenkins/scripts/build_icon-art-oem.sh
+  ./jenkins/scripts/build_icon-art.sh
 fi
 
 # Test COSMO-GHG
@@ -73,11 +73,11 @@ else
 fi
 
 # Test ICON-ART
-if [[ -f work/icon-art-test/2018010100_0_24/checkpoints/finished/icon ]]; then
+if [[ -f work/icon-art-oem-test/2018010100_0_24/checkpoints/finished/icon ]]; then
   echo icon-art test case already finished - skipping test.
 else
-  echo running icon-art test case...
-  ./jenkins/scripts/test_icon-art.sh
+  echo running icon-art-oem test case...
+  ./jenkins/scripts/test_icon-art-oem.sh
 fi
 
 # Test ICON-ART-GLOBAL

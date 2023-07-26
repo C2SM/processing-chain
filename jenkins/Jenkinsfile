@@ -95,11 +95,11 @@ pipeline {
                         }
                     }
                 }
-                stage('Build ICON-ART-OEM') {
+                stage('Build ICON-ART') {
                     steps {
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                         conda activate proc-chain
-                        ./jenkins/scripts/build_icon-art-oem.sh'''
+                        ./jenkins/scripts/build_icon-art.sh'''
                     }
                     post {
                         failure {
@@ -136,6 +136,23 @@ pipeline {
                 conda activate proc-chain
                 . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
                 ./jenkins/scripts/test_icon.sh'''
+            }                     
+            post {
+                failure {
+                    echo 'Cleaning up workspace'
+                    deleteDir()
+                }
+            }
+        }
+        stage('Test ICON-ART (OEM)') {
+            environment {
+                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
+            }
+            steps {
+                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                conda activate proc-chain
+                . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
+                ./jenkins/scripts/test_icon-art-oem.sh'''
             }                     
             post {
                 failure {
