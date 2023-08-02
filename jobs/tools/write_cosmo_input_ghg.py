@@ -3,7 +3,6 @@
 
 import csv
 import sys
-import os
 from .. import tools
 
 STR2INT = {
@@ -61,13 +60,9 @@ STR2INT_recycling = STR2INT.copy()
 STR2INT_recycling["ytype_ini"] = {'zero': 1, 'file': 1, 'user': 2}
 
 
-def group2text(group, model, recycling=False):
+def group2text(group, recycling=False):
 
-    if model == "COSMO":
-        lines = ['&TRACER']
-    if model == "ICON":
-        lines = ['&ghgtracer_nml']
-
+    lines = ['&TRACER']
     for key, value in group.items():
 
         if key == '' or value == '':
@@ -85,10 +80,7 @@ def group2text(group, model, recycling=False):
 
         if key == 'ycatl' or key == 'ytpl' or key == 'yvpl':
             value = value.replace('\'\'', '\'')
-        if model == "COSMO":
-            lines.append('  %s = %s,' % (key, value))
-        if model == "ICON":
-            lines.append('  %s = %s' % (key, value))
+        lines.append('  %s = %s,' % (key, value))
     lines.append('/\n')
 
     return '\n'.join(lines)
@@ -96,7 +88,7 @@ def group2text(group, model, recycling=False):
 
 def main(csv_filename, namelist_filename, cfg=None):
     """Convert a table (``.csv`` file) to namelist file (``INPUT_GHG``)
-    read by **COSMO**
+    read by **COSMO**.
     
     Parameters
     ----------
@@ -106,23 +98,16 @@ def main(csv_filename, namelist_filename, cfg=None):
         Path to the namelist file that will be created
     """
 
-    #Distinguish between COSMO and ICON
-    if cfg.model.startswith('cosmo'):
-        model = "COSMO"
-    if cfg.model.startswith('icon'):
-        model = "ICON"
-
     with open(csv_filename, 'r') as csv_file:
         reader = csv.DictReader(csv_file, delimiter=',')
         reader = [r for r in reader if r[''] != '#']
-        n_tracers = len(reader)
 
         with open(namelist_filename, 'a') as nml_file:
             for group in reader:
                 if cfg.variant == 'spinup' and not cfg.first_one:
-                    nml_file.write(group2text(group, model, recycling=True))
+                    nml_file.write(group2text(group, recycling=True))
                 else:
-                    nml_file.write(group2text(group, model))
+                    nml_file.write(group2text(group))
 
 
 if __name__ == '__main__':
