@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Argument parsing
+force_execution=false
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -f|--force)
+            force_execution=true
+            shift
+            ;;
+        *)
+            echo "Unknown parameter: $1"
+            exit 1
+            ;;
+    esac
+done
+
 set -e -x
 
 # Activate conda environment
@@ -57,7 +73,7 @@ else
 fi
 
 # Test COSMO-GHG
-if [[ -f work/cosmo-ghg-11km-test/2015010112_-6_12/checkpoints/finished/post_cosmo ]]; then
+if [[ -f work/cosmo-ghg-11km-test/2015010112_-6_12/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg test case already finished - skipping test.
 else
   echo running cosmo-ghg test case...
@@ -65,7 +81,7 @@ else
 fi
 
 # Test ICON
-if [[ -f work/icon-test/2018010100_0_24/checkpoints/finished/icon ]]; then
+if [[ -f work/icon-test/2018010100_0_24/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon test case already finished - skipping test.
 else
   echo running icon test case...
@@ -73,7 +89,7 @@ else
 fi
 
 # Test ICON-ART
-if [[ -f work/icon-art-oem-test/2018010100_0_24/checkpoints/finished/icon ]]; then
+if [[ -f work/icon-art-oem-test/2018010100_0_24/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon-art test case already finished - skipping test.
 else
   echo running icon-art-oem test case...
@@ -81,7 +97,7 @@ else
 fi
 
 # Test ICON-ART-GLOBAL
-if [[ -f work/icon-art-global-test/2018010100_0_24/checkpoints/finished/icon ]]; then
+if [[ -f work/icon-art-global-test/2018010100_0_24/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon-art-global test case already finished - skipping test.
 else
   echo running icon-art-global test case...
