@@ -16,7 +16,6 @@
 
 import os
 import logging
-import shutil
 
 from . import tools
 
@@ -80,3 +79,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             source_path = os.path.join(emis_dir, emis_prefix + filename_ending)
             dest_path = os.path.join(target_dir, dest_prefix + filename_ending)
             tools.copy_file(source_path, dest_path)
+
+            # convert grid_mapping_name from string (NF90_STRING) to char
+            # (NF90_CHAR) (needed for int2lm to work)
+            if cfg.model.startswith('cosmo'):
+                tools.string2char.main(dest_path)
