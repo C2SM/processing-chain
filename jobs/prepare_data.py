@@ -31,15 +31,16 @@ import shutil
 import subprocess
 from datetime import timedelta
 import xarray as xr
+import numpy as np
 from . import tools
 from .tools.interpolate_data import create_oh_for_restart, create_oh_for_inicond
 from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 from calendar import monthrange
 
 
-def main(starttime, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """
-    **ICON** (if ``cfg.target`` is ``tools.Target.ICON``)
+    **ICON** (if ``cfg.model`` is ``tools.Target.ICON``)
 
      Create necessary directories ``cfg.icon_input_icbc``
      and ''cfg.icon_work''
@@ -79,9 +80,7 @@ def main(starttime, hstart, hstop, cfg):
         Object holding all user-configuration parameters as attributes
     """
 
-    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
-       cfg.target is tools.Target.ICONARTOEM or cfg.target is tools.Target.ICONARTGLOBAL:
-
+    if cfg.model.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
 
         starttime_real = starttime + timedelta(hours=hstart)
@@ -91,85 +90,27 @@ def main(starttime, hstart, hstop, cfg):
         #-----------------------------------------------------
         tools.create_dir(cfg.icon_work, "icon_work")
         tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
-        tools.create_dir(cfg.icon_input_grid, "icon_input_grid")
-        tools.create_dir(cfg.icon_input_mapping, "icon_input_mapping")
-        tools.create_dir(cfg.icon_input_oae, "icon_input_oem")
-        tools.create_dir(cfg.icon_input_rad, "icon_input_rad")
         tools.create_dir(cfg.icon_output, "icon_output")
         tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
 
         #-----------------------------------------------------
-        # Copy files
+        # Create input directories and copy files
         #-----------------------------------------------------
-        # Copy grid files
-        tools.copy_file(cfg.radiation_grid_filename,
-                        cfg.radiation_grid_filename_scratch,
-                        output_log=True)
-        tools.copy_file(cfg.dynamics_grid_filename,
-                        cfg.dynamics_grid_filename_scratch,
-                        output_log=True)
-
-        tools.copy_file(cfg.extpar_filename,
-                        cfg.extpar_filename_scratch,
-                        output_log=True)
-
-        if cfg.target is not tools.Target.ICONARTGLOBAL:
-            tools.copy_file(cfg.map_file_latbc,
-                            cfg.map_file_latbc_scratch,
+        for varname in cfg.input_files:
+            file_info = cfg.input_files[varname]
+            input_dir = os.path.join(cfg.chain_root, 'icon', 'input',
+                                     file_info[1])
+            input_dir_name = 'icon_input_' + file_info[1]
+            setattr(cfg, input_dir_name, input_dir)
+            tools.create_dir(input_dir, input_dir_name)
+            varname_scratch = varname + '_scratch'
+            tools.copy_file(getattr(cfg, varname),
+                            getattr(cfg, varname_scratch),
                             output_log=True)
 
-        # Copy radiation files
-        tools.copy_file(cfg.cldopt_filename,
-                        cfg.cldopt_filename_scratch,
-                        output_log=True)
-        tools.copy_file(cfg.lrtm_filename,
-                        cfg.lrtm_filename_scratch,
-                        output_log=True)
-
-        # Copy mapping file
-        if cfg.target is not tools.Target.ICONARTGLOBAL:
-            tools.copy_file(cfg.map_file_ana,
-                            cfg.map_file_ana_scratch,
-                            output_log=True)
-
-        # Copy tracer data in case of ART
-        if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM or\
-            cfg.target is tools.Target.ICONARTGLOBAL:
-
-            tools.create_dir(cfg.icon_input_xml, "icon_input_xml")
-            if hasattr(cfg, 'chemtracer_xml_filename'):
-                tools.copy_file(cfg.chemtracer_xml_filename,
-                                cfg.chemtracer_xml_filename_scratch,
-                                output_log=True)
-            if hasattr(cfg, 'pntSrc_xml_filename'):
-                tools.copy_file(cfg.pntSrc_xml_filename,
-                                cfg.pntSrc_xml_filename_scratch,
-                                output_log=True)
-
-        # Copy data for global ICON-ART
-        if cfg.target is tools.Target.ICONARTGLOBAL:
-
-            # -- Copy nudging data
-            if cfg.era5_global_nudging:
-                tools.copy_file(cfg.map_file_nudging,
-                                cfg.map_file_nudging_scratch,
-                                output_log=True)
-
-            # -- Copy ART files
-            if hasattr(cfg, 'input_root_art'):
-                list_files = glob.glob(os.path.join(cfg.input_root_art, '*'))
-                for file in list_files:
-                    tools.copy_file(file, cfg.icon_work)
-
-            # -- Copy inicond file
-            if not cfg.era5_inicond:
-                tools.copy_file(cfg.inicond_filename,
-                                cfg.inicond_filename_scratch,
-                                output_log=True)
-
-            # -- If not, download ERA5 data and create the inicond file
+        if cfg.model == 'icon-art-global':
+            # -- Download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
-
                 # -- Fetch ERA5 data
                 fetch_era5(starttime_real, cfg.icon_input_icbc)
 
@@ -334,39 +275,7 @@ def main(starttime, hstart, hstop, cfg):
                 os.symlink(cfg.restart_filename_scratch,
                            os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 
-        # Copy data for ICON-ART-OEM
-        if cfg.target is tools.Target.ICONARTOEM:
-            tools.copy_file(
-                os.path.join(cfg.oae_dir, cfg.oae_gridded_emissions_nc),
-                cfg.oae_gridded_emissions_nc_scratch)
-            tools.copy_file(
-                os.path.join(cfg.oae_dir, cfg.oae_vertical_profiles_nc),
-                cfg.oae_vertical_profiles_nc_scratch)
-            if hasattr(cfg, 'oae_hourofday_nc'):
-                tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_hourofday_nc),
-                    cfg.oae_hourofday_nc_scratch)
-            if hasattr(cfg, 'oae_dayofweek_nc'):
-                tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_dayofweek_nc),
-                    cfg.oae_dayofweek_nc_scratch)
-            if hasattr(cfg, 'oae_monthofyear_nc'):
-                tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_monthofyear_nc),
-                    cfg.oae_monthofyear_nc_scratch)
-            if hasattr(cfg, 'oae_hourofyear_nc'):
-                tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_hourofyear_nc),
-                    cfg.oae_hourofyear_nc_scratch)
-            if hasattr(cfg, 'oae_ens_reg_nc'):
-                tools.copy_file(os.path.join(cfg.oae_dir, cfg.oae_ens_reg_nc),
-                                cfg.oae_ens_reg_nc_scratch)
-            if hasattr(cfg, 'oae_ens_lambda_nc'):
-                tools.copy_file(
-                    os.path.join(cfg.oae_dir, cfg.oae_ens_lambda_nc),
-                    cfg.oae_ens_lambda_nc_scratch)
-
-        if cfg.target is not tools.Target.ICONARTGLOBAL:
+        else:  # non-global ICON-ART
             #-----------------------------------------------------
             # Get datafile lists for LBC (each at 00 UTC and others)
             #-----------------------------------------------------
@@ -377,7 +286,7 @@ def main(starttime, hstart, hstop, cfg):
                                          cfg.meteo_inc):
                 meteo_file = os.path.join(cfg.icon_input_icbc,
                                           time.strftime(cfg.meteo_nameformat))
-                if cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM:
+                if cfg.model == 'icon-art' or cfg.model == 'icon-art-oem':
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
                         time.strftime(cfg.chem_nameformat))
@@ -446,9 +355,42 @@ def main(starttime, hstart, hstop, cfg):
                     logging.info("Added GEOSP to file {}".format(merged_file))
 
             #-----------------------------------------------------
+            # Add Q (copy of QV) and/or PS to initial file
+            #-----------------------------------------------------
+            if cfg.model.startswith('icon-art'):
+                meteo_file = os.path.join(
+                    cfg.icon_input_icbc,
+                    starttime.strftime(cfg.meteo_nameformat) + '.nc')
+                merged_file = os.path.join(
+                    cfg.icon_input_icbc,
+                    starttime.strftime(cfg.meteo_nameformat) + '_merged.nc')
+                ds = xr.open_dataset(meteo_file)
+                merging = False
+                if 'PS' not in ds:
+                    if 'LNPS' not in ds:
+                        raise KeyError(
+                            f"'LNPS' must be found in the initial conditions file {meteo_file}"
+                        )
+                    merging = True
+                    ds['PS'] = ds['LNPS']
+                    ds['PS'].attrs = ds['LNPS'].attrs
+                    ds['PS'] = np.exp(ds['PS'])
+                    ds['PS'] = ds['PS'].squeeze(dim='lev_2')
+                    ds['PS'].attrs["long_name"] = 'surface pressure'
+                    ds['PS'].attrs['units'] = 'Pa'
+                    logging.info(f"Added PS to file {meteo_file}")
+                if 'Q' not in ds:
+                    merging = True
+                    ds['Q'] = ds['QV']
+                    logging.info(f"Added Q to file {meteo_file}")
+                if merging:
+                    ds.to_netcdf(merged_file)
+                    tools.rename_file(merged_file, meteo_file)
+
+            #-----------------------------------------------------
             # In case of OEM: merge chem tracers with meteo-files
             #-----------------------------------------------------
-            if cfg.target is tools.Target.ICONARTOEM:
+            if cfg.model == 'icon-art-oem':
                 for time in tools.iter_hours(starttime, hstart, hstop,
                                              cfg.meteo_inc):
                     if time == starttime:
@@ -605,7 +547,7 @@ def main(starttime, hstart, hstop, cfg):
 
         # Other IC/BC data
         inv_to_process = []
-        if cfg.target is tools.Target.COSMOGHG:
+        if cfg.model == 'cosmo-ghg':
             try:
                 CAMS = dict(fullname="CAMS",
                             nickname="cams",
@@ -626,7 +568,7 @@ def main(starttime, hstart, hstop, cfg):
                 inv_to_process.append(CT)
             except AttributeError:
                 pass
-        elif cfg.target is tools.Target.COSMOART:
+        elif cfg.model == 'cosmo-art':
             try:
                 MOZART = dict(fullname='MOZART',
                               nickname='mozart',
@@ -641,7 +583,7 @@ def main(starttime, hstart, hstop, cfg):
             except AttributeError:
                 pass
 
-        if cfg.target is tools.Target.COSMOGHG or cfg.target is tools.Target.COSMOART:
+        if cfg.model == 'cosmo-ghg' or cfg.model == 'cosmo-art':
             logging.info("Processing " +
                          ", ".join([i["fullname"]
                                     for i in inv_to_process]) + " data")

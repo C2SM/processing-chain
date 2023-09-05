@@ -9,7 +9,7 @@ import shutil
 from . import tools
 
 
-def main(starttime, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """Copy MODIS surface reflectance data and vegatation class fraction file
     to the **cosmo** input directory.
 

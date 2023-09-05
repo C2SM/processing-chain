@@ -4,7 +4,7 @@
 
 from . import prepare_data
 from . import emissions
-from . import oae
+from . import oem
 from . import biofluxes
 from . import int2lm
 from . import post_int2lm

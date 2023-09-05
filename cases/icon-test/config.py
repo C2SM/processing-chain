@@ -13,20 +13,17 @@ elif os.path.exists(os.environ['HOME'] + '/.acct'):
 else:
     compute_account = os.popen("id -gn").read().splitlines()[0]
 compute_host = 'daint'
-compute_queue = 'debug'  # 'normal' / 'debug'
+compute_queue = 'normal'
 constraint = 'gpu'  # 'mc' / 'gpu'
 
-target = 'icon'
+model = 'icon'
 restart_step = 24  # hours
 
-if constraint == 'gpu':
-    ntasks_per_node = 12
-elif constraint == 'mc':
-    ntasks_per_node = 36
+# Number of tasks per node
+ntasks_per_node = 36 if constraint == 'mc' else 12
 
-# case name = pathname in cases/
-path = os.path.realpath(__file__)
-casename = os.path.basename(os.path.dirname(path))
+# Case name = pathname in cases/
+casename = os.path.basename(os.path.dirname(os.path.realpath(__file__)))
 
 # Root directory of the sourcecode of the chain (where run_chain.py is)
 chain_src_dir = os.getcwd()
@@ -56,26 +53,30 @@ icontools_runjobs = [
 
 # Input data for runscript----------------------------------------------------
 # Grid
+
 input_root_grid = os.path.join(input_root, 'grid')
-radiation_grid_filename = os.path.join(input_root_grid,
-                                       "VERIFY_DOM_DOM01.parent.nc")
-dynamics_grid_filename = os.path.join(input_root_grid, "VERIFY_DOM_DOM01.nc")
-map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
-extpar_filename = os.path.join(
-    input_root_grid, "external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc")
 input_root_rad = os.path.join(input_root, 'rad')
-cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
-lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
-
 input_root_mapping = os.path.join(input_root, 'mapping')
-map_file_ana = os.path.join(input_root_mapping, "map_file.ana")
 
-# File names -----------------------------------------------------------------
+input_files = {
+    'radiation_grid_filename': ['VERIFY_DOM_DOM01.parent.nc', 'grid'],
+    'dynamics_grid_filename': ['VERIFY_DOM_DOM01.nc', 'grid'],
+    'map_file_latbc': ['map_file.latbc', 'grid'],
+    'lateral_boundary_grid': ['lateral_boundary.grid.nc', 'grid'],
+    'extpar_filename':
+    ['external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc', 'grid'],
+    'cldopt_filename': ['rrtm_cldopt.nc', 'rad'],
+    'lrtm_filename': ['rrtmg_lw.nc', 'rad'],
+    'map_file_ana': ['map_file.ana', 'mapping'],
+}
+
 latbc_filename = "ifs_201801<d><h>_lbc.nc"
 inidata_filename = "ifs_init_2018010100.nc"
 
 output_filename = "NWP_LAM"
 filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
+
+lateral_boundary_grid_order = 'lateral_boundary'
 
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
@@ -100,12 +101,9 @@ icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
 if compute_queue == "normal":
     icon_walltime = "00:30:00"
     icon_np_tot = 12
-elif compute_queue == "debug":
+else:
     icon_walltime = "00:30:00"
     icon_np_tot = 10
-else:
-    logging.error("Unknown queue name: %s" % compute_queue)
-    sys.exit(1)
 
 # POST-PROCESSING ============================================================
 # REDUCE_OUTPUT --------------------------------------------------------------

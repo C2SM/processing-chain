@@ -15,7 +15,7 @@ import netCDF4 as nc
 from . import tools
 
 
-def main(start_time, hstart, hstop, cfg):
+def main(start_time, hstart, hstop, cfg, model_cfg):
     """Combine multiple **int2lm** tracer-output files into a single one for
     **COSMO**.
 
@@ -40,7 +40,7 @@ def main(start_time, hstart, hstop, cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    tools.check_target(cfg, tools.Target.COSMOGHG)
+    tools.check_model(cfg, 'cosmo-ghg')
 
     int2lm_output = cfg.int2lm_output
     inidate_int2lm_yyyymmddhh = cfg.inidate_int2lm_yyyymmddhh
@@ -90,7 +90,7 @@ def main(start_time, hstart, hstop, cfg):
     logging.info("OK")
 
     # Meteo spinup simulation with tracer recycling
-    if cfg.target.subtarget is tools.Subtarget.SPINUP and \
+    if cfg.variant == 'spinup' and \
     hasattr(cfg, 'post_int2lm_species_spinup') and not cfg.first_one:
         var_list = cfg.post_int2lm_species_spinup
         logging.info(

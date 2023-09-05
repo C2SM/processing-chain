@@ -1,0 +1,31 @@
+models:
+    cosmo:
+        jobs: ['prepare_data', 'int2lm', 'cosmo', 'post_cosmo']
+        variants: ['spinup']
+        features: ['restart']
+    cosmo-ghg:
+        jobs: ['prepare_data', 'emissions', 'biofluxes', 'oem', 'online_vprm',
+               'int2lm', 'post_int2lm', 'cosmo', 'post_cosmo']
+        variants: ['spinup']
+        features: ['restart', 'tracers']
+    cosmo-art:
+        jobs: ['prepare_data', 'emissions', 'obs_nudging', 'photo_rate',
+               'int2lm', 'cosmo', 'post_cosmo']
+        variants: ['spinup']
+        features: ['nesting']
+    icon:
+        jobs: ['prepare_data', 'icon']
+        variants: []
+        features: ['restart']
+    icon-art:
+        jobs: ['prepare_data', 'icon']
+        variants: []
+        features: ['restart']
+    icon-art-global:
+        jobs: ['prepare_data', 'icon']
+        variants: []
+        features: ['restart']
+    icon-art-oem:
+        jobs: ['prepare_data', 'icon']
+        variants: []
+        features: ['restart']

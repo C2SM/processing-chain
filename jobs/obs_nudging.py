@@ -9,7 +9,7 @@ from datetime import timedelta
 from . import tools
 
 
-def main(starttime, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """Copy and rename the obs_nudging files to the **COSMO** input directory.
 
     In the folder ``cfg.obs_nudging_dir``, the files are saved in the format

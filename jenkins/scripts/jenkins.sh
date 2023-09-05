@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Argument parsing
+force_execution=false
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -f|--force)
+            force_execution=true
+            shift
+            ;;
+        *)
+            echo "Unknown parameter: $1"
+            exit 1
+            ;;
+    esac
+done
+
 set -e -x
 
 # Activate conda environment
@@ -17,7 +33,7 @@ fi
 
 # Preparation
 size=$(du -sb input | awk '{print $1}')
-if [[ $size -gt 40000000000 ]]; then
+if [[ $size -gt 12000000000 ]]; then
   echo input data already present - skipping download...
 else
   echo downloading input data...
@@ -48,17 +64,45 @@ else
   ./jenkins/scripts/build_icon.sh
 fi
 
+# Build ICON-ART
+if [[ -f src/icon-art/bin/icon ]]; then
+  echo icon-art executable already exists - skipping build.
+else
+  echo building icon-art...
+  ./jenkins/scripts/build_icon-art.sh
+fi
+
 # Test COSMO-GHG
-if [[ -f work/cosmo-ghg-11km-test/2015010112_-6_12/checkpoints/finished/post_cosmo ]]; then
+if [[ -f work/cosmo-ghg-11km-test/2015010112_-6_12/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg test case already finished - skipping test.
 else
   echo running cosmo-ghg test case...
-  python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -f
+  ./jenkins/scripts/test_cosmo-ghg.sh
 fi
 
 # Test ICON
-echo running icon test case...
-python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon -f
+if [[ -f work/icon-test/2018010100_0_24/checkpoints/finished/icon && "$force_execution" == false ]]; then
+  echo icon test case already finished - skipping test.
+else
+  echo running icon test case...
+  ./jenkins/scripts/test_icon.sh
+fi
+
+# Test ICON-ART
+if [[ -f work/icon-art-oem-test/2018010100_0_24/checkpoints/finished/icon && "$force_execution" == false ]]; then
+  echo icon-art test case already finished - skipping test.
+else
+  echo running icon-art-oem test case...
+  ./jenkins/scripts/test_icon-art-oem.sh
+fi
+
+# Test ICON-ART-GLOBAL
+if [[ -f work/icon-art-global-test/2018010100_0_24/checkpoints/finished/icon && "$force_execution" == false ]]; then
+  echo icon-art-global test case already finished - skipping test.
+else
+  echo running icon-art-global test case...
+  ./jenkins/scripts/test_icon-art-global.sh
+fi
 
 # Print success message
 echo "Success!"

@@ -17,7 +17,7 @@ import subprocess
 from datetime import datetime
 
 
-def main(starttime, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """Setup the namelist for **int2lm** and submit the job to the queue.
 
     Necessary for both **COSMO** and **COSMOART** simulations.
@@ -77,7 +77,7 @@ def main(starttime, hstart, hstop, cfg):
     tools.copy_file(extpar_file, extpar_dir)
 
     # Copy landuse and plant-functional-type files
-    if cfg.target is tools.Target.COSMOART:
+    if cfg.model == 'cosmo-art':
         lu_file_src = os.path.join(cfg.int2lm_lu_dir, cfg.int2lm_lu_file)
         lu_file_dst = os.path.join(extpar_dir, 'landuse.nc')
         tools.copy_file(lu_file_src, lu_file_dst)
@@ -86,8 +86,7 @@ def main(starttime, hstart, hstop, cfg):
         pft_file_dst = os.path.join(extpar_dir, 'pft.nc')
         tools.copy_file(pft_file_src, pft_file_dst)
 
-    # Copy libgrib_api
-    if cfg.target is tools.Target.COSMOART:
+        # Copy libgrib_api
         dest = os.path.join(cfg.int2lm_work, 'libgrib_api')
         try:
             # delete so no error when forcing this job
