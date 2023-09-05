@@ -2,13 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 
-import logging
 import os
 from re import A
-import subprocess
-from .tools import write_cosmo_input_ghg
 from . import tools
-from datetime import datetime, timedelta
+from datetime import timedelta
 import shutil
 
 
