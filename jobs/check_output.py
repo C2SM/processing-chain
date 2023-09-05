@@ -699,7 +699,7 @@ def create_animations(cfg):
                        duration=300)
 
 
-def main(starttime, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """Checks output variables whether they are in a phyiscally reasonable
     range.
 
@@ -794,7 +794,8 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
     with open(output_file, 'w') as outf:
         outf.write(to_write_fmt)
 
-    exitcode = subprocess.call(["sbatch", "--wait", output_file])
+    result = subprocess.run(["sbatch", "--wait", output_file])
+    exitcode = result.returncode
 
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
@@ -834,7 +835,8 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
     with open(output_file, 'w') as outf:
         outf.write(to_write_fmt)
 
-    exitcode = subprocess.call(["sbatch", "--wait", output_file])
+    result = subprocess.run(["sbatch", "--wait", output_file])
+    exitcode = result.returncode
 
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))

@@ -13,12 +13,12 @@ elif os.path.exists(os.environ['HOME'] + '/.acct'):
 else:
     compute_account = os.popen("id -gn").read().splitlines()[0]
 compute_host = 'daint'
-compute_queue = 'debug'  # 'normal'
+compute_queue = 'normal'
 constraint = 'gpu'  # 'mc'
 
-target = 'cosmo-ghg'
+model = 'cosmo-ghg'
 restart_step = 12  # hours
-subtarget = 'spinup'
+variant = 'spinup'
 spinup = 6
 
 if constraint == 'gpu':
@@ -90,13 +90,13 @@ emis_gridname = "co2_"
 
 # OAE ------------------------------------------------------------------------
 # Online anthropogenic emissions
-oae_dir = os.path.join(input_root, 'oae')
-oae_gridded_emissions_nc = 'emissions.nc'
-oae_vertical_profiles_nc = 'vertical_profiles.nc'
-oae_hourofday_nc = 'hourofday.nc'
-oae_hourofyear_nc = 'hourofyear.nc'
-oae_dayofweek_nc = 'dayofweek.nc'
-oae_monthofyear_nc = 'monthofyear.nc'
+oem_dir = os.path.join(input_root, 'oem')
+oem_gridded_emissions_nc = 'emissions.nc'
+oem_vertical_profiles_nc = 'vertical_profiles.nc'
+oem_hourofday_nc = 'hourofday.nc'
+oem_hourofyear_nc = 'hourofyear.nc'
+oem_dayofweek_nc = 'dayofweek.nc'
+oem_monthofyear_nc = 'monthofyear.nc'
 
 # BIOFLUXES ------------------------------------------------------------------
 # VPRM biogenic fluxes for offline VPRM
@@ -125,11 +125,8 @@ int2lm_runjob = '%s/cases/%s/int2lm_runjob.cfg' % (chain_src_dir, casename)
 # Walltimes
 if compute_queue == "normal":
     int2lm_walltime = "01:00:00"
-elif compute_queue == "debug":
-    int2lm_walltime = "00:30:00"
 else:
-    logging.error("Unset queue name: %s" % compute_queue)
-    sys.exit(1)
+    int2lm_walltime = "00:30:00"
 
 # Domain decomposition
 int2lm_nodes = 2
@@ -160,13 +157,10 @@ if compute_queue == "normal":
     cosmo_walltime = "00:30:00"
     cosmo_np_x = 6
     cosmo_np_y = 4
-elif compute_queue == "debug":
+else:
     cosmo_walltime = "00:30:00"
     cosmo_np_x = 4
     cosmo_np_y = 3
-else:
-    logging.error("Unknown queue name: %s" % compute_queue)
-    sys.exit(1)
 
 # Total node count
 cosmo_np_io = 0

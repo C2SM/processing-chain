@@ -11,24 +11,10 @@ import time
 import shutil
 import argparse
 import csv
+import yaml
 
 import jobs
 from jobs import tools
-
-default_jobs = {
-    tools.Target.COSMO: ["prepare_data", "int2lm", "cosmo", "post_cosmo"],
-    tools.Target.COSMOGHG: [
-        "prepare_data", "emissions", "biofluxes", "oae", "online_vprm",
-        "int2lm", "post_int2lm", "cosmo", "post_cosmo"
-    ],
-    tools.Target.COSMOART: [
-        "prepare_data", "emissions", "obs_nudging", "photo_rate", "int2lm",
-        "cosmo", "post_cosmo"
-    ],
-    tools.Target.ICON: ["prepare_data", "icon"],
-    tools.Target.ICONART: ["prepare_data", "icon"],
-    tools.Target.ICONARTOEM: ["prepare_data", "oae", "icon"]
-}
 
 
 def parse_arguments():
@@ -68,10 +54,8 @@ def parse_arguments():
                  "job for int2lm. "
                  "Jobs are executed in the order in which they are "
                  "given here. "
-                 "If no jobs are given, the default that will be "
-                 "executed is: COSMO: {} | COSMOART : {}".format(
-                     default_jobs[tools.Target.COSMO],
-                     default_jobs[tools.Target.COSMOART]))
+                 "If no jobs are given, default jobs will be executed"
+                 "as defined in config/models.yaml.")
     parser.add_argument("-j",
                         "--jobs",
                         nargs='*',
@@ -160,44 +144,44 @@ def load_config_file(casename, cfg):
     return cfg
 
 
-def set_simulation_type(cfg):
-    """Detect the chain target and if there is a subtarget.
+def check_model_set_variant(model_cfg, cfg):
+    """Checks the model and sets its variant.
 
-    Check if a target was provided in the config-object. If no target is
-    provided, set the target to cosmo in the config-object.
+    Check if a model was provided in the config-object. If no model is
+    provided, set the model to cosmo in the config-object.
 
-    Check if a subtarget was provided in the config-object. Subtargets
+    Check if a variant was provided in the config-object. Variants
     provide a way to customize the behaviour of the processing chain
     for different types of simulations.
 
-    Raise a RuntimeError if an unsupported target or subtarget is given in cfg.
-    You can add targets and subtargets in the jobs/tools/__init__.py file.
-
-    Translates the target and subtarget from string to enum.
+    Raise a RuntimeError if an unsupported model or variant is given in cfg.
+    You can add models and variants in the config/models.yaml file.
 
     Parameters
     ----------
     cfg : config-object
     """
-    default = 'cosmo'
-    target_str = getattr(cfg, 'target', default)
-    try:
-        target_enum = tools.str_to_enum[target_str.lower()]
-    except KeyError:
-        raise ValueError("The target of the chain must be one of {}".format(
-            list(tools.str_to_enum.keys())))
-    setattr(cfg, 'target', target_enum)
+    if hasattr(cfg, 'model'):
+        model_str = getattr(cfg, 'model')
+    else:
+        raise RuntimeError("Variable 'model' not set in config.")
 
-    subtarget_str = getattr(cfg, 'subtarget', 'none')
-    try:
-        subtarget_enum = tools.str_to_enum[subtarget_str.lower()]
-    except KeyError:
-        raise ValueError("The target of the chain must be one of {}".format(
-            list(tools.str_to_enum.keys())))
-    setattr(cfg.target, 'subtarget', subtarget_enum)
+    models = model_cfg['models']
+    if cfg.model not in models:
+        raise ValueError("Invalid model: {}".format(model_str))
+
+    if hasattr(cfg, 'variant'):
+        variants = models[cfg.model]['variants']
+        if cfg.variant not in variants:
+            raise ValueError(f"Invalid variant for {cfg.model}: {cfg.variant}")
+    else:
+        setattr(cfg, 'variant', None)
+
+    return cfg
 
 
-def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
+def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
+              force):
     """Run chain ignoring already finished jobs.
 
     Sets configuration values derived from user-provided ones, for example the
@@ -258,7 +242,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
     inidate_int2lm_yyyymmddhh = (start_time +
                                  timedelta(hours=hstart)).strftime('%Y%m%d%H')
 
-    if cfg.target.subtarget is tools.Subtarget.SPINUP:
+    if cfg.variant == 'spinup':
         if cfg.first_one:  # first run in spinup
             chain_root_last_run = ''
         else:  # consecutive runs in spinup
@@ -282,189 +266,78 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
 
     setattr(cfg, 'forecasttime', forecasttime)
 
-    # int2lm processing always starts at hstart=0 and we modify inidate instead
-    setattr(cfg, 'inidate_int2lm_yyyymmddhh', inidate_int2lm_yyyymmddhh)
-    setattr(cfg, 'hstart_int2lm', '0')
-    setattr(cfg, 'hstop_int2lm', forecasttime)
-
     # chain
     job_id = '%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
     chain_root = os.path.join(work_root, cfg.casename, job_id)
     setattr(cfg, 'chain_root', chain_root)
 
-    # INT2LM
-    setattr(cfg, 'int2lm_base', os.path.join(chain_root, 'int2lm'))
-    setattr(cfg, 'int2lm_input', os.path.join(chain_root, 'int2lm', 'input'))
-    setattr(cfg, 'int2lm_work', os.path.join(chain_root, 'int2lm', 'run'))
-    setattr(cfg, 'int2lm_output', os.path.join(chain_root, 'int2lm', 'output'))
+    if cfg.model.startswith('cosmo'):
+        # TODO: refactor
+        # INT2LM
+        setattr(cfg, 'int2lm_base', os.path.join(chain_root, 'int2lm'))
+        setattr(cfg, 'int2lm_input', os.path.join(chain_root, 'int2lm',
+                                                  'input'))
+        setattr(cfg, 'int2lm_work', os.path.join(chain_root, 'int2lm', 'run'))
+        setattr(cfg, 'int2lm_output',
+                os.path.join(chain_root, 'int2lm', 'output'))
 
-    # COSMO
-    setattr(cfg, 'cosmo_base', os.path.join(chain_root, 'cosmo'))
-    setattr(cfg, 'cosmo_input', os.path.join(chain_root, 'cosmo', 'input'))
-    setattr(cfg, 'cosmo_work', os.path.join(chain_root, 'cosmo', 'run'))
-    setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo', 'output'))
-    setattr(cfg, 'cosmo_output_reduced',
-            os.path.join(chain_root, 'cosmo', 'output_reduced'))
+        # int2lm processing always starts at hstart=0 and we modify inidate instead
+        setattr(cfg, 'inidate_int2lm_yyyymmddhh', inidate_int2lm_yyyymmddhh)
+        setattr(cfg, 'hstart_int2lm', '0')
+        setattr(cfg, 'hstop_int2lm', forecasttime)
 
-    # ICON
-    setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
-    setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
-    setattr(cfg, 'icon_input_icbc',
-            os.path.join(chain_root, 'icon', 'input', 'icbc'))
-    setattr(cfg, 'icon_input_oae',
-            os.path.join(chain_root, 'icon', 'input', 'oae'))
-    setattr(cfg, 'icon_input_grid',
-            os.path.join(chain_root, 'icon', 'input', 'grid'))
-    setattr(cfg, 'icon_input_mapping',
-            os.path.join(chain_root, 'icon', 'input', 'mapping'))
-    setattr(cfg, 'icon_input_rad',
-            os.path.join(chain_root, 'icon', 'input', 'rad'))
-    setattr(cfg, 'icon_input_xml',
-            os.path.join(chain_root, 'icon', 'input', 'xml'))
-    setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
-    setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
-    setattr(cfg, 'icon_output_reduced',
-            os.path.join(chain_root, 'icon', 'output_reduced'))
-    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART \
-            or cfg.target is tools.Target.ICONARTOEM:
-        setattr(
-            cfg, 'radiation_grid_filename_scratch',
-            os.path.join(cfg.icon_input_grid,
-                         os.path.basename(cfg.radiation_grid_filename)))
-        setattr(
-            cfg, 'dynamics_grid_filename_scratch',
-            os.path.join(cfg.icon_input_grid,
-                         os.path.basename(cfg.dynamics_grid_filename)))
-        setattr(
-            cfg, 'map_file_latbc_scratch',
-            os.path.join(cfg.icon_input_grid,
-                         os.path.basename(cfg.map_file_latbc)))
-        setattr(
-            cfg, 'extpar_filename_scratch',
-            os.path.join(cfg.icon_input_grid,
-                         os.path.basename(cfg.extpar_filename)))
-        setattr(cfg, 'lateral_boundary_grid_scratch',
-                os.path.join(cfg.icon_input_grid, 'lateral_boundary.grid.nc'))
-        setattr(cfg, 'lateral_boundary_grid_order',
-                os.path.join(cfg.icon_input_grid, 'lateral_boundary'))
-        setattr(
-            cfg, 'cldopt_filename_scratch',
-            os.path.join(cfg.icon_input_rad,
-                         os.path.basename(cfg.cldopt_filename)))
-        setattr(
-            cfg, 'lrtm_filename_scratch',
-            os.path.join(cfg.icon_input_rad,
-                         os.path.basename(cfg.lrtm_filename)))
-        setattr(
-            cfg, 'map_file_ana_scratch',
-            os.path.join(cfg.icon_input_mapping,
-                         os.path.basename(cfg.map_file_ana)))
-        if hasattr(cfg, 'chemtracer_xml_filename'):
-            setattr(
-                cfg, 'chemtracer_xml_filename_scratch',
-                os.path.join(cfg.icon_input_xml,
-                             os.path.basename(cfg.chemtracer_xml_filename)))
-        if hasattr(cfg, 'pntSrc_xml_filename'):
-            setattr(
-                cfg, 'pntSrc_xml_filename_scratch',
-                os.path.join(cfg.icon_input_xml,
-                             os.path.basename(cfg.pntSrc_xml_filename)))
+        # COSMO
+        setattr(cfg, 'cosmo_base', os.path.join(chain_root, 'cosmo'))
+        setattr(cfg, 'cosmo_input', os.path.join(chain_root, 'cosmo', 'input'))
+        setattr(cfg, 'cosmo_work', os.path.join(chain_root, 'cosmo', 'run'))
+        setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo',
+                                                  'output'))
+        setattr(cfg, 'cosmo_output_reduced',
+                os.path.join(chain_root, 'cosmo', 'output_reduced'))
 
-    # OEM
-    if cfg.target is tools.Target.ICONARTOEM:
-        setattr(
-            cfg, 'oae_gridded_emissions_nc_scratch',
-            os.path.join(cfg.icon_input_oae,
-                         os.path.basename(cfg.oae_gridded_emissions_nc)))
-        setattr(
-            cfg, 'oae_vertical_profiles_nc_scratch',
-            os.path.join(cfg.icon_input_oae,
-                         os.path.basename(cfg.oae_vertical_profiles_nc)))
-        if hasattr(cfg, 'oae_hourofday_nc'):
-            setattr(
-                cfg, 'oae_hourofday_nc_scratch',
-                os.path.join(cfg.icon_input_oae,
-                             os.path.basename(cfg.oae_hourofday_nc)))
-        else:
-            setattr(cfg, 'oae_hourofday_nc_scratch', '')
-        if hasattr(cfg, 'oae_dayofweek_nc'):
-            setattr(
-                cfg, 'oae_dayofweek_nc_scratch',
-                os.path.join(cfg.icon_input_oae,
-                             os.path.basename(cfg.oae_dayofweek_nc)))
-        else:
-            setattr(cfg, 'oae_dayofweek_nc_scratch', '')
-        if hasattr(cfg, 'oae_monthofyear_nc'):
-            setattr(
-                cfg, 'oae_monthofyear_nc_scratch',
-                os.path.join(cfg.icon_input_oae,
-                             os.path.basename(cfg.oae_monthofyear_nc)))
-        else:
-            setattr(cfg, 'oae_monthofyear_nc_scratch', '')
-        if hasattr(cfg, 'oae_hourofyear_nc'):
-            setattr(
-                cfg, 'oae_hourofyear_nc_scratch',
-                os.path.join(cfg.icon_input_oae,
-                             os.path.basename(cfg.oae_hourofyear_nc)))
-        else:
-            setattr(cfg, 'oae_hourofyear_nc_scratch', '')
-        if hasattr(cfg, 'oae_ens_reg_nc'):
-            setattr(
-                cfg, 'oae_ens_reg_nc_scratch',
-                os.path.join(cfg.icon_input_oae,
-                             os.path.basename(cfg.oae_ens_reg_nc)))
-        if hasattr(cfg, 'oae_ens_lambda_nc'):
-            setattr(
-                cfg, 'oae_ens_lambda_nc_scratch',
-                os.path.join(cfg.icon_input_oae,
-                             os.path.basename(cfg.oae_ens_lambda_nc)))
-
-    # Number of tracers
-    tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
-                                  'cosmo_tracers.csv')
-    if os.path.isfile(tracer_csvfile):
-        if cfg.target is tools.Target.COSMOGHG:
-            with open(tracer_csvfile, 'r') as csv_file:
-                reader = csv.DictReader(csv_file, delimiter=',')
-                reader = [r for r in reader if r[''] != '#']
-                setattr(cfg, 'in_tracers', len(reader))
-
-        # tracer_start namelist paramter for spinup simulation
-        if cfg.target.subtarget is tools.Subtarget.SPINUP:
-            if cfg.first_one:
-                setattr(cfg, 'tracer_start', 0)
+        # Number of tracers
+        if 'tracers' in model_cfg['models'][cfg.model]['features']:
+            tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases',
+                                          cfg.casename, 'cosmo_tracers.csv')
+            if os.path.isfile(tracer_csvfile):
+                with open(tracer_csvfile, 'r') as csv_file:
+                    reader = csv.DictReader(csv_file, delimiter=',')
+                    reader = [r for r in reader if r[''] != '#']
+                    setattr(cfg, 'in_tracers', len(reader))
             else:
-                setattr(cfg, 'tracer_start', cfg.spinup)
-        else:
-            setattr(cfg, 'tracer_start', 0)
+                raise FileNotFoundError(f"File not found: {tracer_csvfile}")
+
+            # tracer_start namelist paramter for spinup simulation
+            if cfg.variant == 'spinup':
+                if cfg.first_one:
+                    setattr(cfg, 'tracer_start', 0)
+                else:
+                    setattr(cfg, 'tracer_start', cfg.spinup)
+            else:
+                setattr(cfg, 'tracer_start', 0)
+
+        # asynchronous I/O
+        if hasattr(cfg, 'cfg.cosmo_np_io'):
+            if cfg.cosmo_np_io == 0:
+                setattr(cfg, 'lasync_io', '.FALSE.')
+                setattr(cfg, 'num_iope_percomm', 0)
+            else:
+                setattr(cfg, 'lasync_io', '.TRUE.')
+                setattr(cfg, 'num_iope_percomm', 1)
 
     # constraint (gpu or mc)
     if hasattr(cfg, 'constraint'):
         assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
                                                  "gpu or mc")
-    else:
-        # set default constraint
-        if cfg.target is tools.Target.COSMOART:
-            setattr(cfg, 'constraint', 'mc')
-        else:
-            setattr(cfg, 'constraint', 'gpu')
 
-    # asynchronous I/O
-    if hasattr(cfg, 'cfg.cosmo_np_io'):
-        if cfg.cosmo_np_io == 0:
-            setattr(cfg, 'lasync_io', '.FALSE.')
-            setattr(cfg, 'num_iope_percomm', 0)
-        else:
-            setattr(cfg, 'lasync_io', '.TRUE.')
-            setattr(cfg, 'num_iope_percomm', 1)
-
-    if cfg.target.subtarget is tools.Subtarget.SPINUP:
+    # Spinup
+    if cfg.variant == 'spinup':
         setattr(cfg, 'last_cosmo_output',
                 os.path.join(chain_root_last_run, 'cosmo', 'output'))
         # No restart for spinup simulations (= default values for no restart)
         setattr(cfg, 'cosmo_restart_out', '')
         setattr(cfg, 'cosmo_restart_in', '')
-    elif cfg.target is not tools.Target.COSMOART:
+    elif 'restart' in model_cfg['models'][cfg.model]['features']:
         job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh,
                                         hstart - cfg.restart_step, hstart)
         chain_root_last_run = os.path.join(work_root, cfg.casename,
@@ -475,12 +348,48 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
         setattr(cfg, 'cosmo_restart_in',
                 os.path.join(chain_root_last_run, 'cosmo', 'restart'))
 
-    if cfg.target is tools.Target.COSMOART:
-        # no restarts in cosmoart
+    # Restart step
+    if 'restart' in model_cfg['models'][cfg.model]['features']:
         setattr(cfg, 'restart_step', hstop - hstart)
 
-    if cfg.target is tools.Target.ICON or cfg.target is tools.Target.ICONART or \
-       cfg.target is tools.Target.ICONARTOEM:
+    # if nested run: use output of mother-simulation
+    if 'nesting' in model_cfg['models'][
+            cfg.model]['features'] and not os.path.isdir(cfg.meteo_dir):
+        # if ifs_hres_dir doesn't point to a directory,
+        # it is the name of the mother run
+        mother_name = cfg.meteo_dir
+        cfg.meteo_dir = os.path.join(work_root, mother_name, job_id, 'cosmo',
+                                     'output')
+        cfg.meteo_inc = 1
+        cfg.meteo_prefix = 'lffd'
+
+    # ICON
+    if cfg.model.startswith('icon'):
+        setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
+        setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
+        setattr(cfg, 'icon_input_icbc',
+                os.path.join(chain_root, 'icon', 'input', 'icbc'))
+        setattr(cfg, 'icon_input_oae',
+                os.path.join(chain_root, 'icon', 'input', 'OEM'))
+        setattr(cfg, 'icon_input_grid',
+                os.path.join(chain_root, 'icon', 'input', 'grid'))
+        setattr(cfg, 'icon_input_mapping',
+                os.path.join(chain_root, 'icon', 'input', 'mapping'))
+        setattr(cfg, 'icon_input_rad',
+                os.path.join(chain_root, 'icon', 'input', 'rad'))
+        setattr(cfg, 'icon_input_xml',
+                os.path.join(chain_root, 'icon', 'input', 'XML'))
+        setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
+        setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
+        setattr(cfg, 'icon_output_reduced',
+                os.path.join(chain_root, 'icon', 'output_reduced'))
+
+        for varname in cfg.input_files:
+            file_info = cfg.input_files[varname]
+            setattr(cfg, varname,
+                    os.path.join(cfg.input_root, file_info[1], file_info[0]))
+            setattr(cfg, f'{varname}_scratch',
+                    os.path.join(cfg.icon_input, file_info[1], file_info[0]))
         ini_datetime_string = (
             start_time +
             timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
@@ -496,18 +405,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                 os.path.join(chain_root_last_run, 'icon', 'restart'))
         # TODO: Set correct restart setting
         setattr(cfg, 'lrestart', '.FALSE.')
-
-    # if nested run: use output of mother-simulation
-    if cfg.target is tools.Target.COSMOART and not os.path.isdir(
-            cfg.meteo_dir):
-        # if ifs_hres_dir doesn't point to a directory,
-        # it is the name of the mother run
-        mother_name = cfg.meteo_dir
-        cfg.meteo_dir = os.path.join(work_root, mother_name, job_id, 'cosmo',
-                                     'output')
-
-        cfg.meteo_inc = 1
-        cfg.meteo_prefix = 'lffd'
 
     # logging
     log_working_dir = os.path.join(chain_root, 'checkpoints', 'working')
@@ -528,13 +425,6 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
 
     # run jobs (if required)
     for job in job_names:
-
-        # mapping of scripts in jobs with their arguments
-
-        # if job == 'meteo':
-        #     job.meteo.main(start_time, hstart, hstop, cfg)
-        #     continue
-
         skip = False
 
         # if exists job is currently worked on or has been finished
@@ -572,7 +462,7 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
 
                     # Launch the job
                     to_call = getattr(jobs, job)
-                    to_call.main(start_time, hstart, hstop, cfg)
+                    to_call.main(start_time, hstart, hstop, cfg, model_cfg)
 
                     shutil.copy(logfile, logfile_finish)
 
@@ -602,7 +492,8 @@ def run_chain(work_root, cfg, start_time, hstart, hstop, job_names, force):
                 raise RuntimeError(subject)
 
 
-def restart_runs(work_root, cfg, start, hstart, hstop, job_names, force):
+def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
+                 force):
     """Starts the subchains in the specified intervals.
     
     Slices the total runtime of the chain according to ``cfg.restart_step``.
@@ -640,6 +531,7 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names, force):
         print("Starting run with starttime {}".format(time))
 
         run_chain(work_root=work_root,
+                  model_cfg=model_cfg,
                   cfg=cfg,
                   start_time=start,
                   hstart=sub_hstart,
@@ -648,8 +540,8 @@ def restart_runs(work_root, cfg, start, hstart, hstop, job_names, force):
                   force=force)
 
 
-def restart_runs_spinup(work_root, cfg, start, hstart, hstop, job_names,
-                        force):
+def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop,
+                        job_names, force):
     """Starts the subchains in the specified intervals.
     
     Slices the total runtime of the chain according to ``cfg.restart_step``.
@@ -714,6 +606,7 @@ def restart_runs_spinup(work_root, cfg, start, hstart, hstop, job_names,
 
         if cfg.first_one:
             run_chain(work_root=work_root,
+                      model_cfg=model_cfg,
                       cfg=cfg,
                       start_time=time,
                       hstart=0,
@@ -722,6 +615,7 @@ def restart_runs_spinup(work_root, cfg, start, hstart, hstop, job_names,
                       force=force)
         else:
             run_chain(work_root=work_root,
+                      model_cfg=model_cfg,
                       cfg=cfg,
                       start_time=time,
                       hstart=-cfg.spinup,
@@ -730,34 +624,41 @@ def restart_runs_spinup(work_root, cfg, start, hstart, hstop, job_names,
                       force=force)
 
 
+def load_model_config_yaml(yamlfile):
+    with open(yamlfile) as file:
+        model_cfg = yaml.safe_load(file)
+    return model_cfg
+
+
 if __name__ == '__main__':
     args = parse_arguments()
 
     # 'empty' config object to be overwritten by load_config_file
     cfg = None
     for casename in args.casenames:
+        model_cfg = load_model_config_yaml('config/models.yaml')
         cfg = load_config_file(casename=casename, cfg=cfg)
         start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
-        set_simulation_type(cfg)
+        cfg = check_model_set_variant(model_cfg, cfg)
         if args.job_list is None:
-            args.job_list = default_jobs[cfg.target]
+            args.job_list = model_cfg['models'][cfg.model]['jobs']
 
-        print("Starting chain for case {}, using {}".format(
-            casename, cfg.target.name))
+        print(f"Starting chain for case {casename} and model {cfg.model}")
 
-        if cfg.target is tools.Target.COSMO or cfg.target is tools.Target.ICON or \
-           cfg.target is tools.Target.ICONART or cfg.target is tools.Target.ICONARTOEM or \
-           cfg.target is tools.Target.COSMOGHG:
-            if cfg.target.subtarget is tools.Subtarget.NONE:
+        if 'restart' in model_cfg['models'][cfg.model]['features']:
+            if cfg.variant is None:
                 restart_runs(work_root=cfg.work_root,
+                             model_cfg=model_cfg,
                              cfg=cfg,
                              start=start_time,
                              hstart=args.hstart,
                              hstop=args.hstop,
                              job_names=args.job_list,
                              force=args.force)
-            elif cfg.target.subtarget is tools.Subtarget.SPINUP:
+            elif cfg.variant == 'spinup':
+                print(f"Model variant is {cfg.variant}")
                 restart_runs_spinup(work_root=cfg.work_root,
+                                    model_cfg=model_cfg,
                                     cfg=cfg,
                                     start=start_time,
                                     hstart=args.hstart,
@@ -765,9 +666,8 @@ if __name__ == '__main__':
                                     job_names=args.job_list,
                                     force=args.force)
             else:
-                raise RuntimeError("Unknown subtarget: {}".format(
-                    cfg.subtarget))
-        elif cfg.target is tools.Target.COSMOART:
+                raise RuntimeError(f"Unknown variant: {cfg.variant}")
+        else:
             # cosmoart can't do restarts
             run_chain(work_root=cfg.work_root,
                       cfg=cfg,
@@ -776,7 +676,5 @@ if __name__ == '__main__':
                       hstop=args.hstop,
                       job_names=args.job_list,
                       force=args.force)
-        else:
-            raise RuntimeError("Unknown target: {}".format(cfg.target))
 
     print('>>> finished chain for good or bad! <<<')

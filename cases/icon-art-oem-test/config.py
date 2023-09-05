@@ -5,26 +5,25 @@ Configuration file for the 'icon-art-oem-test' case with ICON-ART
 
 # GENERAL SETTINGS ===========================================================
 user = os.environ['USER']
-if os.path.exists(os.environ['HOME'] + '/.acct'):
+if user == 'jenkins':
+    compute_account = 'g110'
+elif os.path.exists(os.environ['HOME'] + '/.acct'):
     with open(os.environ['HOME'] + '/.acct', 'r') as file:
         compute_account = file.read().rstrip()
 else:
     compute_account = os.popen("id -gn").read().splitlines()[0]
 compute_host = 'daint'
-compute_queue = 'debug'  # 'normal' / 'debug'
-constraint = 'mc'  # 'mc' / 'gpu'
+compute_queue = 'normal'
+constraint = 'gpu'  # 'mc'
 
-target = 'icon-art-oem'
+model = 'icon-art-oem'
 restart_step = 24  # hours
 
-if constraint == 'gpu':
-    ntasks_per_node = 12
-elif constraint == 'mc':
-    ntasks_per_node = 36
+# Number of tasks per node
+ntasks_per_node = 36 if constraint == 'mc' else 12
 
-# case name = pathname in cases/
-path = os.path.realpath(__file__)
-casename = os.path.basename(os.path.dirname(path))
+# Case name = pathname in cases/
+casename = os.path.basename(os.path.dirname(os.path.realpath(__file__)))
 
 # Root directory of the sourcecode of the chain (where run_chain.py is)
 chain_src_dir = os.getcwd()
@@ -32,28 +31,23 @@ chain_src_dir = os.getcwd()
 # Root directory of the working space of the chain
 work_root = os.path.join(chain_src_dir, 'work')
 
-# Directory where executables are stored
-exe_dir = "/store/empa/em05/executables"
-
 # Case directory
 case_dir = os.path.join(chain_src_dir, 'cases', casename)
 
-# PREPARE_DATA ---------------------------------------------------------------
-input_root = '/store/empa/em05/input_iconart_processing_chain_example/'
-
-input_root_meteo = '/store/empa/em05/input_iconart_processing_chain_example/meteo'
+# PRE-PROCESSING =============================================================
+input_root = os.path.join(chain_src_dir, 'input', model)
+# meteo
+input_root_meteo = os.path.join(input_root, 'meteo')
 meteo_prefix = 'ifs_'
 meteo_nameformat = meteo_prefix + '%Y%m%d%H'
 meteo_suffix = '.grb'
 meteo_inc = 3
 
-input_root_chem = '/store/empa/em05/input_iconart_processing_chain_example/chem'
-
+input_root_chem = os.path.join(input_root, 'chem')
 input_root_icbc = os.path.join(input_root, 'icbc')
 chem_prefix = 'cams_gqpe_'
 chem_nameformat = chem_prefix + '%Y%m%d_%H'
 chem_suffix = '.grb'
-chem_inc = 3
 
 icontools_runjobs = [
     'icontools_remap_ic_runjob.cfg',
@@ -63,27 +57,27 @@ icontools_runjobs = [
     'icontools_remap_lbc_chem_runjob.cfg',
 ]
 
-# Icontools executables
-#icontools_dir = '/project/s903/mjaehn/spack-install/daint/icontools/master/cce/ldcbgsjjzq2p73xbei7ws4wce5ivzxer/bin/'
-icontools_dir = '/scratch/snx3000/msteiner/spack-stages/daint/spack-stage-icontools-master-t524rnfa5sfyn4rbvarypyzwae4jg46d/spack-src/icontools'
-iconremap_bin = os.path.join(icontools_dir, "iconremap")
-iconsub_bin = os.path.join(icontools_dir, "iconsub")
-
 # Input data for runscript----------------------------------------------------
 # Grid
-input_root_grid = os.path.join(input_root, 'grids')
-radiation_grid_filename = os.path.join(input_root_grid,
-                                       "testcase_DOM01.parent.nc")
-dynamics_grid_filename = os.path.join(input_root_grid, "testcase_DOM01.nc")
-map_file_latbc = os.path.join(input_root_grid, "map_file.latbc")
-extpar_filename = os.path.join(
-    input_root_grid, "external_parameter_icon_testcase_DOM01_tiles.nc")
-input_root_rad = os.path.join(input_root, 'rad')
-cldopt_filename = os.path.join(input_root_rad, 'rrtm_cldopt.nc')
-lrtm_filename = os.path.join(input_root_rad, 'rrtmg_lw.nc')
 
-input_root_mapping = os.path.join(input_root, 'mapping')
-map_file_ana = os.path.join(input_root_mapping, "map_file.ana")
+input_files = {
+    'radiation_grid_filename': ['testcase_DOM01.parent.nc', 'grid'],
+    'dynamics_grid_filename': ['testcase_DOM01.nc', 'grid'],
+    'map_file_latbc': ['map_file.latbc', 'grid'],
+    'lateral_boundary_grid': ['lateral_boundary.grid.nc', 'grid'],
+    'extpar_filename':
+    ['external_parameter_icon_testcase_DOM01_tiles.nc', 'grid'],
+    'cldopt_filename': ['rrtm_cldopt.nc', 'rad'],
+    'lrtm_filename': ['rrtmg_lw.nc', 'rad'],
+    'map_file_ana': ['map_file.ana', 'mapping'],
+    'chemtracer_xml_filename': ['tracers_oh_pntsrc.xml', 'XML'],
+    'pntSrc_xml_filename': ['pntSrc_example.xml', 'XML'],
+    'oem_gridded_emissions_nc': ['tno_3cat.nc', 'OEM'],
+    'oem_vertical_profiles_nc': ['vertical_profiles.nc', 'OEM'],
+    'oem_hourofday_nc': ['hourofday.nc', 'OEM'],
+    'oem_dayofweek_nc': ['dayofweek.nc', 'OEM'],
+    'oem_monthofyear_nc': ['monthofyear.nc', 'OEM'],
+}
 
 # File names -----------------------------------------------------------------
 latbc_filename = "ifs_<y><m><d><h>_lbc.nc"
@@ -91,35 +85,28 @@ inidata_prefix = "ifs_init_"
 inidata_nameformat = inidata_prefix + '%Y%m%d%H'
 inidata_filename_suffix = ".nc"
 
-output_filename = "icon-art-test"
+output_filename = "icon-art-oem-test"
 filename_format = "<output_filename>_DOM<physdom>_<ddhhmmss>"
 
-# ART settings----------------------------------------------------------------
-input_root_tracers = os.path.join(input_root, 'XML')
-chemtracer_xml_filename = os.path.join(input_root_tracers,
-                                       'tracers_oh_pntsrc.xml')
-pntSrc_xml_filename = os.path.join(input_root_tracers, 'pntSrc_example.xml')
-art_input_folder = os.path.join(input_root, 'ART')
+lateral_boundary_grid_order = 'lateral_boundary'
 
-# OAE ------------------------------------------------------------------------
-# Online anthropogenic emissions
-oae_dir = os.path.join(input_root, 'OEM')
-oae_gridded_emissions_nc = 'tno_3cat.nc'
-oae_vertical_profiles_nc = 'vertical_profiles.nc'
-oae_hourofday_nc = 'hourofday.nc'
-oae_dayofweek_nc = 'dayofweek.nc'
-oae_monthofyear_nc = 'monthofyear.nc'
-#oae_hourofyear_nc = 'hourofyear.nc'
+# ART settings----------------------------------------------------------------
+art_input_folder = os.path.join(input_root, 'ART')
 
 # SIMULATION =================================================================
 # ICON -----------------------------------------------------------------------
 # Executable
-icon_bin = os.path.join(exe_dir, "icon-art-oem-nudging_20211011")
+icon_bin = os.path.join(chain_src_dir, 'src', 'icon-art', 'bin', 'icon')
+
+# eccodes
+eccodes_dir = os.path.join(chain_src_dir, 'input', 'eccodes_definitions')
+
+# Icontools executables
+iconremap_bin = 'iconremap'
+iconsub_bin = 'iconsub'
 
 # Namelists and slurm runscript templates
 icon_runjob = os.path.join(case_dir, 'icon_runjob.cfg')
-icon_namelist_master = os.path.join(case_dir, 'icon_master.namelist.cfg')
-icon_namelist_nwp = os.path.join(case_dir, 'icon_NAMELIST_NWP.cfg')
 
 # Walltimes and domain decomposition
 if compute_queue == "normal":
@@ -128,9 +115,6 @@ if compute_queue == "normal":
 elif compute_queue == "debug":
     icon_walltime = "00:30:00"
     icon_np_tot = 10
-else:
-    logging.error("Unknown queue name: %s" % compute_queue)
-    sys.exit(1)
 
 # POST-PROCESSING ============================================================
 # REDUCE_OUTPUT --------------------------------------------------------------

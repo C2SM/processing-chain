@@ -16,28 +16,29 @@ instruction for the installation.
 
 ### 1\. Install Miniconda
 
-Install as user specific miniconda, e.g. on `/scratch` (enter `cd
-$SCRATCH` and `pwd` at the command line to get to your personal scratch
-directory on Daint). When the command prompt asks for installation
-location, provide the path to your scratch and append `/miniconda3`.
+Install as user specific Miniconda, e.g. on your `$HOME` directory,
+which is the default location.
 
-> **Note**: The default location would be on your `$HOME` directory, which
-> may lead to memory issues.
+> **Note**: Only conda itself should be installed in your `$HOME`.
+> All environments should be stored in your `$PROJECT` directory,
+> otherwise you risk filling up your `$HOME` directory. See below for instructions.
 
-To install the latest miniconda, type:
+To install the latest Miniconda, type:
 
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
     bash Miniconda3-latest-Linux-x86_64.sh
 
-Then, export `$PATH` to your conda installation:
-
-    export PATH="$SCRATCH/miniconda3/bin:$PATH"
+Further deails on Miniconda can be found on the [Miniconda documentation page](https://docs.conda.io/en/latest/miniconda.html).
 
 ### 2\. Create the Conda Environment
 
 Create a conda environment `proc-chain` with and install requirements:
 
-    conda env create -f env/environment.yml
+    conda env create --prefix $PROJECT/envs/proc-chain -f env/environment.yml
+
+To be able to activate your conda environment by simply using `conda activate proc-chain` instead of the full path, add the following to your `.bashrc`:
+
+    export CONDA_ENVS_PATH=$PROJECT/envs
 
 Activate the environment (use "source activate" in case "conda activate"
 does not work):
@@ -60,7 +61,7 @@ these files within your home directory:
 
 Once everything has been set up correctly according to the above steps,
 you just need to execute the following command to activate your
-environment:
+environment (if not done already):
 
     conda activate proc-chain
 
@@ -69,7 +70,7 @@ line help to see the available arguments for the main script:
 
     python run_chain.py -h
 
-To run the example cases with their standard jobs, please ensure
+To run the test cases with their standard jobs, please ensure
 that you clone the Processing Chain to `$SCRATCH`, as input and
 output data are stored in subdirectories of the chain itself.
 
@@ -78,62 +79,30 @@ output data are stored in subdirectories of the chain itself.
 > adapt the configuration file `config.py` in your case folder in
 > a way that output files are written to a specified folder on `$SCRATCH`.
 
-For these test cases, the necessary input data can be obtained via
-the following script (this may take some time):
+For these test cases, you can use the Jenkins script
 
-    ./get_data.sh
+    ./jenkins/scripts/jenkins.sh
 
-Furthermore, executables for COSMO-GHG and ICON are needed. For both COSMO-GHG and ICON,
-a spack instance needs to be initialized first. Then, COSMO-GHG can be 
-installed:
+This script calls other scripts that are located in `jenkins/scripts/`. 
+They will
+- activate the conda environment (if not done already)
+- setup spack-c2sm
+- download input data to `input/`
+- build `int2lm`, `cosmo-ghg`, `icon` and `icon-art`
+- test `cosmo-ghg`, `icon`, `icon-art-oem`, `icon-art-global`
 
-    source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh
-    spack installcosmo cosmo@empa-ghg%nvhpc cosmo_target=gpu +cppdycore
-    
-For ICON, type:
+To run the test cases manually, type:
 
-    spack install icon@c2sm-master%nvhpc@21.3 icon_target=cpu +eccodes +ocean
-    
-> **Note**: For further information about building ICON or building software
-> with Spack in general, consider the 
-> [C2SM wiki page](https://wiki.c2sm.ethz.ch/MODELS/ICONIconModel) and the official 
-> [C2SM Spack Documentation](https://c2sm.github.io/spack-c2sm/QuickStart.html).
-
-Alternatively, you can use the following scripts:
-
-    ./jenkins/scripts/build_cosmo-ghg.sh
-    
-or
-
-    ./jenkins/scripts/build_icon.sh
-
-Finally, to run the COSMO-GHG test case, type:
-
+```bash
+    # COSMO-GHG
     python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24
-
-> **Note**: Be sure to have spack initialized via 
-> `source /project/g110/spack/user/daint/spack/share/spack/setup-env.sh`
-> before you run COSMO or ICON jobs.
-
-For ICON, type:
-
+    # ICON
     python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon
-
-Empa users can perform additional tests:
-
-    python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 24
-
-or:
-
-    python run_chain.py icon-art-test 2018-01-01 0 24 -j prepare_data icon
-
-or:
-
+    # ICON-ART (OEM)
     python run_chain.py icon-art-oem-test 2018-01-01 0 24 -j prepare_data oae icon
-
-or:
-
-    python run_chain.py icon-art-oem-ensembles-test 2018-01-01 0 24 -j prepare_data oae icon
+    # ICON-ART (global)
+    python run_chain.py icon-art-global-test 2018-01-01 0 24 -j prepare_data oae icon
+```
 
 ## Documentation
 

@@ -19,7 +19,7 @@ def comp_data(dataset1, dataset2, variables):
     tools.helper.datasets_equal(dataset1, dataset2, variables, verbose=True)
 
 
-def main(starttime, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """Compare outputs of the chain to a reference.
 
     Looks for the reference-file in ``cfg.reference_dir``.

@@ -10,15 +10,9 @@ function error {
 # Check if script is called correctly
 [[ $(git rev-parse --show-toplevel 2>/dev/null) = $(pwd) ]] || error "$0 not launched from toplevel of repository"
 
-BRANCH=main
-GIT_REMOTE=https://github.com/C2SM/spack-c2sm.git
-
-rm -fr src/spack-c2sm
-
-pushd src
-git clone --depth 1 --recurse-submodules --shallow-submodules -b ${BRANCH} ${GIT_REMOTE}
-. spack-c2sm/setup-env.sh
+mkdir -p input
+pushd input
+    wget ftp://iacftp.ethz.ch/pub_read/mjaehn/input_processing-chain.tgz 
+    tar -xvzf input_processing-chain.tgz
+    rm -f input_processing-chain.tgz
 popd
-
-spack install icontools
-

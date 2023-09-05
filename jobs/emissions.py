@@ -16,12 +16,11 @@
 
 import os
 import logging
-import shutil
 
 from . import tools
 
 
-def main(starttime, hstart, hstop, cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """Copy emission files to the **int2lm** input directory.
 
     Necessary for both **COSMO** and **COSMOART** simulations.
@@ -83,5 +82,5 @@ def main(starttime, hstart, hstop, cfg):
 
             # convert grid_mapping_name from string (NF90_STRING) to char
             # (NF90_CHAR) (needed for int2lm to work)
-            if cfg.target is tools.Target.COSMO:
+            if cfg.model.startswith('cosmo'):
                 tools.string2char.main(dest_path)
