@@ -603,7 +603,6 @@ if __name__ == '__main__':
         model_cfg = load_model_config_yaml('config/models.yaml')
         cfg = load_config_file(casename=casename, cfg=cfg)
         start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
-        cfg = check_model_set_variant(model_cfg, cfg)
         if args.job_list is None:
             args.job_list = model_cfg['models'][cfg.model]['jobs']
 
