@@ -142,9 +142,10 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 "Start time %s must not be smaller than in laf_starttime %s." %
                 (str(starttime), str(startfiletime)))
 
-    # No restarts for COSMO-ART and for simulations with spinup
-    if 'restart' in model_cfg['models'][cfg.model]['features'] and \
-       cfg.variant != 'spinup':
+    # Create restart directory if feature is present and 
+    # if there is no spinup
+    if 'restart' in model_cfg['models'][cfg.model]['features'] and not \
+       hasattr(cfg, 'spinup'):
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
     # Copy cosmo executable
@@ -174,13 +175,14 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
         output_file = os.path.join(cfg.cosmo_work, "INPUT_" + section)
         with open(output_file, "w") as outf:
-            if cfg.variant == 'spinup':
-                # no restarts
+            if hasattr(cfg, 'spinup'):
+                # no built-in restarts
                 to_write = to_write.format(cfg=cfg,
                                            restart_start=12,
                                            restart_stop=0,
                                            restart_step=12)
             else:
+                # built-in restarts
                 to_write = to_write.format(cfg=cfg,
                                            restart_start=cfg.hstart +
                                            cfg.restart_step,

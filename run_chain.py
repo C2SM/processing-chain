@@ -144,42 +144,6 @@ def load_config_file(casename, cfg):
     return cfg
 
 
-def check_model_set_variant(model_cfg, cfg):
-    """Checks the model and sets its variant.
-
-    Check if a model was provided in the config-object. If no model is
-    provided, set the model to cosmo in the config-object.
-
-    Check if a variant was provided in the config-object. Variants
-    provide a way to customize the behaviour of the processing chain
-    for different types of simulations.
-
-    Raise a RuntimeError if an unsupported model or variant is given in cfg.
-    You can add models and variants in the config/models.yaml file.
-
-    Parameters
-    ----------
-    cfg : config-object
-    """
-    if hasattr(cfg, 'model'):
-        model_str = getattr(cfg, 'model')
-    else:
-        raise RuntimeError("Variable 'model' not set in config.")
-
-    models = model_cfg['models']
-    if cfg.model not in models:
-        raise ValueError("Invalid model: {}".format(model_str))
-
-    if hasattr(cfg, 'variant'):
-        variants = models[cfg.model]['variants']
-        if cfg.variant not in variants:
-            raise ValueError(f"Invalid variant for {cfg.model}: {cfg.variant}")
-    else:
-        setattr(cfg, 'variant', None)
-
-    return cfg
-
-
 def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
               force):
     """Run chain ignoring already finished jobs.
@@ -242,7 +206,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     inidate_int2lm_yyyymmddhh = (start_time +
                                  timedelta(hours=hstart)).strftime('%Y%m%d%H')
 
-    if cfg.variant == 'spinup':
+    if hasattr(cfg, 'spinup'):
         if cfg.first_one:  # first run in spinup
             chain_root_last_run = ''
         else:  # consecutive runs in spinup
@@ -308,7 +272,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                 raise FileNotFoundError(f"File not found: {tracer_csvfile}")
 
             # tracer_start namelist paramter for spinup simulation
-            if cfg.variant == 'spinup':
+            if hasattr(cfg, 'spinup'):
                 if cfg.first_one:
                     setattr(cfg, 'tracer_start', 0)
                 else:
@@ -331,7 +295,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                                                  "gpu or mc")
 
     # Spinup
-    if cfg.variant == 'spinup':
+    if hasattr(cfg, 'spinup'):
         setattr(cfg, 'last_cosmo_output',
                 os.path.join(chain_root_last_run, 'cosmo', 'output'))
         # No restart for spinup simulations (= default values for no restart)
@@ -645,18 +609,10 @@ if __name__ == '__main__':
 
         print(f"Starting chain for case {casename} and model {cfg.model}")
 
+        # check for restart compatibility and spinup
         if 'restart' in model_cfg['models'][cfg.model]['features']:
-            if cfg.variant is None:
-                restart_runs(work_root=cfg.work_root,
-                             model_cfg=model_cfg,
-                             cfg=cfg,
-                             start=start_time,
-                             hstart=args.hstart,
-                             hstop=args.hstop,
-                             job_names=args.job_list,
-                             force=args.force)
-            elif cfg.variant == 'spinup':
-                print(f"Model variant is {cfg.variant}")
+            if hasattr(cfg, 'spinup'):
+                print("This is a spinup simulation.")
                 restart_runs_spinup(work_root=cfg.work_root,
                                     model_cfg=model_cfg,
                                     cfg=cfg,
@@ -666,9 +622,17 @@ if __name__ == '__main__':
                                     job_names=args.job_list,
                                     force=args.force)
             else:
-                raise RuntimeError(f"Unknown variant: {cfg.variant}")
+                print("Built-in model restart is used.")
+                restart_runs(work_root=cfg.work_root,
+                             model_cfg=model_cfg,
+                             cfg=cfg,
+                             start=start_time,
+                             hstart=args.hstart,
+                             hstop=args.hstop,
+                             job_names=args.job_list,
+                             force=args.force)
         else:
-            # cosmoart can't do restarts
+            print("No restart is used.")
             run_chain(work_root=cfg.work_root,
                       cfg=cfg,
                       start_time=start_time,
