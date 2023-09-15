@@ -142,7 +142,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 "Start time %s must not be smaller than in laf_starttime %s." %
                 (str(starttime), str(startfiletime)))
 
-    # Create restart directory if feature is present and 
+    # Create restart directory if feature is present and
     # if there is no spinup
     if 'restart' in model_cfg['models'][cfg.model]['features'] and not \
        hasattr(cfg, 'spinup'):
