@@ -18,7 +18,6 @@ constraint = 'gpu'  # 'mc'
 
 model = 'cosmo-ghg'
 restart_step = 12  # hours
-variant = 'spinup'
 spinup = 6
 
 if constraint == 'gpu':
