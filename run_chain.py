@@ -88,60 +88,77 @@ def parse_arguments():
 
 
 def load_config_file(casename, cfg):
-    """Load the config file.
-
-    Looks for the config file in ``cases/casename/config.py`` and then imports
-    it as a module. This lets the config file contain python statements which
-    are evaluated on import.
-
-    If this is not the first config-file to be imported by run_chain.py, the
-    module has to be reloaded to overwrite the values of the old case.
-
-    Access variables declared in the config-file (``myval = 9``) with
-    ``cfg.myval``.
-
-    Add new variables with::
-
-        setattr(cfg, 'myval', 9)
-
-    Parameters
-    ----------
-    casename : str
-        Name of the folder in cases/ where the configuration files are stored
-    cfg : module or None
-        If cfg is None, the module is freshly imported. If it is a module
-        object, that module is reloaded.
-
-    Returns
-    -------
-    config-object
-        Object with all variables as attributes
     """
-    cfg_path = os.path.join('cases', casename, 'config')
+    Load the configuration settings from a YAML file.
 
-    if not os.path.exists(os.path.dirname(cfg_path)):
-        all_cases = [path.name for path in os.scandir('cases') if path.is_dir]
+    This function reads the configuration settings from a YAML file located in
+    the 'cases/casename' directory and sets them as attributes of the provided
+    `cfg` object.
+
+    Parameters:
+    - casename (str): Name of the folder in 'cases/' where the configuration
+      files are stored.
+    - cfg (object): An object to store the configuration settings as attributes.
+
+    Returns:
+    - cfg (object): The same `cfg` object with configuration settings as
+      attributes.
+    """
+
+    cfg_path = os.path.join('cases', casename, 'config.yaml')
+
+    if not os.path.exists(cfg_path):
+        all_cases = [path.name for path in os.scandir('cases') if path.is_dir()]
         closest_name = min([(tools.levenshtein(casename, name), name)
                             for name in all_cases],
                            key=lambda x: x[0])[1]
-        raise FileNotFoundError("Case-directory '{}' not found, did you "
-                                "mean '{}'?".format(casename, closest_name))
-
-    sys.path.append(os.path.dirname(cfg_path))
+        raise FileNotFoundError(
+            f"Case-directory '{casename}' not found, did you mean '{closest_name}'?"
+        )
 
     try:
-        if cfg is None:
-            cfg = importlib.import_module(os.path.basename(cfg_path))
-        else:
-            cfg = importlib.reload(cfg)
-    except ModuleNotFoundError:
-        raise FileNotFoundError("No file 'config.py' in " +
-                                os.path.dirname(cfg_path))
+        with open(cfg_path, 'r') as yaml_file:
+            cfg_data = yaml.load(yaml_file, Loader=yaml.FullLoader)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"No file 'config.yaml' in {os.path.dirname(cfg_path)}")
 
-    # so that a different cfg-file can be imported later
-    sys.path.pop()
+    for key, value in cfg_data.items():
+        setattr(cfg, key, value)
+
+    # Set additional config variables
+    cfg = set_user_account(cfg)
 
     return cfg
+
+
+def set_user_account(cfg):
+    setattr(cfg, user, os.environ['USER'])
+    if cfg.user == 'jenkins':
+        # g110 account for Jenkins testing
+        setattr(cfg, compute_account, 'g110')
+    elif os.path.exists(os.environ['HOME'] + '/.acct'):
+        # Use account specified in ~/.acct file
+        with open(os.environ['HOME'] + '/.acct', 'r') as file:
+            setattr(cfg, compute_account, file.read().rstrip())
+    else:
+        # Use standard account
+        setattr(cfg, compute_account, os.popen("id -gn").read().splitlines()[0])
+
+    return cfg
+
+def set_node_info(cfg):
+    if cfg.constraint == 'gpu':
+        setattr(cfg, ntasks_per_node, 12)
+        setattr(cfg, mpich_cuda, ('export MPICH_RDMA_ENABLED_CUDA=1\n'
+                      'export MPICH_G2G_PIPELINE=256\n'
+                      'export CRAY_CUDA_MPS=1\n')
+               )
+    elif cfg.constraint == 'mc':
+        setattr(cfg, ntasks_per_node, 36)
+        setattr(cfg, mpich_cuda, '')
+    else:
+        raise ValueError("Invalid value for 'constraint' in the configuration."
+                         "It should be either 'gpu' or 'mc'.")
 
 
 def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
