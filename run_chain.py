@@ -108,7 +108,9 @@ def load_config_file(casename, cfg):
     cfg_path = os.path.join('cases', casename, 'config.yaml')
 
     if not os.path.exists(cfg_path):
-        all_cases = [path.name for path in os.scandir('cases') if path.is_dir()]
+        all_cases = [
+            path.name for path in os.scandir('cases') if path.is_dir()
+        ]
         closest_name = min([(tools.levenshtein(casename, name), name)
                             for name in all_cases],
                            key=lambda x: x[0])[1]
@@ -120,7 +122,8 @@ def load_config_file(casename, cfg):
         with open(cfg_path, 'r') as yaml_file:
             cfg_data = yaml.load(yaml_file, Loader=yaml.FullLoader)
     except FileNotFoundError:
-        raise FileNotFoundError(f"No file 'config.yaml' in {os.path.dirname(cfg_path)}")
+        raise FileNotFoundError(
+            f"No file 'config.yaml' in {os.path.dirname(cfg_path)}")
 
     for key, value in cfg_data.items():
         setattr(cfg, key, value)
@@ -142,17 +145,18 @@ def set_user_account(cfg):
             setattr(cfg, compute_account, file.read().rstrip())
     else:
         # Use standard account
-        setattr(cfg, compute_account, os.popen("id -gn").read().splitlines()[0])
+        setattr(cfg, compute_account,
+                os.popen("id -gn").read().splitlines()[0])
 
     return cfg
+
 
 def set_node_info(cfg):
     if cfg.constraint == 'gpu':
         setattr(cfg, ntasks_per_node, 12)
         setattr(cfg, mpich_cuda, ('export MPICH_RDMA_ENABLED_CUDA=1\n'
-                      'export MPICH_G2G_PIPELINE=256\n'
-                      'export CRAY_CUDA_MPS=1\n')
-               )
+                                  'export MPICH_G2G_PIPELINE=256\n'
+                                  'export CRAY_CUDA_MPS=1\n'))
     elif cfg.constraint == 'mc':
         setattr(cfg, ntasks_per_node, 36)
         setattr(cfg, mpich_cuda, '')
