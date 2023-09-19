@@ -165,7 +165,6 @@ def set_node_info(cfg):
                          "It should be either 'gpu' or 'mc'.")
 
 
-
 def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
               force):
     """Run chain ignoring already finished jobs.
