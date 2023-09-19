@@ -184,5 +184,13 @@ pipeline {
             echo 'Cleaning up workspace'
                 deleteDir()
         }
+        failure {
+            mail to: "${env.EMAIL_TO_1}",
+            subject: "Jenkins Pipeline Failed: ${currentBuild.fullDisplayName}",
+            body: """The Jenkins pipeline ${currentBuild.fullDisplayName} has failed.
+		
+                View the build: ${env.BUILD_URL}
+                """
+        }
     }
 }
