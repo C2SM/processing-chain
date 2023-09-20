@@ -61,7 +61,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         emis_prefixes = cfg.emissions['gridname']
 
     assert len(emis_dirs) == len(emis_prefixes), (
-        "Different number of cfg.emissions['dir'] and cfg.emissions['gridname']")
+        "Different number of cfg.emissions['dir'] and cfg.emissions['gridname']"
+    )
 
     for i, (emis_dir, emis_prefix) in enumerate(zip(emis_dirs, emis_prefixes)):
         # create directory
