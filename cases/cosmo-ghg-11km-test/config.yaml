@@ -20,8 +20,9 @@ cams:
     inc: 3
 
 # EMISSIONS
-emissions_dir: null  # Set this value based on your use case
-emis_gridname: co2_
+emissions:
+    dir: ./input/cosmo-ghg/emissions_coarse
+    gridname: co2_
 
 # OAE
 oem_dir: null  # Set this value based on your use case
