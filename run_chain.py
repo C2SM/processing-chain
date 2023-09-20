@@ -86,7 +86,9 @@ def parse_arguments():
 
     return args
 
+
 class Config():
+
     def __init__(self, casename):
         # Global attributes (initialized with default values)
         self.casename = casename
@@ -101,7 +103,6 @@ class Config():
         # Derived attributes based on user configuration
         self.set_account()
         self.set_node_info()
-
 
     def load_config_file(self, casename):
         """
@@ -143,7 +144,7 @@ class Config():
         for key, value in cfg_data.items():
             setattr(self, key, value)
 
-        # Save the user-defined items
+            # Save the user-defined items
             self.user_config = cfg_data.items()
 
         return self
@@ -172,11 +173,11 @@ class Config():
             self.ntasks_per_node = 36
             self.mpich_cuda = ''
         else:
-            raise ValueError("Invalid value for 'constraint' in the configuration."
-                             "It should be either 'gpu' or 'mc'.")
+            raise ValueError(
+                "Invalid value for 'constraint' in the configuration."
+                "It should be either 'gpu' or 'mc'.")
 
         return self
-
 
     def print_config(self):
         # Print the configuration
