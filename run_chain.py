@@ -93,6 +93,8 @@ class Config():
         # Global attributes (initialized with default values)
         self.casename = casename
         self.user = os.environ['USER']
+        self.set_email()
+
         self.chain_src_dir = os.getcwd()
         self.path = os.path.join(self.chain_src_dir, self.casename)
         self.work_root = os.path.join(self.chain_src_dir, 'work')
@@ -144,9 +146,6 @@ class Config():
         for key, value in cfg_data.items():
             setattr(self, key, value)
 
-            # Save the user-defined items
-            self.user_config = cfg_data.items()
-
         return self
 
     def set_account(self):
@@ -179,29 +178,25 @@ class Config():
 
         return self
 
+
+    def set_email(self):
+        if self.user == 'jenkins':
+            self.mail_address = None
+        elif os.path.exists(os.environ['HOME'] + '/.forward'):
+            with open(os.environ['HOME'] + '/.forward', 'r') as file:
+                self.mail_address = file.read().rstrip()
+        else:
+            self.mail_address = None
+
+        return self
+
+
     def print_config(self):
         # Print the configuration
         max_col_width = max(len(key) for key in vars(self)) + 1
 
-        print("\nConfiguration:")
-        print(f"{'Attribute':<{max_col_width}} {'Value'}")
-        print("-" * 80)
-
-        # Global attributes
-        print(f"{'casename':<{max_col_width}} {self.casename}")
-        print(f"{'user':<{max_col_width}} {self.user}")
-        print(f"{'chain_src_dir':<{max_col_width}} {self.chain_src_dir}")
-        print(f"{'path':<{max_col_width}} {self.path}")
-        print(f"{'work_root':<{max_col_width}} {self.work_root}")
-
-        # User-defined attributes
-        for key, value in self.user_config:
+        for key, value in vars(self).items():
             print(f"{key:<{max_col_width}} {value}")
-
-        # Derived attributes
-        print(f"{'compute_account':<{max_col_width}} {self.compute_account}")
-        print(f"{'ntasks_per_node':<{max_col_width}} {self.ntasks_per_node}")
-        print(f"{'mpich_cuda':<{max_col_width}} {self.mpich_cuda}")
 
 
 def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
@@ -241,14 +236,6 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     force : bool
         If True will do job regardless of completion status
     """
-    # Read mail address
-    if os.environ['USER'] == 'jenkins':
-        mail_address = None
-    elif os.path.exists(os.environ['HOME'] + '/.forward'):
-        with open(os.environ['HOME'] + '/.forward', 'r') as file:
-            mail_address = file.read().rstrip()
-    else:
-        mail_address = None
 
     # ini date and forecast time (ignore meteo times)
     inidate = int((start_time - datetime(1970, 1, 1)).total_seconds())
@@ -496,11 +483,11 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                     subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
                         job, job_id)
                     logging.exception(subject)
-                    if mail_address:
+                    if cfg.mail_address:
                         message = tools.prepare_message(
                             os.path.join(log_working_dir, job))
-                        logging.info('Sending log file to %s' % mail_address)
-                        tools.send_mail(mail_address, subject, message)
+                        logging.info('Sending log file to %s' % cfg.mail_address)
+                        tools.send_mail(cfg.mail_address, subject, message)
                     if try_count == 0:
                         raise RuntimeError(subject)
 
@@ -508,11 +495,11 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                     os.path.join(log_finished_dir, job)):
                 subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
                     job, job_id)
-                if mail_address:
+                if cfg.mail_address:
                     message = tools.prepare_message(
                         os.path.join(log_working_dir, job))
-                    logging.info('Sending log file to %s' % mail_address)
-                    tools.send_mail(mail_address, subject, message)
+                    logging.info('Sending log file to %s' % cfg.mail_address)
+                    tools.send_mail(cfg.mail_address, subject, message)
                 raise RuntimeError(subject)
 
 
@@ -658,16 +645,20 @@ if __name__ == '__main__':
     args = parse_arguments()
 
     for casename in args.casenames:
+        # Load configs
         model_cfg = load_model_config_yaml('config/models.yaml')
         cfg = Config(casename)
+
+        # Print config
         cfg.print_config()
-        sys.exit()
-        start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
+
+        # Check if jobs are set or if default ones are used
         if args.job_list is None:
             args.job_list = model_cfg['models'][cfg.model]['jobs']
 
         print(f"Starting chain for case {casename} and model {cfg.model}")
 
+        start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
         # check for restart compatibility and spinup
         if 'restart' in model_cfg['models'][cfg.model]['features']:
             if hasattr(cfg, 'spinup'):

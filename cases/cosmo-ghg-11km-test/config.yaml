@@ -6,6 +6,7 @@ constraint: gpu
 restart_step: 12
 variant: spinup
 spinup: 6
+input_root: ./input/cosmo-ghg
 
 # METEO
 meteo_prefix: laf
