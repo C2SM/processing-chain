@@ -504,8 +504,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                     if cfg.user_mail:
                         message = tools.prepare_message(
                             os.path.join(log_working_dir, job))
-                        logging.info('Sending log file to %s' %
-                                     cfg.user_mail)
+                        logging.info('Sending log file to %s' % cfg.user_mail)
                         tools.send_mail(cfg.user_mail, subject, message)
                     if try_count == 0:
                         raise RuntimeError(subject)
