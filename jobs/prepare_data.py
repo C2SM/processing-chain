@@ -61,10 +61,10 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
      Copy meteo files to **int2lm** input.
 
      Create necessary directory ``cfg.int2lm_input/meteo``. Copy meteo files
-     from project directory (``cfg.meteo_dir/cfg.meteo_prefixYYYYMMDDHH``) to
+     from project directory (``cfg.meteo['dir']/cfg.meteo['prefix']YYYYMMDDHH``) to
      int2lm input folder on scratch (``cfg.int2lm_input/meteo``).
 
-     For nested runs (meteo files are cosmo-output: ``cfg.meteo_prefix == 
+     For nested runs (meteo files are cosmo-output: ``cfg.meteo['prefix'] == 
      'lffd'``), also the ``*c.nc``-file with constant parameters is copied.
 
     
@@ -283,9 +283,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             datafile_list_rest = []
             datafile_list_chem = []
             for time in tools.iter_hours(starttime, hstart, hstop,
-                                         cfg.meteo_inc):
+                                         cfg.meteo['inc']):
                 meteo_file = os.path.join(cfg.icon_input_icbc,
-                                          time.strftime(cfg.meteo_nameformat))
+                                          time.strftime(cfg.meteo['nameformat']))
                 if cfg.model == 'icon-art' or cfg.model == 'icon-art-oem':
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
@@ -331,13 +331,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             # Add GEOSP to all meteo files
             #-----------------------------------------------------
             for time in tools.iter_hours(starttime, hstart, hstop,
-                                         cfg.meteo_inc):
+                                         cfg.meteo['inc']):
                 src_file = os.path.join(
                     cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
+                    time.strftime(cfg.meteo['nameformat']) + '_lbc.nc')
                 merged_file = os.path.join(
                     cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo_nameformat) + '_merged.nc')
+                    time.strftime(cfg.meteo['nameformat']) + '_merged.nc')
                 ds = xr.open_dataset(src_file)
                 # Load GEOSP-dataset as ds_geosp at time 00:
                 if (time.hour == 0):
@@ -360,10 +360,10 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             if cfg.model.startswith('icon-art'):
                 meteo_file = os.path.join(
                     cfg.icon_input_icbc,
-                    starttime.strftime(cfg.meteo_nameformat) + '.nc')
+                    starttime.strftime(cfg.meteo['nameformat']) + '.nc')
                 merged_file = os.path.join(
                     cfg.icon_input_icbc,
-                    starttime.strftime(cfg.meteo_nameformat) + '_merged.nc')
+                    starttime.strftime(cfg.meteo['nameformat']) + '_merged.nc')
                 ds = xr.open_dataset(meteo_file)
                 merging = False
                 if 'PS' not in ds:
@@ -392,20 +392,20 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             #-----------------------------------------------------
             if cfg.model == 'icon-art-oem':
                 for time in tools.iter_hours(starttime, hstart, hstop,
-                                             cfg.meteo_inc):
+                                             cfg.meteo['inc']):
                     if time == starttime:
                         #------------
                         # Merge IC:
                         #------------
                         meteo_file = os.path.join(
                             cfg.icon_input_icbc,
-                            time.strftime(cfg.meteo_nameformat) + '.nc')
+                            time.strftime(cfg.meteo['nameformat']) + '.nc')
                         chem_file = os.path.join(
                             cfg.icon_input_icbc,
                             time.strftime(cfg.chem_nameformat) + '.nc')
                         merged_file = os.path.join(
                             cfg.icon_input_icbc,
-                            time.strftime(cfg.meteo_nameformat) + '_merged.nc')
+                            time.strftime(cfg.meteo['nameformat']) + '_merged.nc')
                         ds_meteo = xr.open_dataset(meteo_file)
                         ds_chem = xr.open_dataset(chem_file)
                         # LNPS --> PS
@@ -429,13 +429,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     #------------
                     meteo_file = os.path.join(
                         cfg.icon_input_icbc,
-                        time.strftime(cfg.meteo_nameformat) + '_lbc.nc')
+                        time.strftime(cfg.meteo['nameformat']) + '_lbc.nc')
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
                         time.strftime(cfg.chem_nameformat) + '_lbc.nc')
                     merged_file = os.path.join(
                         cfg.icon_input_icbc,
-                        time.strftime(cfg.meteo_nameformat) + '_merged.nc')
+                        time.strftime(cfg.meteo['nameformat']) + '_merged.nc')
                     ds_meteo = xr.open_dataset(meteo_file)
                     ds_chem = xr.open_dataset(chem_file)
                     # LNPS --> PS
@@ -461,13 +461,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         dest_path = os.path.join(cfg.int2lm_input, 'meteo')
         tools.create_dir(dest_path, "meteo input")
 
-        source_nameformat = cfg.meteo_nameformat
+        source_nameformat = cfg.meteo['nameformat']
         starttime_real = starttime + timedelta(hours=hstart)
-        if cfg.meteo_prefix == 'lffd':
+        if cfg.meteo['prefix'] == 'lffd':
             # nested runs use cosmoart-output as meteo data
             # have to copy the *c.nc-file
             src_file = os.path.join(
-                cfg.meteo_dir,
+                cfg.meteo['dir'],
                 starttime_real.strftime(source_nameformat + 'c.nc'))
 
             tools.copy_file(src_file, dest_path)
@@ -478,30 +478,30 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             # extend nameformat with ending to match cosmo-output
             source_nameformat += '.nc'
 
-        if cfg.meteo_prefix == 'efsf':
-            source_nameformat = cfg.meteo_prefix + '%y%m%d%H'
+        if cfg.meteo['prefix'] == 'efsf':
+            source_nameformat = cfg.meteo['prefix'] + '%y%m%d%H'
 
         num_steps = 0
-        meteo_dir = cfg.meteo_dir
+        meteo_dir = cfg.meteo['dir']
         subdir = os.path.join(meteo_dir, starttime_real.strftime('%y%m%d%H'))
-        for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo_inc):
+        for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo['inc']):
             dest_path = os.path.join(cfg.int2lm_input, 'meteo')
             src_file = os.path.join(meteo_dir,
                                     time.strftime(source_nameformat))
 
-            if cfg.meteo_prefix == 'efsf':
+            if cfg.meteo['prefix'] == 'efsf':
                 if time == starttime_real:
                     src_file = os.path.join(subdir,
                                             'eas' + time.strftime('%Y%m%d%H'))
-                    if not os.path.isfile(src_file) and hasattr(
-                            cfg, 'meteo_dir_alt'):
-                        meteo_dir = cfg.meteo_dir_alt
+                    if not os.path.isfile(src_file) and cfg.meteo.get('dir_alt') \
+                        is not None:
+                        meteo_dir = cfg.meteo['dir_alt']
                         subdir = os.path.join(
                             meteo_dir, starttime_real.strftime('%y%m%d%H'))
                         src_file = os.path.join(
                             subdir, 'eas' + time.strftime('%Y%m%d%H'))
                     dest_path = os.path.join(cfg.int2lm_input, 'meteo',
-                                             cfg.meteo_prefix + '00000000')
+                                             cfg.meteo['prefix'] + '00000000')
                 else:
                     td = time - starttime_real - timedelta(hours=6 * num_steps)
                     days = str(td.days).zfill(2)
@@ -511,10 +511,10 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     hours_total = str(td_total.seconds // 3600).zfill(2)
 
                     src_file = os.path.join(
-                        subdir, cfg.meteo_prefix + days + hours + '0000')
+                        subdir, cfg.meteo['prefix'] + days + hours + '0000')
                     dest_path = os.path.join(
                         cfg.int2lm_input, 'meteo',
-                        cfg.meteo_prefix + days_total + hours_total + '0000')
+                        cfg.meteo['prefix'] + days_total + hours_total + '0000')
 
                     # Next time, change directory
                     checkdir = os.path.join(meteo_dir,
@@ -522,16 +522,16 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     if os.path.isdir(checkdir):
                         num_steps += 1
                         subdir = checkdir
-                    elif hasattr(cfg, 'meteo_dir_alt'):
-                        checkdir = os.path.join(cfg.meteo_dir_alt,
+                    elif cfg.meteo.get('dir_alt') is not None:
+                        checkdir = os.path.join(cfg.meteo['dir_alt'],
                                                 time.strftime('%y%m%d%H'))
                         if os.path.isdir(checkdir):
                             num_steps += 1
                             subdir = checkdir
-                            meteo_dir = cfg.meteo_dir_alt
+                            meteo_dir = cfg.meteo['dir_alt']
                             logging.info(
                                 "Switching to other input directory from {} to {}"
-                                .format(cfg.meteo_dir, cfg.meteo_dir_alt))
+                                .format(cfg.meteo['dir'], cfg.meteo['dir_alt']))
             elif not os.path.exists(src_file):
                 # special case for MeteoSwiss COSMO-7 data
                 archive = '/store/mch/msopr/owm/COSMO-7'
@@ -552,9 +552,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 CAMS = dict(fullname="CAMS",
                             nickname="cams",
                             executable="cams4int2cosmo",
-                            indir=cfg.cams_dir_orig,
-                            outdir=cfg.cams_dir_proc,
-                            param=cfg.cams_parameters)
+                            indir=cfg.cams.dir_orig,
+                            outdir=cfg.cams.dir_proc,
+                            param=cfg.cams.parameters)
                 inv_to_process.append(CAMS)
             except AttributeError:
                 pass

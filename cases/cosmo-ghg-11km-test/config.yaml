@@ -7,17 +7,15 @@ restart_step: 12
 variant: spinup
 spinup: 6
 
-# METEO
 meteo:
     dir: ./input/cosmo-ghg/meteo
     prefix: laf
     nameformat: "laf%Y%m%d%H"
     inc: 1
 
-# ICBC
-cams_dir_orig: ./input/cosmo-ghg/icbc
-cams_dir_proc: ./input/cosmo-ghg/icbc/processed
-cams_parameters:
+cams:
+    dir_orig: ./input/cosmo-ghg/icbc
+    dir_proc: ./input/cosmo-ghg/icbc/processed
     suffix: cams_co2
     inc: 3
 
