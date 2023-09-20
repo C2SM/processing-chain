@@ -284,8 +284,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             datafile_list_chem = []
             for time in tools.iter_hours(starttime, hstart, hstop,
                                          cfg.meteo['inc']):
-                meteo_file = os.path.join(cfg.icon_input_icbc,
-                                          time.strftime(cfg.meteo['nameformat']))
+                meteo_file = os.path.join(
+                    cfg.icon_input_icbc,
+                    time.strftime(cfg.meteo['nameformat']))
                 if cfg.model == 'icon-art' or cfg.model == 'icon-art-oem':
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
@@ -405,7 +406,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                             time.strftime(cfg.chem_nameformat) + '.nc')
                         merged_file = os.path.join(
                             cfg.icon_input_icbc,
-                            time.strftime(cfg.meteo['nameformat']) + '_merged.nc')
+                            time.strftime(cfg.meteo['nameformat']) +
+                            '_merged.nc')
                         ds_meteo = xr.open_dataset(meteo_file)
                         ds_chem = xr.open_dataset(chem_file)
                         # LNPS --> PS
@@ -484,7 +486,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         num_steps = 0
         meteo_dir = cfg.meteo['dir']
         subdir = os.path.join(meteo_dir, starttime_real.strftime('%y%m%d%H'))
-        for time in tools.iter_hours(starttime, hstart, hstop, cfg.meteo['inc']):
+        for time in tools.iter_hours(starttime, hstart, hstop,
+                                     cfg.meteo['inc']):
             dest_path = os.path.join(cfg.int2lm_input, 'meteo')
             src_file = os.path.join(meteo_dir,
                                     time.strftime(source_nameformat))
@@ -513,8 +516,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     src_file = os.path.join(
                         subdir, cfg.meteo['prefix'] + days + hours + '0000')
                     dest_path = os.path.join(
-                        cfg.int2lm_input, 'meteo',
-                        cfg.meteo['prefix'] + days_total + hours_total + '0000')
+                        cfg.int2lm_input, 'meteo', cfg.meteo['prefix'] +
+                        days_total + hours_total + '0000')
 
                     # Next time, change directory
                     checkdir = os.path.join(meteo_dir,
@@ -531,7 +534,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                             meteo_dir = cfg.meteo['dir_alt']
                             logging.info(
                                 "Switching to other input directory from {} to {}"
-                                .format(cfg.meteo['dir'], cfg.meteo['dir_alt']))
+                                .format(cfg.meteo['dir'],
+                                        cfg.meteo['dir_alt']))
             elif not os.path.exists(src_file):
                 # special case for MeteoSwiss COSMO-7 data
                 archive = '/store/mch/msopr/owm/COSMO-7'
