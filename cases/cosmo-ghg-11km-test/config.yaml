@@ -2,6 +2,7 @@
 
 # GENERAL SETTINGS
 model: cosmo-ghg
+constraint: gpu
 restart_step: 12
 variant: spinup
 spinup: 6
