@@ -193,8 +193,26 @@ class Config():
         # Print the configuration
         max_col_width = max(len(key) for key in vars(self)) + 1
 
+        print("\nConfiguration:")
+        print(f"{'Attribute':<{max_col_width}} Type Value")
+        print("-" * 80)
         for key, value in vars(self).items():
-            print(f"{key:<{max_col_width}} {value}")
+            if isinstance(value, list):
+                # If the value is a list, format it with indentation
+                print(f"{key:<{max_col_width}} list")
+                for item in value:
+                    item_type = type(item).__name__
+                    print(f"  - {item:<{max_col_width-4}} {item_type}")
+            elif isinstance(value, dict):
+                # If the value is a dictionary, format it as before
+                print(f"{key:<{max_col_width}} dict")
+                for sub_key, sub_value in value.items():
+                    sub_value_type = type(sub_value).__name__
+                    print(f"  - {sub_key:<{max_col_width-4}} {sub_value_type:<4} {sub_value}")
+            else:
+                # Standard output
+                key_type = type(key).__name__
+                print(f"{key:<{max_col_width}} {key_type:<4} {value}")
 
 
 def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
@@ -363,14 +381,14 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
 
     # if nested run: use output of mother-simulation
     if 'nesting' in model_cfg['models'][
-            cfg.model]['features'] and not os.path.isdir(cfg.meteo_dir):
+            cfg.model]['features'] and not os.path.isdir(cfg.meteo.dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
-        mother_name = cfg.meteo_dir
-        cfg.meteo_dir = os.path.join(work_root, mother_name, job_id, 'cosmo',
+        mother_name = cfg.meteo.dir
+        cfg.meteo.dir = os.path.join(work_root, mother_name, job_id, 'cosmo',
                                      'output')
-        cfg.meteo_inc = 1
-        cfg.meteo_prefix = 'lffd'
+        cfg.meteo.inc = 1
+        cfg.meteo.prefix = 'lffd'
 
     # ICON
     if cfg.model.startswith('icon'):

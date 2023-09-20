@@ -6,18 +6,19 @@ constraint: gpu
 restart_step: 12
 variant: spinup
 spinup: 6
-input_root: ./input/cosmo-ghg
 
 # METEO
-meteo_prefix: laf
-meteo_nameformat: "laf%Y%m%d%H"
-meteo_inc: 1
+meteo:
+    dir: ./input/cosmo-ghg/meteo
+    prefix: laf
+    nameformat: "laf%Y%m%d%H"
+    inc: 1
 
 # ICBC
-cams_dir_orig: null  # Set this value based on your use case
-cams_dir_proc: null  # Set this value based on your use case
+cams_dir_orig: ./input/cosmo-ghg/icbc
+cams_dir_proc: ./input/cosmo-ghg/icbc/processed
 cams_parameters:
-  - suffix: cams_co2
+    suffix: cams_co2
     inc: 3
 
 # EMISSIONS
@@ -87,18 +88,18 @@ output_root: null  # Set this value based on your use case
 reference_dir: null  # Set this value based on your use case
 output_dir: null  # Set this value based on your use case
 values_to_check:
-  - - cosmo-ghg_pgi_gpu_e5e9e5a_lffd2015010200.nc
-    - lffd2015010200.nc
-    - T
-    - P
-    - U
-    - V
-    - W
-    - CO2_BG
-    - CO2_A
-    - CO2_GPP
-    - CO2_RA
-    - CO2_A2
-    - CO2_GPP2
-    - CO2_RA2
+  - cosmo-ghg_pgi_gpu_e5e9e5a_lffd2015010200.nc
+  - lffd2015010200.nc
+  - T
+  - P
+  - U
+  - V
+  - W
+  - CO2_BG
+  - CO2_A
+  - CO2_GPP
+  - CO2_RA
+  - CO2_A2
+  - CO2_GPP2
+  - CO2_RA2
 
