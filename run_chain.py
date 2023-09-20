@@ -178,7 +178,6 @@ class Config():
 
         return self
 
-
     def set_email(self):
         if self.user == 'jenkins':
             self.mail_address = None
@@ -189,7 +188,6 @@ class Config():
             self.mail_address = None
 
         return self
-
 
     def print_config(self):
         # Print the configuration
@@ -486,7 +484,8 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                     if cfg.mail_address:
                         message = tools.prepare_message(
                             os.path.join(log_working_dir, job))
-                        logging.info('Sending log file to %s' % cfg.mail_address)
+                        logging.info('Sending log file to %s' %
+                                     cfg.mail_address)
                         tools.send_mail(cfg.mail_address, subject, message)
                     if try_count == 0:
                         raise RuntimeError(subject)
