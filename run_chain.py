@@ -96,7 +96,7 @@ class Config():
         self.casename = casename
 
         self.chain_src_dir = os.getcwd()
-        self.path = os.path.join(self.chain_src_dir, self.casename)
+        self.path = os.path.join(self.chain_src_dir, 'cases', self.casename)
         self.work_root = os.path.join(self.chain_src_dir, 'work')
 
         # User-defined attributes from config file
