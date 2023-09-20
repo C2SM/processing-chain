@@ -105,9 +105,9 @@ def load_config_file(casename, cfg):
       attributes.
     """
 
-    cfg_path = os.path.join('cases', casename, 'config.yaml')
+    cfg_file = os.path.join('cases', casename, 'config.yaml')
 
-    if not os.path.exists(cfg_path):
+    if not os.path.isfile(cfg_file):
         all_cases = [
             path.name for path in os.scandir('cases') if path.is_dir()
         ]
@@ -119,17 +119,18 @@ def load_config_file(casename, cfg):
         )
 
     try:
-        with open(cfg_path, 'r') as yaml_file:
+        with open(cfg_file, 'r') as yaml_file:
             cfg_data = yaml.load(yaml_file, Loader=yaml.FullLoader)
     except FileNotFoundError:
         raise FileNotFoundError(
-            f"No file 'config.yaml' in {os.path.dirname(cfg_path)}")
+            f"No file 'config.yaml' in {os.path.dirname(cfg_file)}")
 
     for key, value in cfg_data.items():
         setattr(cfg, key, value)
 
     # Set additional config variables
     cfg = set_user_account(cfg)
+    cfg = set_node_info(cfg)
 
     return cfg
 
@@ -163,6 +164,24 @@ def set_node_info(cfg):
     else:
         raise ValueError("Invalid value for 'constraint' in the configuration."
                          "It should be either 'gpu' or 'mc'.")
+
+    return cfg
+
+
+def set_paths_and_case(cfg):
+    # Root directory of the sourcecode of the chain (where run_chain.py is)
+    setattr(cfg, chain_src_dir, os.getcwd())
+
+    # The case name is the name of the case directory
+    setattr(cfg, casename, os.path.basename(os.path.dirname(path)))
+
+    # Path of the case files
+    setattr(cfg, path, os.path.join(cfg.chain_src.dir, cfg.casename))
+
+    # Root directory of the working space of the chain
+    setattr(cfg, work_root, os.path.join(chain_src_dir, 'work'))
+
+    return cfg
 
 
 def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,

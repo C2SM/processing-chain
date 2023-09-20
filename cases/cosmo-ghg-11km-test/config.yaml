@@ -6,18 +6,7 @@ restart_step: 12
 variant: spinup
 spinup: 6
 
-# case name = pathname in cases/
-casename: null  # Set this value based on your use case
-
-# Root directory settings
-chain_src_dir: null  # Set this value based on your use case
-work_root: null  # Set this value based on your use case
-
-# PRE-PROCESSING
-input_root: null  # Set this value based on your use case
-
 # METEO
-meteo_dir: null  # Set this value based on your use case
 meteo_prefix: laf
 meteo_nameformat: "laf%Y%m%d%H"
 meteo_inc: 1
