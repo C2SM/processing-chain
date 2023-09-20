@@ -180,21 +180,27 @@ class Config():
 
     def print_config(self):
         # Print the configuration
-        print("Global Attributes:")
-        print(f"casename: {self.casename}")
-        print(f"user: {self.user}")
-        print(f"chain_src_dir: {self.chain_src_dir}")
-        print(f"path: {self.path}")
-        print(f"work_root: {self.work_root}")
+        max_col_width = max(len(key) for key in vars(self)) + 1
 
-        print("\nUser-defined attributes:")
+        print("\nConfiguration:")
+        print(f"{'Attribute':<{max_col_width}} {'Value'}")
+        print("-" * 80)
+
+        # Global attributes
+        print(f"{'casename':<{max_col_width}} {self.casename}")
+        print(f"{'user':<{max_col_width}} {self.user}")
+        print(f"{'chain_src_dir':<{max_col_width}} {self.chain_src_dir}")
+        print(f"{'path':<{max_col_width}} {self.path}")
+        print(f"{'work_root':<{max_col_width}} {self.work_root}")
+
+        # User-defined attributes
         for key, value in self.user_config:
-            print(f"{key}: {value}")
+            print(f"{key:<{max_col_width}} {value}")
 
-        print("\nDerived attributes:")
-        print(f"compute_account: {self.compute_account}")
-        print(f"ntasks_per_node: {self.ntasks_per_node}")
-        print(f"mpich_cuda: {self.mpich_cuda}")
+        # Derived attributes
+        print(f"{'compute_account':<{max_col_width}} {self.compute_account}")
+        print(f"{'ntasks_per_node':<{max_col_width}} {self.ntasks_per_node}")
+        print(f"{'mpich_cuda':<{max_col_width}} {self.mpich_cuda}")
 
 
 def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
