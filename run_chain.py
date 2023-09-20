@@ -91,9 +91,9 @@ class Config():
 
     def __init__(self, casename):
         # Global attributes (initialized with default values)
-        self.casename = casename
-        self.user = os.environ['USER']
+        self.user_name = os.environ['USER']
         self.set_email()
+        self.casename = casename
 
         self.chain_src_dir = os.getcwd()
         self.path = os.path.join(self.chain_src_dir, self.casename)
@@ -149,7 +149,7 @@ class Config():
         return self
 
     def set_account(self):
-        if self.user == 'jenkins':
+        if self.user_name == 'jenkins':
             # g110 account for Jenkins testing
             self.compute_account = 'g110'
         elif os.path.exists(os.environ['HOME'] + '/.acct'):
@@ -179,13 +179,13 @@ class Config():
         return self
 
     def set_email(self):
-        if self.user == 'jenkins':
-            self.mail_address = None
+        if self.user_name == 'jenkins':
+            self.user_mail = None
         elif os.path.exists(os.environ['HOME'] + '/.forward'):
             with open(os.environ['HOME'] + '/.forward', 'r') as file:
-                self.mail_address = file.read().rstrip()
+                self.user_mail = file.read().rstrip()
         else:
-            self.mail_address = None
+            self.user_mail = None
 
         return self
 
@@ -501,12 +501,12 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                     subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
                         job, job_id)
                     logging.exception(subject)
-                    if cfg.mail_address:
+                    if cfg.user_mail:
                         message = tools.prepare_message(
                             os.path.join(log_working_dir, job))
                         logging.info('Sending log file to %s' %
-                                     cfg.mail_address)
-                        tools.send_mail(cfg.mail_address, subject, message)
+                                     cfg.user_mail)
+                        tools.send_mail(cfg.user_mail, subject, message)
                     if try_count == 0:
                         raise RuntimeError(subject)
 
@@ -514,11 +514,11 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                     os.path.join(log_finished_dir, job)):
                 subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
                     job, job_id)
-                if cfg.mail_address:
+                if cfg.user_mail:
                     message = tools.prepare_message(
                         os.path.join(log_working_dir, job))
-                    logging.info('Sending log file to %s' % cfg.mail_address)
-                    tools.send_mail(cfg.mail_address, subject, message)
+                    logging.info('Sending log file to %s' % cfg.user_mail)
+                    tools.send_mail(cfg.user_mail, subject, message)
                 raise RuntimeError(subject)
 
 
