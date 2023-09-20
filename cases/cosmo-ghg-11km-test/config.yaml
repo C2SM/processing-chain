@@ -10,7 +10,7 @@ spinup: 6
 meteo:
     dir: ./input/cosmo-ghg/meteo
     prefix: laf
-    nameformat: "laf%Y%m%d%H"
+    nameformat: laf%Y%m%d%H
     inc: 1
 
 cams:
@@ -19,10 +19,15 @@ cams:
     suffix: cams_co2
     inc: 3
 
-# EMISSIONS
 emissions:
     dir: ./input/cosmo-ghg/emissions_coarse
     gridname: co2_
+
+vprm:
+    dir: ./input/cosmo-ghg/vprm_smartcarb/processed
+    prefix:
+        - vprm2_
+
 
 # OAE
 oem_dir: null  # Set this value based on your use case
@@ -32,11 +37,6 @@ oem_hourofday_nc: hourofday.nc
 oem_hourofyear_nc: hourofyear.nc
 oem_dayofweek_nc: dayofweek.nc
 oem_monthofyear_nc: monthofyear.nc
-
-# BIOFLUXES
-vprm_dir: null  # Set this value based on your use case
-vprm_prefix:
-  - vprm2_
 
 # ONLINE_VPRM
 online_vprm_dir: null  # Set this value based on your use case
