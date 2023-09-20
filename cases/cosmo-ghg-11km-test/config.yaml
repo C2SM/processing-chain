@@ -28,15 +28,14 @@ vprm:
     prefix:
         - vprm2_
 
-
-# OAE
-oem_dir: null  # Set this value based on your use case
-oem_gridded_emissions_nc: emissions.nc
-oem_vertical_profiles_nc: vertical_profiles.nc
-oem_hourofday_nc: hourofday.nc
-oem_hourofyear_nc: hourofyear.nc
-oem_dayofweek_nc: dayofweek.nc
-oem_monthofyear_nc: monthofyear.nc
+oem:
+    dir: ./input/cosmo-ghg/oem
+    gridded_emissions_nc: emissions.nc
+    vertical_profiles_nc: vertical_profiles.nc
+    hourofday_nc: hourofday.nc
+    hourofyear_nc: hourofyear.nc
+    dayofweek_nc: dayofweek.nc
+    monthofyear_nc: monthofyear.nc
 
 # ONLINE_VPRM
 online_vprm_dir: null  # Set this value based on your use case
