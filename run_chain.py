@@ -208,7 +208,9 @@ class Config():
                 print(f"{key:<{max_col_width}} dict")
                 for sub_key, sub_value in value.items():
                     sub_value_type = type(sub_value).__name__
-                    print(f"  - {sub_key:<{max_col_width-4}} {sub_value_type:<4} {sub_value}")
+                    print(
+                        f"  - {sub_key:<{max_col_width-4}} {sub_value_type:<4} {sub_value}"
+                    )
             else:
                 # Standard output
                 key_type = type(key).__name__
