@@ -88,6 +88,7 @@ def parse_arguments():
 
 
 class Config():
+
     def __init__(self, casename):
         # Global attributes (initialized with default values)
         self.user_name = os.environ['USER']

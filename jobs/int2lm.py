@@ -119,8 +119,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         multi_layer = ".TRUE."
     output_file = os.path.join(cfg.int2lm_work, "INPUT")
     with open(output_file, "w") as outf:
-        outf.write(to_write.format(cfg=cfg,
-                                   multi_layer=multi_layer))
+        outf.write(to_write.format(cfg=cfg, multi_layer=multi_layer))
 
     # Prepare runscript
     with open(cfg.int2lm_runjob) as input_file:

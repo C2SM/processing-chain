@@ -142,7 +142,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
     # Copy cosmo executable
-    tools.copy_file(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, cfg.cosmo['execname']))
+    tools.copy_file(cfg.cosmo_bin,
+                    os.path.join(cfg.cosmo_work, cfg.cosmo['execname']))
 
     # Prepare namelist and submit job
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
