@@ -1,6 +1,5 @@
 # Configuration file for the 'cosmo-ghg-11km-test' case with COSMO-GHG
 
-# GENERAL SETTINGS
 model: cosmo-ghg
 constraint: gpu
 restart_step: 12
@@ -37,67 +36,68 @@ oem:
     dayofweek_nc: dayofweek.nc
     monthofyear_nc: monthofyear.nc
 
-# ONLINE_VPRM
-online_vprm_dir: null  # Set this value based on your use case
-modis_filename: MODIS_sur_refl_Example_20150101-20150201.nc
-vegetation_filename: VPRM_VegClasses_example_vprm.nc
+online_vprm:
+    dir: ./input/cosmo-ghg/online_vprm
+    modis_filename: MODIS_sur_refl_Example_20150101-20150201.nc
+    vegetation_filename: VPRM_VegClasses_example_vprm.nc
 
-# INT2LM
-int2lm_extpar_dir: null  # Set this value based on your use case
-int2lm_extpar_file: test_domain.nc
-int2lm_bin: null  # Set this value based on your use case
-int2lm_namelist: null  # Set this value based on your use case
-int2lm_runjob: null  # Set this value based on your use case
-int2lm_walltime: "01:00:00"
-int2lm_nodes: 2
-int2lm_ntasks_per_node: 12
-int2lm_np_x: 8
-int2lm_np_y: 3
+int2lm:
+    extpar_dir: null  # Set this value based on your use case
+    extpar_file: test_domain.nc
+    bin: null  # Set this value based on your use case
+    namelist: null  # Set this value based on your use case
+    runjob: null  # Set this value based on your use case
+    walltime: "01:00:00"
+    nodes: 2
+    ntasks_per_node: 12
+    np_x: 8
+    np_y: 3
 
-# POST_INT2LM
-post_int2lm_species:
-  - CO2_BG
-post_int2lm_species_spinup:
-  - CO2_BG
-  - CO2_GPP
-  - CO2_RA
-  - CO2_A
-  - CO2_GPP2
-  - CO2_RA2
-  - CO2_A2
+post_int2lm:
+    species:
+        - CO2_BG
+    species_spinup:
+        - CO2_BG
+        - CO2_GPP
+        - CO2_RA
+        - CO2_A
+        - CO2_GPP2
+        - CO2_RA2
+        - CO2_A2
 
-# SIMULATION
-# COSMO
-cosmo_bin: null  # Set this value based on your use case
-cosmo_namelist: null  # Set this value based on your use case
-cosmo_runjob: null  # Set this value based on your use case
-cosmo_walltime: "00:30:00"
-cosmo_np_x: 6
-cosmo_np_y: 4
-cosmo_np_io: 0
+cosmo:
+    bin: null  # Set this value based on your use case
+    namelist: null  # Set this value based on your use case
+    runjob: null  # Set this value based on your use case
+    walltime: "00:30:00"
+    np_x: 6
+    np_y: 4
+    np_io: 0
 
 # POST-PROCESSING
 # REDUCE_OUTPUT
-convert_gas: true
-output_levels: 20
+reduce_output:
+    convert_gas: true
+    output_levels: 20
 
 # POST_COSMO
-output_root: null  # Set this value based on your use case
-reference_dir: null  # Set this value based on your use case
-output_dir: null  # Set this value based on your use case
-values_to_check:
-  - cosmo-ghg_pgi_gpu_e5e9e5a_lffd2015010200.nc
-  - lffd2015010200.nc
-  - T
-  - P
-  - U
-  - V
-  - W
-  - CO2_BG
-  - CO2_A
-  - CO2_GPP
-  - CO2_RA
-  - CO2_A2
-  - CO2_GPP2
-  - CO2_RA2
+post_cosmo:
+    output_root: null  # Set this value based on your use case
+    reference_dir: null  # Set this value based on your use case
+    output_dir: null  # Set this value based on your use case
+    values_to_check:
+        - cosmo-ghg_pgi_gpu_e5e9e5a_lffd2015010200.nc
+        - lffd2015010200.nc
+        - T
+        - P
+        - U
+        - V
+        - W
+        - CO2_BG
+        - CO2_A
+        - CO2_GPP
+        - CO2_RA
+        - CO2_A2
+        - CO2_GPP2
+        - CO2_RA2
 
