@@ -27,19 +27,19 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
     dest_modis = 'modis.nc'
     dest_vegetation = 'vegetation.nc'
-    modis_dir = cfg.online_vprm_dir
-    vegetation_dir = cfg.online_vprm_dir
 
+    src_dir = cfg.online_vprm['dir']
     dest_dir = os.path.join(cfg.cosmo_input, "vprm")
     tools.create_dir(dest_dir, "input data for vprm")
 
-    modis_data_nc = os.path.join(modis_dir, cfg.modis_filename)
+    modis_data_nc = os.path.join(src_dir, cfg.online_vprm['modis_filename'])
     logging.info("Copying MODIS file from {} to {}".format(
-        modis_dir, dest_dir))
+        src_dir, dest_dir))
     tools.copy_file(modis_data_nc, os.path.join(dest_dir, dest_modis))
 
-    vegetation_data_nc = os.path.join(vegetation_dir, cfg.vegetation_filename)
+    vegetation_data_nc = os.path.join(src_dir, cfg.online_vprm['vegetation_filename'])
     logging.info("Copying vegetation class fraction file from {} to {}".format(
-        vegetation_dir, dest_dir))
+        src_dir, dest_dir))
     tools.copy_file(vegetation_data_nc, os.path.join(dest_dir,
                                                      dest_vegetation))
+
