@@ -70,11 +70,11 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
     # Copy landuse and plant-functional-type files
     if cfg.model == 'cosmo-art':
-        lu_file_src = os.path.join(cfg.int2lm['lu_dir'], cfg.int2lm_lu_file)
+        lu_file_src = cfg.int2lm['lu_file']
         lu_file_dst = os.path.join(extpar_dir, 'landuse.nc')
         tools.copy_file(lu_file_src, lu_file_dst)
 
-        pft_file_src = os.path.join(cfg.int2lm['pft_dir'], cfg.int2lm_pft_file)
+        pft_file_src = cfg.int2lm['pft_file']
         pft_file_dst = os.path.join(extpar_dir, 'pft.nc')
         tools.copy_file(pft_file_src, pft_file_dst)
 

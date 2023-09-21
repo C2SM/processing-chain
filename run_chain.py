@@ -176,15 +176,36 @@ class Config():
         return self
 
     def set_job_variables(self):
+        self.set_attributes_time()
+
+        if hasattr(self, 'int2lm'):
+            self.set_attributes_int2lm()
         if hasattr(self, 'cosmo'):
-            self.cosmo['execname'] = self.model.lower()
+            self.set_attributes_cosmo()
 
         return self
 
     def set_attributes_time(self):
+        # ini date and forecast time (ignore meteo times)
+        self.inidate_yyyymmddhh = self.startdate.strftime('%Y%m%d%H')
+        self.inidate_yyyymmdd_hh = self.startdate.strftime('%Y%m%d_%H')
+        self.inidate_yyyymmddhhmmss = self.startdate.strftime('%Y%m%d%H%M%S')
+        self.forecasttime = '%d' % (self.hstop - self.hstart)
 
+        return self
 
-        
+    def set_attributes_int2lm(self):
+        self.inidate_int2lm_yyyymmddhh = (self.startdate +
+                                     timedelta(hours=self.hstart)).strftime('%Y%m%d%H')
+        # int2lm processing always starts at hstart=0 and we modify inidate instead
+        self.hstart_int2lm = 0
+        self.hstop_int2lm = self.forecasttime
+
+        return self
+
+    def set_attributes_cosmo(self):
+        self.cosmo['execname'] = self.model.lower()
+
         return self
 
     def print_config(self):
@@ -254,22 +275,6 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         If True will do job regardless of completion status
     """
 
-    # ini date and forecast time (ignore meteo times)
-    inidate = start_time
-    inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
-    inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
-    inidate_yyyymmddhhmmss = start_time.strftime('%Y%m%d%H%M%S')
-    forecasttime = '%d' % (hstop - hstart)
-    setattr(cfg, 'inidate', inidate)
-    setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh)
-    setattr(cfg, 'inidate_yyyymmdd_hh', inidate_yyyymmdd_hh)
-    setattr(cfg, 'inidate_yyyymmddhhmmss', inidate_yyyymmddhhmmss)
-    setattr(cfg, 'hstart', hstart)
-    setattr(cfg, 'hstop', hstop)
-    forecasttime = '%d' % (hstop - hstart)
-    inidate_int2lm_yyyymmddhh = (start_time +
-                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
-
     if hasattr(cfg, 'spinup'):
         if cfg.first_one:  # first run in spinup
             chain_root_last_run = ''
@@ -292,28 +297,11 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
             chain_root_last_run = os.path.join(work_root, cfg.casename,
                                                job_id_last_run)
 
-    setattr(cfg, 'forecasttime', forecasttime)
-
-    # chain
-    job_id = '%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
+    # Folder naming and structure
+    job_id = '%s_%d_%d' % (cfg.inidate_yyyymmddhh, hstart, hstop)
     chain_root = os.path.join(work_root, cfg.casename, job_id)
-    setattr(cfg, 'chain_root', chain_root)
 
     if cfg.model.startswith('cosmo'):
-        # TODO: refactor
-        # INT2LM
-        setattr(cfg, 'int2lm_base', os.path.join(chain_root, 'int2lm'))
-        setattr(cfg, 'int2lm_input', os.path.join(chain_root, 'int2lm',
-                                                  'input'))
-        setattr(cfg, 'int2lm_work', os.path.join(chain_root, 'int2lm', 'run'))
-        setattr(cfg, 'int2lm_output',
-                os.path.join(chain_root, 'int2lm', 'output'))
-
-        # int2lm processing always starts at hstart=0 and we modify inidate instead
-        setattr(cfg, 'inidate_int2lm_yyyymmddhh', inidate_int2lm_yyyymmddhh)
-        setattr(cfg, 'hstart_int2lm', '0')
-        setattr(cfg, 'hstop_int2lm', forecasttime)
-
         # COSMO
         setattr(cfg, 'cosmo_base', os.path.join(chain_root, 'cosmo'))
         setattr(cfg, 'cosmo_input', os.path.join(chain_root, 'cosmo', 'input'))
