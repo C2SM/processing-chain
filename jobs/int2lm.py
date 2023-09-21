@@ -61,7 +61,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     tools.create_dir(cfg.int2lm['work'], "int2lm_work")
     tools.create_dir(cfg.int2lm['output'], "int2lm_output")
 
-    tools.copy_file(cfg.int2lm['bin'], os.path.join(cfg.int2lm['work'], "int2lm"))
+    tools.copy_file(cfg.int2lm['bin'],
+                    os.path.join(cfg.int2lm['work'], "int2lm"))
 
     # Copy extpar file to input/extpar directory
     extpar_dir = os.path.join(cfg.int2lm['input'], "extpar")
@@ -140,4 +141,3 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     exitcode = result.returncode
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-
