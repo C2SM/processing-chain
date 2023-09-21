@@ -42,11 +42,10 @@ online_vprm:
     vegetation_filename: VPRM_VegClasses_example_vprm.nc
 
 int2lm:
-    extpar_dir: null  # Set this value based on your use case
-    extpar_file: test_domain.nc
-    bin: null  # Set this value based on your use case
-    namelist: null  # Set this value based on your use case
-    runjob: null  # Set this value based on your use case
+    extpar_file: ./input/cosmo-ghg/extpar/test_domain.nc
+    bin: ./src/int2lm/test/testsuite/int2lm
+    namelist: int2lm_INPUT.cfg
+    runjob: int2lm_runjob.cfg
     walltime: "01:00:00"
     nodes: 2
     ntasks_per_node: 12

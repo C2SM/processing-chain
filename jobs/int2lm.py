@@ -31,8 +31,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     Copy the **int2lm**-executable from ``cfg.int2lm_bin`` to 
     ``cfg.int2lm_work/int2lm``.
 
-    Copy the extpar-file from ``cfg.extpar_dir/cfg.extpar_file`` to
-    ``cfg.int2lm_run/extpar``.
+    Copy the extpar-file ``cfg.int2lm['extpar_file']`` to
+    ``cfg.int2lm_run/work``.
 
     **COSMOART**: Copy the ``libgrib_api`` files to
     ``cfg.int2lm_work/libgrib_api``.
@@ -56,13 +56,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     """
     logfile = os.path.join(cfg.log_working_dir, "int2lm")
     logfile_finish = os.path.join(cfg.log_finished_dir, "int2lm")
-
-    # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
-    if starttime < datetime.strptime('2007-08-02', '%Y-%m-%d'):
-        multi_layer = ".FALSE."
-    else:
-        multi_layer = ".TRUE."
-    setattr(cfg, "multi_layer", multi_layer)
 
     # Create int2lm directory
     tools.create_dir(cfg.int2lm_work, "int2lm_work")
@@ -119,9 +112,15 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     with open(cfg.int2lm_namelist) as input_file:
         to_write = input_file.read()
 
+    # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
+    if starttime < datetime.strptime('2007-08-02', '%Y-%m-%d'):
+        multi_layer = ".FALSE."
+    else:
+        multi_layer = ".TRUE."
     output_file = os.path.join(cfg.int2lm_work, "INPUT")
     with open(output_file, "w") as outf:
-        outf.write(to_write.format(cfg=cfg))
+        outf.write(to_write.format(cfg=cfg,
+                                   multi_layer=multi_layer))
 
     # Prepare runscript
     with open(cfg.int2lm_runjob) as input_file:

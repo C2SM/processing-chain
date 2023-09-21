@@ -88,12 +88,12 @@ def parse_arguments():
 
 
 class Config():
-
     def __init__(self, casename):
         # Global attributes (initialized with default values)
         self.user_name = os.environ['USER']
         self.set_email()
         self.casename = casename
+        self.set_account()
 
         self.chain_src_dir = os.getcwd()
         self.path = os.path.join(self.chain_src_dir, 'cases', self.casename)
@@ -102,9 +102,11 @@ class Config():
         # User-defined attributes from config file
         self.load_config_file(casename)
 
-        # Derived attributes based on user configuration
-        self.set_account()
+        # Specific settings based on the node type ('gpu' or 'mc')
         self.set_node_info()
+
+        # Check jobs and apply settings
+        self.set_job_variables()
 
     def load_config_file(self, casename):
         """
@@ -189,9 +191,16 @@ class Config():
 
         return self
 
+    def set_job_variables(self):
+        if hasattr(self, 'cosmo'):
+            self.cosmo['execname'] = self.model.lower()
+
+        return self
+
     def print_config(self):
         # Print the configuration
-        max_col_width = max(len(key) for key in vars(self)) + 1
+        # max_col_width = max(len(key) for key in vars(self)) + 1
+        max_col_width = 27
 
         print("\nConfiguration:")
         print(f"{'Attribute':<{max_col_width}} Type Value")

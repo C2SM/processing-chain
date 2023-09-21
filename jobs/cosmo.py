@@ -62,13 +62,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     logging.info("Setup the namelist for a COSMO tracer run and "
                  "submit the job to the queue")
 
-    # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
-    if int(starttime.strftime("%Y%m%d%H")) < 2007080200:
-        multi_layer = ".FALSE."
-    else:
-        multi_layer = ".TRUE."
-    setattr(cfg, "multi_layer", multi_layer)
-
     # Create directories
     tools.create_dir(cfg.cosmo_work, "cosmo_work")
     tools.create_dir(cfg.cosmo_output, "cosmo_output")
@@ -149,9 +142,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
     # Copy cosmo executable
-    execname = cfg.model.lower()
-    tools.copy_file(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, execname))
-    setattr(cfg, "execname", execname)
+    tools.copy_file(cfg.cosmo_bin, os.path.join(cfg.cosmo_work, cfg.cosmo['execname']))
 
     # Prepare namelist and submit job
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
