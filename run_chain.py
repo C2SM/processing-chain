@@ -195,8 +195,8 @@ class Config():
         return self
 
     def set_attributes_int2lm(self):
-        self.inidate_int2lm_yyyymmddhh = (self.startdate +
-                                     timedelta(hours=self.hstart)).strftime('%Y%m%d%H')
+        self.inidate_int2lm_yyyymmddhh = (
+            self.startdate + timedelta(hours=self.hstart)).strftime('%Y%m%d%H')
         # int2lm processing always starts at hstart=0 and we modify inidate instead
         self.hstart_int2lm = 0
         self.hstop_int2lm = self.forecasttime
