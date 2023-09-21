@@ -183,8 +183,6 @@ class Config():
 
     def set_attributes_time(self):
 
-
-        
         return self
 
     def print_config(self):
@@ -708,4 +706,3 @@ if __name__ == '__main__':
                       force=args.force)
 
     print('>>> finished chain for good or bad! <<<')
-
