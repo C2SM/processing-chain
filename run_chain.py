@@ -33,20 +33,6 @@ def parse_arguments():
                         "to be in cases/<casename>/. The runs are executed "
                         "sequentially in the order they're given here.")
 
-    times_help = ("Triplet of {date hstart hstop} | "
-                  "date: Startdate of the run in the format "
-                  "yyyy-mm-dd | "
-                  "hstart: Time on the startdate when the "
-                  "simulation starts. If this is zero, the "
-                  "simulation starts at midnight of the +startdate. | "
-                  "hstop: Length of the simulation in hours. The "
-                  "simulation runs until startdate + hstart + "
-                  "hstop. Depending on your config.py settings, "
-                  "processing-chain will split up the simulation "
-                  "and perform several restarts before reaching the "
-                  "stopping-time.")
-    parser.add_argument("times", nargs=3, help=times_help)
-
     jobs_help = ("List of job-names to be executed. A job is a .py-"
                  "file in jobs/ with a main()-function which "
                  "handles one aspect of the processing chain, for "
@@ -80,9 +66,6 @@ def parse_arguments():
                         default=1)
 
     args = parser.parse_args()
-    args.startdate = args.times[0]
-    args.hstart = int(args.times[1])
-    args.hstop = int(args.times[2])
 
     return args
 
@@ -198,6 +181,12 @@ class Config():
 
         return self
 
+    def set_attributes_time(self):
+
+
+        
+        return self
+
     def print_config(self):
         # Print the configuration
         # max_col_width = max(len(key) for key in vars(self)) + 1
@@ -266,7 +255,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     """
 
     # ini date and forecast time (ignore meteo times)
-    inidate = int((start_time - datetime(1970, 1, 1)).total_seconds())
+    inidate = start_time
     inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
     inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
     inidate_yyyymmddhhmmss = start_time.strftime('%Y%m%d%H%M%S')
@@ -686,7 +675,6 @@ if __name__ == '__main__':
 
         print(f"Starting chain for case {casename} and model {cfg.model}")
 
-        start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
         # check for restart compatibility and spinup
         if 'restart' in model_cfg['models'][cfg.model]['features']:
             if hasattr(cfg, 'spinup'):
@@ -694,9 +682,9 @@ if __name__ == '__main__':
                 restart_runs_spinup(work_root=cfg.work_root,
                                     model_cfg=model_cfg,
                                     cfg=cfg,
-                                    start=start_time,
-                                    hstart=args.hstart,
-                                    hstop=args.hstop,
+                                    start=cfg.startdate,
+                                    hstart=cfg.hstart,
+                                    hstop=cfg.hstop,
                                     job_names=args.job_list,
                                     force=args.force)
             else:
@@ -704,19 +692,20 @@ if __name__ == '__main__':
                 restart_runs(work_root=cfg.work_root,
                              model_cfg=model_cfg,
                              cfg=cfg,
-                             start=start_time,
-                             hstart=args.hstart,
-                             hstop=args.hstop,
+                             start=cfg.startdate,
+                             hstart=cfg.hstart,
+                             hstop=cfg.hstop,
                              job_names=args.job_list,
                              force=args.force)
         else:
             print("No restart is used.")
             run_chain(work_root=cfg.work_root,
                       cfg=cfg,
-                      start_time=start_time,
-                      hstart=args.hstart,
-                      hstop=args.hstop,
+                      start_time=cfg.startdate,
+                      hstart=cfg.hstart,
+                      hstop=cfg.hstop,
                       job_names=args.job_list,
                       force=args.force)
 
     print('>>> finished chain for good or bad! <<<')
+

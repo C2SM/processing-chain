@@ -26,16 +26,16 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     ``startdate`` of the simulation.
 
     Create necessary directory structure to run **int2lm** (run and output
-    directories, defined in ``cfg.int2lm`` and ``cfg.int2lm_output``).
+    directories, defined in ``cfg.int2lm`` and ``cfg.int2lm['output']``).
 
-    Copy the **int2lm**-executable from ``cfg.int2lm_bin`` to 
-    ``cfg.int2lm_work/int2lm``.
+    Copy the **int2lm**-executable from ``cfg.int2lm['bin']`` to 
+    ``cfg.int2lm['work']/int2lm``.
 
     Copy the extpar-file ``cfg.int2lm['extpar_file']`` to
     ``cfg.int2lm_run/work``.
 
     **COSMOART**: Copy the ``libgrib_api`` files to
-    ``cfg.int2lm_work/libgrib_api``.
+    ``cfg.int2lm['work']/libgrib_api``.
 
     **COSMO**: Convert the tracer-csv-files into a **int2lm**-namelist file.
 
@@ -58,36 +58,35 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     logfile_finish = os.path.join(cfg.log_finished_dir, "int2lm")
 
     # Create int2lm directory
-    tools.create_dir(cfg.int2lm_work, "int2lm_work")
-    tools.create_dir(cfg.int2lm_output, "int2lm_output")
+    tools.create_dir(cfg.int2lm['work'], "int2lm_work")
+    tools.create_dir(cfg.int2lm['output'], "int2lm_output")
 
-    tools.copy_file(cfg.int2lm_bin, os.path.join(cfg.int2lm_work, "int2lm"))
+    tools.copy_file(cfg.int2lm['bin'], os.path.join(cfg.int2lm['work'], "int2lm"))
 
     # Copy extpar file to input/extpar directory
-    extpar_dir = os.path.join(cfg.int2lm_input, "extpar")
-    extpar_file = os.path.join(cfg.int2lm_extpar_dir, cfg.int2lm_extpar_file)
+    extpar_dir = os.path.join(cfg.int2lm['input'], "extpar")
     tools.create_dir(extpar_dir, "int2lm extpar")
-    tools.copy_file(extpar_file, extpar_dir)
+    tools.copy_file(cfg.int2lm['extpar_file'], extpar_dir)
 
     # Copy landuse and plant-functional-type files
     if cfg.model == 'cosmo-art':
-        lu_file_src = os.path.join(cfg.int2lm_lu_dir, cfg.int2lm_lu_file)
+        lu_file_src = os.path.join(cfg.int2lm['lu_dir'], cfg.int2lm_lu_file)
         lu_file_dst = os.path.join(extpar_dir, 'landuse.nc')
         tools.copy_file(lu_file_src, lu_file_dst)
 
-        pft_file_src = os.path.join(cfg.int2lm_pft_dir, cfg.int2lm_pft_file)
+        pft_file_src = os.path.join(cfg.int2lm['pft_dir'], cfg.int2lm_pft_file)
         pft_file_dst = os.path.join(extpar_dir, 'pft.nc')
         tools.copy_file(pft_file_src, pft_file_dst)
 
         # Copy libgrib_api
-        dest = os.path.join(cfg.int2lm_work, 'libgrib_api')
+        dest = os.path.join(cfg.int2lm['work'], 'libgrib_api')
         try:
             # delete so no error when forcing this job
             shutil.rmtree(dest)
         except FileNotFoundError:
             pass
         try:
-            shutil.copytree(src=cfg.int2lm_libgrib_dir,
+            shutil.copytree(src=cfg.int2lm['libgrib_dir'],
                             dst=dest,
                             symlinks=True)
         except FileNotFoundError:
@@ -103,13 +102,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     if os.path.isfile(tracer_csvfile):
         datasets_csvfile = os.path.join(cfg.chain_src_dir, 'cases',
                                         cfg.casename, 'int2lm_datasets.csv')
-        input_art_filename = os.path.join(cfg.int2lm_work, 'INPUT_ART')
+        input_art_filename = os.path.join(cfg.int2lm['work'], 'INPUT_ART')
 
         tools.write_int2lm_input_art.main(tracer_csvfile, datasets_csvfile,
                                           input_art_filename)
 
     # Prepare namelist
-    with open(cfg.int2lm_namelist) as input_file:
+    with open(cfg.int2lm['namelist']) as input_file:
         to_write = input_file.read()
 
     # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
@@ -117,7 +116,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         multi_layer = ".FALSE."
     else:
         multi_layer = ".TRUE."
-    output_file = os.path.join(cfg.int2lm_work, "INPUT")
+    output_file = os.path.join(cfg.int2lm['work'], "INPUT")
     with open(output_file, "w") as outf:
         outf.write(to_write.format(cfg=cfg, multi_layer=multi_layer))
 
@@ -125,7 +124,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     with open(cfg.int2lm_runjob) as input_file:
         to_write = input_file.read()
 
-    output_file = os.path.join(cfg.int2lm_work, "run.job")
+    output_file = os.path.join(cfg.int2lm['work'], "run.job")
     with open(output_file, "w") as outf:
         outf.write(
             to_write.format(cfg=cfg,
@@ -137,7 +136,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     # Submit job
     result = subprocess.run(
         ["sbatch", "--wait",
-         os.path.join(cfg.int2lm_work, "run.job")])
+         os.path.join(cfg.int2lm['work'], "run.job")])
     exitcode = result.returncode
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+

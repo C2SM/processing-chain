@@ -5,6 +5,9 @@ constraint: gpu
 restart_step: 12
 variant: spinup
 spinup: 6
+startdate: 2015-01-01T00:00:00Z
+hstart: 0
+hstop: 24
 
 meteo:
     dir: ./input/cosmo-ghg/meteo
