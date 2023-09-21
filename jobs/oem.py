@@ -60,10 +60,12 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     logging.info("Copying oem files from {} to {}".format(oem_dir, dest_dir))
 
     if hod_tps:
-        tools.copy_file(oem_gridded_emissions_nc,
-                        os.path.join(dest_dir, cfg.oem['gridded_emissions_nc']))
-        tools.copy_file(oem_vertical_profiles_nc,
-                        os.path.join(dest_dir, cfg.oem['vertical_profiles_nc']))
+        tools.copy_file(
+            oem_gridded_emissions_nc,
+            os.path.join(dest_dir, cfg.oem['gridded_emissions_nc']))
+        tools.copy_file(
+            oem_vertical_profiles_nc,
+            os.path.join(dest_dir, cfg.oem['vertical_profiles_nc']))
         tools.copy_file(oem_hourofday_nc,
                         os.path.join(dest_dir, cfg.oem['hourofday_nc']))
         tools.copy_file(oem_dayofweek_nc,
