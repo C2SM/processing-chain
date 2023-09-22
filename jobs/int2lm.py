@@ -67,7 +67,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
     # Set folder names
     setattr(cfg, 'int2lm_run', os.path.join(cfg.chain_root, 'int2lm', 'run'))
-    setattr(cfg, 'int2lm_output', os.path.join(cfg.chain_root, 'int2lm', 'output'))
+    setattr(cfg, 'int2lm_output',
+            os.path.join(cfg.chain_root, 'int2lm', 'output'))
     int2lm_run = os.path.join(cfg.int2lm_run)
     int2lm_output = os.path.join(cfg.int2lm_output)
 
