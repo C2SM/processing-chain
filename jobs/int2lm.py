@@ -58,6 +58,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     # Int2lm processing always starts at hstart=0, thus modifying inidate
     inidate_int2lm_yyyymmddhh = (
         cfg.startdate + timedelta(hours=cfg.hstart)).strftime('%Y%m%d%H')
+    setattr(cfg, 'inidate_int2lm_yyyymmddhh', inidate_int2lm_yyyymmddhh)
     hstart_int2lm = 0
     hstop_int2lm = cfg.forecasttime
 
@@ -65,10 +66,12 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     np_tot = cfg.int2lm['np_x'] * cfg.int2lm['np_y']
 
     # Set folder names
-    int2lm_run = os.path.join(cfg.int2lm_work, 'run')
-    int2lm_output = os.path.join(cfg.int2lm_work, 'output')
+    setattr(cfg, 'int2lm_run', os.path.join(cfg.chain_root, 'int2lm', 'run'))
+    setattr(cfg, 'int2lm_output', os.path.join(cfg.chain_root, 'int2lm', 'output'))
+    int2lm_run = os.path.join(cfg.int2lm_run)
+    int2lm_output = os.path.join(cfg.int2lm_output)
 
-    # Create int2lm directory
+    # Create int2lm directories
     tools.create_dir(int2lm_run, "int2lm_run")
     tools.create_dir(int2lm_output, "int2lm_output")
 

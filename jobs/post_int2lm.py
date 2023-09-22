@@ -42,10 +42,9 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
     """
     tools.check_model(cfg, 'cosmo-ghg')
 
-    int2lm_output = cfg.int2lm_output
     inidate_int2lm_yyyymmddhh = cfg.inidate_int2lm_yyyymmddhh
 
-    chem_list = cfg.post_int2lm_species
+    chem_list = cfg.post_int2lm['species']
 
     date = dt.datetime.today()
 
@@ -64,13 +63,13 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
     # Add background tracers in all 'lbfd**t.nc' files to
     # normal lbfd files, because CAMS tracers are only every 3 hours.
     # We add it 4 times to hour-1, hour+0, hour+1 and hour+2
-    for f in sorted(glob.glob(os.path.join(int2lm_output, 'lbfd*t.nc'))):
+    for f in sorted(glob.glob(os.path.join(cfg.int2lm_output, 'lbfd*t.nc'))):
         logging.info(f)
         yyyymmddhh_str = os.path.basename(f)[4:-4]
         yyyymmddhh = dt.datetime.strptime(yyyymmddhh_str, '%Y%m%d%H')
 
         for hour in tools.iter_hours(yyyymmddhh, -1, 2):
-            outfile1 = os.path.join(int2lm_output,
+            outfile1 = os.path.join(cfg.int2lm_output,
                                     hour.strftime('lbfd%Y%m%d%H' + '.nc'))
             if os.path.exists(outfile1):
                 with nc.Dataset(outfile1, 'a') as outf, nc.Dataset(f) as inf:
@@ -91,7 +90,7 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
 
     # Meteo spinup simulation with tracer recycling
     if hasattr(cfg, 'spinup') and \
-    hasattr(cfg, 'post_int2lm_species_spinup') and not cfg.first_one:
+    cfg.post_int2lm.get('species_spinup') is not None and not cfg.first_one:
         var_list = cfg.post_int2lm_species_spinup
         logging.info(
             'INITIAL CONDITIONS (RECYCLING): Adding tracers %s from last COSMO run (%s) to regular int2lm files.'
@@ -101,7 +100,7 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
         infile_paths = sorted(
             glob.glob(os.path.join(cfg.last_cosmo_output, infile_name)))
         outfile_name = 'laf' + inidate_int2lm_yyyymmddhh + '.nc'
-        outfile_path = os.path.join(int2lm_output, outfile_name)
+        outfile_path = os.path.join(cfg.int2lm_output, outfile_name)
 
         for infile_path in infile_paths:
             with nc.Dataset(infile_path) as inf, nc.Dataset(outfile_path,
@@ -127,7 +126,7 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
         logging.info(
             'INITIAL CONDITIONS: Adding tracers from laf*t.nc files to regular int2lm files.'
         )
-        infile = os.path.join(int2lm_output,
+        infile = os.path.join(cfg.int2lm_output,
                               "laf" + inidate_int2lm_yyyymmddhh + "t.nc")
         if os.path.exists(infile):
             outfile = infile[:-4] + ".nc"

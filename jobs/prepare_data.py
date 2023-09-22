@@ -460,8 +460,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     else:
         logging.info('COSMO analysis data for IC/BC')
 
-        setattr(cfg, 'int2lm_work', os.path.join(cfg.chain_root, 'int2lm'))
-        setattr(cfg, 'int2lm_input', os.path.join(cfg.int2lm_work, 'input'))
+        setattr(cfg, 'int2lm_root', os.path.join(cfg.chain_root, 'int2lm'))
+        setattr(cfg, 'int2lm_input', os.path.join(cfg.int2lm_root, 'input'))
         dest_path = os.path.join(cfg.int2lm_input, 'meteo')
         tools.create_dir(dest_path, "meteo input")
 
