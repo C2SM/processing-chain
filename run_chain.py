@@ -80,7 +80,8 @@ class Config():
         self.set_account()
 
         self.chain_src_dir = os.getcwd()
-        self.case_path = os.path.join(self.chain_src_dir, 'cases', self.casename)
+        self.case_path = os.path.join(self.chain_src_dir, 'cases',
+                                      self.casename)
         self.work_root = os.path.join(self.chain_src_dir, 'work')
 
         # User-defined attributes from config file

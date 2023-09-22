@@ -56,8 +56,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         Object holding all user-configuration parameters as attributes
     """
     # Int2lm processing always starts at hstart=0, thus modifying inidate
-    inidate_int2lm_yyyymmddhh = (cfg.startdate +
-                                 timedelta(hours=cfg.hstart)).strftime('%Y%m%d%H')
+    inidate_int2lm_yyyymmddhh = (
+        cfg.startdate + timedelta(hours=cfg.hstart)).strftime('%Y%m%d%H')
     hstart_int2lm = 0
     hstop_int2lm = cfg.forecasttime
 
@@ -78,8 +78,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     # Copy extpar file to input/extpar directory
     extpar_dir = os.path.join(cfg.int2lm_input, "extpar")
     tools.create_dir(extpar_dir, "int2lm extpar")
-    tools.copy_file(os.path.join(cfg.int2lm['extpar_dir'],
-        cfg.int2lm['extpar_filename']), extpar_dir)
+    tools.copy_file(
+        os.path.join(cfg.int2lm['extpar_dir'], cfg.int2lm['extpar_filename']),
+        extpar_dir)
 
     # Copy landuse and plant-functional-type files
     if cfg.model == 'cosmo-art':
@@ -127,21 +128,26 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         multi_layer = ".TRUE."
 
     # Prepare namelist
-    with open(os.path.join(cfg.case_path, cfg.int2lm['namelist_filename'])) as input_file:
+    with open(os.path.join(cfg.case_path,
+                           cfg.int2lm['namelist_filename'])) as input_file:
         int2lm_namelist = input_file.read()
 
     output_file = os.path.join(int2lm_run, "INPUT")
     with open(output_file, "w") as outf:
-        outf.write(int2lm_namelist.format(cfg=cfg, **cfg.int2lm,
-                            inidate_int2lm_yyyymmddhh=inidate_int2lm_yyyymmddhh,
-                            hstart_int2lm=hstart_int2lm,
-                            hstop_int2lm=hstop_int2lm,
-                                          multi_layer=multi_layer,
-                            meteo_prefix=cfg.meteo['prefix'],
-                                         ))
+        outf.write(
+            int2lm_namelist.format(
+                cfg=cfg,
+                **cfg.int2lm,
+                inidate_int2lm_yyyymmddhh=inidate_int2lm_yyyymmddhh,
+                hstart_int2lm=hstart_int2lm,
+                hstop_int2lm=hstop_int2lm,
+                multi_layer=multi_layer,
+                meteo_prefix=cfg.meteo['prefix'],
+            ))
 
     # Prepare runscript
-    with open(os.path.join(cfg.case_path, cfg.int2lm['runjob_filename'])) as input_file:
+    with open(os.path.join(cfg.case_path,
+                           cfg.int2lm['runjob_filename'])) as input_file:
         int2lm_runscript = input_file.read()
 
     # Logfile variables
@@ -151,14 +157,15 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     output_file = os.path.join(int2lm_run, "run.job")
     with open(output_file, "w") as outf:
         outf.write(
-            int2lm_runscript.format(cfg=cfg, **cfg.int2lm,
-                            int2lm_run=int2lm_run,
-                            ini_day=inidate_int2lm_yyyymmddhh[0:8],
-                            ini_hour=inidate_int2lm_yyyymmddhh[8:],
-                            np_tot=np_tot,
-                            hstop_int2lm=hstop_int2lm,
-                            logfile=logfile,
-                            logfile_finish=logfile_finish))
+            int2lm_runscript.format(cfg=cfg,
+                                    **cfg.int2lm,
+                                    int2lm_run=int2lm_run,
+                                    ini_day=inidate_int2lm_yyyymmddhh[0:8],
+                                    ini_hour=inidate_int2lm_yyyymmddhh[8:],
+                                    np_tot=np_tot,
+                                    hstop_int2lm=hstop_int2lm,
+                                    logfile=logfile,
+                                    logfile_finish=logfile_finish))
 
     # Submit job
     result = subprocess.run(
@@ -167,4 +174,3 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     exitcode = result.returncode
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-

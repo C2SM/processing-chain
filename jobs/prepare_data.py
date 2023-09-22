@@ -563,7 +563,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                             param=[{
                                 'inc': cfg.cams['inc'],
                                 'suffix': cfg.cams['suffix']
-                                }])
+                            }])
                 inv_to_process.append(CAMS)
             except AttributeError:
                 pass
