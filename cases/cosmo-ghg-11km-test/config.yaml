@@ -45,11 +45,13 @@ online_vprm:
     vegetation_filename: VPRM_VegClasses_example_vprm.nc
 
 int2lm:
-    extpar_file: ./input/cosmo-ghg/extpar/test_domain.nc
-    bin: ./src/int2lm/test/testsuite/int2lm
-    namelist: int2lm_INPUT.cfg
-    runjob: int2lm_runjob.cfg
-    walltime: "01:00:00"
+    extpar_dir: ./input/cosmo-ghg/extpar
+    extpar_filename: test_domain.nc
+    binary_file: ./src/int2lm/test/testsuite/int2lm
+    namelist_filename: int2lm_INPUT.cfg
+    runjob_filename: int2lm_runjob.cfg
+    compute_queue: normal
+    walltime: 01:00:00
     nodes: 2
     ntasks_per_node: 12
     np_x: 8

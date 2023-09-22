@@ -80,7 +80,7 @@ class Config():
         self.set_account()
 
         self.chain_src_dir = os.getcwd()
-        self.path = os.path.join(self.chain_src_dir, 'cases', self.casename)
+        self.case_path = os.path.join(self.chain_src_dir, 'cases', self.casename)
         self.work_root = os.path.join(self.chain_src_dir, 'work')
 
         # User-defined attributes from config file
@@ -178,8 +178,6 @@ class Config():
     def set_job_variables(self):
         self.set_attributes_time()
 
-        if hasattr(self, 'int2lm'):
-            self.set_attributes_int2lm()
         if hasattr(self, 'cosmo'):
             self.set_attributes_cosmo()
 
@@ -190,16 +188,6 @@ class Config():
         self.inidate_yyyymmddhh = self.startdate.strftime('%Y%m%d%H')
         self.inidate_yyyymmdd_hh = self.startdate.strftime('%Y%m%d_%H')
         self.inidate_yyyymmddhhmmss = self.startdate.strftime('%Y%m%d%H%M%S')
-        self.forecasttime = '%d' % (self.hstop - self.hstart)
-
-        return self
-
-    def set_attributes_int2lm(self):
-        self.inidate_int2lm_yyyymmddhh = (self.startdate +
-                                     timedelta(hours=self.hstart)).strftime('%Y%m%d%H')
-        # int2lm processing always starts at hstart=0 and we modify inidate instead
-        self.hstart_int2lm = 0
-        self.hstop_int2lm = self.forecasttime
 
         return self
 
@@ -275,6 +263,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         If True will do job regardless of completion status
     """
 
+    forecasttime = '%d' % (hstop - hstart)
     if hasattr(cfg, 'spinup'):
         if cfg.first_one:  # first run in spinup
             chain_root_last_run = ''
@@ -297,9 +286,13 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
             chain_root_last_run = os.path.join(work_root, cfg.casename,
                                                job_id_last_run)
 
+    setattr(cfg, 'forecasttime', forecasttime)
+
     # Folder naming and structure
     job_id = '%s_%d_%d' % (cfg.inidate_yyyymmddhh, hstart, hstop)
     chain_root = os.path.join(work_root, cfg.casename, job_id)
+    setattr(cfg, 'job_id', job_id)
+    setattr(cfg, 'chain_root', chain_root)
 
     if cfg.model.startswith('cosmo'):
         # COSMO

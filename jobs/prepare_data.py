@@ -460,6 +460,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     else:
         logging.info('COSMO analysis data for IC/BC')
 
+        setattr(cfg, 'int2lm_work', os.path.join(cfg.chain_root, 'int2lm'))
+        setattr(cfg, 'int2lm_input', os.path.join(cfg.int2lm_work, 'input'))
         dest_path = os.path.join(cfg.int2lm_input, 'meteo')
         tools.create_dir(dest_path, "meteo input")
 
@@ -556,9 +558,12 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 CAMS = dict(fullname="CAMS",
                             nickname="cams",
                             executable="cams4int2cosmo",
-                            indir=cfg.cams.dir_orig,
-                            outdir=cfg.cams.dir_proc,
-                            param=cfg.cams.parameters)
+                            indir=cfg.cams['dir_orig'],
+                            outdir=cfg.cams['dir_proc'],
+                            param=[{
+                                'inc': cfg.cams['inc'],
+                                'suffix': cfg.cams['suffix']
+                                }])
                 inv_to_process.append(CAMS)
             except AttributeError:
                 pass
