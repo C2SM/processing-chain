@@ -91,7 +91,7 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
     # Meteo spinup simulation with tracer recycling
     if hasattr(cfg, 'spinup') and \
     cfg.post_int2lm.get('species_spinup') is not None and not cfg.first_one:
-        var_list = cfg.post_int2lm_species_spinup
+        var_list = cfg.post_int2lm['species_spinup']
         logging.info(
             'INITIAL CONDITIONS (RECYCLING): Adding tracers %s from last COSMO run (%s) to regular int2lm files.'
             % (str(var_list), cfg.last_cosmo_output))
