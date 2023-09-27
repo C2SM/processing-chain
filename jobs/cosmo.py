@@ -142,7 +142,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
     # Copy cosmo executable
-    tools.copy_file(cfg.cosmo_bin,
+    tools.copy_file(cfg.cosmo['binary_file'],
                     os.path.join(cfg.cosmo_work, cfg.cosmo['execname']))
 
     # Prepare namelist and submit job
@@ -162,7 +162,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             namelist_names += ['OAE']
 
     for section in namelist_names:
-        with open(cfg.cosmo_namelist + section + ".cfg") as input_file:
+        with open(cfg.cosmo['namelist_prefix'] + section + ".cfg") as input_file:
             to_write = input_file.read()
 
         output_file = os.path.join(cfg.cosmo_work, "INPUT_" + section)
@@ -190,7 +190,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             write_cosmo_input_ghg.main(tracer_csvfile, input_ghg_filename, cfg)
 
     # Write run script (run.job)
-    with open(cfg.cosmo_runjob) as input_file:
+    with open(cfg.cosmo['runjob_filename']) as input_file:
         to_write = input_file.read()
 
     output_file = os.path.join(cfg.cosmo_work, "run.job")

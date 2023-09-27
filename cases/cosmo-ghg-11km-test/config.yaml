@@ -70,23 +70,22 @@ post_int2lm:
         - CO2_A2
 
 cosmo:
-    bin: null  # Set this value based on your use case
-    namelist: null  # Set this value based on your use case
-    runjob: null  # Set this value based on your use case
+    binary_file: ./src/cosmo-ghg/cosmo/ACC/cosmo_gpu
+    namelist_prefix: cosmo_INPUT_
+    runjob_filename: cosmo_runjob.cfg
     walltime: "00:30:00"
     np_x: 6
     np_y: 4
     np_io: 0
 
-# POST-PROCESSING
-# REDUCE_OUTPUT
 reduce_output:
     convert_gas: true
     output_levels: 20
 
-# POST_COSMO
 post_cosmo:
     output_root: null  # Set this value based on your use case
+
+verify_chain:
     reference_dir: null  # Set this value based on your use case
     output_dir: null  # Set this value based on your use case
     values_to_check:
