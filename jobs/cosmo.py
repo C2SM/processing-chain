@@ -162,7 +162,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             namelist_names += ['OAE']
 
     for section in namelist_names:
-        with open(cfg.cosmo['namelist_prefix'] + section + ".cfg") as input_file:
+        with open(cfg.cosmo['namelist_prefix'] + section +
+                  ".cfg") as input_file:
             to_write = input_file.read()
 
         output_file = os.path.join(cfg.cosmo_work, "INPUT_" + section)
