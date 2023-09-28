@@ -2,6 +2,7 @@
 
 model: cosmo-ghg
 constraint: gpu
+ntasks_per_node: 12
 restart_step: 12
 variant: spinup
 spinup: 6
@@ -53,7 +54,6 @@ int2lm:
     compute_queue: normal
     walltime: 01:00:00
     nodes: 2
-    ntasks_per_node: 12
     np_x: 8
     np_y: 3
 
@@ -73,6 +73,7 @@ cosmo:
     binary_file: ./src/cosmo-ghg/cosmo/ACC/cosmo_gpu
     namelist_prefix: cosmo_INPUT_
     runjob_filename: cosmo_runjob.cfg
+    compute_queue: normal
     walltime: "00:30:00"
     np_x: 6
     np_y: 4

@@ -129,7 +129,6 @@ else:
 
 # Domain decomposition
 int2lm_nodes = 2
-int2lm_ntasks_per_node = 12
 int2lm_np_x = 8
 int2lm_np_y = 3
 int2lm_np_tot = int2lm_np_x * int2lm_np_y

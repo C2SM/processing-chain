@@ -90,8 +90,8 @@ class Config():
         # Specific settings based on the node type ('gpu' or 'mc')
         self.set_node_info()
 
-        # Check jobs and apply settings
-        self.set_job_variables()
+        # Set some formatted time variables
+        self.set_attributes_time()
 
     def load_config_file(self, casename):
         """
@@ -176,24 +176,11 @@ class Config():
 
         return self
 
-    def set_job_variables(self):
-        self.set_attributes_time()
-
-        if hasattr(self, 'cosmo'):
-            self.set_attributes_cosmo()
-
-        return self
-
     def set_attributes_time(self):
         # ini date and forecast time (ignore meteo times)
         self.inidate_yyyymmddhh = self.startdate.strftime('%Y%m%d%H')
         self.inidate_yyyymmdd_hh = self.startdate.strftime('%Y%m%d_%H')
         self.inidate_yyyymmddhhmmss = self.startdate.strftime('%Y%m%d%H%M%S')
-
-        return self
-
-    def set_attributes_cosmo(self):
-        self.cosmo['execname'] = self.model.lower()
 
         return self
 

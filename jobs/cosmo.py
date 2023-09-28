@@ -66,6 +66,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     tools.create_dir(cfg.cosmo_work, "cosmo_work")
     tools.create_dir(cfg.cosmo_output, "cosmo_output")
 
+    # Total number of processes
+    np_tot = int(cfg.cosmo['np_x'] * cfg.cosmo['np_y'] / cfg.ntasks_per_node) + cfg.cosmo['np_io']
+
     # If an laf* file is used for initialization,
     # copy this to to 'cosmo/input/initial/' or merge with fieldextra
     if hasattr(cfg, 'laf_startfile'):
@@ -142,6 +145,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
     # Copy cosmo executable
+    cfg.cosmo['execname'] = cfg.model.lower()
     tools.copy_file(cfg.cosmo['binary_file'],
                     os.path.join(cfg.cosmo_work, cfg.cosmo['execname']))
 
@@ -162,25 +166,31 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             namelist_names += ['OAE']
 
     for section in namelist_names:
-        with open(cfg.cosmo['namelist_prefix'] + section + ".cfg") as input_file:
-            to_write = input_file.read()
+        namelist_file = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
+                        cfg.cosmo['namelist_prefix'] + section + ".cfg")
+        with open(namelist_file) as input_file:
+            cosmo_namelist = input_file.read()
 
         output_file = os.path.join(cfg.cosmo_work, "INPUT_" + section)
         with open(output_file, "w") as outf:
             if hasattr(cfg, 'spinup'):
                 # no built-in restarts
-                to_write = to_write.format(cfg=cfg,
+                cosmo_namelist = cosmo_namelist.format(cfg=cfg,
+                                           **cfg.cosmo,
+                                           **cfg.oem,
                                            restart_start=12,
                                            restart_stop=0,
                                            restart_step=12)
             else:
                 # built-in restarts
-                to_write = to_write.format(cfg=cfg,
+                cosmo_namelist = cosmo_namelist.format(cfg=cfg,
+                                           **cfg.cosmo,
+                                           **cfg.oem,
                                            restart_start=cfg.hstart +
                                            cfg.restart_step,
                                            restart_stop=cfg.hstop,
                                            restart_step=cfg.restart_step)
-            outf.write(to_write)
+            outf.write(cosmo_namelist)
 
     # Append INPUT_GHG namelist with tracer definitions from csv file
     if os.path.isfile(tracer_csvfile):
@@ -190,13 +200,17 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             write_cosmo_input_ghg.main(tracer_csvfile, input_ghg_filename, cfg)
 
     # Write run script (run.job)
-    with open(cfg.cosmo['runjob_filename']) as input_file:
-        to_write = input_file.read()
+    runscript_file = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
+                     cfg.cosmo['runjob_filename'])
+    with open(runscript_file) as input_file:
+        cosmo_runscript = input_file.read()
 
     output_file = os.path.join(cfg.cosmo_work, "run.job")
     with open(output_file, "w") as outf:
         outf.write(
-            to_write.format(cfg=cfg,
+            cosmo_runscript.format(cfg=cfg,
+                            **cfg.cosmo,
+                            np_tot=np_tot,
                             logfile=logfile,
                             logfile_finish=logfile_finish))
 
