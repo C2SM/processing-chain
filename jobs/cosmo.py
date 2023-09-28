@@ -67,7 +67,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     tools.create_dir(cfg.cosmo_output, "cosmo_output")
 
     # Total number of processes
-    np_tot = int(cfg.cosmo['np_x'] * cfg.cosmo['np_y'] / cfg.ntasks_per_node) + cfg.cosmo['np_io']
+    np_tot = int(cfg.cosmo['np_x'] * cfg.cosmo['np_y'] /
+                 cfg.ntasks_per_node) + cfg.cosmo['np_io']
 
     # If an laf* file is used for initialization,
     # copy this to to 'cosmo/input/initial/' or merge with fieldextra
@@ -166,8 +167,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             namelist_names += ['OAE']
 
     for section in namelist_names:
-        namelist_file = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
-                        cfg.cosmo['namelist_prefix'] + section + ".cfg")
+        namelist_file = os.path.join(
+            cfg.chain_src_dir, 'cases', cfg.casename,
+            cfg.cosmo['namelist_prefix'] + section + ".cfg")
         with open(namelist_file) as input_file:
             cosmo_namelist = input_file.read()
 
@@ -176,20 +178,20 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             if hasattr(cfg, 'spinup'):
                 # no built-in restarts
                 cosmo_namelist = cosmo_namelist.format(cfg=cfg,
-                                           **cfg.cosmo,
-                                           **cfg.oem,
-                                           restart_start=12,
-                                           restart_stop=0,
-                                           restart_step=12)
+                                                       **cfg.cosmo,
+                                                       **cfg.oem,
+                                                       restart_start=12,
+                                                       restart_stop=0,
+                                                       restart_step=12)
             else:
                 # built-in restarts
-                cosmo_namelist = cosmo_namelist.format(cfg=cfg,
-                                           **cfg.cosmo,
-                                           **cfg.oem,
-                                           restart_start=cfg.hstart +
-                                           cfg.restart_step,
-                                           restart_stop=cfg.hstop,
-                                           restart_step=cfg.restart_step)
+                cosmo_namelist = cosmo_namelist.format(
+                    cfg=cfg,
+                    **cfg.cosmo,
+                    **cfg.oem,
+                    restart_start=cfg.hstart + cfg.restart_step,
+                    restart_stop=cfg.hstop,
+                    restart_step=cfg.restart_step)
             outf.write(cosmo_namelist)
 
     # Append INPUT_GHG namelist with tracer definitions from csv file
@@ -201,7 +203,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
     # Write run script (run.job)
     runscript_file = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
-                     cfg.cosmo['runjob_filename'])
+                                  cfg.cosmo['runjob_filename'])
     with open(runscript_file) as input_file:
         cosmo_runscript = input_file.read()
 
@@ -209,10 +211,10 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     with open(output_file, "w") as outf:
         outf.write(
             cosmo_runscript.format(cfg=cfg,
-                            **cfg.cosmo,
-                            np_tot=np_tot,
-                            logfile=logfile,
-                            logfile_finish=logfile_finish))
+                                   **cfg.cosmo,
+                                   np_tot=np_tot,
+                                   logfile=logfile,
+                                   logfile_finish=logfile_finish))
 
     result = subprocess.run(
         ["sbatch", "--wait",
