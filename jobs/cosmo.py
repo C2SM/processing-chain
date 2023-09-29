@@ -178,6 +178,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 cosmo_namelist = cosmo_namelist.format(cfg=cfg,
                                            **cfg.cosmo,
                                            **cfg.oem,
+                                           hstart=hstart,
+                                           hstop=hstop,
                                            restart_start=12,
                                            restart_stop=0,
                                            restart_step=12)
