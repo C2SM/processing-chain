@@ -68,7 +68,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = set_int2lm_variables(cfg)
+    cfg = set_cfg_variables(cfg)
     hstart_int2lm = 0
     hstop_int2lm = cfg.forecasttime
 
@@ -149,7 +149,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             int2lm_namelist.format(
                 cfg=cfg,
                 **cfg.int2lm,
-                inidate_int2lm_yyyymmddhh=inidate_int2lm_yyyymmddhh,
                 hstart_int2lm=hstart_int2lm,
                 hstop_int2lm=hstop_int2lm,
                 multi_layer=multi_layer,
@@ -171,8 +170,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             int2lm_runscript.format(cfg=cfg,
                                     **cfg.int2lm,
                                     int2lm_run=int2lm_run,
-                                    ini_day=inidate_int2lm_yyyymmddhh[0:8],
-                                    ini_hour=inidate_int2lm_yyyymmddhh[8:],
+                                    ini_day=cfg.inidate_int2lm_yyyymmddhh[0:8],
+                                    ini_hour=cfg.inidate_int2lm_yyyymmddhh[8:],
                                     np_tot=np_tot,
                                     hstop_int2lm=hstop_int2lm,
                                     logfile=logfile,

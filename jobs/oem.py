@@ -5,7 +5,7 @@
 import os
 import logging
 
-from . import tools
+from . import tools, cosmo
 
 
 def main(starttime, hstart, hstop, cfg, model_cfg):
@@ -23,6 +23,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
+    cfg = cosmo.set_cfg_variables(cfg, model_cfg)
 
     oem_dir = cfg.oem['dir']
     oem_gridded_emissions_nc = os.path.join(oem_dir,
