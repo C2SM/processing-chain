@@ -30,6 +30,7 @@ def set_cfg_variables(cfg):
 
     return cfg
 
+
 def main(starttime, hstart, hstop, cfg, model_cfg):
     """Setup the namelist for **int2lm** and submit the job to the queue.
 
