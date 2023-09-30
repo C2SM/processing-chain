@@ -3,12 +3,12 @@
 model: cosmo-ghg
 constraint: gpu
 ntasks_per_node: 12
-restart_step: 12
+restart_step: 3
 variant: spinup
-spinup: 6
+spinup: 1
 startdate: 2015-01-01T00:00:00Z
 hstart: 0
-hstop: 24
+hstop: 6
 
 meteo:
     dir: ./input/cosmo-ghg/meteo
