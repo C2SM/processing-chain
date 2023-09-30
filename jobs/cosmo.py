@@ -100,7 +100,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = set_cosmo_variables(cfg, model_cfg)
+    cfg = set_cfg_variables(cfg, model_cfg)
     logfile = os.path.join(cfg.log_working_dir, "cosmo")
     logfile_finish = os.path.join(cfg.log_finished_dir, "cosmo")
 
