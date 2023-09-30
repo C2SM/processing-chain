@@ -282,47 +282,6 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     setattr(cfg, 'job_id', job_id)
     setattr(cfg, 'chain_root', chain_root)
 
-    if cfg.model.startswith('cosmo'):
-        # COSMO
-        setattr(cfg, 'cosmo_base', os.path.join(chain_root, 'cosmo'))
-        setattr(cfg, 'cosmo_input', os.path.join(chain_root, 'cosmo', 'input'))
-        setattr(cfg, 'cosmo_work', os.path.join(chain_root, 'cosmo', 'run'))
-        setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo',
-                                                  'output'))
-        setattr(cfg, 'cosmo_output_reduced',
-                os.path.join(chain_root, 'cosmo', 'output_reduced'))
-
-        # Number of tracers
-        if 'tracers' in model_cfg['models'][cfg.model]['features']:
-            tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases',
-                                          cfg.casename, 'cosmo_tracers.csv')
-            if os.path.isfile(tracer_csvfile):
-                with open(tracer_csvfile, 'r') as csv_file:
-                    reader = csv.DictReader(csv_file, delimiter=',')
-                    reader = [r for r in reader if r[''] != '#']
-                    setattr(cfg, 'in_tracers', len(reader))
-            else:
-                raise FileNotFoundError(f"File not found: {tracer_csvfile}")
-
-            # tracer_start namelist paramter for spinup simulation
-            if hasattr(cfg, 'spinup'):
-                if cfg.first_one:
-                    setattr(cfg, 'tracer_start', 0)
-                else:
-                    setattr(cfg, 'tracer_start', cfg.spinup)
-            else:
-                setattr(cfg, 'tracer_start', 0)
-
-        # asynchronous I/O
-        if hasattr(cfg, 'cfg.cosmo_np_io'):
-            if cfg.cosmo_np_io == 0:
-                setattr(cfg, 'lasync_io', '.FALSE.')
-                setattr(cfg, 'num_iope_percomm', 0)
-            else:
-                setattr(cfg, 'lasync_io', '.TRUE.')
-                setattr(cfg, 'num_iope_percomm', 1)
-
-    # constraint (gpu or mc)
     if hasattr(cfg, 'constraint'):
         assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
                                                  "gpu or mc")

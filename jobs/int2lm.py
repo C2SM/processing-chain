@@ -18,6 +18,18 @@ from datetime import datetime, timedelta
 import pytz
 
 
+def set_cfg_variables(cfg):
+
+    # Int2lm processing always starts at hstart=0, thus modifying inidate
+    inidate_int2lm_yyyymmddhh = (
+        cfg.startdate + timedelta(hours=cfg.hstart)).strftime('%Y%m%d%H')
+    setattr(cfg, 'inidate_int2lm_yyyymmddhh', inidate_int2lm_yyyymmddhh)
+    setattr(cfg, 'int2lm_run', os.path.join(cfg.chain_root, 'int2lm', 'run'))
+    setattr(cfg, 'int2lm_output',
+            os.path.join(cfg.chain_root, 'int2lm', 'output'))
+
+    return cfg
+
 def main(starttime, hstart, hstop, cfg, model_cfg):
     """Setup the namelist for **int2lm** and submit the job to the queue.
 
@@ -55,10 +67,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    # Int2lm processing always starts at hstart=0, thus modifying inidate
-    inidate_int2lm_yyyymmddhh = (
-        cfg.startdate + timedelta(hours=cfg.hstart)).strftime('%Y%m%d%H')
-    setattr(cfg, 'inidate_int2lm_yyyymmddhh', inidate_int2lm_yyyymmddhh)
+    cfg = set_int2lm_variables(cfg)
     hstart_int2lm = 0
     hstop_int2lm = cfg.forecasttime
 
@@ -66,9 +75,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     np_tot = cfg.int2lm['np_x'] * cfg.int2lm['np_y']
 
     # Set folder names
-    setattr(cfg, 'int2lm_run', os.path.join(cfg.chain_root, 'int2lm', 'run'))
-    setattr(cfg, 'int2lm_output',
-            os.path.join(cfg.chain_root, 'int2lm', 'output'))
     int2lm_run = os.path.join(cfg.int2lm_run)
     int2lm_output = os.path.join(cfg.int2lm_output)
 
