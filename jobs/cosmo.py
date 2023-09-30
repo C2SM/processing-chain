@@ -32,8 +32,8 @@ def set_cfg_variables(cfg, model_cfg):
 
     # Number of tracers
     if 'tracers' in model_cfg['models'][cfg.model]['features']:
-        tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases',
-                                      cfg.casename, 'cosmo_tracers.csv')
+        tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
+                                      'cosmo_tracers.csv')
         if os.path.isfile(tracer_csvfile):
             with open(tracer_csvfile, 'r') as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=',')
