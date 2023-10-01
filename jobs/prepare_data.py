@@ -38,6 +38,14 @@ from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 from calendar import monthrange
 
 
+def set_cfg_variables(cfg):
+
+    if cfg.model.startswith('cosmo'):
+        setattr(cfg, 'int2lm_root', os.path.join(cfg.chain_root, 'int2lm'))
+        setattr(cfg, 'int2lm_input', os.path.join(cfg.int2lm_root, 'input'))
+
+    return cfg
+
 def main(starttime, hstart, hstop, cfg, model_cfg):
     """
     **ICON** (if ``cfg.model`` is ``tools.Target.ICON``)
@@ -80,6 +88,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         Object holding all user-configuration parameters as attributes
     """
 
+    cfg = set_cfg_variables(cfg)
+
     if cfg.model.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
 
@@ -101,7 +111,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             input_dir = os.path.join(cfg.chain_root, 'icon', 'input',
                                      file_info[1])
             input_dir_name = 'icon_input_' + file_info[1]
-            setattr(cfg, input_dir_name, input_dir)
             tools.create_dir(input_dir, input_dir_name)
             varname_scratch = varname + '_scratch'
             tools.copy_file(getattr(cfg, varname),
@@ -460,8 +469,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     else:
         logging.info('COSMO analysis data for IC/BC')
 
-        setattr(cfg, 'int2lm_root', os.path.join(cfg.chain_root, 'int2lm'))
-        setattr(cfg, 'int2lm_input', os.path.join(cfg.int2lm_root, 'input'))
         dest_path = os.path.join(cfg.int2lm_input, 'meteo')
         tools.create_dir(dest_path, "meteo input")
 

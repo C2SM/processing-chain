@@ -251,7 +251,19 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         If True will do job regardless of completion status
     """
 
+    # ini date and forecast time (ignore meteo times)
+    inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
+    inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
+    inidate_yyyymmddhhmmss = start_time.strftime('%Y%m%d%H%M%S')
+    setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh)
+    setattr(cfg, 'inidate_yyyymmdd_hh', inidate_yyyymmdd_hh)
+    setattr(cfg, 'inidate_yyyymmddhhmmss', inidate_yyyymmddhhmmss)
+    setattr(cfg, 'hstart', hstart)
+    setattr(cfg, 'hstop', hstop)
     forecasttime = '%d' % (hstop - hstart)
+    inidate_int2lm_yyyymmddhh = (start_time +
+                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
+
     if hasattr(cfg, 'spinup'):
         if cfg.first_one:  # first run in spinup
             chain_root_last_run = ''
@@ -277,7 +289,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     setattr(cfg, 'forecasttime', forecasttime)
 
     # Folder naming and structure
-    job_id = '%s_%d_%d' % (cfg.inidate_yyyymmddhh, hstart, hstop)
+    job_id = '%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
     chain_root = os.path.join(work_root, cfg.casename, job_id)
     setattr(cfg, 'job_id', job_id)
     setattr(cfg, 'chain_root', chain_root)
@@ -558,7 +570,7 @@ def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop,
         if endtime_act_sim > start + timedelta(hours=hstop):
             continue
 
-        print('Runtime of sub-simulation: ', run_time)
+        print(f'Runtime of sub-simulation: {run_time} h')
 
         if cfg.first_one:
             run_chain(work_root=work_root,

@@ -12,18 +12,14 @@
 import os
 import logging
 import shutil
-from . import tools
 import subprocess
-from datetime import datetime, timedelta
 import pytz
+from datetime import datetime, timedelta
+from . import tools, prepare_data
 
 
 def set_cfg_variables(cfg):
 
-    # Int2lm processing always starts at hstart=0, thus modifying inidate
-    inidate_int2lm_yyyymmddhh = (
-        cfg.startdate + timedelta(hours=cfg.hstart)).strftime('%Y%m%d%H')
-    setattr(cfg, 'inidate_int2lm_yyyymmddhh', inidate_int2lm_yyyymmddhh)
     setattr(cfg, 'int2lm_run', os.path.join(cfg.chain_root, 'int2lm', 'run'))
     setattr(cfg, 'int2lm_output',
             os.path.join(cfg.chain_root, 'int2lm', 'output'))
@@ -68,9 +64,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
+    cfg = prepare_data.set_cfg_variables(cfg)
     cfg = set_cfg_variables(cfg)
-    hstart_int2lm = 0
-    hstop_int2lm = cfg.forecasttime
 
     # Total number of processes
     np_tot = cfg.int2lm['np_x'] * cfg.int2lm['np_y']
@@ -143,12 +138,19 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                            cfg.int2lm['namelist_filename'])) as input_file:
         int2lm_namelist = input_file.read()
 
+    # Int2lm processing always starts at hstart=0, thus modifying inidate
+    inidate_int2lm_yyyymmddhh = (
+        cfg.startdate + timedelta(hours=cfg.hstart)).strftime('%Y%m%d%H')
+    hstart_int2lm = 0
+    hstop_int2lm = cfg.forecasttime
+
     output_file = os.path.join(int2lm_run, "INPUT")
     with open(output_file, "w") as outf:
         outf.write(
             int2lm_namelist.format(
                 cfg=cfg,
                 **cfg.int2lm,
+                inidate_int2lm_yyyymmddhh=inidate_int2lm_yyyymmddhh,
                 hstart_int2lm=hstart_int2lm,
                 hstop_int2lm=hstop_int2lm,
                 multi_layer=multi_layer,
@@ -170,8 +172,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             int2lm_runscript.format(cfg=cfg,
                                     **cfg.int2lm,
                                     int2lm_run=int2lm_run,
-                                    ini_day=cfg.inidate_int2lm_yyyymmddhh[0:8],
-                                    ini_hour=cfg.inidate_int2lm_yyyymmddhh[8:],
+                                    inidate_yyyymmddhh=inidate_int2lm_yyyymmddhh,
+                                    ini_day=inidate_int2lm_yyyymmddhh[0:8],
+                                    ini_hour=inidate_int2lm_yyyymmddhh[8:],
                                     np_tot=np_tot,
                                     hstop_int2lm=hstop_int2lm,
                                     logfile=logfile,
