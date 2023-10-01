@@ -169,16 +169,17 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     output_file = os.path.join(int2lm_run, "run.job")
     with open(output_file, "w") as outf:
         outf.write(
-            int2lm_runscript.format(cfg=cfg,
-                                    **cfg.int2lm,
-                                    int2lm_run=int2lm_run,
-                                    inidate_yyyymmddhh=inidate_int2lm_yyyymmddhh,
-                                    ini_day=inidate_int2lm_yyyymmddhh[0:8],
-                                    ini_hour=inidate_int2lm_yyyymmddhh[8:],
-                                    np_tot=np_tot,
-                                    hstop_int2lm=hstop_int2lm,
-                                    logfile=logfile,
-                                    logfile_finish=logfile_finish))
+            int2lm_runscript.format(
+                cfg=cfg,
+                **cfg.int2lm,
+                int2lm_run=int2lm_run,
+                inidate_yyyymmddhh=inidate_int2lm_yyyymmddhh,
+                ini_day=inidate_int2lm_yyyymmddhh[0:8],
+                ini_hour=inidate_int2lm_yyyymmddhh[8:],
+                np_tot=np_tot,
+                hstop_int2lm=hstop_int2lm,
+                logfile=logfile,
+                logfile_finish=logfile_finish))
 
     # Submit job
     result = subprocess.run(
