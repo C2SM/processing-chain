@@ -43,8 +43,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg = int2lm.set_cfg_variables(cfg)
 
     # Int2lm processing always starts at hstart=0, thus modifying inidate
-    inidate_int2lm_yyyymmddhh = (
-        starttime + timedelta(hours=hstart)).strftime('%Y%m%d%H')
+    inidate_int2lm_yyyymmddhh = (starttime +
+                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
 
     chem_list = cfg.post_int2lm['species']
 
