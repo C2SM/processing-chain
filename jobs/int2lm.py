@@ -140,7 +140,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
     # Int2lm processing always starts at hstart=0, thus modifying inidate
     inidate_int2lm_yyyymmddhh = (
-        cfg.startdate + timedelta(hours=cfg.hstart)).strftime('%Y%m%d%H')
+        starttime + timedelta(hours=hstart)).strftime('%Y%m%d%H')
     hstart_int2lm = 0
     hstop_int2lm = cfg.forecasttime
 
