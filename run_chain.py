@@ -90,9 +90,6 @@ class Config():
         # Specific settings based on the node type ('gpu' or 'mc')
         self.set_node_info()
 
-        # Set some formatted time variables
-        self.set_attributes_time()
-
     def load_config_file(self, casename):
         """
         Load the configuration settings from a YAML file.
@@ -173,14 +170,6 @@ class Config():
                 self.user_mail = file.read().rstrip()
         else:
             self.user_mail = None
-
-        return self
-
-    def set_attributes_time(self):
-        # ini date and forecast time (ignore meteo times)
-        self.inidate_yyyymmddhh = self.startdate.strftime('%Y%m%d%H')
-        self.inidate_yyyymmdd_hh = self.startdate.strftime('%Y%m%d_%H')
-        self.inidate_yyyymmddhhmmss = self.startdate.strftime('%Y%m%d%H%M%S')
 
         return self
 
