@@ -23,8 +23,8 @@ def set_cfg_variables(cfg, starttime, hstart):
     setattr(cfg, 'int2lm_run', os.path.join(cfg.chain_root, 'int2lm', 'run'))
     setattr(cfg, 'int2lm_output',
             os.path.join(cfg.chain_root, 'int2lm', 'output'))
-    cfg.int2lm['inidate_yyyymmddhh'] = (starttime +
-                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
+    cfg.int2lm['inidate_yyyymmddhh'] = (
+        starttime + timedelta(hours=hstart)).strftime('%Y%m%d%H')
 
     return cfg
 
