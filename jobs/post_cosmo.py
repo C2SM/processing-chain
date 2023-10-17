@@ -75,7 +75,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = int2lm.set_cfg_variables(cfg)
+    cfg = int2lm.set_cfg_variables(cfg, starttime, hstart)
     cfg = cosmo.set_cfg_variables(cfg, model_cfg)
 
     logfile = os.path.join(cfg.log_working_dir, "post_cosmo")

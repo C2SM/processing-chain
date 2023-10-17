@@ -40,7 +40,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = int2lm.set_cfg_variables(cfg)
+    cfg = int2lm.set_cfg_variables(cfg, starttime, hstart)
 
     # Int2lm processing always starts at hstart=0, thus modifying inidate
     inidate_int2lm_yyyymmddhh = (starttime +
