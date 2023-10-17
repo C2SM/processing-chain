@@ -139,8 +139,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         int2lm_namelist = input_file.read()
 
     # Int2lm processing always starts at hstart=0, thus modifying inidate
-    inidate_int2lm_yyyymmddhh = (starttime +
-                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
     hstart_int2lm = 0
     hstop_int2lm = cfg.forecasttime
 
@@ -150,7 +148,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             int2lm_namelist.format(
                 cfg=cfg,
                 **cfg.int2lm,
-                inidate_int2lm_yyyymmddhh=inidate_int2lm_yyyymmddhh,
                 hstart_int2lm=hstart_int2lm,
                 hstop_int2lm=hstop_int2lm,
                 multi_layer=multi_layer,
@@ -173,9 +170,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 cfg=cfg,
                 **cfg.int2lm,
                 int2lm_run=int2lm_run,
-                inidate_yyyymmddhh=inidate_int2lm_yyyymmddhh,
-                ini_day=inidate_int2lm_yyyymmddhh[0:8],
-                ini_hour=inidate_int2lm_yyyymmddhh[8:],
+                ini_day=cfg.inidate_yyyymmddhh[0:8],
+                ini_hour=cfg.inidate_yyyymmddhh[8:],
                 np_tot=np_tot,
                 hstop_int2lm=hstop_int2lm,
                 logfile=logfile,

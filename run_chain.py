@@ -243,15 +243,17 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     # ini date and forecast time (ignore meteo times)
     inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
     inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
-    inidate_yyyymmddhhmmss = start_time.strftime('%Y%m%d%H%M%S')
     setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh)
-    setattr(cfg, 'inidate_yyyymmdd_hh', inidate_yyyymmdd_hh)
-    setattr(cfg, 'inidate_yyyymmddhhmmss', inidate_yyyymmddhhmmss)
+    setattr(cfg, 'inidate_yyyymmdd_hh', inidate_yyyymmdd_hh) # only for icon-art-oem
     setattr(cfg, 'hstart', hstart)
     setattr(cfg, 'hstop', hstop)
     forecasttime = '%d' % (hstop - hstart)
-    inidate_int2lm_yyyymmddhh = (start_time +
-                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
+
+    # Folder naming and structure
+    job_id = '%s_%d_%d' % (cfg.inidate_yyyymmddhh, cfg.hstart, cfg.hstop)
+    chain_root = os.path.join(work_root, cfg.casename, job_id)
+    setattr(cfg, 'job_id', job_id)
+    setattr(cfg, 'chain_root', chain_root)
 
     if hasattr(cfg, 'spinup'):
         if cfg.first_one:  # first run in spinup
@@ -277,11 +279,6 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
 
     setattr(cfg, 'forecasttime', forecasttime)
 
-    # Folder naming and structure
-    job_id = '%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
-    chain_root = os.path.join(work_root, cfg.casename, job_id)
-    setattr(cfg, 'job_id', job_id)
-    setattr(cfg, 'chain_root', chain_root)
 
     if hasattr(cfg, 'constraint'):
         assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
@@ -295,7 +292,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         setattr(cfg, 'cosmo_restart_out', '')
         setattr(cfg, 'cosmo_restart_in', '')
     elif 'restart' in model_cfg['models'][cfg.model]['features']:
-        job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh,
+        job_id_last_run = '%s_%d_%d' % (cfg.inidate_yyyymmddhh,
                                         hstart - cfg.restart_step, hstart)
         chain_root_last_run = os.path.join(work_root, cfg.casename,
                                            job_id_last_run)
