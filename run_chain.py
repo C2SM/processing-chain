@@ -244,7 +244,8 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
     inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
     setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh)
-    setattr(cfg, 'inidate_yyyymmdd_hh', inidate_yyyymmdd_hh) # only for icon-art-oem
+    setattr(cfg, 'inidate_yyyymmdd_hh',
+            inidate_yyyymmdd_hh)  # only for icon-art-oem
     setattr(cfg, 'hstart', hstart)
     setattr(cfg, 'hstop', hstop)
     forecasttime = '%d' % (hstop - hstart)
@@ -278,7 +279,6 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                                                job_id_last_run)
 
     setattr(cfg, 'forecasttime', forecasttime)
-
 
     if hasattr(cfg, 'constraint'):
         assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
