@@ -45,7 +45,8 @@ def set_cfg_variables(cfg):
         setattr(cfg, 'int2lm_input', os.path.join(cfg.int2lm_root, 'input'))
     elif cfg.model.startswith('icon'):
         setattr(cfg, 'icon_base', os.path.join(cfg.chain_root, 'icon'))
-        setattr(cfg, 'icon_input', os.path.join(cfg.chain_root, 'icon', 'input'))
+        setattr(cfg, 'icon_input', os.path.join(cfg.chain_root, 'icon',
+                                                'input'))
         setattr(cfg, 'icon_input_icbc',
                 os.path.join(cfg.chain_root, 'icon', 'input', 'icbc'))
         setattr(cfg, 'icon_input_oae',
@@ -59,7 +60,8 @@ def set_cfg_variables(cfg):
         setattr(cfg, 'icon_input_xml',
                 os.path.join(cfg.chain_root, 'icon', 'input', 'XML'))
         setattr(cfg, 'icon_work', os.path.join(cfg.chain_root, 'icon', 'run'))
-        setattr(cfg, 'icon_output', os.path.join(cfg.chain_root, 'icon', 'output'))
+        setattr(cfg, 'icon_output',
+                os.path.join(cfg.chain_root, 'icon', 'output'))
         setattr(cfg, 'icon_output_reduced',
                 os.path.join(cfg.chain_root, 'icon', 'output_reduced'))
         setattr(cfg, 'icon_restart_out',

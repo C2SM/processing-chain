@@ -267,14 +267,15 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                 start_time -
                 timedelta(hours=cfg.restart_step)).strftime('%Y%m%d%H')
             if cfg.second_one:  # second run (i.e., get job_id from first run)
-                cfg.job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run, 0,
-                                                hstop)
+                cfg.job_id_last_run = '%s_%d_%d' % (
+                    inidate_yyyymmddhh_last_run, 0, hstop)
             else:  # all other runs
-                cfg.job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run,
-                                                0 - cfg.spinup, hstop)
+                cfg.job_id_last_run = '%s_%d_%d' % (
+                    inidate_yyyymmddhh_last_run, 0 - cfg.spinup, hstop)
             cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                               cfg.job_id_last_run)
-        cfg.last_cosmo_output = os.path.join(cfg.chain_root_last_run, 'cosmo', 'output')
+                                                   cfg.job_id_last_run)
+        cfg.last_cosmo_output = os.path.join(cfg.chain_root_last_run, 'cosmo',
+                                             'output')
 
         # No restart for spinup simulations (= default values for no restart)
         cfg.cosmo_restart_out = ''
@@ -282,9 +283,9 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     elif 'restart' in model_cfg['models'][cfg.model]['features']:
         cfg.chain_root_last_run = 'foo'
         cfg.job_id_last_run = '%s_%d_%d' % (cfg.inidate_yyyymmddhh,
-                                        hstart - cfg.restart_step, hstart)
+                                            hstart - cfg.restart_step, hstart)
         cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                           cfg.job_id_last_run)
+                                               cfg.job_id_last_run)
         # Set restart directories
         setattr(cfg, 'cosmo_restart_out',
                 os.path.join(cfg.chain_root, 'cosmo', 'restart'))
@@ -308,8 +309,8 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
         mother_name = cfg.meteo.dir
-        cfg.meteo.dir = os.path.join(work_root, mother_name, cfg.job_id, 'cosmo',
-                                     'output')
+        cfg.meteo.dir = os.path.join(work_root, mother_name, cfg.job_id,
+                                     'cosmo', 'output')
         cfg.meteo.inc = 1
         cfg.meteo.prefix = 'lffd'
 
@@ -343,7 +344,8 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                         skip = True
                         break
                     else:
-                        print('Wait for "%s" of chain "%s"' % (job, cfg.job_id))
+                        print('Wait for "%s" of chain "%s"' %
+                              (job, cfg.job_id))
                         sys.stdout.flush()
                         for _ in range(3000):
                             time.sleep(0.1)
