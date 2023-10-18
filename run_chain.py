@@ -287,9 +287,10 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
                                                cfg.job_id_last_run)
         # Set restart directories
-        cfg.cosmo_restart_out = os.path.join(cfg.chain_root, 'cosmo', 'restart')
-        cfg.cosmo_restart_in = os.path.join(cfg.chain_root_last_run, 'cosmo', 'restart')
-
+        cfg.cosmo_restart_out = os.path.join(cfg.chain_root, 'cosmo',
+                                             'restart')
+        cfg.cosmo_restart_in = os.path.join(cfg.chain_root_last_run, 'cosmo',
+                                            'restart')
 
     # Check constraint
     if hasattr(cfg, 'constraint'):

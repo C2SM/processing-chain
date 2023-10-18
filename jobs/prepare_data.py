@@ -73,12 +73,11 @@ def set_cfg_variables(cfg, starttime, hstart, hstop):
 
         cfg.input_files_scratch = {}
         for varname in cfg.input_files:
-            cfg.input_files_scratch[varname] = os.path.join(cfg.icon_input,
-                    os.path.basename(cfg.input_files[varname]))
-    
+            cfg.input_files_scratch[varname] = os.path.join(
+                cfg.icon_input, os.path.basename(cfg.input_files[varname]))
+
         cfg.ini_datetime_string = (
-            starttime +
-            timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
+            starttime + timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
         cfg.end_datetime_string = (
             starttime + timedelta(hours=hstart) +
             timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
