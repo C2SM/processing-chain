@@ -247,7 +247,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     cfg.inidate_yyyymmdd_hh = inidate_yyyymmdd_hh  # only for icon-art-oem
     cfg.hstart = hstart
     cfg.hstop = hstop
-    forecasttime = '%d' % (hstop - hstart)
+    cfg.forecasttime = '%d' % (hstop - hstart)
 
     # Folder naming and structure
     cfg.job_id = '%s_%d_%d' % (cfg.inidate_yyyymmddhh, cfg.hstart, cfg.hstop)
@@ -262,7 +262,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
             cfg.inidate_yyyymmddhh = inidate_yyyymmddhh_spinup
             cfg.hstart = 0
             cfg.hstop = hstop + cfg.spinup
-            forecasttime = '%d' % (hstop + cfg.spinup)
+            cfg.forecasttime = '%d' % (hstop + cfg.spinup)
             inidate_yyyymmddhh_last_run = (
                 start_time -
                 timedelta(hours=cfg.restart_step)).strftime('%Y%m%d%H')
@@ -287,12 +287,9 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
                                                cfg.job_id_last_run)
         # Set restart directories
-        setattr(cfg, 'cosmo_restart_out',
-                os.path.join(cfg.chain_root, 'cosmo', 'restart'))
-        setattr(cfg, 'cosmo_restart_in',
-                os.path.join(cfg.chain_root_last_run, 'cosmo', 'restart'))
+        cfg.cosmo_restart_out = os.path.join(cfg.chain_root, 'cosmo', 'restart')
+        cfg.cosmo_restart_in = os.path.join(cfg.chain_root_last_run, 'cosmo', 'restart')
 
-    setattr(cfg, 'forecasttime', forecasttime)
 
     # Check constraint
     if hasattr(cfg, 'constraint'):

@@ -38,8 +38,9 @@ from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 from calendar import monthrange
 
 
-def set_cfg_variables(cfg):
+def set_cfg_variables(cfg, starttime, hstart, hstop):
 
+    # TODO: Change setattr() to direct assignment
     if cfg.model.startswith('cosmo'):
         setattr(cfg, 'int2lm_root', os.path.join(cfg.chain_root, 'int2lm'))
         setattr(cfg, 'int2lm_input', os.path.join(cfg.int2lm_root, 'input'))
@@ -70,27 +71,24 @@ def set_cfg_variables(cfg):
                 os.path.join(cfg.chain_root_last_run, 'icon', 'restart'))
         setattr(cfg, 'lrestart', '.TRUE.')
 
+        cfg.input_files_scratch = {}
         for varname in cfg.input_files:
-            file_info = cfg.input_files[varname]
-            setattr(cfg, varname,
-                    os.path.join(cfg.input_root, file_info[1], file_info[0]))
-            setattr(cfg, f'{varname}_scratch',
-                    os.path.join(cfg.icon_input, file_info[1], file_info[0]))
-        ini_datetime_string = (
-            start_time +
+            cfg.input_files_scratch[varname] = os.path.join(cfg.icon_input,
+                    os.path.basename(cfg.input_files[varname]))
+    
+        cfg.ini_datetime_string = (
+            starttime +
             timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
-        end_datetime_string = (
-            start_time + timedelta(hours=hstart) +
+        cfg.end_datetime_string = (
+            starttime + timedelta(hours=hstart) +
             timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
-        setattr(cfg, 'ini_datetime_string', ini_datetime_string)
-        setattr(cfg, 'end_datetime_string', end_datetime_string)
 
     return cfg
 
 
 def main(starttime, hstart, hstop, cfg, model_cfg):
     """
-    **ICON** (if ``cfg.model`` is ``tools.Target.ICON``)
+    **ICON** 
 
      Create necessary directories ``cfg.icon_input_icbc``
      and ''cfg.icon_work''
@@ -130,7 +128,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         Object holding all user-configuration parameters as attributes
     """
 
-    cfg = set_cfg_variables(cfg)
+    cfg = set_cfg_variables(cfg, starttime, hstart, hstop)
 
     if cfg.model.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
@@ -146,17 +144,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
 
         #-----------------------------------------------------
-        # Create input directories and copy files
+        # Copy input files
         #-----------------------------------------------------
+        cfg.print_config()
         for varname in cfg.input_files:
-            file_info = cfg.input_files[varname]
-            input_dir = os.path.join(cfg.chain_root, 'icon', 'input',
-                                     file_info[1])
-            input_dir_name = 'icon_input_' + file_info[1]
-            tools.create_dir(input_dir, input_dir_name)
-            varname_scratch = varname + '_scratch'
-            tools.copy_file(getattr(cfg, varname),
-                            getattr(cfg, varname_scratch),
+            varname_scratch = f'{varname}_scratch'
+            tools.copy_file(cfg.input_files[varname],
+                            cfg.input_files_scratch[varname],
                             output_log=True)
 
         if cfg.model == 'icon-art-global':

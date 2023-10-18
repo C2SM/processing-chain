@@ -21,13 +21,13 @@ icontools_runjobs:
 
 input_files:
     radiation_grid_filename: ./input/icon/grid/VERIFY_DOM_DOM01.parent.nc
-    dynamics_grid_filename: VERIFY_DOM_DOM01.nc
-    map_file_latbc: map_file.latbc
-    lateral_boundary_grid: lateral_boundary.grid.nc
-    extpar_filename: external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc
-    cldopt_filename: rrtm_cldopt.nc
-    lrtm_filename: rrtmg_lw.nc
-    map_file_ana: map_file.ana
+    dynamics_grid_filename: ./input/icon/grid/VERIFY_DOM_DOM01.nc
+    map_file_latbc: ./input/icon/grid/map_file.latbc
+    lateral_boundary_grid: ./input/icon/grid/lateral_boundary.grid.nc
+    extpar_filename: ./input/icon/grid/external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc
+    cldopt_filename: ./input/icon/rad/rrtm_cldopt.nc
+    lrtm_filename: ./input/icon/rad/rrtmg_lw.nc
+    map_file_ana: ./input/icon/mapping/map_file.ana
 
 icon:
     binary_file: ./src/cosmo-ghg/cosmo/ACC/cosmo_gpu
