@@ -240,138 +240,91 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         If True will do job regardless of completion status
     """
 
-    # ini date and forecast time (ignore meteo times)
+    # Initial date and forecast time
     inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
     inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
-    setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh)
-    setattr(cfg, 'inidate_yyyymmdd_hh',
-            inidate_yyyymmdd_hh)  # only for icon-art-oem
-    setattr(cfg, 'hstart', hstart)
-    setattr(cfg, 'hstop', hstop)
+    cfg.inidate_yyyymmddhh = inidate_yyyymmddhh
+    cfg.inidate_yyyymmdd_hh = inidate_yyyymmdd_hh  # only for icon-art-oem
+    cfg.hstart = hstart
+    cfg.hstop = hstop
     forecasttime = '%d' % (hstop - hstart)
 
     # Folder naming and structure
-    job_id = '%s_%d_%d' % (cfg.inidate_yyyymmddhh, cfg.hstart, cfg.hstop)
-    chain_root = os.path.join(work_root, cfg.casename, job_id)
-    setattr(cfg, 'job_id', job_id)
-    setattr(cfg, 'chain_root', chain_root)
+    cfg.job_id = '%s_%d_%d' % (cfg.inidate_yyyymmddhh, cfg.hstart, cfg.hstop)
+    cfg.chain_root = os.path.join(work_root, cfg.casename, cfg.job_id)
 
     if hasattr(cfg, 'spinup'):
         if cfg.first_one:  # first run in spinup
-            chain_root_last_run = ''
+            cfg.chain_root_last_run = ''
         else:  # consecutive runs in spinup
             inidate_yyyymmddhh_spinup = (
                 start_time - timedelta(hours=cfg.spinup)).strftime('%Y%m%d%H')
-            setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh_spinup)
-            setattr(cfg, 'hstart', 0)
-            setattr(cfg, 'hstop', hstop + cfg.spinup)
+            cfg.inidate_yyyymmddhh = inidate_yyyymmddhh_spinup
+            cfg.hstart = 0
+            cfg.hstop = hstop + cfg.spinup
             forecasttime = '%d' % (hstop + cfg.spinup)
             inidate_yyyymmddhh_last_run = (
                 start_time -
                 timedelta(hours=cfg.restart_step)).strftime('%Y%m%d%H')
             if cfg.second_one:  # second run (i.e., get job_id from first run)
-                job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run, 0,
+                cfg.job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run, 0,
                                                 hstop)
             else:  # all other runs
-                job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run,
+                cfg.job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run,
                                                 0 - cfg.spinup, hstop)
-            chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                               job_id_last_run)
+            cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
+                                               cfg.job_id_last_run)
+        cfg.last_cosmo_output = os.path.join(cfg.chain_root_last_run, 'cosmo', 'output')
+
+        # No restart for spinup simulations (= default values for no restart)
+        cfg.cosmo_restart_out = ''
+        cfg.cosmo_restart_in = ''
+    elif 'restart' in model_cfg['models'][cfg.model]['features']:
+        cfg.chain_root_last_run = 'foo'
+        cfg.job_id_last_run = '%s_%d_%d' % (cfg.inidate_yyyymmddhh,
+                                        hstart - cfg.restart_step, hstart)
+        cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
+                                           cfg.job_id_last_run)
+        # Set restart directories
+        setattr(cfg, 'cosmo_restart_out',
+                os.path.join(cfg.chain_root, 'cosmo', 'restart'))
+        setattr(cfg, 'cosmo_restart_in',
+                os.path.join(cfg.chain_root_last_run, 'cosmo', 'restart'))
 
     setattr(cfg, 'forecasttime', forecasttime)
 
+    # Check constraint
     if hasattr(cfg, 'constraint'):
         assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
                                                  "gpu or mc")
-
-    # Spinup
-    if hasattr(cfg, 'spinup'):
-        setattr(cfg, 'last_cosmo_output',
-                os.path.join(chain_root_last_run, 'cosmo', 'output'))
-        # No restart for spinup simulations (= default values for no restart)
-        setattr(cfg, 'cosmo_restart_out', '')
-        setattr(cfg, 'cosmo_restart_in', '')
-    elif 'restart' in model_cfg['models'][cfg.model]['features']:
-        job_id_last_run = '%s_%d_%d' % (cfg.inidate_yyyymmddhh,
-                                        hstart - cfg.restart_step, hstart)
-        chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                           job_id_last_run)
-        # Set restart directories
-        setattr(cfg, 'cosmo_restart_out',
-                os.path.join(chain_root, 'cosmo', 'restart'))
-        setattr(cfg, 'cosmo_restart_in',
-                os.path.join(chain_root_last_run, 'cosmo', 'restart'))
 
     # Restart step
     if 'restart' in model_cfg['models'][cfg.model]['features']:
         setattr(cfg, 'restart_step', hstop - hstart)
 
-    # if nested run: use output of mother-simulation
+    # If nested run: use output of mother-simulation
     if 'nesting' in model_cfg['models'][
             cfg.model]['features'] and not os.path.isdir(cfg.meteo.dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
         mother_name = cfg.meteo.dir
-        cfg.meteo.dir = os.path.join(work_root, mother_name, job_id, 'cosmo',
+        cfg.meteo.dir = os.path.join(work_root, mother_name, cfg.job_id, 'cosmo',
                                      'output')
         cfg.meteo.inc = 1
         cfg.meteo.prefix = 'lffd'
 
-    # ICON
-    if cfg.model.startswith('icon'):
-        setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
-        setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
-        setattr(cfg, 'icon_input_icbc',
-                os.path.join(chain_root, 'icon', 'input', 'icbc'))
-        setattr(cfg, 'icon_input_oae',
-                os.path.join(chain_root, 'icon', 'input', 'OEM'))
-        setattr(cfg, 'icon_input_grid',
-                os.path.join(chain_root, 'icon', 'input', 'grid'))
-        setattr(cfg, 'icon_input_mapping',
-                os.path.join(chain_root, 'icon', 'input', 'mapping'))
-        setattr(cfg, 'icon_input_rad',
-                os.path.join(chain_root, 'icon', 'input', 'rad'))
-        setattr(cfg, 'icon_input_xml',
-                os.path.join(chain_root, 'icon', 'input', 'XML'))
-        setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
-        setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
-        setattr(cfg, 'icon_output_reduced',
-                os.path.join(chain_root, 'icon', 'output_reduced'))
-
-        for varname in cfg.input_files:
-            file_info = cfg.input_files[varname]
-            setattr(cfg, varname,
-                    os.path.join(cfg.input_root, file_info[1], file_info[0]))
-            setattr(cfg, f'{varname}_scratch',
-                    os.path.join(cfg.icon_input, file_info[1], file_info[0]))
-        ini_datetime_string = (
-            start_time +
-            timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
-        end_datetime_string = (
-            start_time + timedelta(hours=hstart) +
-            timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
-        setattr(cfg, 'ini_datetime_string', ini_datetime_string)
-        setattr(cfg, 'end_datetime_string', end_datetime_string)
-        # Set restart directories
-        setattr(cfg, 'icon_restart_out',
-                os.path.join(chain_root, 'icon', 'restart'))
-        setattr(cfg, 'icon_restart_in',
-                os.path.join(chain_root_last_run, 'icon', 'restart'))
-        # TODO: Set correct restart setting
-        setattr(cfg, 'lrestart', '.FALSE.')
-
-    # logging
-    log_working_dir = os.path.join(chain_root, 'checkpoints', 'working')
-    log_finished_dir = os.path.join(chain_root, 'checkpoints', 'finished')
+    # Logging
+    log_working_dir = os.path.join(cfg.chain_root, 'checkpoints', 'working')
+    log_finished_dir = os.path.join(cfg.chain_root, 'checkpoints', 'finished')
     setattr(cfg, 'log_working_dir', log_working_dir)
     setattr(cfg, 'log_finished_dir', log_finished_dir)
 
-    # create working dirs
-    tools.create_dir(chain_root, "chain_root")
+    # Create working directories
+    tools.create_dir(cfg.chain_root, "chain_root")
     tools.create_dir(log_working_dir, "log_working")
     tools.create_dir(log_finished_dir, "log_finished")
 
-    # number of levels and switch for unit conversion for 'reduce_output' job
+    # Number of levels and switch for unit conversion for 'reduce_output' job
     if not hasattr(cfg, 'output_levels'):
         setattr(cfg, 'output_levels', -1)
     if not hasattr(cfg, 'convert_gas'):
@@ -386,11 +339,11 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
             if not force:
                 while True:
                     if os.path.exists(os.path.join(log_finished_dir, job)):
-                        print('Skip "%s" for chain "%s"' % (job, job_id))
+                        print('Skip "%s" for chain "%s"' % (job, cfg.job_id))
                         skip = True
                         break
                     else:
-                        print('Wait for "%s" of chain "%s"' % (job, job_id))
+                        print('Wait for "%s" of chain "%s"' % (job, cfg.job_id))
                         sys.stdout.flush()
                         for _ in range(3000):
                             time.sleep(0.1)
@@ -402,7 +355,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                     pass
 
         if not skip:
-            print('Process "%s" for chain "%s"' % (job, job_id))
+            print('Process "%s" for chain "%s"' % (job, cfg.job_id))
             sys.stdout.flush()
 
             try_count = 1 + (args.ntry - 1) * (job == 'cosmo')
@@ -424,7 +377,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                     try_count = 0
                 except:
                     subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
-                        job, job_id)
+                        job, cfg.job_id)
                     logging.exception(subject)
                     if cfg.user_mail:
                         message = tools.prepare_message(
@@ -437,7 +390,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
             if exitcode != 0 or not os.path.exists(
                     os.path.join(log_finished_dir, job)):
                 subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
-                    job, job_id)
+                    job, cfg.job_id)
                 if cfg.user_mail:
                     message = tools.prepare_message(
                         os.path.join(log_working_dir, job))

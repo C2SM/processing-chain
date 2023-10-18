@@ -43,6 +43,45 @@ def set_cfg_variables(cfg):
     if cfg.model.startswith('cosmo'):
         setattr(cfg, 'int2lm_root', os.path.join(cfg.chain_root, 'int2lm'))
         setattr(cfg, 'int2lm_input', os.path.join(cfg.int2lm_root, 'input'))
+    elif cfg.model.startswith('icon'):
+        setattr(cfg, 'icon_base', os.path.join(cfg.chain_root, 'icon'))
+        setattr(cfg, 'icon_input', os.path.join(cfg.chain_root, 'icon', 'input'))
+        setattr(cfg, 'icon_input_icbc',
+                os.path.join(cfg.chain_root, 'icon', 'input', 'icbc'))
+        setattr(cfg, 'icon_input_oae',
+                os.path.join(cfg.chain_root, 'icon', 'input', 'OEM'))
+        setattr(cfg, 'icon_input_grid',
+                os.path.join(cfg.chain_root, 'icon', 'input', 'grid'))
+        setattr(cfg, 'icon_input_mapping',
+                os.path.join(cfg.chain_root, 'icon', 'input', 'mapping'))
+        setattr(cfg, 'icon_input_rad',
+                os.path.join(cfg.chain_root, 'icon', 'input', 'rad'))
+        setattr(cfg, 'icon_input_xml',
+                os.path.join(cfg.chain_root, 'icon', 'input', 'XML'))
+        setattr(cfg, 'icon_work', os.path.join(cfg.chain_root, 'icon', 'run'))
+        setattr(cfg, 'icon_output', os.path.join(cfg.chain_root, 'icon', 'output'))
+        setattr(cfg, 'icon_output_reduced',
+                os.path.join(cfg.chain_root, 'icon', 'output_reduced'))
+        setattr(cfg, 'icon_restart_out',
+                os.path.join(cfg.chain_root, 'icon', 'restart'))
+        setattr(cfg, 'icon_restart_in',
+                os.path.join(cfg.chain_root_last_run, 'icon', 'restart'))
+        setattr(cfg, 'lrestart', '.TRUE.')
+
+        for varname in cfg.input_files:
+            file_info = cfg.input_files[varname]
+            setattr(cfg, varname,
+                    os.path.join(cfg.input_root, file_info[1], file_info[0]))
+            setattr(cfg, f'{varname}_scratch',
+                    os.path.join(cfg.icon_input, file_info[1], file_info[0]))
+        ini_datetime_string = (
+            start_time +
+            timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
+        end_datetime_string = (
+            start_time + timedelta(hours=hstart) +
+            timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
+        setattr(cfg, 'ini_datetime_string', ini_datetime_string)
+        setattr(cfg, 'end_datetime_string', end_datetime_string)
 
     return cfg
 
