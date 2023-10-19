@@ -8,9 +8,11 @@ restart_step: 6
 startdate: 2018-01-01T00:00:00Z
 hstart: 0
 hstop: 12
+
 eccodes_dir: ./input/eccodes_definitions
 iconremap_bin: iconremap
 iconsub_bin: iconsub
+lateral_boundary_grid_order: lateral_boundary
 
 meteo:
     dir: ./input/meteo

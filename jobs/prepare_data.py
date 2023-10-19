@@ -50,16 +50,6 @@ def set_cfg_variables(cfg, starttime, hstart, hstop):
                                                 'input'))
         setattr(cfg, 'icon_input_icbc',
                 os.path.join(cfg.chain_root, 'icon', 'input', 'icbc'))
-        setattr(cfg, 'icon_input_oae',
-                os.path.join(cfg.chain_root, 'icon', 'input', 'OEM'))
-        setattr(cfg, 'icon_input_grid',
-                os.path.join(cfg.chain_root, 'icon', 'input', 'grid'))
-        setattr(cfg, 'icon_input_mapping',
-                os.path.join(cfg.chain_root, 'icon', 'input', 'mapping'))
-        setattr(cfg, 'icon_input_rad',
-                os.path.join(cfg.chain_root, 'icon', 'input', 'rad'))
-        setattr(cfg, 'icon_input_xml',
-                os.path.join(cfg.chain_root, 'icon', 'input', 'XML'))
         setattr(cfg, 'icon_work', os.path.join(cfg.chain_root, 'icon', 'run'))
         setattr(cfg, 'icon_output',
                 os.path.join(cfg.chain_root, 'icon', 'output'))
@@ -321,7 +311,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
         else:  # non-global ICON-ART
             #-----------------------------------------------------
-            # Get datafile lists for LBC (each at 00 UTC and others)
+            # Create LBC datafile lists (each at 00 UTC and others)
             #-----------------------------------------------------
             datafile_list = []
             datafile_list_rest = []
