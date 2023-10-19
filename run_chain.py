@@ -555,12 +555,13 @@ if __name__ == '__main__':
         model_cfg = load_model_config_yaml('config/models.yaml')
         cfg = Config(casename)
 
-        # Duplicate variables in the form of <dict>_<value> for better
-        # access within namelist template, e.g.: meteo.dir -> meteo_dir
-        cfg.create_vars_from_dicts()
-
-        # Print config
+        # Print config before duplication of dict variables
         cfg.print_config()
+
+        # Duplicate variables in the form of <dict>_<value> for better
+        # access within namelist template.
+        # E.g.: cfg.meteo['dir'] -> cfg.meteo_dir
+        cfg.create_vars_from_dicts()
 
         # Check if jobs are set or if default ones are used
         if args.job_list is None:
