@@ -220,7 +220,8 @@ class Config():
                             continue
                         # Convert relative paths to absolute paths
                         if value.startswith('./'):
-                            self.__dict__[attr_name][key] = os.path.abspath(value)
+                            self.__dict__[attr_name][key] = os.path.abspath(
+                                value)
 
         return self
 
