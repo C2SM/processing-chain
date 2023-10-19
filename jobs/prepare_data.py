@@ -75,6 +75,7 @@ def set_cfg_variables(cfg, starttime, hstart, hstop):
         for varname in cfg.input_files:
             cfg.input_files_scratch[varname] = os.path.join(
                 cfg.icon_input, os.path.basename(cfg.input_files[varname]))
+        cfg.create_vars_from_dicts()
 
         cfg.ini_datetime_string = (
             starttime + timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
@@ -145,7 +146,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         #-----------------------------------------------------
         # Copy input files
         #-----------------------------------------------------
-        cfg.print_config()
         for varname in cfg.input_files:
             varname_scratch = f'{varname}_scratch'
             tools.copy_file(cfg.input_files[varname],
