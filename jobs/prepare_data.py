@@ -320,7 +320,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                                          cfg.meteo['inc']):
                 meteo_file = os.path.join(
                     cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo['nameformat']))
+                    cfg.meteo['prefix'] + time.strftime(cfg.meteo['nameformat']))
                 if cfg.model == 'icon-art' or cfg.model == 'icon-art-oem':
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
@@ -371,10 +371,10 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                                          cfg.meteo['inc']):
                 src_file = os.path.join(
                     cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo['nameformat']) + '_lbc.nc')
+                    time.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_lbc.nc')
                 merged_file = os.path.join(
                     cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo['nameformat']) + '_merged.nc')
+                    time.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_merged.nc')
                 ds = xr.open_dataset(src_file)
                 # Load GEOSP-dataset as ds_geosp at time 00:
                 if (time.hour == 0):
@@ -397,10 +397,10 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             if cfg.model.startswith('icon-art'):
                 meteo_file = os.path.join(
                     cfg.icon_input_icbc,
-                    starttime.strftime(cfg.meteo['nameformat']) + '.nc')
+                    starttime.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '.nc')
                 merged_file = os.path.join(
                     cfg.icon_input_icbc,
-                    starttime.strftime(cfg.meteo['nameformat']) + '_merged.nc')
+                    starttime.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_merged.nc')
                 ds = xr.open_dataset(meteo_file)
                 merging = False
                 if 'PS' not in ds:
@@ -436,13 +436,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                         #------------
                         meteo_file = os.path.join(
                             cfg.icon_input_icbc,
-                            time.strftime(cfg.meteo['nameformat']) + '.nc')
+                            time.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '.nc')
                         chem_file = os.path.join(
                             cfg.icon_input_icbc,
                             time.strftime(cfg.chem_nameformat) + '.nc')
                         merged_file = os.path.join(
                             cfg.icon_input_icbc,
-                            time.strftime(cfg.meteo['nameformat']) +
+                            time.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) +
                             '_merged.nc')
                         ds_meteo = xr.open_dataset(meteo_file)
                         ds_chem = xr.open_dataset(chem_file)
@@ -467,13 +467,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     #------------
                     meteo_file = os.path.join(
                         cfg.icon_input_icbc,
-                        time.strftime(cfg.meteo['nameformat']) + '_lbc.nc')
+                        time.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_lbc.nc')
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
                         time.strftime(cfg.chem_nameformat) + '_lbc.nc')
                     merged_file = os.path.join(
                         cfg.icon_input_icbc,
-                        time.strftime(cfg.meteo['nameformat']) + '_merged.nc')
+                        time.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_merged.nc')
                     ds_meteo = xr.open_dataset(meteo_file)
                     ds_chem = xr.open_dataset(chem_file)
                     # LNPS --> PS
