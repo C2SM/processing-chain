@@ -201,6 +201,29 @@ class Config():
                 key_type = type(key).__name__
                 print(f"{key:<{max_col_width}} {key_type:<4} {value}")
 
+    def convert_paths_to_absolute(self):
+        # Loop through all variables and their dictionary entries
+        for attr_name, attr_value in self.__dict__.items():
+            if isinstance(attr_value, str):
+                if os.path.isabs(attr_value):
+                    # If the value is already an absolute path, continue to the next iteration
+                    continue
+                # Convert relative paths to absolute paths
+                if attr_value.startswith('./'):
+                    self.__dict__[attr_name] = os.path.abspath(attr_value)
+            elif isinstance(attr_value, dict):
+                # If the attribute is a dictionary, loop through its entries
+                for key, value in attr_value.items():
+                    if isinstance(value, str):
+                        if os.path.isabs(value):
+                            # If the value is already an absolute path, continue to the next iteration
+                            continue
+                        # Convert relative paths to absolute paths
+                        if value.startswith('./'):
+                            self.__dict__[attr_name][key] = os.path.abspath(value)
+
+        return self
+
     def create_vars_from_dicts(self):
         # Create a copy of the object's __dict__ to avoid modifying it during iteration
         object_dict = vars(self).copy()
@@ -554,6 +577,9 @@ if __name__ == '__main__':
         # Load configs
         model_cfg = load_model_config_yaml('config/models.yaml')
         cfg = Config(casename)
+
+        # Convert relative to absolute paths
+        cfg.convert_paths_to_absolute()
 
         # Print config before duplication of dict variables
         cfg.print_config()
