@@ -384,7 +384,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 # Merge GEOSP-dataset with other timesteps
                 elif (time.hour != 0):
                     # Change values of time dimension to current time
-                    da_geosp = da_geosp.assign_coords(time=[time])
+                    da_geosp = da_geosp.assign_coords(time=[np.datetime64(time)])
                     # Merge GEOSP into temporary file
                     ds_merged = xr.merge([ds, da_geosp])
                     ds_merged.attrs = ds.attrs
