@@ -201,6 +201,16 @@ class Config():
                 key_type = type(key).__name__
                 print(f"{key:<{max_col_width}} {key_type:<4} {value}")
 
+    def create_vars_from_dicts(self):
+        # Create a copy of the object's __dict__ to avoid modifying it during iteration
+        object_dict = vars(self).copy()
+
+        for key, value in object_dict.items():
+            if isinstance(value, dict):
+                for sub_key, sub_value in value.items():
+                    setattr(self, key + '_' + sub_key, sub_value)
+        return self
+
 
 def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
               force):
@@ -543,6 +553,10 @@ if __name__ == '__main__':
         # Load configs
         model_cfg = load_model_config_yaml('config/models.yaml')
         cfg = Config(casename)
+
+        # Duplicate variables in the form of <dict>_<value> for better
+        # access within namelist template, e.g.: meteo.dir -> meteo_dir
+        cfg.create_vars_from_dicts()
 
         # Print config
         cfg.print_config()
