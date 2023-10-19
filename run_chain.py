@@ -515,7 +515,6 @@ def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop,
     """
 
     for time in tools.iter_hours(start, hstart, hstop, cfg.restart_step):
-        print(time)
         if time == start:
             setattr(cfg, "first_one", True)
             setattr(cfg, "second_one", False)
