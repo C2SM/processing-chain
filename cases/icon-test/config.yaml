@@ -2,16 +2,19 @@
 
 model: icon
 constraint: gpu
+compute_queue: normal
 ntasks_per_node: 12
 restart_step: 6
 startdate: 2018-01-01T00:00:00Z
 hstart: 0
 hstop: 12
+eccodes_dir: ./input/eccodes_definitions
 
 meteo:
     dir: ./input/meteo
     prefix: ifs_
-    nameformat: '%Y%m%d%H.grb'
+    nameformat: '%Y%m%d%H'
+    suffix: .grb
     inc: 3
 
 icontools_runjobs:

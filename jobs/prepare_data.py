@@ -336,11 +336,11 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
                         time.strftime(cfg.chem_nameformat))
-                    datafile_list_chem.append(chem_file + cfg.chem_suffix)
+                    datafile_list_chem.append(chem_file + cfg.chem['suffix'])
                 if meteo_file.endswith('00'):
-                    datafile_list.append(meteo_file + cfg.meteo_suffix)
+                    datafile_list.append(meteo_file + cfg.meteo['suffix'])
                 else:
-                    datafile_list_rest.append(meteo_file + cfg.meteo_suffix)
+                    datafile_list_rest.append(meteo_file + cfg.meteo['suffix'])
             datafile_list = ' '.join([str(v) for v in datafile_list])
             datafile_list_rest = ' '.join([str(v) for v in datafile_list_rest])
             datafile_list_chem = ' '.join([str(v) for v in datafile_list_chem])
@@ -352,12 +352,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
                 logfile_finish = os.path.join(cfg.log_finished_dir,
                                               'prepare_data')
-                with open(os.path.join(cfg.case_dir, runscript)) as input_file:
+                with open(os.path.join(cfg.case_path, runscript)) as input_file:
                     to_write = input_file.read()
                 output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
                 with open(output_run, "w") as outf:
                     outf.write(
                         to_write.format(cfg=cfg,
+                                        meteo=cfg.meteo,
                                         logfile=logfile,
                                         logfile_finish=logfile_finish,
                                         datafile_list=datafile_list,
