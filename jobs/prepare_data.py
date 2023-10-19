@@ -351,7 +351,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
                 logfile_finish = os.path.join(cfg.log_finished_dir,
                                               'prepare_data')
-                with open(os.path.join(cfg.case_path, runscript)) as input_file:
+                with open(os.path.join(cfg.case_path,
+                                       runscript)) as input_file:
                     to_write = input_file.read()
                 output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
                 with open(output_run, "w") as outf:
