@@ -12,6 +12,10 @@ hstop: 12
 eccodes_dir: ./input/eccodes_definitions
 iconremap_bin: iconremap
 iconsub_bin: iconsub
+latbc_filename: ifs_201801<d><h>_lbc.nc
+inidata_filename: ifs_init_2018010100.nc
+output_filename: NWP_LAM
+filename_format: <output_filename>_DOM<physdom>_<ddhhmmss>
 lateral_boundary_grid_order: lateral_boundary
 
 meteo:
@@ -37,12 +41,10 @@ input_files:
     map_file_ana: ./input/icon/mapping/map_file.ana
 
 icon:
-    binary_file: ./src/cosmo-ghg/cosmo/ACC/cosmo_gpu
-    namelist_prefix: cosmo_INPUT_
-    runjob_filename: cosmo_runjob.cfg
+    binary_file: ./src/icon/bin/icon
+    runjob_filename: icon_runjob.cfg
     compute_queue: normal
     walltime: '00:30:00'
-    np_x: 6
-    np_y: 4
+    np_tot: 12
     np_io: 0
 
