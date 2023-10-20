@@ -61,7 +61,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     # Copy icon executable
     cfg.print_config()
     execname = 'icon.exe'
-    tools.copy_file(cfg.icon_binary_file, os.path.join(cfg.icon_work, execname))
+    tools.copy_file(cfg.icon_binary_file, os.path.join(cfg.icon_work,
+                                                       execname))
 
     # Get name of initial file
     if hasattr(cfg, 'inicond_filename'):
