@@ -371,21 +371,26 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             for time in tools.iter_hours(starttime, hstart, hstop,
                                          cfg.meteo['inc']):
                 # Specify file names
-                geosp_filename = time.replace(hour=0).strftime(
-                    cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_lbc.nc'
+                geosp_filename = time.replace(
+                    hour=0).strftime(cfg.meteo['prefix'] +
+                                     cfg.meteo['nameformat']) + '_lbc.nc'
                 geosp_file = os.path.join(cfg.icon_input_icbc, geosp_filename)
                 src_filename = time.strftime(
                     cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_lbc.nc'
                 src_file = os.path.join(cfg.icon_input_icbc, src_filename)
                 merged_filename = time.strftime(
-                    cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_merged.nc'
-                merged_file = os.path.join(cfg.icon_input_icbc, merged_filename)
+                    cfg.meteo['prefix'] +
+                    cfg.meteo['nameformat']) + '_merged.nc'
+                merged_file = os.path.join(cfg.icon_input_icbc,
+                                           merged_filename)
 
                 # Copy GEOSP file from last run if not present
                 if not os.path.exists(geosp_file):
                     src_file = os.path.join(cfg.icon_input_icbc_last_run,
                                             geosp_filename)
-                    tools.copy_file(src_file, cfg.icon_input_icbc, output_log=True)
+                    tools.copy_file(src_file,
+                                    cfg.icon_input_icbc,
+                                    output_log=True)
 
                 # Load GEOSP data array as da_geosp at time 00:
                 ds = xr.open_dataset(src_file)
@@ -680,6 +685,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                                 raise
 
                         # copy to (temporary) run input directory
-                        tools.copy_file(filename, scratch_path, output_log=True)
+                        tools.copy_file(filename,
+                                        scratch_path,
+                                        output_log=True)
 
                         logging.info("OK")
