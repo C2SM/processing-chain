@@ -148,10 +148,20 @@ class Config():
 
     def set_node_info(self):
         if self.constraint == 'gpu':
-            self.ntasks_per_node = 12
-            self.mpich_cuda = ('export MPICH_RDMA_ENABLED_CUDA=1\n'
-                               'export MPICH_G2G_PIPELINE=256\n'
-                               'export CRAY_CUDA_MPS=1\n')
+            if self.model.startswith('icon'):
+                if self.run_on == 'gpu':
+                    self.ntasks_per_node = 1
+                elif self.run_on == 'cpu':
+                    self.ntasks_per_node = 12
+                else:
+                    raise ValueError(
+                        "Invalid value for 'run_on' in the configuration."
+                        "It should be either 'gpu' or 'cpu'.")
+            else:
+                self.ntasks_per_node = 12
+                self.mpich_cuda = ('export MPICH_RDMA_ENABLED_CUDA=1\n'
+                                   'export MPICH_G2G_PIPELINE=256\n'
+                                   'export CRAY_CUDA_MPS=1\n')
         elif self.constraint == 'mc':
             self.ntasks_per_node = 36
             self.mpich_cuda = ''
