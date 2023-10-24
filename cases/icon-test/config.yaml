@@ -44,7 +44,9 @@ icon:
     binary_file: ./src/icon/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
-    walltime: '00:30:00'
-    np_tot: 12
-    np_io: 0
+    walltime: '00:20:00'
+    np_tot: 6
+    np_io: 1
+    np_restart: 1
+    np_prefetch: 1
 
