@@ -59,7 +59,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                  "submit the job to the queue")
 
     # Copy icon executable
-    cfg.print_config()
     execname = 'icon.exe'
     tools.copy_file(cfg.icon_binary_file, os.path.join(cfg.icon_work,
                                                        execname))
