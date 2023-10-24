@@ -59,7 +59,8 @@ def set_cfg_variables(cfg, starttime, hstart, hstop):
                 os.path.join(cfg.chain_root, 'icon', 'restart'))
         setattr(cfg, 'icon_restart_in',
                 os.path.join(cfg.chain_root_last_run, 'icon', 'restart'))
-        setattr(cfg, 'lrestart', '.TRUE.')
+        setattr(cfg, 'icon_input_icbc_last_run',
+                os.path.join(cfg.chain_root_last_run, 'icon', 'input', 'icbc'))
 
         cfg.input_files_scratch = {}
         for varname in cfg.input_files:
@@ -369,20 +370,30 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             #-----------------------------------------------------
             for time in tools.iter_hours(starttime, hstart, hstop,
                                          cfg.meteo['inc']):
-                src_file = os.path.join(
-                    cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo['prefix'] +
-                                  cfg.meteo['nameformat']) + '_lbc.nc')
-                merged_file = os.path.join(
-                    cfg.icon_input_icbc,
-                    time.strftime(cfg.meteo['prefix'] +
-                                  cfg.meteo['nameformat']) + '_merged.nc')
+                # Specify file names
+                geosp_filename = time.replace(hour=0).strftime(
+                    cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_lbc.nc'
+                geosp_file = os.path.join(cfg.icon_input_icbc, geosp_filename)
+                src_filename = time.strftime(
+                    cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_lbc.nc'
+                src_file = os.path.join(cfg.icon_input_icbc, src_filename)
+                merged_filename = time.strftime(
+                    cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_merged.nc'
+                merged_file = os.path.join(cfg.icon_input_icbc, merged_filename)
+
+                # Copy GEOSP file from last run if not present
+                if not os.path.exists(geosp_file):
+                    src_file = os.path.join(cfg.icon_input_icbc_last_run,
+                                            geosp_filename)
+                    tools.copy_file(src_file, cfg.icon_input_icbc, output_log=True)
+
+                # Load GEOSP data array as da_geosp at time 00:
                 ds = xr.open_dataset(src_file)
-                # Load GEOSP-dataset as ds_geosp at time 00:
-                if (time.hour == 0):
-                    da_geosp = ds['GEOSP']
+                ds_geosp = xr.open_dataset(geosp_file)
+                da_geosp = ds_geosp['GEOSP']
+
                 # Merge GEOSP-dataset with other timesteps
-                elif (time.hour != 0):
+                if (time.hour != 0):
                     # Change values of time dimension to current time
                     da_geosp = da_geosp.assign_coords(
                         time=[np.datetime64(time)])
@@ -392,6 +403,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     ds_merged.to_netcdf(merged_file)
                     # Rename file to get original file name
                     tools.rename_file(merged_file, src_file)
+                    # Logging info for merging GEOSP
                     logging.info("Added GEOSP to file {}".format(merged_file))
 
             #-----------------------------------------------------
@@ -517,7 +529,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 cfg.meteo['dir'],
                 starttime_real.strftime(source_nameformat + 'c.nc'))
 
-            tools.copy_file(src_file, dest_path)
+            tools.copy_file(src_file, dest_path, output_log=True)
 
             logging.info("Copied constant-param file from {} to {}".format(
                 src_file, dest_path))
@@ -589,7 +601,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 src_file = os.path.join(path, time.strftime(source_nameformat))
 
             # copy meteo file from project folder to
-            tools.copy_file(src_file, dest_path)
+            tools.copy_file(src_file, dest_path, output_log=True)
 
             logging.info("Copied file from {} to {}".format(
                 src_file, dest_path))
@@ -668,6 +680,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                                 raise
 
                         # copy to (temporary) run input directory
-                        tools.copy_file(filename, scratch_path)
+                        tools.copy_file(filename, scratch_path, output_log=True)
 
                         logging.info("OK")
