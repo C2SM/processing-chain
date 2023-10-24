@@ -71,8 +71,7 @@ def set_cfg_variables(cfg, starttime, hstart, hstop):
         cfg.ini_datetime_string = (
             starttime + timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
         cfg.end_datetime_string = (
-            starttime + timedelta(hours=hstart) +
-            timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
+            starttime + timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
 
     return cfg
 
