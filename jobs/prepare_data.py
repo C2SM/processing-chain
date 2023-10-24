@@ -68,8 +68,7 @@ def set_cfg_variables(cfg, starttime, hstart, hstop):
                 cfg.icon_input, os.path.basename(cfg.input_files[varname]))
         cfg.create_vars_from_dicts()
 
-        cfg.ini_datetime_string = (
-            starttime + timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
+        cfg.ini_datetime_string = starttime.strftime('%Y-%m-%dT%H:00:00Z')
         cfg.end_datetime_string = (
             starttime + timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
 
@@ -405,10 +404,10 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     ds_merged = xr.merge([ds, da_geosp])
                     ds_merged.attrs = ds.attrs
                     ds_merged.to_netcdf(merged_file)
-                    # Rename file to get original file name
-                    tools.rename_file(merged_file, src_file)
                     # Logging info for merging GEOSP
                     logging.info("Added GEOSP to file {}".format(merged_file))
+                    # Rename file to get original file name
+                    tools.rename_file(merged_file, src_file)
 
             #-----------------------------------------------------
             # Add Q (copy of QV) and/or PS to initial file
