@@ -195,6 +195,47 @@ def copy_file(source_path, dest_path, output_log=False):
     logging.info("Copied {} to {}".format(source_path, dest_path))
 
 
+def symlink_file(source_path, dest_path, output_log=False):
+    """Create a symbolic link from source_path to dest_path
+
+    Use os.symlink to create the symbolic link.
+    dest_path can be either a directory or a filepath.
+    If it is a directory, the link name will be kept,
+    if it is a filepath, the link name will be used.
+
+    Provides error description to the logfiles
+
+    Parameters
+    ----------
+    source_path : str
+        Path to the source file or directory
+    dest_path : str
+        Path to the destination directory or destination link
+    output_log : bool, optional
+        Whether to log messages (default is False)
+    """
+
+    try:
+        if os.path.lexists(dest_path):
+            os.remove(dest_path)
+        os.symlink(source_path, dest_path)
+    except FileNotFoundError:
+        if output_log:
+            logging.error(f"Source file or directory not found at {source_path}")
+        raise
+    except PermissionError:
+        if output_log:
+            logging.error(f"Creating symbolic link from {source_path} to {dest_path} failed due to a permission error.")
+        raise
+    except (OSError, Exception) as e:
+        if output_log:
+            logging.error(f"Creating symbolic link from {source_path} to {dest_path} failed with {type(e).__name__}")
+        raise
+
+    if output_log:
+        logging.info(f"Created symbolic link from {source_path} to {dest_path}")
+
+
 def rename_file(source_path, dest_path, output_log=False):
     """Copy a file from source_path to dest_path
 

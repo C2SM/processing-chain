@@ -64,6 +64,12 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     tools.copy_file(cfg.icon_binary_file, os.path.join(cfg.icon_work,
                                                        execname))
 
+    # Symlink the restart file to the last run into the icon/run folder
+    if cfg.lrestart == '.TRUE.': 
+        restart_filename = 'restart_atm_DOM01.nc'
+        restart_file = os.path.join(cfg.icon_restart_in, restart_filename)
+        tools.symlink_file(restart_file, os.path.join(cfg.icon_work, restart_filename))
+
     # Get name of initial file
     if hasattr(cfg, 'inicond_filename'):
         inidata_filename = os.path.join(cfg.icon_input_icbc,

@@ -58,7 +58,7 @@ def set_cfg_variables(cfg, starttime, hstart, hstop):
         setattr(cfg, 'icon_restart_out',
                 os.path.join(cfg.chain_root, 'icon', 'restart'))
         setattr(cfg, 'icon_restart_in',
-                os.path.join(cfg.chain_root_last_run, 'icon', 'restart'))
+                os.path.join(cfg.chain_root_last_run, 'icon', 'run'))
         setattr(cfg, 'icon_input_icbc_last_run',
                 os.path.join(cfg.chain_root_last_run, 'icon', 'input', 'icbc'))
 

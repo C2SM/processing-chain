@@ -344,6 +344,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     # Restart step
     if 'restart' in model_cfg['models'][cfg.model]['features']:
         setattr(cfg, 'restart_step', hstop - hstart)
+        setattr(cfg, 'restart_step_iso', f'PT{int(cfg.restart_step)}H')
 
     # If nested run: use output of mother-simulation
     if 'nesting' in model_cfg['models'][
