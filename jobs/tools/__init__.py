@@ -221,19 +221,25 @@ def symlink_file(source_path, dest_path, output_log=False):
         os.symlink(source_path, dest_path)
     except FileNotFoundError:
         if output_log:
-            logging.error(f"Source file or directory not found at {source_path}")
+            logging.error(
+                f"Source file or directory not found at {source_path}")
         raise
     except PermissionError:
         if output_log:
-            logging.error(f"Creating symbolic link from {source_path} to {dest_path} failed due to a permission error.")
+            logging.error(
+                f"Creating symbolic link from {source_path} to {dest_path} failed due to a permission error."
+            )
         raise
     except (OSError, Exception) as e:
         if output_log:
-            logging.error(f"Creating symbolic link from {source_path} to {dest_path} failed with {type(e).__name__}")
+            logging.error(
+                f"Creating symbolic link from {source_path} to {dest_path} failed with {type(e).__name__}"
+            )
         raise
 
     if output_log:
-        logging.info(f"Created symbolic link from {source_path} to {dest_path}")
+        logging.info(
+            f"Created symbolic link from {source_path} to {dest_path}")
 
 
 def rename_file(source_path, dest_path, output_log=False):
