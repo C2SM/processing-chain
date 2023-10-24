@@ -72,7 +72,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         starttime_real = starttime + timedelta(hours=hstart)
         inidata_filename = os.path.join(
             cfg.icon_input_icbc,
-            starttime_real.strftime(cfg.meteo_nameformat) + '.nc')
+            starttime_real.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '.nc')
 
     # Write run script (run_icon.job)
     icon_runjob = os.path.join(cfg.case_path, cfg.icon_runjob_filename)

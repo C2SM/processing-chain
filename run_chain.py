@@ -469,6 +469,12 @@ def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
             continue
         sub_hstop = sub_hstart + runtime
 
+        # Set restart variable (only takes effect for ICON)
+        if time == start:
+            setattr(cfg, "lrestart", '.FALSE.')
+        else:
+            setattr(cfg, "lrestart", '.TRUE.')
+
         print("Starting run with starttime {}".format(time))
 
         run_chain(work_root=work_root,
