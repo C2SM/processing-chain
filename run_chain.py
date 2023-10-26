@@ -246,8 +246,7 @@ class Config():
         return self
 
 
-def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
-              force):
+def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names, force):
     """Run chain ignoring already finished jobs.
 
     Sets configuration values derived from user-provided ones, for example the
@@ -285,13 +284,11 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     """
 
     # Initial date and forecast time
-    inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
-    inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
+    inidate_yyyymmddhh = cfg.startdate.strftime('%Y%m%d%H')
+    inidate_yyyymmdd_hh = cfg.startdate.strftime('%Y%m%d_%H')
     cfg.inidate_yyyymmddhh = inidate_yyyymmddhh
     cfg.inidate_yyyymmdd_hh = inidate_yyyymmdd_hh  # only for icon-art-oem
-    cfg.hstart = hstart
-    cfg.hstop = hstop
-    cfg.forecasttime = '%d' % (hstop - hstart)
+    cfg.forecasttime = (enddate_sim - startdate_sim).total_seconds() / 3600
 
     # Folder naming and structure
     cfg.job_id = '%s_%d_%d' % (cfg.inidate_yyyymmddhh, cfg.hstart, cfg.hstop)
@@ -444,8 +441,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                 raise RuntimeError(subject)
 
 
-def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
-                 force):
+def restart_runs(work_root, model_cfg, cfg, job_names, force):
     """Starts the subchains in the specified intervals.
     
     Slices the total runtime of the chain according to ``cfg.restart_step``.
@@ -472,16 +468,16 @@ def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
         If True will do job regardless of completion status
     """
     # run restarts
-    for time in tools.iter_hours(start, hstart, hstop, cfg.restart_step):
-        sub_hstart = (time - start).total_seconds() / 3600.0
-        runtime = min(cfg.restart_step, hstop - sub_hstart)
-        if runtime == 0:
-            # don't start simuation with 0 runtime
+    for time in tools.iter_hours(cfg.startdate, cfg.enddate, cfg.restart_step):
+        startdate_sim = time
+        enddate_sim = time + timedelta(hours=cfg.restart_step)
+        runtime_sim = (enddate_sim - startdate_sim).total_seconds() / 3600
+
+        if enddate_sim > cfg.enddate:
             continue
-        sub_hstop = sub_hstart + runtime
 
         # Set restart variable (only takes effect for ICON)
-        if time == start:
+        if time == cfg.startdate:
             setattr(cfg, "lrestart", '.FALSE.')
         else:
             setattr(cfg, "lrestart", '.TRUE.')
@@ -491,15 +487,13 @@ def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
         run_chain(work_root=work_root,
                   model_cfg=model_cfg,
                   cfg=cfg,
-                  start_time=start,
-                  hstart=sub_hstart,
-                  hstop=sub_hstop,
+                  startdate_sim=startdate_sim,
+                  enddate_sim=enddate_sim,
                   job_names=job_names,
                   force=force)
 
 
-def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop,
-                        job_names, force):
+def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
     """Starts the subchains in the specified intervals.
     
     Slices the total runtime of the chain according to ``cfg.restart_step``.
@@ -531,7 +525,10 @@ def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop,
         If True will do job regardless of completion status
     """
 
-    for time in tools.iter_hours(start, hstart, hstop, cfg.restart_step):
+    for time in tools.iter_hours(cfg.startdate, cfg.enddate, cfg.restart_step):
+        startdate_sim = time
+        enddate_sim = time + timedelta(hours=cfg.restart_step)
+        runtime_sim = (enddate_sim - startdate_sim).total_seconds() / 3600
         if time == start:
             setattr(cfg, "first_one", True)
             setattr(cfg, "second_one", False)
@@ -619,9 +616,6 @@ if __name__ == '__main__':
                 restart_runs_spinup(work_root=cfg.work_root,
                                     model_cfg=model_cfg,
                                     cfg=cfg,
-                                    start=cfg.startdate,
-                                    hstart=cfg.hstart,
-                                    hstop=cfg.hstop,
                                     job_names=args.job_list,
                                     force=args.force)
             else:
@@ -629,18 +623,12 @@ if __name__ == '__main__':
                 restart_runs(work_root=cfg.work_root,
                              model_cfg=model_cfg,
                              cfg=cfg,
-                             start=cfg.startdate,
-                             hstart=cfg.hstart,
-                             hstop=cfg.hstop,
                              job_names=args.job_list,
                              force=args.force)
         else:
             print("No restart is used.")
             run_chain(work_root=cfg.work_root,
                       cfg=cfg,
-                      start_time=cfg.startdate,
-                      hstart=cfg.hstart,
-                      hstop=cfg.hstop,
                       job_names=args.job_list,
                       force=args.force)
 
