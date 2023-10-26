@@ -23,6 +23,62 @@ from . import comp_nc
 from . import helper
 
 
+def iso8601_duration_to_hours(iso8601_duration):
+    # Initialize variables to store duration components
+    years = 0
+    months = 0
+    days = 0
+    hours = 0
+    minutes = 0
+    seconds = 0
+
+    # Split the duration string into its components
+    duration_components = iso8601_duration[1:]  # Remove the "P" prefix
+    time_flag = False  # Indicates when we're processing time components
+
+    while duration_components:
+        value = ""
+        while duration_components and duration_components[0].isdigit():
+            value += duration_components[0]
+            duration_components = duration_components[1:]
+
+        unit = duration_components[0]  # Get the unit character
+
+        if unit == 'T':
+            time_flag = True
+        else:
+            value = int(value) if value else 0
+
+            # Determine the unit and add the value accordingly
+            if unit == 'Y':
+                years = value
+            elif unit == 'M':
+                if time_flag:
+                    minutes = value
+                else:
+                    months = value
+            elif unit == 'D':
+                days = value
+            elif unit == 'H':
+                hours = value
+            elif unit == 'S':
+                seconds = value
+
+        duration_components = duration_components[1:]  # Move to the next character
+
+    # Calculate the total duration in hours
+    total_hours = (
+        years * 365 * 24 +
+        months * 30 * 24 +
+        days * 24 +
+        hours +
+        minutes / 60 +
+        seconds / 3600
+    )
+
+    return total_hours
+
+
 def iter_hours(starttime, hstart, hstop, step=1):
     """Return a generator that yields datetime-objects from 
     ``starttime + hstart`` up to (and possibly including) ``starttime + hstop`` 
