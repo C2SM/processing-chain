@@ -64,17 +64,12 @@ def iso8601_duration_to_hours(iso8601_duration):
             elif unit == 'S':
                 seconds = value
 
-        duration_components = duration_components[1:]  # Move to the next character
+        duration_components = duration_components[
+            1:]  # Move to the next character
 
     # Calculate the total duration in hours
-    total_hours = (
-        years * 365 * 24 +
-        months * 30 * 24 +
-        days * 24 +
-        hours +
-        minutes / 60 +
-        seconds / 3600
-    )
+    total_hours = (years * 365 * 24 + months * 30 * 24 + days * 24 + hours +
+                   minutes / 60 + seconds / 3600)
 
     return total_hours
 
