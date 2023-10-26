@@ -66,7 +66,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = prepare_data.set_cfg_variables(cfg)
+    cfg = prepare_data.set_cfg_variables(cfg, starttime, hstart, hstop)
     cfg = set_cfg_variables(cfg, starttime, hstart)
 
     # Total number of processes
