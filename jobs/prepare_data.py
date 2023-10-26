@@ -384,9 +384,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
                 # Copy GEOSP file from last run if not present
                 if not os.path.exists(geosp_file):
-                    src_file = os.path.join(cfg.icon_input_icbc_last_run,
+                    geosp_src_file = os.path.join(cfg.icon_input_icbc_last_run,
                                             geosp_filename)
-                    tools.copy_file(src_file,
+                    tools.copy_file(geosp_src_file,
                                     cfg.icon_input_icbc,
                                     output_log=True)
 
