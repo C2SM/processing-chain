@@ -483,6 +483,12 @@ def restart_runs(work_root, model_cfg, cfg, job_names, force):
         else:
             setattr(cfg, "lrestart", '.TRUE.')
 
+        # Set restart variable (only takes effect for ICON)
+        if time == start:
+            setattr(cfg, "lrestart", '.FALSE.')
+        else:
+            setattr(cfg, "lrestart", '.TRUE.')
+
         print("Starting run with starttime {}".format(time))
 
         run_chain(work_root=work_root,
@@ -617,6 +623,9 @@ if __name__ == '__main__':
                 restart_runs_spinup(work_root=cfg.work_root,
                                     model_cfg=model_cfg,
                                     cfg=cfg,
+                                    start=cfg.startdate,
+                                    hstart=cfg.hstart,
+                                    hstop=cfg.hstop,
                                     job_names=args.job_list,
                                     force=args.force)
             else:
@@ -624,12 +633,18 @@ if __name__ == '__main__':
                 restart_runs(work_root=cfg.work_root,
                              model_cfg=model_cfg,
                              cfg=cfg,
+                             start=cfg.startdate,
+                             hstart=cfg.hstart,
+                             hstop=cfg.hstop,
                              job_names=args.job_list,
                              force=args.force)
         else:
             print("No restart is used.")
             run_chain(work_root=cfg.work_root,
                       cfg=cfg,
+                      start_time=cfg.startdate,
+                      hstart=cfg.hstart,
+                      hstop=cfg.hstop,
                       job_names=args.job_list,
                       force=args.force)
 
