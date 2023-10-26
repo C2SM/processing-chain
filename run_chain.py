@@ -172,6 +172,9 @@ class Config():
 
         return self
 
+    def set_restart_step(self):
+        self.restart_step_hours = int(tools.iso8601_duration_to_hours(self.restart_step))
+    
     def set_email(self):
         if self.user_name == 'jenkins':
             self.user_mail = None
@@ -323,7 +326,9 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         cfg.cosmo_restart_out = ''
         cfg.cosmo_restart_in = ''
     elif 'restart' in model_cfg['models'][cfg.model]['features']:
-        cfg.chain_root_last_run = 'foo'
+        cfg.startdate_sim_prev = cfg.startdate_sim_yyyymmddhh - timedelta(hours=cfg.restart_step_hours)
+        cfg.enddate_sim_prev = cfg.enddate_sim_yyyymmddhh - timedelta(hours=cfg.restart_step_hours)
+        
         cfg.job_id_last_run = '%s_%d_%d' % (cfg.startdate_sim_yyyymmddhh,
                                             hstart - cfg.restart_step, hstart)
         cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
@@ -338,11 +343,6 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
     if hasattr(cfg, 'constraint'):
         assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
                                                  "gpu or mc")
-
-    # Restart step
-    if 'restart' in model_cfg['models'][cfg.model]['features']:
-        setattr(cfg, 'restart_step', hstop - hstart)
-        setattr(cfg, 'restart_step_iso', f'PT{int(cfg.restart_step)}H')
 
     # If nested run: use output of mother-simulation
     if 'nesting' in model_cfg['models'][
@@ -601,6 +601,9 @@ if __name__ == '__main__':
 
         # Convert relative to absolute paths
         cfg.convert_paths_to_absolute()
+
+        # Set restart step in hours
+        cfg.set_restart_step()
 
         # Print config before duplication of dict variables
         cfg.print_config()
