@@ -105,7 +105,7 @@ def iter_hours(startdate, enddate, step=1):
     Examples
     --------
     If the timeperiod is divisible by the step, the last timepoint will be
-    exactly ``starttime + hstop``. If not, the last timepoint will be before
+    exactly ``enddate``. If not, the last timepoint will be before
     that.
 
     >>> import datetime
