@@ -1,4 +1,4 @@
-# Configuration file for the 'cosmo-ghg-11km-test' case with COSMO-GHG
+# Configuration file for the 'cosmo-ghg-test' case with COSMO-GHG
 
 model: cosmo-ghg
 constraint: gpu
