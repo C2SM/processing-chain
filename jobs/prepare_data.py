@@ -72,6 +72,9 @@ def set_cfg_variables(cfg, starttime, hstart, hstop):
         cfg.end_datetime_string = (
             starttime + timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
 
+        if cfg.model == 'icon-art-oem':
+            cfg.startdate_sim_yyyymmdd_hh = startdate_sim.strftime('%Y%m%d_%H') 
+
     return cfg
 
 

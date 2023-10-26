@@ -284,15 +284,14 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         If True will do job regardless of completion status
     """
 
-    # Initial date and forecast time
-    inidate_yyyymmddhh = cfg.startdate.strftime('%Y%m%d%H')
-    inidate_yyyymmdd_hh = cfg.startdate.strftime('%Y%m%d_%H')
-    cfg.inidate_yyyymmddhh = inidate_yyyymmddhh
-    cfg.inidate_yyyymmdd_hh = inidate_yyyymmdd_hh  # only for icon-art-oem
+    # Set forecast time
     cfg.forecasttime = (enddate_sim - startdate_sim).total_seconds() / 3600
 
+    # String variables for startdate_sim
+    cfg.startdate_sim_yyyymmddhh = startdate_sim.strftime('%Y%m%d%H')
+
     # Folder naming and structure
-    cfg.job_id = '%s_%d_%d' % (cfg.inidate_yyyymmddhh, cfg.hstart, cfg.hstop)
+    cfg.job_id = '%s_%d_%d' % (cfg.startdate_sim_yyyymmddhh, cfg.hstart, cfg.hstop)
     cfg.chain_root = os.path.join(work_root, cfg.casename, cfg.job_id)
 
     if hasattr(cfg, 'spinup'):
@@ -301,7 +300,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         else:  # consecutive runs in spinup
             inidate_yyyymmddhh_spinup = (
                 start_time - timedelta(hours=cfg.spinup)).strftime('%Y%m%d%H')
-            cfg.inidate_yyyymmddhh = inidate_yyyymmddhh_spinup
+            cfg.startdate_sim_yyyymmddhh = inidate_yyyymmddhh_spinup
             cfg.hstart = 0
             cfg.hstop = hstop + cfg.spinup
             cfg.forecasttime = '%d' % (hstop + cfg.spinup)
@@ -324,7 +323,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         cfg.cosmo_restart_in = ''
     elif 'restart' in model_cfg['models'][cfg.model]['features']:
         cfg.chain_root_last_run = 'foo'
-        cfg.job_id_last_run = '%s_%d_%d' % (cfg.inidate_yyyymmddhh,
+        cfg.job_id_last_run = '%s_%d_%d' % (cfg.startdate_sim_yyyymmddhh,
                                             hstart - cfg.restart_step, hstart)
         cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
                                                cfg.job_id_last_run)
