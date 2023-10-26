@@ -1,12 +1,11 @@
-# Configuration file for the 'cosmo-ghg-11km-test' case with COSMO-GHG
+# Configuration file for the 'cosmo-ghg-test' case with COSMO-GHG
 
 model: cosmo-ghg
 constraint: gpu
 ntasks_per_node: 12
 restart_step: 6
 startdate: 2015-01-01T00:00:00Z
-hstart: 0
-hstop: 12
+enddate: 2015-01-01T12:00:00Z
 
 meteo:
     dir: ./input/cosmo-ghg/meteo

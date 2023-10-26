@@ -7,8 +7,7 @@ compute_queue: normal
 ntasks_per_node: 12
 restart_step: 6
 startdate: 2018-01-01T00:00:00Z
-hstart: 0
-hstop: 12
+enddate: 2018-01-01T12:00:00Z
 
 eccodes_dir: ./input/eccodes_definitions
 iconremap_bin: iconremap

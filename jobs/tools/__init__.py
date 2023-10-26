@@ -79,7 +79,7 @@ def iso8601_duration_to_hours(iso8601_duration):
     return total_hours
 
 
-def iter_hours(starttime, hstart, hstop, step=1):
+def iter_hours(startdate, enddate, step=1):
     """Return a generator that yields datetime-objects from 
     ``starttime + hstart`` up to (and possibly including) ``starttime + hstop`` 
     in ``step``-increments.
@@ -115,11 +115,10 @@ def iter_hours(starttime, hstart, hstop, step=1):
     >>> [t.hour for t in iter_hours(date, 9, 16, 3)]
     [9, 12, 15]
     """
-    assert hstop > hstart, "Start has to be before stop (hstop > hstart)"
-    current = starttime + timedelta(hours=hstart)
-    stoptime = starttime + timedelta(hours=hstop)
+    assert enddate > startdate, "Start has to be before stop (enddate > startdate)"
+    current = startdate
 
-    while current <= stoptime:
+    while current <= enddate:
         yield current
         current += timedelta(hours=step)
 
