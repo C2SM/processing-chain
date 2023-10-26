@@ -9,13 +9,13 @@
 import logging
 import os
 import shutil
-import datetime as dt
 import glob
 import netCDF4 as nc
-from . import tools
+from datetime import datetime, timedelta
+from . import tools, int2lm
 
 
-def main(start_time, hstart, hstop, cfg, model_cfg):
+def main(starttime, hstart, hstop, cfg, model_cfg):
     """Combine multiple **int2lm** tracer-output files into a single one for
     **COSMO**.
 
@@ -31,23 +31,24 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
     
     Parameters
     ----------	
-    start_time : datetime-object
+    starttime : datetime-object
         The starting date of the simulation
     hstart : int
-        Offset (in hours) of the actual start from the start_time
+        Offset (in hours) of the actual start from the starttime
     hstop : int
         Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    tools.check_model(cfg, 'cosmo-ghg')
+    cfg = int2lm.set_cfg_variables(cfg, starttime, hstart)
 
-    int2lm_output = cfg.int2lm_output
-    inidate_int2lm_yyyymmddhh = cfg.inidate_int2lm_yyyymmddhh
+    # Int2lm processing always starts at hstart=0, thus modifying inidate
+    inidate_int2lm_yyyymmddhh = (starttime +
+                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
 
-    chem_list = cfg.post_int2lm_species
+    chem_list = cfg.post_int2lm['species']
 
-    date = dt.datetime.today()
+    date = datetime.today()
 
     to_print = """POST_INT2LM
 
@@ -64,13 +65,13 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
     # Add background tracers in all 'lbfd**t.nc' files to
     # normal lbfd files, because CAMS tracers are only every 3 hours.
     # We add it 4 times to hour-1, hour+0, hour+1 and hour+2
-    for f in sorted(glob.glob(os.path.join(int2lm_output, 'lbfd*t.nc'))):
+    for f in sorted(glob.glob(os.path.join(cfg.int2lm_output, 'lbfd*t.nc'))):
         logging.info(f)
         yyyymmddhh_str = os.path.basename(f)[4:-4]
-        yyyymmddhh = dt.datetime.strptime(yyyymmddhh_str, '%Y%m%d%H')
+        yyyymmddhh = datetime.strptime(yyyymmddhh_str, '%Y%m%d%H')
 
         for hour in tools.iter_hours(yyyymmddhh, -1, 2):
-            outfile1 = os.path.join(int2lm_output,
+            outfile1 = os.path.join(cfg.int2lm_output,
                                     hour.strftime('lbfd%Y%m%d%H' + '.nc'))
             if os.path.exists(outfile1):
                 with nc.Dataset(outfile1, 'a') as outf, nc.Dataset(f) as inf:
@@ -91,17 +92,17 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
 
     # Meteo spinup simulation with tracer recycling
     if hasattr(cfg, 'spinup') and \
-    hasattr(cfg, 'post_int2lm_species_spinup') and not cfg.first_one:
-        var_list = cfg.post_int2lm_species_spinup
+    cfg.post_int2lm.get('species_spinup') is not None and not cfg.first_one:
+        var_list = cfg.post_int2lm['species_spinup']
         logging.info(
             'INITIAL CONDITIONS (RECYCLING): Adding tracers %s from last COSMO run (%s) to regular int2lm files.'
             % (str(var_list), cfg.last_cosmo_output))
 
-        infile_name = 'lffd' + start_time.strftime('%Y%m%d%H') + '*.nc'
+        infile_name = 'lffd' + starttime.strftime('%Y%m%d%H') + '*.nc'
         infile_paths = sorted(
             glob.glob(os.path.join(cfg.last_cosmo_output, infile_name)))
         outfile_name = 'laf' + inidate_int2lm_yyyymmddhh + '.nc'
-        outfile_path = os.path.join(int2lm_output, outfile_name)
+        outfile_path = os.path.join(cfg.int2lm_output, outfile_name)
 
         for infile_path in infile_paths:
             with nc.Dataset(infile_path) as inf, nc.Dataset(outfile_path,
@@ -127,7 +128,7 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
         logging.info(
             'INITIAL CONDITIONS: Adding tracers from laf*t.nc files to regular int2lm files.'
         )
-        infile = os.path.join(int2lm_output,
+        infile = os.path.join(cfg.int2lm_output,
                               "laf" + inidate_int2lm_yyyymmddhh + "t.nc")
         if os.path.exists(infile):
             outfile = infile[:-4] + ".nc"
@@ -154,7 +155,7 @@ def main(start_time, hstart, hstop, cfg, model_cfg):
                     'Appending tracers %s from file %s to file %s failed.' %
                     (str(chem_list), infile, outfile))
 
-    date = dt.datetime.today()
+    date = datetime.today()
     to_print = """=====================================================
 ============== POST PROCESSING ENDS ==================
 ============== EndTime: %s

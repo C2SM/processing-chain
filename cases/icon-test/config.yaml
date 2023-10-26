@@ -1,0 +1,53 @@
+# Configuration file for the 'icon-test' case with ICON
+
+model: icon
+constraint: gpu
+run_on: cpu
+compute_queue: normal
+ntasks_per_node: 12
+restart_step: 6
+startdate: 2018-01-01T00:00:00Z
+hstart: 0
+hstop: 12
+
+eccodes_dir: ./input/eccodes_definitions
+iconremap_bin: iconremap
+iconsub_bin: iconsub
+latbc_filename: ifs_201801<d><h>_lbc.nc
+inidata_filename: ifs_init_2018010100.nc
+output_filename: NWP_LAM
+filename_format: <output_filename>_DOM<physdom>_<ddhhmmss>
+lateral_boundary_grid_order: lateral_boundary
+
+meteo:
+    dir: ./input/meteo
+    prefix: ifs_
+    nameformat: '%Y%m%d%H'
+    suffix: .grb
+    inc: 3
+
+icontools_runjobs:
+    - icontools_remap_ic_runjob.cfg
+    - icontools_remap_00_lbc_runjob.cfg
+    - icontools_remap_lbc_rest_runjob.cfg
+
+input_files:
+    radiation_grid_filename: ./input/icon/grid/VERIFY_DOM_DOM01.parent.nc
+    dynamics_grid_filename: ./input/icon/grid/VERIFY_DOM_DOM01.nc
+    map_file_latbc: ./input/icon/grid/map_file.latbc
+    lateral_boundary_grid: ./input/icon/grid/lateral_boundary.grid.nc
+    extpar_filename: ./input/icon/grid/external_parameter_icon_VERIFY_DOM_DOM01_tiles.nc
+    cldopt_filename: ./input/icon/rad/rrtm_cldopt.nc
+    lrtm_filename: ./input/icon/rad/rrtmg_lw.nc
+    map_file_ana: ./input/icon/mapping/map_file.ana
+
+icon:
+    binary_file: ./src/icon/bin/icon
+    runjob_filename: icon_runjob.cfg
+    compute_queue: normal
+    walltime: '00:10:00'
+    np_tot: 8
+    np_io: 1
+    np_restart: 1
+    np_prefetch: 1
+

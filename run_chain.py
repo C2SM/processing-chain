@@ -33,20 +33,6 @@ def parse_arguments():
                         "to be in cases/<casename>/. The runs are executed "
                         "sequentially in the order they're given here.")
 
-    times_help = ("Triplet of {date hstart hstop} | "
-                  "date: Startdate of the run in the format "
-                  "yyyy-mm-dd | "
-                  "hstart: Time on the startdate when the "
-                  "simulation starts. If this is zero, the "
-                  "simulation starts at midnight of the +startdate. | "
-                  "hstop: Length of the simulation in hours. The "
-                  "simulation runs until startdate + hstart + "
-                  "hstop. Depending on your config.py settings, "
-                  "processing-chain will split up the simulation "
-                  "and perform several restarts before reaching the "
-                  "stopping-time.")
-    parser.add_argument("times", nargs=3, help=times_help)
-
     jobs_help = ("List of job-names to be executed. A job is a .py-"
                  "file in jobs/ with a main()-function which "
                  "handles one aspect of the processing chain, for "
@@ -80,68 +66,184 @@ def parse_arguments():
                         default=1)
 
     args = parser.parse_args()
-    args.startdate = args.times[0]
-    args.hstart = int(args.times[1])
-    args.hstop = int(args.times[2])
 
     return args
 
 
-def load_config_file(casename, cfg):
-    """Load the config file.
+class Config():
 
-    Looks for the config file in ``cases/casename/config.py`` and then imports
-    it as a module. This lets the config file contain python statements which
-    are evaluated on import.
+    def __init__(self, casename):
+        # Global attributes (initialized with default values)
+        self.user_name = os.environ['USER']
+        self.set_email()
+        self.casename = casename
+        self.set_account()
 
-    If this is not the first config-file to be imported by run_chain.py, the
-    module has to be reloaded to overwrite the values of the old case.
+        self.chain_src_dir = os.getcwd()
+        self.case_path = os.path.join(self.chain_src_dir, 'cases',
+                                      self.casename)
+        self.work_root = os.path.join(self.chain_src_dir, 'work')
 
-    Access variables declared in the config-file (``myval = 9``) with
-    ``cfg.myval``.
+        # User-defined attributes from config file
+        self.load_config_file(casename)
 
-    Add new variables with::
+        # Specific settings based on the node type ('gpu' or 'mc')
+        self.set_node_info()
 
-        setattr(cfg, 'myval', 9)
+    def load_config_file(self, casename):
+        """
+        Load the configuration settings from a YAML file.
 
-    Parameters
-    ----------
-    casename : str
-        Name of the folder in cases/ where the configuration files are stored
-    cfg : module or None
-        If cfg is None, the module is freshly imported. If it is a module
-        object, that module is reloaded.
+        This method reads the configuration settings from a YAML file located in
+        the 'cases/casename' directory and sets them as attributes of the instance.
 
-    Returns
-    -------
-    config-object
-        Object with all variables as attributes
-    """
-    cfg_path = os.path.join('cases', casename, 'config')
+        Parameters:
+        - casename (str): Name of the folder in 'cases/' where the configuration
+          files are stored.
 
-    if not os.path.exists(os.path.dirname(cfg_path)):
-        all_cases = [path.name for path in os.scandir('cases') if path.is_dir]
-        closest_name = min([(tools.levenshtein(casename, name), name)
-                            for name in all_cases],
-                           key=lambda x: x[0])[1]
-        raise FileNotFoundError("Case-directory '{}' not found, did you "
-                                "mean '{}'?".format(casename, closest_name))
+        Returns:
+        - self (Config): The same `Config` instance with configuration settings as
+          attributes.
+        """
 
-    sys.path.append(os.path.dirname(cfg_path))
+        cfg_file = os.path.join('cases', casename, 'config.yaml')
 
-    try:
-        if cfg is None:
-            cfg = importlib.import_module(os.path.basename(cfg_path))
+        if not os.path.isfile(cfg_file):
+            all_cases = [
+                path.name for path in os.scandir('cases') if path.is_dir()
+            ]
+            closest_name = min([(tools.levenshtein(casename, name), name)
+                                for name in all_cases],
+                               key=lambda x: x[0])[1]
+            raise FileNotFoundError(
+                f"Case-directory '{casename}' not found, did you mean '{closest_name}'?"
+            )
+
+        try:
+            with open(cfg_file, 'r') as yaml_file:
+                cfg_data = yaml.load(yaml_file, Loader=yaml.FullLoader)
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f"No file 'config.yaml' in {os.path.dirname(cfg_file)}")
+
+        # Directly assign values to instance attributes
+        for key, value in cfg_data.items():
+            setattr(self, key, value)
+
+        return self
+
+    def set_account(self):
+        if self.user_name == 'jenkins':
+            # g110 account for Jenkins testing
+            self.compute_account = 'g110'
+        elif os.path.exists(os.environ['HOME'] + '/.acct'):
+            # Use account specified in ~/.acct file
+            with open(os.environ['HOME'] + '/.acct', 'r') as file:
+                self.compute_account = file.read().rstrip()
         else:
-            cfg = importlib.reload(cfg)
-    except ModuleNotFoundError:
-        raise FileNotFoundError("No file 'config.py' in " +
-                                os.path.dirname(cfg_path))
+            # Use standard account
+            self.compute_account = os.popen("id -gn").read().splitlines()[0]
 
-    # so that a different cfg-file can be imported later
-    sys.path.pop()
+        return self
 
-    return cfg
+    def set_node_info(self):
+        if self.constraint == 'gpu':
+            if self.model.startswith('icon'):
+                if self.run_on == 'gpu':
+                    self.ntasks_per_node = 1
+                elif self.run_on == 'cpu':
+                    self.ntasks_per_node = 12
+                else:
+                    raise ValueError(
+                        "Invalid value for 'run_on' in the configuration."
+                        "It should be either 'gpu' or 'cpu'.")
+            else:
+                self.ntasks_per_node = 12
+                self.mpich_cuda = ('export MPICH_RDMA_ENABLED_CUDA=1\n'
+                                   'export MPICH_G2G_PIPELINE=256\n'
+                                   'export CRAY_CUDA_MPS=1\n')
+        elif self.constraint == 'mc':
+            self.ntasks_per_node = 36
+            self.mpich_cuda = ''
+        else:
+            raise ValueError(
+                "Invalid value for 'constraint' in the configuration."
+                "It should be either 'gpu' or 'mc'.")
+
+        return self
+
+    def set_email(self):
+        if self.user_name == 'jenkins':
+            self.user_mail = None
+        elif os.path.exists(os.environ['HOME'] + '/.forward'):
+            with open(os.environ['HOME'] + '/.forward', 'r') as file:
+                self.user_mail = file.read().rstrip()
+        else:
+            self.user_mail = None
+
+        return self
+
+    def print_config(self):
+        # Print the configuration
+        # max_col_width = max(len(key) for key in vars(self)) + 1
+        max_col_width = 27
+
+        print("\nConfiguration:")
+        print(f"{'Attribute':<{max_col_width}} Type Value")
+        print("-" * 80)
+        for key, value in vars(self).items():
+            if isinstance(value, list):
+                # If the value is a list, format it with indentation
+                print(f"{key:<{max_col_width}} list")
+                for item in value:
+                    item_type = type(item).__name__
+                    print(f"  - {item:<{max_col_width-4}} {item_type}")
+            elif isinstance(value, dict):
+                # If the value is a dictionary, format it as before
+                print(f"{key:<{max_col_width}} dict")
+                for sub_key, sub_value in value.items():
+                    sub_value_type = type(sub_value).__name__
+                    print(
+                        f"  - {sub_key:<{max_col_width-4}} {sub_value_type:<4} {sub_value}"
+                    )
+            else:
+                # Standard output
+                key_type = type(key).__name__
+                print(f"{key:<{max_col_width}} {key_type:<4} {value}")
+
+    def convert_paths_to_absolute(self):
+        # Loop through all variables and their dictionary entries
+        for attr_name, attr_value in self.__dict__.items():
+            if isinstance(attr_value, str):
+                if os.path.isabs(attr_value):
+                    # If the value is already an absolute path, continue to the next iteration
+                    continue
+                # Convert relative paths to absolute paths
+                if attr_value.startswith('./'):
+                    self.__dict__[attr_name] = os.path.abspath(attr_value)
+            elif isinstance(attr_value, dict):
+                # If the attribute is a dictionary, loop through its entries
+                for key, value in attr_value.items():
+                    if isinstance(value, str):
+                        if os.path.isabs(value):
+                            # If the value is already an absolute path, continue to the next iteration
+                            continue
+                        # Convert relative paths to absolute paths
+                        if value.startswith('./'):
+                            self.__dict__[attr_name][key] = os.path.abspath(
+                                value)
+
+        return self
+
+    def create_vars_from_dicts(self):
+        # Create a copy of the object's __dict__ to avoid modifying it during iteration
+        object_dict = vars(self).copy()
+
+        for key, value in object_dict.items():
+            if isinstance(value, dict):
+                for sub_key, sub_value in value.items():
+                    setattr(self, key + '_' + sub_key, sub_value)
+        return self
 
 
 def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
@@ -181,207 +283,92 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
     force : bool
         If True will do job regardless of completion status
     """
-    # Read mail address
-    if os.environ['USER'] == 'jenkins':
-        mail_address = None
-    elif os.path.exists(os.environ['HOME'] + '/.forward'):
-        with open(os.environ['HOME'] + '/.forward', 'r') as file:
-            mail_address = file.read().rstrip()
-    else:
-        mail_address = None
 
-    # ini date and forecast time (ignore meteo times)
-    inidate = int((start_time - datetime(1970, 1, 1)).total_seconds())
+    # Initial date and forecast time
     inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
     inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
-    inidate_yyyymmddhhmmss = start_time.strftime('%Y%m%d%H%M%S')
-    forecasttime = '%d' % (hstop - hstart)
-    setattr(cfg, 'inidate', inidate)
-    setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh)
-    setattr(cfg, 'inidate_yyyymmdd_hh', inidate_yyyymmdd_hh)
-    setattr(cfg, 'inidate_yyyymmddhhmmss', inidate_yyyymmddhhmmss)
-    setattr(cfg, 'hstart', hstart)
-    setattr(cfg, 'hstop', hstop)
-    forecasttime = '%d' % (hstop - hstart)
-    inidate_int2lm_yyyymmddhh = (start_time +
-                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
+    cfg.inidate_yyyymmddhh = inidate_yyyymmddhh
+    cfg.inidate_yyyymmdd_hh = inidate_yyyymmdd_hh  # only for icon-art-oem
+    cfg.hstart = hstart
+    cfg.hstop = hstop
+    cfg.forecasttime = '%d' % (hstop - hstart)
+
+    # Folder naming and structure
+    cfg.job_id = '%s_%d_%d' % (cfg.inidate_yyyymmddhh, cfg.hstart, cfg.hstop)
+    cfg.chain_root = os.path.join(work_root, cfg.casename, cfg.job_id)
 
     if hasattr(cfg, 'spinup'):
         if cfg.first_one:  # first run in spinup
-            chain_root_last_run = ''
+            cfg.chain_root_last_run = ''
         else:  # consecutive runs in spinup
             inidate_yyyymmddhh_spinup = (
                 start_time - timedelta(hours=cfg.spinup)).strftime('%Y%m%d%H')
-            setattr(cfg, 'inidate_yyyymmddhh', inidate_yyyymmddhh_spinup)
-            setattr(cfg, 'hstart', 0)
-            setattr(cfg, 'hstop', hstop + cfg.spinup)
-            forecasttime = '%d' % (hstop + cfg.spinup)
+            cfg.inidate_yyyymmddhh = inidate_yyyymmddhh_spinup
+            cfg.hstart = 0
+            cfg.hstop = hstop + cfg.spinup
+            cfg.forecasttime = '%d' % (hstop + cfg.spinup)
             inidate_yyyymmddhh_last_run = (
                 start_time -
                 timedelta(hours=cfg.restart_step)).strftime('%Y%m%d%H')
             if cfg.second_one:  # second run (i.e., get job_id from first run)
-                job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run, 0,
-                                                hstop)
+                cfg.job_id_last_run = '%s_%d_%d' % (
+                    inidate_yyyymmddhh_last_run, 0, hstop)
             else:  # all other runs
-                job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh_last_run,
-                                                0 - cfg.spinup, hstop)
-            chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                               job_id_last_run)
+                cfg.job_id_last_run = '%s_%d_%d' % (
+                    inidate_yyyymmddhh_last_run, 0 - cfg.spinup, hstop)
+            cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
+                                                   cfg.job_id_last_run)
+        cfg.last_cosmo_output = os.path.join(cfg.chain_root_last_run, 'cosmo',
+                                             'output')
 
-    setattr(cfg, 'forecasttime', forecasttime)
+        # No restart for spinup simulations (= default values for no restart)
+        cfg.cosmo_restart_out = ''
+        cfg.cosmo_restart_in = ''
+    elif 'restart' in model_cfg['models'][cfg.model]['features']:
+        cfg.chain_root_last_run = 'foo'
+        cfg.job_id_last_run = '%s_%d_%d' % (cfg.inidate_yyyymmddhh,
+                                            hstart - cfg.restart_step, hstart)
+        cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
+                                               cfg.job_id_last_run)
+        # Set restart directories
+        cfg.cosmo_restart_out = os.path.join(cfg.chain_root, 'cosmo',
+                                             'restart')
+        cfg.cosmo_restart_in = os.path.join(cfg.chain_root_last_run, 'cosmo',
+                                            'restart')
 
-    # chain
-    job_id = '%s_%d_%d' % (inidate_yyyymmddhh, hstart, hstop)
-    chain_root = os.path.join(work_root, cfg.casename, job_id)
-    setattr(cfg, 'chain_root', chain_root)
-
-    if cfg.model.startswith('cosmo'):
-        # TODO: refactor
-        # INT2LM
-        setattr(cfg, 'int2lm_base', os.path.join(chain_root, 'int2lm'))
-        setattr(cfg, 'int2lm_input', os.path.join(chain_root, 'int2lm',
-                                                  'input'))
-        setattr(cfg, 'int2lm_work', os.path.join(chain_root, 'int2lm', 'run'))
-        setattr(cfg, 'int2lm_output',
-                os.path.join(chain_root, 'int2lm', 'output'))
-
-        # int2lm processing always starts at hstart=0 and we modify inidate instead
-        setattr(cfg, 'inidate_int2lm_yyyymmddhh', inidate_int2lm_yyyymmddhh)
-        setattr(cfg, 'hstart_int2lm', '0')
-        setattr(cfg, 'hstop_int2lm', forecasttime)
-
-        # COSMO
-        setattr(cfg, 'cosmo_base', os.path.join(chain_root, 'cosmo'))
-        setattr(cfg, 'cosmo_input', os.path.join(chain_root, 'cosmo', 'input'))
-        setattr(cfg, 'cosmo_work', os.path.join(chain_root, 'cosmo', 'run'))
-        setattr(cfg, 'cosmo_output', os.path.join(chain_root, 'cosmo',
-                                                  'output'))
-        setattr(cfg, 'cosmo_output_reduced',
-                os.path.join(chain_root, 'cosmo', 'output_reduced'))
-
-        # Number of tracers
-        if 'tracers' in model_cfg['models'][cfg.model]['features']:
-            tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases',
-                                          cfg.casename, 'cosmo_tracers.csv')
-            if os.path.isfile(tracer_csvfile):
-                with open(tracer_csvfile, 'r') as csv_file:
-                    reader = csv.DictReader(csv_file, delimiter=',')
-                    reader = [r for r in reader if r[''] != '#']
-                    setattr(cfg, 'in_tracers', len(reader))
-            else:
-                raise FileNotFoundError(f"File not found: {tracer_csvfile}")
-
-            # tracer_start namelist paramter for spinup simulation
-            if hasattr(cfg, 'spinup'):
-                if cfg.first_one:
-                    setattr(cfg, 'tracer_start', 0)
-                else:
-                    setattr(cfg, 'tracer_start', cfg.spinup)
-            else:
-                setattr(cfg, 'tracer_start', 0)
-
-        # asynchronous I/O
-        if hasattr(cfg, 'cfg.cosmo_np_io'):
-            if cfg.cosmo_np_io == 0:
-                setattr(cfg, 'lasync_io', '.FALSE.')
-                setattr(cfg, 'num_iope_percomm', 0)
-            else:
-                setattr(cfg, 'lasync_io', '.TRUE.')
-                setattr(cfg, 'num_iope_percomm', 1)
-
-    # constraint (gpu or mc)
+    # Check constraint
     if hasattr(cfg, 'constraint'):
         assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
                                                  "gpu or mc")
 
-    # Spinup
-    if hasattr(cfg, 'spinup'):
-        setattr(cfg, 'last_cosmo_output',
-                os.path.join(chain_root_last_run, 'cosmo', 'output'))
-        # No restart for spinup simulations (= default values for no restart)
-        setattr(cfg, 'cosmo_restart_out', '')
-        setattr(cfg, 'cosmo_restart_in', '')
-    elif 'restart' in model_cfg['models'][cfg.model]['features']:
-        job_id_last_run = '%s_%d_%d' % (inidate_yyyymmddhh,
-                                        hstart - cfg.restart_step, hstart)
-        chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                           job_id_last_run)
-        # Set restart directories
-        setattr(cfg, 'cosmo_restart_out',
-                os.path.join(chain_root, 'cosmo', 'restart'))
-        setattr(cfg, 'cosmo_restart_in',
-                os.path.join(chain_root_last_run, 'cosmo', 'restart'))
-
     # Restart step
     if 'restart' in model_cfg['models'][cfg.model]['features']:
         setattr(cfg, 'restart_step', hstop - hstart)
+        setattr(cfg, 'restart_step_iso', f'PT{int(cfg.restart_step)}H')
 
-    # if nested run: use output of mother-simulation
+    # If nested run: use output of mother-simulation
     if 'nesting' in model_cfg['models'][
-            cfg.model]['features'] and not os.path.isdir(cfg.meteo_dir):
+            cfg.model]['features'] and not os.path.isdir(cfg.meteo.dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
-        mother_name = cfg.meteo_dir
-        cfg.meteo_dir = os.path.join(work_root, mother_name, job_id, 'cosmo',
-                                     'output')
-        cfg.meteo_inc = 1
-        cfg.meteo_prefix = 'lffd'
+        mother_name = cfg.meteo.dir
+        cfg.meteo.dir = os.path.join(work_root, mother_name, cfg.job_id,
+                                     'cosmo', 'output')
+        cfg.meteo.inc = 1
+        cfg.meteo.prefix = 'lffd'
 
-    # ICON
-    if cfg.model.startswith('icon'):
-        setattr(cfg, 'icon_base', os.path.join(chain_root, 'icon'))
-        setattr(cfg, 'icon_input', os.path.join(chain_root, 'icon', 'input'))
-        setattr(cfg, 'icon_input_icbc',
-                os.path.join(chain_root, 'icon', 'input', 'icbc'))
-        setattr(cfg, 'icon_input_oae',
-                os.path.join(chain_root, 'icon', 'input', 'OEM'))
-        setattr(cfg, 'icon_input_grid',
-                os.path.join(chain_root, 'icon', 'input', 'grid'))
-        setattr(cfg, 'icon_input_mapping',
-                os.path.join(chain_root, 'icon', 'input', 'mapping'))
-        setattr(cfg, 'icon_input_rad',
-                os.path.join(chain_root, 'icon', 'input', 'rad'))
-        setattr(cfg, 'icon_input_xml',
-                os.path.join(chain_root, 'icon', 'input', 'XML'))
-        setattr(cfg, 'icon_work', os.path.join(chain_root, 'icon', 'run'))
-        setattr(cfg, 'icon_output', os.path.join(chain_root, 'icon', 'output'))
-        setattr(cfg, 'icon_output_reduced',
-                os.path.join(chain_root, 'icon', 'output_reduced'))
-
-        for varname in cfg.input_files:
-            file_info = cfg.input_files[varname]
-            setattr(cfg, varname,
-                    os.path.join(cfg.input_root, file_info[1], file_info[0]))
-            setattr(cfg, f'{varname}_scratch',
-                    os.path.join(cfg.icon_input, file_info[1], file_info[0]))
-        ini_datetime_string = (
-            start_time +
-            timedelta(hours=hstart)).strftime('%Y-%m-%dT%H:00:00Z')
-        end_datetime_string = (
-            start_time + timedelta(hours=hstart) +
-            timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
-        setattr(cfg, 'ini_datetime_string', ini_datetime_string)
-        setattr(cfg, 'end_datetime_string', end_datetime_string)
-        # Set restart directories
-        setattr(cfg, 'icon_restart_out',
-                os.path.join(chain_root, 'icon', 'restart'))
-        setattr(cfg, 'icon_restart_in',
-                os.path.join(chain_root_last_run, 'icon', 'restart'))
-        # TODO: Set correct restart setting
-        setattr(cfg, 'lrestart', '.FALSE.')
-
-    # logging
-    log_working_dir = os.path.join(chain_root, 'checkpoints', 'working')
-    log_finished_dir = os.path.join(chain_root, 'checkpoints', 'finished')
+    # Logging
+    log_working_dir = os.path.join(cfg.chain_root, 'checkpoints', 'working')
+    log_finished_dir = os.path.join(cfg.chain_root, 'checkpoints', 'finished')
     setattr(cfg, 'log_working_dir', log_working_dir)
     setattr(cfg, 'log_finished_dir', log_finished_dir)
 
-    # create working dirs
-    tools.create_dir(chain_root, "chain_root")
+    # Create working directories
+    tools.create_dir(cfg.chain_root, "chain_root")
     tools.create_dir(log_working_dir, "log_working")
     tools.create_dir(log_finished_dir, "log_finished")
 
-    # number of levels and switch for unit conversion for 'reduce_output' job
+    # Number of levels and switch for unit conversion for 'reduce_output' job
     if not hasattr(cfg, 'output_levels'):
         setattr(cfg, 'output_levels', -1)
     if not hasattr(cfg, 'convert_gas'):
@@ -396,11 +383,12 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
             if not force:
                 while True:
                     if os.path.exists(os.path.join(log_finished_dir, job)):
-                        print('Skip "%s" for chain "%s"' % (job, job_id))
+                        print('Skip "%s" for chain "%s"' % (job, cfg.job_id))
                         skip = True
                         break
                     else:
-                        print('Wait for "%s" of chain "%s"' % (job, job_id))
+                        print('Wait for "%s" of chain "%s"' %
+                              (job, cfg.job_id))
                         sys.stdout.flush()
                         for _ in range(3000):
                             time.sleep(0.1)
@@ -412,7 +400,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                     pass
 
         if not skip:
-            print('Process "%s" for chain "%s"' % (job, job_id))
+            print('Process "%s" for chain "%s"' % (job, cfg.job_id))
             sys.stdout.flush()
 
             try_count = 1 + (args.ntry - 1) * (job == 'cosmo')
@@ -434,25 +422,25 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                     try_count = 0
                 except:
                     subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
-                        job, job_id)
+                        job, cfg.job_id)
                     logging.exception(subject)
-                    if mail_address:
+                    if cfg.user_mail:
                         message = tools.prepare_message(
                             os.path.join(log_working_dir, job))
-                        logging.info('Sending log file to %s' % mail_address)
-                        tools.send_mail(mail_address, subject, message)
+                        logging.info('Sending log file to %s' % cfg.user_mail)
+                        tools.send_mail(cfg.user_mail, subject, message)
                     if try_count == 0:
                         raise RuntimeError(subject)
 
             if exitcode != 0 or not os.path.exists(
                     os.path.join(log_finished_dir, job)):
                 subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
-                    job, job_id)
-                if mail_address:
+                    job, cfg.job_id)
+                if cfg.user_mail:
                     message = tools.prepare_message(
                         os.path.join(log_working_dir, job))
-                    logging.info('Sending log file to %s' % mail_address)
-                    tools.send_mail(mail_address, subject, message)
+                    logging.info('Sending log file to %s' % cfg.user_mail)
+                    tools.send_mail(cfg.user_mail, subject, message)
                 raise RuntimeError(subject)
 
 
@@ -491,6 +479,12 @@ def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
             # don't start simuation with 0 runtime
             continue
         sub_hstop = sub_hstart + runtime
+
+        # Set restart variable (only takes effect for ICON)
+        if time == start:
+            setattr(cfg, "lrestart", '.FALSE.')
+        else:
+            setattr(cfg, "lrestart", '.TRUE.')
 
         print("Starting run with starttime {}".format(time))
 
@@ -538,7 +532,6 @@ def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop,
     """
 
     for time in tools.iter_hours(start, hstart, hstop, cfg.restart_step):
-        print(time)
         if time == start:
             setattr(cfg, "first_one", True)
             setattr(cfg, "second_one", False)
@@ -566,7 +559,7 @@ def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop,
         if endtime_act_sim > start + timedelta(hours=hstop):
             continue
 
-        print('Runtime of sub-simulation: ', run_time)
+        print(f'Runtime of sub-simulation: {run_time} h')
 
         if cfg.first_one:
             run_chain(work_root=work_root,
@@ -597,12 +590,23 @@ def load_model_config_yaml(yamlfile):
 if __name__ == '__main__':
     args = parse_arguments()
 
-    # 'empty' config object to be overwritten by load_config_file
-    cfg = None
     for casename in args.casenames:
+        # Load configs
         model_cfg = load_model_config_yaml('config/models.yaml')
-        cfg = load_config_file(casename=casename, cfg=cfg)
-        start_time = datetime.strptime(args.startdate, '%Y-%m-%d')
+        cfg = Config(casename)
+
+        # Convert relative to absolute paths
+        cfg.convert_paths_to_absolute()
+
+        # Print config before duplication of dict variables
+        cfg.print_config()
+
+        # Duplicate variables in the form of <dict>_<value> for better
+        # access within namelist template.
+        # E.g.: cfg.meteo['dir'] -> cfg.meteo_dir
+        cfg.create_vars_from_dicts()
+
+        # Check if jobs are set or if default ones are used
         if args.job_list is None:
             args.job_list = model_cfg['models'][cfg.model]['jobs']
 
@@ -615,9 +619,9 @@ if __name__ == '__main__':
                 restart_runs_spinup(work_root=cfg.work_root,
                                     model_cfg=model_cfg,
                                     cfg=cfg,
-                                    start=start_time,
-                                    hstart=args.hstart,
-                                    hstop=args.hstop,
+                                    start=cfg.startdate,
+                                    hstart=cfg.hstart,
+                                    hstop=cfg.hstop,
                                     job_names=args.job_list,
                                     force=args.force)
             else:
@@ -625,18 +629,18 @@ if __name__ == '__main__':
                 restart_runs(work_root=cfg.work_root,
                              model_cfg=model_cfg,
                              cfg=cfg,
-                             start=start_time,
-                             hstart=args.hstart,
-                             hstop=args.hstop,
+                             start=cfg.startdate,
+                             hstart=cfg.hstart,
+                             hstop=cfg.hstop,
                              job_names=args.job_list,
                              force=args.force)
         else:
             print("No restart is used.")
             run_chain(work_root=cfg.work_root,
                       cfg=cfg,
-                      start_time=start_time,
-                      hstart=args.hstart,
-                      hstop=args.hstop,
+                      start_time=cfg.startdate,
+                      hstart=cfg.hstart,
+                      hstop=cfg.hstop,
                       job_names=args.job_list,
                       force=args.force)
 

@@ -10,4 +10,4 @@ function error {
 # Check if script is called correctly
 [[ $(git rev-parse --show-toplevel 2>/dev/null) = $(pwd) ]] || error "$0 not launched from toplevel of repository"
 
-python run_chain.py icon-test -f
+python run_chain.py cosmo-ghg-spinup-test -f

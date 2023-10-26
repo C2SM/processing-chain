@@ -5,7 +5,7 @@
 import os
 import logging
 
-from . import tools
+from . import tools, cosmo
 
 
 def main(starttime, hstart, hstop, cfg, model_cfg):
@@ -23,12 +23,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
+    cfg = cosmo.set_cfg_variables(cfg, model_cfg)
 
-    oem_dir = cfg.oem_dir
+    oem_dir = cfg.oem['dir']
     oem_gridded_emissions_nc = os.path.join(oem_dir,
-                                            cfg.oem_gridded_emissions_nc)
+                                            cfg.oem['gridded_emissions_nc'])
     oem_vertical_profiles_nc = os.path.join(oem_dir,
-                                            cfg.oem_vertical_profiles_nc)
+                                            cfg.oem['vertical_profiles_nc'])
 
     # Temporal profiles can be given as hourofday, dayofweek, monthofyear
     # AND/OR as hourofyear. We copy all files indicated in cfg, but make
@@ -36,13 +37,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     hod_tps = True
     hoy_tps = True
     try:
-        oem_hourofday_nc = os.path.join(oem_dir, cfg.oem_hourofday_nc)
-        oem_dayofweek_nc = os.path.join(oem_dir, cfg.oem_dayofweek_nc)
-        oem_monthofyear_nc = os.path.join(oem_dir, cfg.oem_monthofyear_nc)
+        oem_hourofday_nc = os.path.join(oem_dir, cfg.oem['hourofday_nc'])
+        oem_dayofweek_nc = os.path.join(oem_dir, cfg.oem['dayofweek_nc'])
+        oem_monthofyear_nc = os.path.join(oem_dir, cfg.oem['monthofyear_nc'])
     except AttributeError:
         hod_tps = False
     try:
-        oem_hourofyear_nc = os.path.join(oem_dir, cfg.oem_hourofyear_nc)
+        oem_hourofyear_nc = os.path.join(oem_dir, cfg.oem['hourofyear_nc'])
     except AttributeError:
         hoy_tps = False
 
@@ -60,24 +61,26 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     logging.info("Copying oem files from {} to {}".format(oem_dir, dest_dir))
 
     if hod_tps:
-        tools.copy_file(oem_gridded_emissions_nc,
-                        os.path.join(dest_dir, cfg.oem_gridded_emissions_nc))
-        tools.copy_file(oem_vertical_profiles_nc,
-                        os.path.join(dest_dir, cfg.oem_vertical_profiles_nc))
+        tools.copy_file(
+            oem_gridded_emissions_nc,
+            os.path.join(dest_dir, cfg.oem['gridded_emissions_nc']))
+        tools.copy_file(
+            oem_vertical_profiles_nc,
+            os.path.join(dest_dir, cfg.oem['vertical_profiles_nc']))
         tools.copy_file(oem_hourofday_nc,
-                        os.path.join(dest_dir, cfg.oem_hourofday_nc))
+                        os.path.join(dest_dir, cfg.oem['hourofday_nc']))
         tools.copy_file(oem_dayofweek_nc,
-                        os.path.join(dest_dir, cfg.oem_dayofweek_nc))
+                        os.path.join(dest_dir, cfg.oem['dayofweek_nc']))
         tools.copy_file(oem_monthofyear_nc,
-                        os.path.join(dest_dir, cfg.oem_monthofyear_nc))
+                        os.path.join(dest_dir, cfg.oem['monthofyear_nc']))
     if hoy_tps:
         tools.copy_file(oem_hourofyear_nc,
-                        os.path.join(dest_dir, cfg.oem_hourofyear_nc))
+                        os.path.join(dest_dir, cfg.oem['hourofyear_nc']))
 
     # Additional files for ICON simulations
-    if hasattr(cfg, 'oem_ens_reg_nc'):
-        tools.copy_file(os.path.join(oem_dir, cfg.oem_ens_reg_nc),
-                        os.path.join(dest_dir, cfg.oem_ens_reg_nc))
-    if hasattr(cfg, 'oem_ens_lambda_nc'):
-        tools.copy_file(os.path.join(oem_dir, cfg.oem_ens_lambda_nc),
-                        os.path.join(dest_dir, cfg.oem_ens_lambda_nc))
+    if cfg.oem.get('ens_reg_nc') is not None:
+        tools.copy_file(os.path.join(oem_dir, cfg.oem['ens_reg_nc']),
+                        os.path.join(dest_dir, cfg.oem['ens_reg_nc']))
+    if cfg.oem.get('oem_ens_lambda_nc') is not None:
+        tools.copy_file(os.path.join(oem_dir, cfg.oem['ens_lambda_nc']),
+                        os.path.join(dest_dir, cfg.oem['ens_lambda_nc']))

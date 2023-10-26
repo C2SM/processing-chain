@@ -12,9 +12,21 @@
 import os
 import logging
 import shutil
-from . import tools
 import subprocess
-from datetime import datetime
+import pytz
+from datetime import datetime, timedelta
+from . import tools, prepare_data
+
+
+def set_cfg_variables(cfg, starttime, hstart):
+
+    setattr(cfg, 'int2lm_run', os.path.join(cfg.chain_root, 'int2lm', 'run'))
+    setattr(cfg, 'int2lm_output',
+            os.path.join(cfg.chain_root, 'int2lm', 'output'))
+    cfg.int2lm['inidate_yyyymmddhh'] = (
+        starttime + timedelta(hours=hstart)).strftime('%Y%m%d%H')
+
+    return cfg
 
 
 def main(starttime, hstart, hstop, cfg, model_cfg):
@@ -26,16 +38,16 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     ``startdate`` of the simulation.
 
     Create necessary directory structure to run **int2lm** (run and output
-    directories, defined in ``cfg.int2lm`` and ``cfg.int2lm_output``).
+    directories, defined in ``cfg.int2lm`` and ``cfg.int2lm['output']``).
 
-    Copy the **int2lm**-executable from ``cfg.int2lm_bin`` to 
-    ``cfg.int2lm_work/int2lm``.
+    Copy the **int2lm**-executable from ``cfg.int2lm['binary_file']`` to 
+    ``cfg.int2lm['work']/int2lm``.
 
-    Copy the extpar-file from ``cfg.extpar_dir/cfg.extpar_file`` to
-    ``cfg.int2lm_run/extpar``.
+    Copy the extpar-file ``cfg.int2lm['extpar_file']`` to
+    ``cfg.int2lm_run/work``.
 
     **COSMOART**: Copy the ``libgrib_api`` files to
-    ``cfg.int2lm_work/libgrib_api``.
+    ``cfg.int2lm['work']/libgrib_api``.
 
     **COSMO**: Convert the tracer-csv-files into a **int2lm**-namelist file.
 
@@ -54,47 +66,49 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    logfile = os.path.join(cfg.log_working_dir, "int2lm")
-    logfile_finish = os.path.join(cfg.log_finished_dir, "int2lm")
+    cfg = prepare_data.set_cfg_variables(cfg, starttime, hstart, hstop)
+    cfg = set_cfg_variables(cfg, starttime, hstart)
 
-    # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
-    if starttime < datetime.strptime('2007-08-02', '%Y-%m-%d'):
-        multi_layer = ".FALSE."
-    else:
-        multi_layer = ".TRUE."
-    setattr(cfg, "multi_layer", multi_layer)
+    # Total number of processes
+    np_tot = cfg.int2lm['np_x'] * cfg.int2lm['np_y']
 
-    # Create int2lm directory
-    tools.create_dir(cfg.int2lm_work, "int2lm_work")
-    tools.create_dir(cfg.int2lm_output, "int2lm_output")
+    # Set folder names
+    int2lm_run = os.path.join(cfg.int2lm_run)
+    int2lm_output = os.path.join(cfg.int2lm_output)
 
-    tools.copy_file(cfg.int2lm_bin, os.path.join(cfg.int2lm_work, "int2lm"))
+    # Create int2lm directories
+    tools.create_dir(int2lm_run, "int2lm_run")
+    tools.create_dir(int2lm_output, "int2lm_output")
+
+    tools.copy_file(cfg.int2lm['binary_file'],
+                    os.path.join(int2lm_run, "int2lm"))
 
     # Copy extpar file to input/extpar directory
     extpar_dir = os.path.join(cfg.int2lm_input, "extpar")
-    extpar_file = os.path.join(cfg.int2lm_extpar_dir, cfg.int2lm_extpar_file)
     tools.create_dir(extpar_dir, "int2lm extpar")
-    tools.copy_file(extpar_file, extpar_dir)
+    tools.copy_file(
+        os.path.join(cfg.int2lm['extpar_dir'], cfg.int2lm['extpar_filename']),
+        extpar_dir)
 
     # Copy landuse and plant-functional-type files
     if cfg.model == 'cosmo-art':
-        lu_file_src = os.path.join(cfg.int2lm_lu_dir, cfg.int2lm_lu_file)
+        lu_file_src = cfg.int2lm['lu_file']
         lu_file_dst = os.path.join(extpar_dir, 'landuse.nc')
         tools.copy_file(lu_file_src, lu_file_dst)
 
-        pft_file_src = os.path.join(cfg.int2lm_pft_dir, cfg.int2lm_pft_file)
+        pft_file_src = cfg.int2lm['pft_file']
         pft_file_dst = os.path.join(extpar_dir, 'pft.nc')
         tools.copy_file(pft_file_src, pft_file_dst)
 
         # Copy libgrib_api
-        dest = os.path.join(cfg.int2lm_work, 'libgrib_api')
+        dest = os.path.join(cfg.int2lm['work'], 'libgrib_api')
         try:
             # delete so no error when forcing this job
             shutil.rmtree(dest)
         except FileNotFoundError:
             pass
         try:
-            shutil.copytree(src=cfg.int2lm_libgrib_dir,
+            shutil.copytree(src=cfg.int2lm['libgrib_dir'],
                             dst=dest,
                             symlinks=True)
         except FileNotFoundError:
@@ -110,36 +124,64 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     if os.path.isfile(tracer_csvfile):
         datasets_csvfile = os.path.join(cfg.chain_src_dir, 'cases',
                                         cfg.casename, 'int2lm_datasets.csv')
-        input_art_filename = os.path.join(cfg.int2lm_work, 'INPUT_ART')
+        input_art_filename = os.path.join(int2lm_run, 'INPUT_ART')
 
         tools.write_int2lm_input_art.main(tracer_csvfile, datasets_csvfile,
                                           input_art_filename)
 
+    # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
+    if starttime < datetime(2007, 8, 2, tzinfo=pytz.UTC):
+        multi_layer = ".FALSE."
+    else:
+        multi_layer = ".TRUE."
+
     # Prepare namelist
-    with open(cfg.int2lm_namelist) as input_file:
-        to_write = input_file.read()
+    with open(os.path.join(cfg.case_path,
+                           cfg.int2lm['namelist_filename'])) as input_file:
+        int2lm_namelist = input_file.read()
 
-    output_file = os.path.join(cfg.int2lm_work, "INPUT")
-    with open(output_file, "w") as outf:
-        outf.write(to_write.format(cfg=cfg))
+    # Int2lm processing always starts at hstart=0, thus modifying inidate
+    hstart_int2lm = 0
+    hstop_int2lm = cfg.forecasttime
 
-    # Prepare runscript
-    with open(cfg.int2lm_runjob) as input_file:
-        to_write = input_file.read()
-
-    output_file = os.path.join(cfg.int2lm_work, "run.job")
+    output_file = os.path.join(int2lm_run, "INPUT")
     with open(output_file, "w") as outf:
         outf.write(
-            to_write.format(cfg=cfg,
-                            ini_day=cfg.inidate_int2lm_yyyymmddhh[0:8],
-                            ini_hour=cfg.inidate_int2lm_yyyymmddhh[8:],
-                            logfile=logfile,
-                            logfile_finish=logfile_finish))
+            int2lm_namelist.format(
+                cfg=cfg,
+                **cfg.int2lm,
+                hstart_int2lm=hstart_int2lm,
+                hstop_int2lm=hstop_int2lm,
+                multi_layer=multi_layer,
+                meteo_prefix=cfg.meteo['prefix'],
+            ))
+
+    # Prepare runscript
+    with open(os.path.join(cfg.case_path,
+                           cfg.int2lm['runjob_filename'])) as input_file:
+        int2lm_runscript = input_file.read()
+
+    # Logfile variables
+    logfile = os.path.join(cfg.log_working_dir, "int2lm")
+    logfile_finish = os.path.join(cfg.log_finished_dir, "int2lm")
+
+    output_file = os.path.join(int2lm_run, "run.job")
+    with open(output_file, "w") as outf:
+        outf.write(
+            int2lm_runscript.format(cfg=cfg,
+                                    **cfg.int2lm,
+                                    int2lm_run=int2lm_run,
+                                    ini_day=cfg.inidate_yyyymmddhh[0:8],
+                                    ini_hour=cfg.inidate_yyyymmddhh[8:],
+                                    np_tot=np_tot,
+                                    hstop_int2lm=hstop_int2lm,
+                                    logfile=logfile,
+                                    logfile_finish=logfile_finish))
 
     # Submit job
     result = subprocess.run(
         ["sbatch", "--wait",
-         os.path.join(cfg.int2lm_work, "run.job")])
+         os.path.join(int2lm_run, "run.job")])
     exitcode = result.returncode
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))

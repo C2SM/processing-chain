@@ -23,6 +23,57 @@ from . import comp_nc
 from . import helper
 
 
+def iso8601_duration_to_hours(iso8601_duration):
+    # Initialize variables to store duration components
+    years = 0
+    months = 0
+    days = 0
+    hours = 0
+    minutes = 0
+    seconds = 0
+
+    # Split the duration string into its components
+    duration_components = iso8601_duration[1:]  # Remove the "P" prefix
+    time_flag = False  # Indicates when we're processing time components
+
+    while duration_components:
+        value = ""
+        while duration_components and duration_components[0].isdigit():
+            value += duration_components[0]
+            duration_components = duration_components[1:]
+
+        unit = duration_components[0]  # Get the unit character
+
+        if unit == 'T':
+            time_flag = True
+        else:
+            value = int(value) if value else 0
+
+            # Determine the unit and add the value accordingly
+            if unit == 'Y':
+                years = value
+            elif unit == 'M':
+                if time_flag:
+                    minutes = value
+                else:
+                    months = value
+            elif unit == 'D':
+                days = value
+            elif unit == 'H':
+                hours = value
+            elif unit == 'S':
+                seconds = value
+
+        duration_components = duration_components[
+            1:]  # Move to the next character
+
+    # Calculate the total duration in hours
+    total_hours = (years * 365 * 24 + months * 30 * 24 + days * 24 + hours +
+                   minutes / 60 + seconds / 3600)
+
+    return total_hours
+
+
 def iter_hours(starttime, hstart, hstop, step=1):
     """Return a generator that yields datetime-objects from 
     ``starttime + hstart`` up to (and possibly including) ``starttime + hstop`` 
@@ -193,6 +244,53 @@ def copy_file(source_path, dest_path, output_log=False):
             type(e).__name__))
         raise
     logging.info("Copied {} to {}".format(source_path, dest_path))
+
+
+def symlink_file(source_path, dest_path, output_log=False):
+    """Create a symbolic link from source_path to dest_path
+
+    Use os.symlink to create the symbolic link.
+    dest_path can be either a directory or a filepath.
+    If it is a directory, the link name will be kept,
+    if it is a filepath, the link name will be used.
+
+    Provides error description to the logfiles
+
+    Parameters
+    ----------
+    source_path : str
+        Path to the source file or directory
+    dest_path : str
+        Path to the destination directory or destination link
+    output_log : bool, optional
+        Whether to log messages (default is False)
+    """
+
+    try:
+        if os.path.lexists(dest_path):
+            os.remove(dest_path)
+        os.symlink(source_path, dest_path)
+    except FileNotFoundError:
+        if output_log:
+            logging.error(
+                f"Source file or directory not found at {source_path}")
+        raise
+    except PermissionError:
+        if output_log:
+            logging.error(
+                f"Creating symbolic link from {source_path} to {dest_path} failed due to a permission error."
+            )
+        raise
+    except (OSError, Exception) as e:
+        if output_log:
+            logging.error(
+                f"Creating symbolic link from {source_path} to {dest_path} failed with {type(e).__name__}"
+            )
+        raise
+
+    if output_log:
+        logging.info(
+            f"Created symbolic link from {source_path} to {dest_path}")
 
 
 def rename_file(source_path, dest_path, output_log=False):

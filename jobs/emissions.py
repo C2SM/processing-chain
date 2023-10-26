@@ -25,18 +25,18 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
     Necessary for both **COSMO** and **COSMOART** simulations.
 
-    Copy emission files from project folder (``cfg.emissions_dir``) to
+    Copy emission files from project folder (``cfg.emissions['dir']``) to
     **int2lm** input folder on scratch (``cfg.int2lm_input/emissions``).
 
     For **COSMO** simulations, converts the the netCDF-variable-names 
     from ``string`` to ``char`` (necessary for **int2lm**).
 
-    If there are multiple emission-datasets (cfg.emissions_dir is a list of
+    If there are multiple emission-datasets (cfg.emissions['dir'] is a list of
     paths), they are copied as follows::
 
-        cfg.emissions_dir[0]/cfg.emis_gridname[0]YYYYMMDD.nc -> int2lm_input/emissions/emis_YYYYMMDD.nc
-        cfg.emissions_dir[1]/cfg.emis_gridname[1]YYYYMMDD.nc -> int2lm_input/emissions2/emis_YYYYMMDD.nc
-        cfg.emissions_dir[2]/cfg.emis_gridname[2]YYYYMMDD.nc -> int2lm_input/emissions3/emis_YYYYMMDD.nc
+        cfg.emissions['dir'][0]/cfg.emissions['gridname'][0]YYYYMMDD.nc -> int2lm_input/emissions/emis_YYYYMMDD.nc
+        cfg.emissions['dir'][1]/cfg.emissions['gridname'][1]YYYYMMDD.nc -> int2lm_input/emissions2/emis_YYYYMMDD.nc
+        cfg.emissions['dir'][2]/cfg.emissions['gridname'][2]YYYYMMDD.nc -> int2lm_input/emissions3/emis_YYYYMMDD.nc
 
     Parameters
     ----------	
@@ -51,17 +51,18 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     """
     dest_prefix = "emis_"
 
-    if not isinstance(cfg.emissions_dir, list):
-        emis_dirs = [cfg.emissions_dir]
+    if not isinstance(cfg.emissions['dir'], list):
+        emis_dirs = [cfg.emissions['dir']]
     else:
-        emis_dirs = cfg.emissions_dir
-    if not isinstance(cfg.emis_gridname, list):
-        emis_prefixes = [cfg.emis_gridname]
+        emis_dirs = cfg.emissions['dir']
+    if not isinstance(cfg.emissions['gridname'], list):
+        emis_prefixes = [cfg.emissions['gridname']]
     else:
-        emis_prefixes = cfg.emis_gridname
+        emis_prefixes = cfg.emissions['gridname']
 
     assert len(emis_dirs) == len(emis_prefixes), (
-        "Different number of cfg.emissions_dir and cfg.emis_gridname")
+        "Different number of cfg.emissions['dir'] and cfg.emissions['gridname']"
+    )
 
     for i, (emis_dir, emis_prefix) in enumerate(zip(emis_dirs, emis_prefixes)):
         # create directory
