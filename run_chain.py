@@ -291,7 +291,8 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
     cfg.startdate_sim_yyyymmddhh = startdate_sim.strftime('%Y%m%d%H')
 
     # Folder naming and structure
-    cfg.job_id = '%s_%d_%d' % (cfg.startdate_sim_yyyymmddhh, cfg.hstart, cfg.hstop)
+    cfg.job_id = '%s_%d_%d' % (cfg.startdate_sim_yyyymmddhh, cfg.hstart,
+                               cfg.hstop)
     cfg.chain_root = os.path.join(work_root, cfg.casename, cfg.job_id)
 
     if hasattr(cfg, 'spinup'):
