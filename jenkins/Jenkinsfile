@@ -127,6 +127,23 @@ pipeline {
                 }
             }
         }
+        stage('Test COSMO-GHG (spinup)') {
+            environment {
+                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
+            }
+            steps {
+                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                conda activate proc-chain
+                . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
+                ./jenkins/scripts/test_cosmo-ghg-spinup.sh'''
+            }
+            post {
+                failure {
+                    echo 'Cleaning up workspace'
+                    deleteDir()
+                }
+            }
+        }
         stage('Test ICON') {
             environment {
                 PATH = "${WORKSPACE}/miniconda/bin:$PATH"

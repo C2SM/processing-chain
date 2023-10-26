@@ -73,15 +73,23 @@ else
 fi
 
 # Test COSMO-GHG
-if [[ -f work/cosmo-ghg-11km-test/2015010112_-6_12/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+if [[ -f work/cosmo-ghg-test/2015010106_0_6/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg test case already finished - skipping test.
 else
   echo running cosmo-ghg test case...
   ./jenkins/scripts/test_cosmo-ghg.sh
 fi
 
+# Test COSMO-GHG (spinup)
+if [[ -f work/cosmo-ghg-spinup-test/2015010106_-3_6/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+  echo cosmo-ghg test case already finished - skipping test.
+else
+  echo running cosmo-ghg-spinup test case...
+  ./jenkins/scripts/test_cosmo-ghg-spinup.sh
+fi
+
 # Test ICON
-if [[ -f work/icon-test/2018010100_0_24/checkpoints/finished/icon && "$force_execution" == false ]]; then
+if [[ -f work/icon-test/2018010100_6_12/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon test case already finished - skipping test.
 else
   echo running icon test case...
