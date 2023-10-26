@@ -246,7 +246,8 @@ class Config():
         return self
 
 
-def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names, force):
+def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
+              force):
     """Run chain ignoring already finished jobs.
 
     Sets configuration values derived from user-provided ones, for example the
