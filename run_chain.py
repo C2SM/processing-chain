@@ -173,8 +173,9 @@ class Config():
         return self
 
     def set_restart_step(self):
-        self.restart_step_hours = int(tools.iso8601_duration_to_hours(self.restart_step))
-    
+        self.restart_step_hours = int(
+            tools.iso8601_duration_to_hours(self.restart_step))
+
     def set_email(self):
         if self.user_name == 'jenkins':
             self.user_mail = None
@@ -326,9 +327,11 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         cfg.cosmo_restart_out = ''
         cfg.cosmo_restart_in = ''
     elif 'restart' in model_cfg['models'][cfg.model]['features']:
-        cfg.startdate_sim_prev = cfg.startdate_sim_yyyymmddhh - timedelta(hours=cfg.restart_step_hours)
-        cfg.enddate_sim_prev = cfg.enddate_sim_yyyymmddhh - timedelta(hours=cfg.restart_step_hours)
-        
+        cfg.startdate_sim_prev = cfg.startdate_sim_yyyymmddhh - timedelta(
+            hours=cfg.restart_step_hours)
+        cfg.enddate_sim_prev = cfg.enddate_sim_yyyymmddhh - timedelta(
+            hours=cfg.restart_step_hours)
+
         cfg.job_id_last_run = '%s_%d_%d' % (cfg.startdate_sim_yyyymmddhh,
                                             hstart - cfg.restart_step, hstart)
         cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
