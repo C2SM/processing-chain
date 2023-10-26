@@ -73,7 +73,7 @@ else
 fi
 
 # Test COSMO-GHG
-if [[ -f work/cosmo-ghg-test/2015010106_0_6/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+if [[ -f work/cosmo-ghg-test/2015010100_6_12/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg test case already finished - skipping test.
 else
   echo running cosmo-ghg test case...
