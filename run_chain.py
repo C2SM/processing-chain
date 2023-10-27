@@ -293,7 +293,8 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
     cfg.enddate_sim = enddate_sim
 
     # Set forecast time
-    cfg.forecasttime = (cfg.enddate_sim - cfg.startdate_sim).total_seconds() / 3600
+    cfg.forecasttime = (cfg.enddate_sim -
+                        cfg.startdate_sim).total_seconds() / 3600
 
     # String variables for startdate_sim
     cfg.startdate_sim_yyyymmddhh = startdate_sim.strftime('%Y%m%d%H')
@@ -308,8 +309,11 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         if cfg.first_one:  # first run in spinup
             cfg.chain_root_prev = None
         else:  # consecutive runs in spinup
-            cfg.startdate_sim_yyyymmddhh = cfg.startdate_sim.strftime('%Y%m%d%H')
-            enddate_sim_yyyymmddhh_prev = (cfg.enddate_sim - timedelta(hours=cfg.restart_step_hours)).strftime('%Y%m%d%H')
+            cfg.startdate_sim_yyyymmddhh = cfg.startdate_sim.strftime(
+                '%Y%m%d%H')
+            enddate_sim_yyyymmddhh_prev = (
+                cfg.enddate_sim -
+                timedelta(hours=cfg.restart_step_hours)).strftime('%Y%m%d%H')
 
             if cfg.second_one:  # second run (i.e., get job_id from first run)
                 cfg.job_id_prev = '%s_%d_%d' % (inidate_yyyymmddhh_prev, 0,
@@ -332,7 +336,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
             hours=cfg.restart_step_hours)
         cfg.job_id_prev = f'{cfg.startdate_sim_prev_yyyymmddhh}_{cfg.enddate_sim_prev_yyyymmddhh}'
         cfg.chain_root_prev = os.path.join(work_root, cfg.casename,
-                                               cfg.job_id_prev)
+                                           cfg.job_id_prev)
 
         # Set restart directories
         cfg.cosmo_restart_out = os.path.join(cfg.chain_root, 'cosmo',
@@ -413,7 +417,8 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
 
                     # Launch the job
                     to_call = getattr(jobs, job)
-                    to_call.main(cfg.startdate_sim, enddate_sim, cfg, model_cfg)
+                    to_call.main(cfg.startdate_sim, enddate_sim, cfg,
+                                 model_cfg)
 
                     shutil.copy(logfile, logfile_finish)
 
@@ -539,7 +544,8 @@ def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
             setattr(cfg, "lrestart", '.FALSE.')
             run_time = cfg.restart_step_hours
             startdate_sim_spinup = startdate_sim
-        elif startdate_sim == cfg.startdate + timedelta(hours=cfg.restart_step_hours-cfg.spinup):
+        elif startdate_sim == cfg.startdate + timedelta(
+                hours=cfg.restart_step_hours - cfg.spinup):
             setattr(cfg, "first_one", False)
             setattr(cfg, "second_one", True)
             setattr(cfg, "lrestart", '.TRUE.')
