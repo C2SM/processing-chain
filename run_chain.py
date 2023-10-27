@@ -317,13 +317,13 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
                 start_time -
                 timedelta(hours=cfg.restart_step_hours)).strftime('%Y%m%d%H')
             if cfg.second_one:  # second run (i.e., get job_id from first run)
-                cfg.job_id_prev = '%s_%d_%d' % (
-                    inidate_yyyymmddhh_prev, 0, hstop)
+                cfg.job_id_prev = '%s_%d_%d' % (inidate_yyyymmddhh_prev, 0,
+                                                hstop)
             else:  # all other runs
-                cfg.job_id_prev = '%s_%d_%d' % (
-                    inidate_yyyymmddhh_prev, 0 - cfg.spinup, hstop)
+                cfg.job_id_prev = '%s_%d_%d' % (inidate_yyyymmddhh_prev,
+                                                0 - cfg.spinup, hstop)
             cfg.chain_root_prev = os.path.join(work_root, cfg.casename,
-                                                   cfg.job_id_prev)
+                                               cfg.job_id_prev)
         cfg.last_cosmo_output = os.path.join(cfg.chain_root_prev, 'cosmo',
                                              'output')
 
@@ -476,7 +476,8 @@ def restart_runs(work_root, model_cfg, cfg, job_names, force):
         If True will do job regardless of completion status
     """
     # run restarts
-    for time in tools.iter_hours(cfg.startdate, cfg.enddate, cfg.restart_step_hours):
+    for time in tools.iter_hours(cfg.startdate, cfg.enddate,
+                                 cfg.restart_step_hours):
         startdate_sim = time
         enddate_sim = time + timedelta(hours=cfg.restart_step_hours)
         runtime_sim = (enddate_sim - startdate_sim).total_seconds() / 3600
@@ -533,7 +534,8 @@ def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
         If True will do job regardless of completion status
     """
 
-    for time in tools.iter_hours(cfg.startdate, cfg.enddate, cfg.restart_step_hours):
+    for time in tools.iter_hours(cfg.startdate, cfg.enddate,
+                                 cfg.restart_step_hours):
         startdate_sim = time
         enddate_sim = time + timedelta(hours=cfg.restart_step_hours)
         runtime_sim = (enddate_sim - startdate_sim).total_seconds() / 3600
