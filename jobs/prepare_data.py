@@ -38,7 +38,7 @@ from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 from calendar import monthrange
 
 
-def set_cfg_variables(cfg, starttime, hstart, hstop):
+def set_cfg_variables(cfg, startdate, hstart, hstop):
 
     # TODO: Change setattr() to direct assignment
     if cfg.model.startswith('cosmo'):
@@ -68,17 +68,17 @@ def set_cfg_variables(cfg, starttime, hstart, hstop):
                 cfg.icon_input, os.path.basename(cfg.input_files[varname]))
         cfg.create_vars_from_dicts()
 
-        cfg.ini_datetime_string = starttime.strftime('%Y-%m-%dT%H:00:00Z')
+        cfg.ini_datetime_string = startdate.strftime('%Y-%m-%dT%H:00:00Z')
         cfg.end_datetime_string = (
-            starttime + timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
+            startdate + timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
 
         if cfg.model == 'icon-art-oem':
-            cfg.startdate_sim_yyyymmdd_hh = startdate_sim.strftime('%Y%m%d_%H')
+            cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime('%Y%m%d_%H')
 
     return cfg
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(startdate, enddate, cfg, model_cfg):
     """
     **ICON** 
 
@@ -110,22 +110,20 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     
     Parameters
     ----------
-    starttime : datetime-object
+    startdate : datetime-object
         The starting date of the simulation
     hstart : int
-        Offset (in hours) of the actual start from the starttime
+        Offset (in hours) of the actual start from the startdate
     hstop : int
         Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
 
-    cfg = set_cfg_variables(cfg, starttime, hstart, hstop)
+    cfg = set_cfg_variables(cfg, startdate, enddate)
 
     if cfg.model.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
-
-        starttime_real = starttime + timedelta(hours=hstart)
 
         #-----------------------------------------------------
         # Create directories
@@ -148,7 +146,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             # -- Download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
                 # -- Fetch ERA5 data
-                fetch_era5(starttime_real, cfg.icon_input_icbc)
+                fetch_era5(startdate, cfg.icon_input_icbc)
 
                 # -- Copy ERA5 processing script (icon_era5_inicond.job) in workdir
                 with open(cfg.icon_era5_inijob) as input_file:
@@ -194,9 +192,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                             to_write.format(cfg=cfg,
                                             filename=filename,
                                             ext_restart=ext_restart,
-                                            year=starttime_real.year,
-                                            month=starttime_real.month,
-                                            day=starttime_real.day))
+                                            year=startdate.year,
+                                            month=startdate.month,
+                                            day=startdate.day))
 
                     # -- Run ERA5 processing script
                     process = subprocess.Popen([
@@ -209,7 +207,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
                     # -- Create initial conditions for OH concentrations
                     if 'TROH' in cfg.species2restart:
-                        create_oh_for_inicond(cfg, starttime_real.month)
+                        create_oh_for_inicond(cfg, startdate.month)
 
                 else:
 
@@ -225,7 +223,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
                     # -- Change OH concentrations in the restart file
                     if 'TROH' in cfg.species2restart:
-                        create_oh_for_restart(cfg, starttime_real.month,
+                        create_oh_for_restart(cfg, startdate.month,
                                               ext_restart)
 
             # -----------------------------------------------------
@@ -235,9 +233,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             # -- If global nudging, download and process ERA5 and CAMS data
             if cfg.era5_global_nudging:
 
-                for time in tools.iter_hours(starttime,
-                                             hstart,
-                                             hstop,
+                for time in tools.iter_hours(startdate,
+                                             enddate,
                                              step=cfg.nudging_step):
 
                     # -- Give a name to the nudging file
@@ -246,7 +243,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                         timestr=timestr)
 
                     # -- If initial time, copy the initial conditions to be used as boundary conditions
-                    if time == starttime and cfg.era5_inicond:
+                    if time == startdate and cfg.era5_inicond:
                         shutil.copy(
                             cfg.inicond_filename_scratch,
                             os.path.join(cfg.icon_input_icbc, filename))
@@ -318,7 +315,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             datafile_list = []
             datafile_list_rest = []
             datafile_list_chem = []
-            for time in tools.iter_hours(starttime, hstart, hstop,
+            for time in tools.iter_hours(startdate, enddate,
                                          cfg.meteo['inc']):
                 meteo_file = os.path.join(
                     cfg.icon_input_icbc, cfg.meteo['prefix'] +
@@ -369,7 +366,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             #-----------------------------------------------------
             # Add GEOSP to all meteo files
             #-----------------------------------------------------
-            for time in tools.iter_hours(starttime, hstart, hstop,
+            for time in tools.iter_hours(startdate, enddate,
                                          cfg.meteo['inc']):
                 # Specify file names
                 geosp_filename = time.replace(
@@ -418,11 +415,11 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             if cfg.model.startswith('icon-art'):
                 meteo_file = os.path.join(
                     cfg.icon_input_icbc,
-                    starttime.strftime(cfg.meteo['prefix'] +
+                    startdate.strftime(cfg.meteo['prefix'] +
                                        cfg.meteo['nameformat']) + '.nc')
                 merged_file = os.path.join(
                     cfg.icon_input_icbc,
-                    starttime.strftime(cfg.meteo['prefix'] +
+                    startdate.strftime(cfg.meteo['prefix'] +
                                        cfg.meteo['nameformat']) + '_merged.nc')
                 ds = xr.open_dataset(meteo_file)
                 merging = False
@@ -451,9 +448,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             # In case of OEM: merge chem tracers with meteo-files
             #-----------------------------------------------------
             if cfg.model == 'icon-art-oem':
-                for time in tools.iter_hours(starttime, hstart, hstop,
+                for time in tools.iter_hours(startdate, enddate,
                                              cfg.meteo['inc']):
-                    if time == starttime:
+                    if time == startdate:
                         #------------
                         # Merge IC:
                         #------------
@@ -527,13 +524,12 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         tools.create_dir(dest_path, "meteo input")
 
         source_nameformat = cfg.meteo['nameformat']
-        starttime_real = starttime + timedelta(hours=hstart)
         if cfg.meteo['prefix'] == 'lffd':
             # nested runs use cosmoart-output as meteo data
             # have to copy the *c.nc-file
             src_file = os.path.join(
                 cfg.meteo['dir'],
-                starttime_real.strftime(source_nameformat + 'c.nc'))
+                startdate.strftime(source_nameformat + 'c.nc'))
 
             tools.copy_file(src_file, dest_path, output_log=True)
 
@@ -548,31 +544,31 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
         num_steps = 0
         meteo_dir = cfg.meteo['dir']
-        subdir = os.path.join(meteo_dir, starttime_real.strftime('%y%m%d%H'))
-        for time in tools.iter_hours(starttime, hstart, hstop,
+        subdir = os.path.join(meteo_dir, startdate.strftime('%y%m%d%H'))
+        for time in tools.iter_hours(startdate, enddate,
                                      cfg.meteo['inc']):
             dest_path = os.path.join(cfg.int2lm_input, 'meteo')
             src_file = os.path.join(meteo_dir,
                                     time.strftime(source_nameformat))
 
             if cfg.meteo['prefix'] == 'efsf':
-                if time == starttime_real:
+                if time == startdate:
                     src_file = os.path.join(subdir,
                                             'eas' + time.strftime('%Y%m%d%H'))
                     if not os.path.isfile(src_file) and cfg.meteo.get('dir_alt') \
                         is not None:
                         meteo_dir = cfg.meteo['dir_alt']
                         subdir = os.path.join(
-                            meteo_dir, starttime_real.strftime('%y%m%d%H'))
+                            meteo_dir, startdate.strftime('%y%m%d%H'))
                         src_file = os.path.join(
                             subdir, 'eas' + time.strftime('%Y%m%d%H'))
                     dest_path = os.path.join(cfg.int2lm_input, 'meteo',
                                              cfg.meteo['prefix'] + '00000000')
                 else:
-                    td = time - starttime_real - timedelta(hours=6 * num_steps)
+                    td = time - startdate - timedelta(hours=6 * num_steps)
                     days = str(td.days).zfill(2)
                     hours = str(td.seconds // 3600).zfill(2)
-                    td_total = time - starttime_real
+                    td_total = time - startdate
                     days_total = str(td_total.days).zfill(2)
                     hours_total = str(td_total.seconds // 3600).zfill(2)
 
@@ -667,7 +663,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
                 for p in inv["param"]:
                     inc = p["inc"]
-                    for time in tools.iter_hours(starttime, hstart, hstop,
+                    for time in tools.iter_hours(startdate, enddate,
                                                  inc):
                         logging.info(time)
 
