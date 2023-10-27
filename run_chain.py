@@ -338,8 +338,10 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
             hours=cfg.restart_step_hours)
         cfg.enddate_sim_prev = cfg.enddate_sim - timedelta(
             hours=cfg.restart_step_hours)
-        cfg.startdate_sim_prev_yyyymmddhh = cfg.startdate_sim_prev.strftime('%Y%m%d%H')
-        cfg.enddate_sim_prev_yyyymmddhh = cfg.enddate_sim_prev.strftime('%Y%m%d%H')
+        cfg.startdate_sim_prev_yyyymmddhh = cfg.startdate_sim_prev.strftime(
+            '%Y%m%d%H')
+        cfg.enddate_sim_prev_yyyymmddhh = cfg.enddate_sim_prev.strftime(
+            '%Y%m%d%H')
 
         cfg.job_id_prev = f'{cfg.startdate_sim_prev_yyyymmddhh}_{cfg.enddate_sim_prev_yyyymmddhh}'
         cfg.chain_root_prev = os.path.join(work_root, cfg.casename,
