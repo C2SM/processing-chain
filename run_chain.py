@@ -315,12 +315,12 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
                 cfg.enddate_sim -
                 timedelta(hours=cfg.restart_step_hours)).strftime('%Y%m%d%H')
 
-            if cfg.second_one:  # second run (i.e., get job_id from first run)
-                cfg.job_id_prev = '%s_%d_%d' % (inidate_yyyymmddhh_prev, 0,
-                                                hstop)
-            else:  # all other runs
-                cfg.job_id_prev = '%s_%d_%d' % (inidate_yyyymmddhh_prev,
-                                                0 - cfg.spinup, hstop)
+            if cfg.second_one:
+                startdate_sim_yyyymmddhh_prev = (cfg.enddate_sim - timedelta(hours=2*cfg.restart_step_hours)).strftime('%Y%m%d%H')
+            else:  # all other runs (i.e., get job_id from previous run)
+                startdate_sim_yyyymmddhh_prev = (cfg.enddate_sim - timedelta(hours=2*cfg.restart_step_hours+cfg.spinup)).strftime('%Y%m%d%H')
+
+            cfg.job_id_prev = f'{startdate_sim_yyyymmddhh_prev}_{enddate_sim_yyyymmddhh_prev}'
             cfg.chain_root_prev = os.path.join(work_root, cfg.casename,
                                                cfg.job_id_prev)
         cfg.last_cosmo_output = os.path.join(cfg.chain_root_prev, 'cosmo',
@@ -475,11 +475,8 @@ def restart_runs(work_root, model_cfg, cfg, job_names, force):
         If True will do job regardless of completion status
     """
     # run restarts
-    for time in tools.iter_hours(cfg.startdate, cfg.enddate,
-                                 cfg.restart_step_hours):
-        startdate_sim = time
-        enddate_sim = time + timedelta(hours=cfg.restart_step_hours)
-        runtime_sim = (enddate_sim - startdate_sim).total_seconds() / 3600
+    for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate, cfg.restart_step_hours):
+        enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
 
         if enddate_sim > cfg.enddate:
             continue
@@ -532,13 +529,8 @@ def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
     force : bool
         If True will do job regardless of completion status
     """
-
-    for time in tools.iter_hours(cfg.startdate, cfg.enddate,
-                                 cfg.restart_step_hours):
-        startdate_sim = time
-        enddate_sim = time + timedelta(hours=cfg.restart_step_hours)
-        runtime_sim = (enddate_sim - startdate_sim).total_seconds() / 3600
-        if time == start:
+    for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate, cfg.restart_step_hours):
+        if startdate_sim == cfg.startdate:
             setattr(cfg, "first_one", True)
             setattr(cfg, "second_one", False)
             setattr(cfg, "lrestart", '.FALSE.')
