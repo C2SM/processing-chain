@@ -38,7 +38,7 @@ from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 from calendar import monthrange
 
 
-def set_cfg_variables(cfg, startdate, hstart, hstop):
+def set_cfg_variables(cfg, startdate, enddate):
 
     # TODO: Change setattr() to direct assignment
     if cfg.model.startswith('cosmo'):
@@ -69,8 +69,7 @@ def set_cfg_variables(cfg, startdate, hstart, hstop):
         cfg.create_vars_from_dicts()
 
         cfg.ini_datetime_string = startdate.strftime('%Y-%m-%dT%H:00:00Z')
-        cfg.end_datetime_string = (
-            startdate + timedelta(hours=hstop)).strftime('%Y-%m-%dT%H:00:00Z')
+        cfg.end_datetime_string = enddate.strftime('%Y-%m-%dT%H:00:00Z')
 
         if cfg.model == 'icon-art-oem':
             cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime(
@@ -112,11 +111,9 @@ def main(startdate, enddate, cfg, model_cfg):
     Parameters
     ----------
     startdate : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the startdate
-    hstop : int
-        Length of simulation (in hours)
+        The start date of the simulation
+    enddate : datetime-object
+        The end date of the simulation
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
