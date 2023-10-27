@@ -58,9 +58,9 @@ def set_cfg_variables(cfg, startdate, enddate):
         setattr(cfg, 'icon_restart_out',
                 os.path.join(cfg.chain_root, 'icon', 'restart'))
         setattr(cfg, 'icon_restart_in',
-                os.path.join(cfg.chain_root_last_run, 'icon', 'run'))
-        setattr(cfg, 'icon_input_icbc_last_run',
-                os.path.join(cfg.chain_root_last_run, 'icon', 'input', 'icbc'))
+                os.path.join(cfg.chain_root_prev, 'icon', 'run'))
+        setattr(cfg, 'icon_input_icbc_prev',
+                os.path.join(cfg.chain_root_prev, 'icon', 'input', 'icbc'))
 
         cfg.input_files_scratch = {}
         for varname in cfg.input_files:
@@ -380,7 +380,7 @@ def main(startdate, enddate, cfg, model_cfg):
 
                 # Copy GEOSP file from last run if not present
                 if not os.path.exists(geosp_file):
-                    geosp_src_file = os.path.join(cfg.icon_input_icbc_last_run,
+                    geosp_src_file = os.path.join(cfg.icon_input_icbc_prev,
                                                   geosp_filename)
                     tools.copy_file(geosp_src_file,
                                     cfg.icon_input_icbc,
