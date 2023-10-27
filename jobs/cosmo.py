@@ -125,12 +125,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         starttime_real = starttime + timedelta(hours=hstart)
         if starttime_real >= startfiletime:
             starttime_last = starttime_real - timedelta(hours=cfg.restart_step)
-            job_id_last_run = starttime_last.strftime('%Y%m%d%H') + \
-                              "_" + str(int(hstart)) + \
-                              "_" + str(int(hstop))
             work_root = os.path.dirname(os.path.dirname(cfg.chain_root))
             last_output_path = os.path.join(work_root, cfg.casename,
-                                            job_id_last_run, 'cosmo', 'output')
+                                            cfg.job_id_prev, 'cosmo', 'output')
             laf_output_refdate = starttime_real.strftime("%Y%m%d%H")
             last_laf_filename = "laf" + laf_output_refdate
             # At the beginning, use original laf_startfile
