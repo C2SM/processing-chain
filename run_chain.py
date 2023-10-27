@@ -172,9 +172,10 @@ class Config():
 
         return self
 
-    def set_restart_step_hours(self):
-        self.restart_step_hours = int(tools.iso8601_duration_to_hours(self.restart_step))
-    
+    def set_restart_step(self):
+        self.restart_step_hours = int(
+            tools.iso8601_duration_to_hours(self.restart_step))
+
     def set_email(self):
         if self.user_name == 'jenkins':
             self.user_mail = None
@@ -330,19 +331,15 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         cfg.cosmo_restart_out = ''
         cfg.cosmo_restart_in = ''
     elif 'restart' in model_cfg['models'][cfg.model]['features']:
-        # Set dates for previous simulation
-        cfg.startdate_sim_prev = cfg.startdate_sim - timedelta(hours=cfg.restart_step_hours)
-        cfg.enddate_sim_prev = cfg.enddate_sim - timedelta(hours=cfg.restart_step_hours)
-        cfg.startdate_sim_prev_yyyymmddhh = cfg.startdate_sim_prev.strftime('%Y%m%d%H') 
-        cfg.enddate_sim_prev_yyyymmddhh = cfg.enddate_sim_prev.strftime('%Y%m%d%H') 
-        
-        # Set job-id and chain root for previous simulation
-        cfg.job_id_prev = f'{cfg.startdate_sim_prev_yyyymmddhh}_{cfg.enddate_sim_prev_yyyymmddhh}'
-        cfg.chain_root_prev = os.path.join(work_root, cfg.casename,
-                                               cfg.job_id_prev)
-        print(cfg.job_id_prev)
-        print(cfg.chain_root_prev)
-        
+        cfg.startdate_sim_prev = cfg.startdate_sim_yyyymmddhh - timedelta(
+            hours=cfg.restart_step_hours)
+        cfg.enddate_sim_prev = cfg.enddate_sim_yyyymmddhh - timedelta(
+            hours=cfg.restart_step_hours)
+
+        cfg.job_id_last_run = '%s_%d_%d' % (cfg.startdate_sim_yyyymmddhh,
+                                            hstart - cfg.restart_step, hstart)
+        cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
+                                               cfg.job_id_last_run)
         # Set restart directories
         cfg.cosmo_restart_out = os.path.join(cfg.chain_root, 'cosmo',
                                              'restart')
