@@ -116,7 +116,8 @@ def main(cfg, model_cfg):
         tools.create_dir(ini_dir, "cosmo_input_initial")
         startfiletime = datetime.strptime(cfg.laf_startfile[-10:], "%Y%m%d%H")
         if cfg.startdate_sim >= startfiletime:
-            starttime_last = cfg.startdate_sim - timedelta(hours=cfg.restart_step)
+            starttime_last = cfg.startdate_sim - timedelta(
+                hours=cfg.restart_step)
             work_root = os.path.dirname(os.path.dirname(cfg.chain_root))
             last_output_path = os.path.join(work_root, cfg.casename,
                                             cfg.job_id_prev, 'cosmo', 'output')

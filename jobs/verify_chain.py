@@ -60,8 +60,8 @@ def main(cfg, model_cfg):
         if cfg.output_dir is None:
             # Standard output location
             run_file_path = os.path.join(
-                cfg.output_root,
-                cfg.startdate_sim_yyyymmddhh + "_" + cfg.enddate_sim_yyyymmddhh, "cosmo_output", run_file)
+                cfg.output_root, cfg.startdate_sim_yyyymmddhh + "_" +
+                cfg.enddate_sim_yyyymmddhh, "cosmo_output", run_file)
         else:
             # User-provided output location
             run_file_path = os.path.join(cfg.output_dir, run_file)

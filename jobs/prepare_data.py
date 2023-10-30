@@ -311,7 +311,8 @@ def main(cfg, model_cfg):
             datafile_list = []
             datafile_list_rest = []
             datafile_list_chem = []
-            for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim, cfg.meteo['inc']):
+            for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
+                                         cfg.meteo['inc']):
                 meteo_file = os.path.join(
                     cfg.icon_input_icbc, cfg.meteo['prefix'] +
                     time.strftime(cfg.meteo['nameformat']))
@@ -361,7 +362,8 @@ def main(cfg, model_cfg):
             #-----------------------------------------------------
             # Add GEOSP to all meteo files
             #-----------------------------------------------------
-            for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim, cfg.meteo['inc']):
+            for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
+                                         cfg.meteo['inc']):
                 # Specify file names
                 geosp_filename = time.replace(
                     hour=0).strftime(cfg.meteo['prefix'] +
@@ -410,11 +412,13 @@ def main(cfg, model_cfg):
                 meteo_file = os.path.join(
                     cfg.icon_input_icbc,
                     cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
-                                       cfg.meteo['nameformat']) + '.nc')
+                                               cfg.meteo['nameformat']) +
+                    '.nc')
                 merged_file = os.path.join(
                     cfg.icon_input_icbc,
                     cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
-                                       cfg.meteo['nameformat']) + '_merged.nc')
+                                               cfg.meteo['nameformat']) +
+                    '_merged.nc')
                 ds = xr.open_dataset(meteo_file)
                 merging = False
                 if 'PS' not in ds:
@@ -442,7 +446,8 @@ def main(cfg, model_cfg):
             # In case of OEM: merge chem tracers with meteo-files
             #-----------------------------------------------------
             if cfg.model == 'icon-art-oem':
-                for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
+                for time in tools.iter_hours(cfg.startdate_sim,
+                                             cfg.enddate_sim,
                                              cfg.meteo['inc']):
                     if time == cfg.startdate_sim:
                         #------------
@@ -538,8 +543,10 @@ def main(cfg, model_cfg):
 
         num_steps = 0
         meteo_dir = cfg.meteo['dir']
-        subdir = os.path.join(meteo_dir, cfg.startdate_sim.strftime('%y%m%d%H'))
-        for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim, cfg.meteo['inc']):
+        subdir = os.path.join(meteo_dir,
+                              cfg.startdate_sim.strftime('%y%m%d%H'))
+        for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
+                                     cfg.meteo['inc']):
             dest_path = os.path.join(cfg.int2lm_input, 'meteo')
             src_file = os.path.join(meteo_dir,
                                     time.strftime(source_nameformat))
@@ -551,14 +558,15 @@ def main(cfg, model_cfg):
                     if not os.path.isfile(src_file) and cfg.meteo.get('dir_alt') \
                         is not None:
                         meteo_dir = cfg.meteo['dir_alt']
-                        subdir = os.path.join(meteo_dir,
-                                              cfg.startdate_sim.strftime('%y%m%d%H'))
+                        subdir = os.path.join(
+                            meteo_dir, cfg.startdate_sim.strftime('%y%m%d%H'))
                         src_file = os.path.join(
                             subdir, 'eas' + time.strftime('%Y%m%d%H'))
                     dest_path = os.path.join(cfg.int2lm_input, 'meteo',
                                              cfg.meteo['prefix'] + '00000000')
                 else:
-                    td = time - cfg.startdate_sim - timedelta(hours=6 * num_steps)
+                    td = time - cfg.startdate_sim - timedelta(hours=6 *
+                                                              num_steps)
                     days = str(td.days).zfill(2)
                     hours = str(td.seconds // 3600).zfill(2)
                     td_total = time - cfg.startdate_sim
@@ -656,7 +664,8 @@ def main(cfg, model_cfg):
 
                 for p in inv["param"]:
                     inc = p["inc"]
-                    for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim, inc):
+                    for time in tools.iter_hours(cfg.startdate_sim,
+                                                 cfg.enddate_sim, inc):
                         logging.info(time)
 
                         filename = os.path.join(
