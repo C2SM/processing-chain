@@ -16,11 +16,10 @@
 
 import os
 import logging
-import shutil
 from . import tools
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(startdate, enddate, cfg, model_cfg):
     """Prepare the biofluxes-files for the simulation.
 
     Only necessary for **COSMO** simulations.

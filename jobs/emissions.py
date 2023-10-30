@@ -20,7 +20,7 @@ import logging
 from . import tools
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(startdate, enddate, cfg, model_cfg):
     """Copy emission files to the **int2lm** input directory.
 
     Necessary for both **COSMO** and **COSMOART** simulations.

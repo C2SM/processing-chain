@@ -16,7 +16,7 @@ import math
 from . import tools
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(startdate, enddate, cfg, model_cfg):
     """
     Calculates 2D column data and writes them into a new netCDF file.
     Only a fixed number of levels from **COSMO** output are considered.

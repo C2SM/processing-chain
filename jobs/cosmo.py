@@ -63,7 +63,7 @@ def set_cfg_variables(cfg, model_cfg):
     return cfg
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(startdate, enddate, cfg, model_cfg):
     """Setup the namelists for a **COSMO** tracer run and submit the job to
     the queue
 

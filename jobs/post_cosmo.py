@@ -7,9 +7,7 @@
 
 import logging
 import os
-import shutil
 import datetime
-import glob
 from subprocess import call
 
 from . import tools, int2lm, cosmo
@@ -51,7 +49,7 @@ def runscript_commands_template():
     ])
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(startdate, enddate, cfg, model_cfg):
     """Copy the output of a **COSMO**-run to a user-defined position.
 
     Write a runscript to copy all files (**COSMO** settings & output,

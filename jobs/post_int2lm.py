@@ -8,14 +8,13 @@
 
 import logging
 import os
-import shutil
 import glob
 import netCDF4 as nc
 from datetime import datetime, timedelta
 from . import tools, int2lm
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(startdate, enddate, cfg, model_cfg):
     """Combine multiple **int2lm** tracer-output files into a single one for
     **COSMO**.
 

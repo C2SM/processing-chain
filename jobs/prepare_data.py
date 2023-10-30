@@ -25,7 +25,6 @@
 # 2021-11-12 Modified for ICON-ART-simulations (mjaehn)
 
 import os
-import glob
 import logging
 import shutil
 import subprocess
