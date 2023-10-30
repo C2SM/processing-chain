@@ -76,8 +76,8 @@ def main(cfg, model_cfg):
     else:
         inidata_filename = os.path.join(
             cfg.icon_input_icbc,
-            cfg.startdate_sim.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) +
-            '.nc')
+            cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
+                                       cfg.meteo['nameformat']) + '.nc')
 
     # Write run script (run_icon.job)
     icon_runjob = os.path.join(cfg.case_path, cfg.icon_runjob_filename)
