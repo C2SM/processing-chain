@@ -83,12 +83,10 @@ def iter_hours(startdate, enddate, step=1):
 
     Parameters
     ----------
-    starttime : datetime-object
+    startdate : datetime-object
         The start-date if the iteration
-    hstart : int
-        Offset (in hours) from the starttime where the iteration starts
-    hstop : int
-        Offset (in hours) from the starttime where the iteration stops
+    enddate : datetime-object
+        The start-date if the iteration
     step : int, optional
         Stepsize, defaults to 1
         
