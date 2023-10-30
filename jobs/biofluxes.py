@@ -16,7 +16,7 @@
 
 import os
 import logging
-from . import tools
+from . import tools, prepare_data
 
 
 def main(cfg, model_cfg):
@@ -33,12 +33,13 @@ def main(cfg, model_cfg):
         Object holding all user-configuration parameters as attributes
     """
     tools.check_model(cfg, 'cosmo-ghg')
+    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
 
     scratch_path = os.path.join(cfg.int2lm_input, 'vprm')
 
     tools.create_dir(scratch_path, "biofluxes input")
 
-    for time in tools.iter_hours(cfg.starttime_sim, cfg.endtime_sim):
+    for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim):
         logging.info(time)
 
         for prefix in cfg.vprm['prefix']:

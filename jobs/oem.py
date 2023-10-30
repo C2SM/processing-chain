@@ -8,7 +8,7 @@ import logging
 from . import tools, cosmo
 
 
-def main(startdate, enddate, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Copy emission and profile files to the **cosmo** or **icon** input
     directory.
 

@@ -8,7 +8,7 @@ import logging
 from . import tools
 
 
-def main(startdate, enddate, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Copy MODIS surface reflectance data and vegatation class fraction file
     to the **cosmo** input directory.
 
