@@ -426,7 +426,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
 
                     # Launch the job
                     to_call = getattr(jobs, job)
-                    to_call.main(cfg.startdate_sim, enddate_sim, cfg,
+                    to_call.main(cfg.startdate_sim, cfg.enddate_sim, cfg,
                                  model_cfg)
 
                     shutil.copy(logfile, logfile_finish)
