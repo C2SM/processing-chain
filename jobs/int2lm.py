@@ -66,8 +66,8 @@ def main(startdate, enddate, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = prepare_data.set_cfg_variables(cfg, starttime, hstart, hstop)
-    cfg = set_cfg_variables(cfg, starttime, hstart)
+    cfg = prepare_data.set_cfg_variables(startdate, enddate, cfg, model_cfg)
+    cfg = set_cfg_variables(startdate, enddate, cfg, model_cfg)
 
     # Total number of processes
     np_tot = cfg.int2lm['np_x'] * cfg.int2lm['np_y']

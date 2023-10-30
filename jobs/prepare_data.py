@@ -116,7 +116,7 @@ def main(startdate, enddate, cfg, model_cfg):
         Object holding all user-configuration parameters as attributes
     """
 
-    cfg = set_cfg_variables(cfg, startdate, enddate)
+    cfg = set_cfg_variables(startdate, enddate, cfg, model_cfg)
 
     if cfg.model.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
