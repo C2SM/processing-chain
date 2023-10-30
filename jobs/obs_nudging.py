@@ -33,7 +33,8 @@ def main(cfg, model_cfg):
     logging.info("Copying obs_nudging files from {} to {}".format(
         cfg.obs_nudging_dir, dest_dir))
 
-    for i, t in enumerate(tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim, step=24)):
+    for i, t in enumerate(
+            tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim, step=24)):
         i += 1
         for prefix in cfg.obs_nudging_prefixes:
             src_filename = (
