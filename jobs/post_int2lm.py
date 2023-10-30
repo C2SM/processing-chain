@@ -62,7 +62,7 @@ def main(cfg, model_cfg):
         for hour in tools.iter_hours(yyyymmddhh_prev, yyyymmddhh_next2, 1):
             print(hour)
             outfile = os.path.join(cfg.int2lm_output,
-                                    hour.strftime('lbfd%Y%m%d%H' + '.nc'))
+                                   hour.strftime('lbfd%Y%m%d%H' + '.nc'))
             if os.path.exists(outfile):
                 with nc.Dataset(outfile, 'a') as outf, nc.Dataset(f) as inf:
                     for chem in chem_list:
