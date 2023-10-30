@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from . import tools, int2lm
 
 
-def main(startdate, enddate, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Combine multiple **int2lm** tracer-output files into a single one for
     **COSMO**.
 
@@ -30,20 +30,13 @@ def main(startdate, enddate, cfg, model_cfg):
     
     Parameters
     ----------	
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = int2lm.set_cfg_variables(cfg, starttime, hstart)
+    cfg = int2lm.set_cfg_variables(cfg, model_cfg)
 
     # Int2lm processing always starts at hstart=0, thus modifying inidate
-    inidate_int2lm_yyyymmddhh = (starttime +
-                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
+    inidate_int2lm_yyyymmddhh = cfg.startdate_sim_yyyymmddhh
 
     chem_list = cfg.post_int2lm['species']
 
@@ -97,7 +90,7 @@ def main(startdate, enddate, cfg, model_cfg):
             'INITIAL CONDITIONS (RECYCLING): Adding tracers %s from last COSMO run (%s) to regular int2lm files.'
             % (str(var_list), cfg.last_cosmo_output))
 
-        infile_name = 'lffd' + starttime.strftime('%Y%m%d%H') + '*.nc'
+        infile_name = 'lffd' + cfg.startdate_sim_yyyymmddhh + '*.nc'
         infile_paths = sorted(
             glob.glob(os.path.join(cfg.last_cosmo_output, infile_name)))
         outfile_name = 'laf' + inidate_int2lm_yyyymmddhh + '.nc'

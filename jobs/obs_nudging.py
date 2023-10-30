@@ -9,7 +9,7 @@ from datetime import timedelta
 from . import tools
 
 
-def main(startdate, enddate, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Copy and rename the obs_nudging files to the **COSMO** input directory.
 
     In the folder ``cfg.obs_nudging_dir``, the files are saved in the format
@@ -24,12 +24,6 @@ def main(startdate, enddate, cfg, model_cfg):
 
     Parameters
     ----------	
-    start_time : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the start_time
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
@@ -39,7 +33,7 @@ def main(startdate, enddate, cfg, model_cfg):
     logging.info("Copying obs_nudging files from {} to {}".format(
         cfg.obs_nudging_dir, dest_dir))
 
-    for i, t in enumerate(tools.iter_hours(starttime, hstart, hstop, step=24)):
+    for i, t in enumerate(tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim, step=24)):
         i += 1
         for prefix in cfg.obs_nudging_prefixes:
             src_filename = (

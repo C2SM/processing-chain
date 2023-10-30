@@ -19,7 +19,7 @@ import logging
 from . import tools
 
 
-def main(startdate, enddate, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Prepare the biofluxes-files for the simulation.
 
     Only necessary for **COSMO** simulations.
@@ -29,12 +29,6 @@ def main(startdate, enddate, cfg, model_cfg):
 
     Parameters
     ----------	
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
@@ -44,7 +38,7 @@ def main(startdate, enddate, cfg, model_cfg):
 
     tools.create_dir(scratch_path, "biofluxes input")
 
-    for time in tools.iter_hours(starttime, hstart, hstop):
+    for time in tools.iter_hours(cfg.starttime_sim, cfg.endtime_sim):
         logging.info(time)
 
         for prefix in cfg.vprm['prefix']:

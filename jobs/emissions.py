@@ -74,7 +74,7 @@ def main(startdate, enddate, cfg, model_cfg):
                                       "emissions" + str(i + 1))
             tools.create_dir(target_dir, "emissions input")
         # copy data
-        for time in tools.iter_hours(starttime, hstart, hstop):
+        for time in tools.iter_hours(startdate, enddate):
             logging.info(time)
             filename_ending = time.strftime('%Y%m%d%H.nc')
             source_path = os.path.join(emis_dir, emis_prefix + filename_ending)

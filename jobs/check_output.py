@@ -699,7 +699,7 @@ def create_animations(cfg):
                        duration=300)
 
 
-def main(startdate, enddate, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Checks output variables whether they are in a phyiscally reasonable
     range.
 
@@ -710,12 +710,6 @@ def main(startdate, enddate, cfg, model_cfg):
 
     Parameters
     ----------	
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """

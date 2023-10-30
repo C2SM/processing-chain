@@ -19,7 +19,7 @@ def comp_data(dataset1, dataset2, variables):
     tools.helper.datasets_equal(dataset1, dataset2, variables, verbose=True)
 
 
-def main(startdate, enddate, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Compare outputs of the chain to a reference.
 
     Looks for the reference-file in ``cfg.reference_dir``.
@@ -61,8 +61,7 @@ def main(startdate, enddate, cfg, model_cfg):
             # Standard output location
             run_file_path = os.path.join(
                 cfg.output_root,
-                starttime.strftime('%Y%m%d%H') + "_" + str(int(hstart)) + "_" +
-                str(int(hstop)), "cosmo_output", run_file)
+                cfg.startdate_sim_yyyymmddhh + "_" + cfg.enddate_sim_yyyymmddhh, "cosmo_output", run_file)
         else:
             # User-provided output location
             run_file_path = os.path.join(cfg.output_dir, run_file)
