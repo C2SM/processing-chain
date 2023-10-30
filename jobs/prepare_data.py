@@ -37,8 +37,7 @@ from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 from calendar import monthrange
 
 
-def set_cfg_variables(cfg, startdate, enddate):
-
+def set_cfg_variables(startdate, enddate, cfg, model_cfg):
     # TODO: Change setattr() to direct assignment
     if cfg.model.startswith('cosmo'):
         setattr(cfg, 'int2lm_root', os.path.join(cfg.chain_root, 'int2lm'))

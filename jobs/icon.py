@@ -18,7 +18,7 @@ from . import tools, prepare_data
 from datetime import timedelta
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(startdate, enddate, cfg, model_cfg):
     """Setup the namelists for an **ICON** tracer run and submit the job to
     the queue
 

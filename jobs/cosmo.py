@@ -20,8 +20,7 @@ from . import tools
 from datetime import datetime, timedelta
 
 
-def set_cfg_variables(cfg, model_cfg):
-
+def set_cfg_variables(startdate, enddate, cfg, model_cfg):
     setattr(cfg, 'cosmo_base', os.path.join(cfg.chain_root, 'cosmo'))
     setattr(cfg, 'cosmo_input', os.path.join(cfg.chain_root, 'cosmo', 'input'))
     setattr(cfg, 'cosmo_run', os.path.join(cfg.chain_root, 'cosmo', 'run'))

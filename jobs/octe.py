@@ -161,7 +161,7 @@ def perturb_bgs_in_dir(lambdas_nc, directory):
                         entry.name))
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(startdate, enddate, cfg, model_cfg):
     """Copy necessary input files for **COSMO** and perturb BG.
 
     Copies the NetCDF-files found at cfg.octe_maps and cfg.octe_lambdas to

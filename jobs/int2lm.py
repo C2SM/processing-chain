@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 from . import tools, prepare_data
 
 
-def set_cfg_variables(cfg, starttime, hstart):
+def set_cfg_variables(startdate, enddate, cfg, model_cfg):
 
     setattr(cfg, 'int2lm_run', os.path.join(cfg.chain_root, 'int2lm', 'run'))
     setattr(cfg, 'int2lm_output',
@@ -29,7 +29,7 @@ def set_cfg_variables(cfg, starttime, hstart):
     return cfg
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(startdate, enddate, cfg, model_cfg):
     """Setup the namelist for **int2lm** and submit the job to the queue.
 
     Necessary for both **COSMO** and **COSMOART** simulations.
