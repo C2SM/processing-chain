@@ -7,7 +7,7 @@ restart_step: PT6H
 variant: spinup
 spinup: 3
 startdate: 2015-01-01T00:00:00Z
-enddate: 2015-01-01T12:00:00Z
+enddate: 2015-01-01T18:00:00Z
 
 meteo:
     dir: ./input/cosmo-ghg/meteo

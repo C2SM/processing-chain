@@ -325,8 +325,8 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
             cfg.job_id_prev = f'{startdate_sim_yyyymmddhh_prev}_{enddate_sim_yyyymmddhh_prev}'
             cfg.chain_root_prev = os.path.join(work_root, cfg.casename,
                                                cfg.job_id_prev)
-        cfg.last_cosmo_output = os.path.join(cfg.chain_root_prev, 'cosmo',
-                                             'output')
+            cfg.last_cosmo_output = os.path.join(cfg.chain_root_prev, 'cosmo',
+                                                 'output')
 
         # No restart for spinup simulations (= default values for no restart)
         cfg.cosmo_restart_out = ''
