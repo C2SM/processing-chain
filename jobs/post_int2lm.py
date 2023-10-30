@@ -60,7 +60,6 @@ def main(cfg, model_cfg):
         yyyymmddhh_next2 = yyyymmddhh + timedelta(hours=2)
 
         for hour in tools.iter_hours(yyyymmddhh_prev, yyyymmddhh_next2, 1):
-            print(hour)
             outfile = os.path.join(cfg.int2lm_output,
                                    hour.strftime('lbfd%Y%m%d%H' + '.nc'))
             if os.path.exists(outfile):
