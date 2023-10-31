@@ -544,8 +544,7 @@ def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
             setattr(cfg, "lrestart", '.FALSE.')
             run_time = cfg.restart_step_hours
             startdate_sim_spinup = startdate_sim
-        elif startdate_sim == cfg.startdate + timedelta(
-                hours=(cfg.restart_step_hours - cfg.spinup)):
+        elif startdate_sim == cfg.startdate + timedelta(hours=cfg.restart_step_hours):
             setattr(cfg, "first_one", False)
             setattr(cfg, "second_one", True)
             setattr(cfg, "lrestart", '.TRUE.')
@@ -557,7 +556,7 @@ def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
             setattr(cfg, "lrestart", '.TRUE.')
             run_time = cfg.restart_step_hours + cfg.spinup
             startdate_sim_spinup = startdate_sim - timedelta(hours=cfg.spinup)
-
+        
         # If current enddate is later than global enddate, skip
         enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
         if enddate_sim > cfg.enddate:
