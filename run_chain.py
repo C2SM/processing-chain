@@ -272,12 +272,10 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         execution (typically scratch)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
-    start_time : datetime-object
+    startdate_sim : datetime-object
         The startdate of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the startdate (start param)
-    hstop : int
-        Length of simulation (in hours)
+    enddate_sim : datetime-object
+        The enddate of the simulation
     job_names : list of str
         List of the names of jobs to execute on every timeslice.
         Jobs are ``.py`` files in the ``jobs/`` directory with a ``main()``
@@ -469,10 +467,6 @@ def restart_runs(work_root, model_cfg, cfg, job_names, force):
         Object holding all user-configuration parameters as attributes
     start : datetime-object
         The startdate
-    hstart : int
-        Offset (in hours) of the actual start from the startdate (start param)
-    hstop : int
-        Length of simulation (in hours)
     job_names : list of str
         List of the names of jobs to execute on every timeslice.
         Jobs are .py files in the jobs/ directory with a main() function
@@ -525,10 +519,6 @@ def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
         Object holding all user-configuration parameters as attributes
     start : datetime-object
         The startdate
-    hstart : int
-        Offset (in hours) of the actual start from the startdate (start param)
-    hstop : int
-        Length of simulation (in hours)
     job_names : list of str
         List of the names of jobs to execute on every timeslice.
         Jobs are .py files in the jobs/ directory with a main() function
