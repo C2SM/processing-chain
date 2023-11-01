@@ -459,7 +459,7 @@ def main(cfg, model_cfg):
                                           cfg.meteo['nameformat']) + '.nc')
                         chem_file = os.path.join(
                             cfg.icon_input_icbc,
-                            time.strftime(cfg.chem_nameformat) + '.nc')
+                            cfg.chem['prefix'] + time.strftime(cfg.chem['nameformat']) + '.nc')
                         merged_file = os.path.join(
                             cfg.icon_input_icbc,
                             time.strftime(cfg.meteo['prefix'] +
@@ -492,7 +492,7 @@ def main(cfg, model_cfg):
                                       cfg.meteo['nameformat']) + '_lbc.nc')
                     chem_file = os.path.join(
                         cfg.icon_input_icbc,
-                        time.strftime(cfg.chem_nameformat) + '_lbc.nc')
+                        cfg.chem['prefix'] + time.strftime(cfg.chem_nameformat) + '_lbc.nc')
                     merged_file = os.path.join(
                         cfg.icon_input_icbc,
                         time.strftime(cfg.meteo['prefix'] +
