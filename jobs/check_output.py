@@ -743,7 +743,7 @@ def main(cfg, model_cfg):
     to_write = """#!/usr/bin/env bash
 #SBATCH --partition=debug
 #SBATCH --account=em05
-#SBATCH --job-name="check_output_{cfg.inidate_yyyymmddhh}_{cfg.forecasttime}"
+#SBATCH --job-name="check_output_{cfg.startdate_sim_yyyymmddhh}_{cfg.forecasttime}"
 #SBATCH --open-mode=append
 #SBATCH --time=00:30:00
 #SBATCH --constraint=mc
