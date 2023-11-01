@@ -318,8 +318,8 @@ def main(cfg, model_cfg):
                     time.strftime(cfg.meteo['nameformat']))
                 if cfg.model == 'icon-art' or cfg.model == 'icon-art-oem':
                     chem_file = os.path.join(
-                        cfg.icon_input_icbc,
-                        cfg.chem['prefix'] + time.strftime(cfg.chem_nameformat))
+                        cfg.icon_input_icbc, cfg.chem['prefix'] +
+                        time.strftime(cfg.chem_nameformat))
                     datafile_list_chem.append(chem_file + cfg.chem['suffix'])
                 if meteo_file.endswith('00'):
                     datafile_list.append(meteo_file + cfg.meteo['suffix'])
