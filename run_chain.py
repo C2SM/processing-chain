@@ -3,14 +3,12 @@
 
 from datetime import datetime, timedelta
 
-import importlib
 import logging
 import os
 import sys
 import time
 import shutil
 import argparse
-import csv
 import yaml
 
 import jobs
@@ -172,6 +170,10 @@ class Config():
 
         return self
 
+    def set_restart_step_hours(self):
+        self.restart_step_hours = int(
+            tools.iso8601_duration_to_hours(self.restart_step))
+
     def set_email(self):
         if self.user_name == 'jenkins':
             self.user_mail = None
@@ -246,7 +248,7 @@ class Config():
         return self
 
 
-def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
+def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
               force):
     """Run chain ignoring already finished jobs.
 
@@ -270,12 +272,10 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         execution (typically scratch)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
-    start_time : datetime-object
+    startdate_sim : datetime-object
         The startdate of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the startdate (start param)
-    hstop : int
-        Length of simulation (in hours)
+    enddate_sim : datetime-object
+        The enddate of the simulation
     job_names : list of str
         List of the names of jobs to execute on every timeslice.
         Jobs are ``.py`` files in the ``jobs/`` directory with a ``main()``
@@ -284,67 +284,75 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
         If True will do job regardless of completion status
     """
 
-    # Initial date and forecast time
-    inidate_yyyymmddhh = start_time.strftime('%Y%m%d%H')
-    inidate_yyyymmdd_hh = start_time.strftime('%Y%m%d_%H')
-    cfg.inidate_yyyymmddhh = inidate_yyyymmddhh
-    cfg.inidate_yyyymmdd_hh = inidate_yyyymmdd_hh  # only for icon-art-oem
-    cfg.hstart = hstart
-    cfg.hstop = hstop
-    cfg.forecasttime = '%d' % (hstop - hstart)
+    # Write current start and end dates to config variables
+    cfg.startdate_sim = startdate_sim
+    cfg.enddate_sim = enddate_sim
+
+    # Set forecast time
+    cfg.forecasttime = (cfg.enddate_sim -
+                        cfg.startdate_sim).total_seconds() / 3600
+
+    # String variables for startdate_sim
+    cfg.startdate_sim_yyyymmddhh = startdate_sim.strftime('%Y%m%d%H')
+    cfg.enddate_sim_yyyymmddhh = enddate_sim.strftime('%Y%m%d%H')
 
     # Folder naming and structure
-    cfg.job_id = '%s_%d_%d' % (cfg.inidate_yyyymmddhh, cfg.hstart, cfg.hstop)
+    cfg.job_id = f'{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}'
     cfg.chain_root = os.path.join(work_root, cfg.casename, cfg.job_id)
 
+    # Config variables for spinup runs (datetimes, job-id, etc.)
     if hasattr(cfg, 'spinup'):
         if cfg.first_one:  # first run in spinup
-            cfg.chain_root_last_run = ''
+            cfg.chain_root_prev = None
         else:  # consecutive runs in spinup
-            inidate_yyyymmddhh_spinup = (
-                start_time - timedelta(hours=cfg.spinup)).strftime('%Y%m%d%H')
-            cfg.inidate_yyyymmddhh = inidate_yyyymmddhh_spinup
-            cfg.hstart = 0
-            cfg.hstop = hstop + cfg.spinup
-            cfg.forecasttime = '%d' % (hstop + cfg.spinup)
-            inidate_yyyymmddhh_last_run = (
-                start_time -
-                timedelta(hours=cfg.restart_step)).strftime('%Y%m%d%H')
-            if cfg.second_one:  # second run (i.e., get job_id from first run)
-                cfg.job_id_last_run = '%s_%d_%d' % (
-                    inidate_yyyymmddhh_last_run, 0, hstop)
-            else:  # all other runs
-                cfg.job_id_last_run = '%s_%d_%d' % (
-                    inidate_yyyymmddhh_last_run, 0 - cfg.spinup, hstop)
-            cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                                   cfg.job_id_last_run)
-        cfg.last_cosmo_output = os.path.join(cfg.chain_root_last_run, 'cosmo',
-                                             'output')
+            cfg.startdate_sim_yyyymmddhh = cfg.startdate_sim.strftime(
+                '%Y%m%d%H')
+            enddate_sim_yyyymmddhh_prev = (
+                cfg.enddate_sim -
+                timedelta(hours=cfg.restart_step_hours)).strftime('%Y%m%d%H')
+
+            if cfg.second_one:
+                startdate_sim_yyyymmddhh_prev = (cfg.enddate_sim - timedelta(
+                    hours=2 * cfg.restart_step_hours)).strftime('%Y%m%d%H')
+            else:  # all other runs (i.e., get job_id from previous run)
+                startdate_sim_yyyymmddhh_prev = (
+                    cfg.enddate_sim -
+                    timedelta(hours=2 * cfg.restart_step_hours +
+                              cfg.spinup)).strftime('%Y%m%d%H')
+
+            cfg.job_id_prev = f'{startdate_sim_yyyymmddhh_prev}_{enddate_sim_yyyymmddhh_prev}'
+            cfg.chain_root_prev = os.path.join(work_root, cfg.casename,
+                                               cfg.job_id_prev)
+            cfg.last_cosmo_output = os.path.join(cfg.chain_root_prev, 'cosmo',
+                                                 'output')
 
         # No restart for spinup simulations (= default values for no restart)
         cfg.cosmo_restart_out = ''
         cfg.cosmo_restart_in = ''
     elif 'restart' in model_cfg['models'][cfg.model]['features']:
-        cfg.chain_root_last_run = 'foo'
-        cfg.job_id_last_run = '%s_%d_%d' % (cfg.inidate_yyyymmddhh,
-                                            hstart - cfg.restart_step, hstart)
-        cfg.chain_root_last_run = os.path.join(work_root, cfg.casename,
-                                               cfg.job_id_last_run)
+        cfg.startdate_sim_prev = cfg.startdate_sim - timedelta(
+            hours=cfg.restart_step_hours)
+        cfg.enddate_sim_prev = cfg.enddate_sim - timedelta(
+            hours=cfg.restart_step_hours)
+        cfg.startdate_sim_prev_yyyymmddhh = cfg.startdate_sim_prev.strftime(
+            '%Y%m%d%H')
+        cfg.enddate_sim_prev_yyyymmddhh = cfg.enddate_sim_prev.strftime(
+            '%Y%m%d%H')
+
+        cfg.job_id_prev = f'{cfg.startdate_sim_prev_yyyymmddhh}_{cfg.enddate_sim_prev_yyyymmddhh}'
+        cfg.chain_root_prev = os.path.join(work_root, cfg.casename,
+                                           cfg.job_id_prev)
+
         # Set restart directories
         cfg.cosmo_restart_out = os.path.join(cfg.chain_root, 'cosmo',
                                              'restart')
-        cfg.cosmo_restart_in = os.path.join(cfg.chain_root_last_run, 'cosmo',
+        cfg.cosmo_restart_in = os.path.join(cfg.chain_root_prev, 'cosmo',
                                             'restart')
 
     # Check constraint
     if hasattr(cfg, 'constraint'):
         assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
                                                  "gpu or mc")
-
-    # Restart step
-    if 'restart' in model_cfg['models'][cfg.model]['features']:
-        setattr(cfg, 'restart_step', hstop - hstart)
-        setattr(cfg, 'restart_step_iso', f'PT{int(cfg.restart_step)}H')
 
     # If nested run: use output of mother-simulation
     if 'nesting' in model_cfg['models'][
@@ -414,7 +422,7 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
 
                     # Launch the job
                     to_call = getattr(jobs, job)
-                    to_call.main(start_time, hstart, hstop, cfg, model_cfg)
+                    to_call.main(cfg, model_cfg)
 
                     shutil.copy(logfile, logfile_finish)
 
@@ -444,11 +452,10 @@ def run_chain(work_root, model_cfg, cfg, start_time, hstart, hstop, job_names,
                 raise RuntimeError(subject)
 
 
-def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
-                 force):
+def restart_runs(work_root, model_cfg, cfg, job_names, force):
     """Starts the subchains in the specified intervals.
     
-    Slices the total runtime of the chain according to ``cfg.restart_step``.
+    Slices the total runtime of the chain according to ``cfg.restart_step_hours``.
     Calls ``run_chain()`` for each step.
     
     Parameters
@@ -460,10 +467,6 @@ def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
         Object holding all user-configuration parameters as attributes
     start : datetime-object
         The startdate
-    hstart : int
-        Offset (in hours) of the actual start from the startdate (start param)
-    hstop : int
-        Length of simulation (in hours)
     job_names : list of str
         List of the names of jobs to execute on every timeslice.
         Jobs are .py files in the jobs/ directory with a main() function
@@ -472,43 +475,40 @@ def restart_runs(work_root, model_cfg, cfg, start, hstart, hstop, job_names,
         If True will do job regardless of completion status
     """
     # run restarts
-    for time in tools.iter_hours(start, hstart, hstop, cfg.restart_step):
-        sub_hstart = (time - start).total_seconds() / 3600.0
-        runtime = min(cfg.restart_step, hstop - sub_hstart)
-        if runtime == 0:
-            # don't start simuation with 0 runtime
+    for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
+                                          cfg.restart_step_hours):
+        enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
+
+        if enddate_sim > cfg.enddate:
             continue
-        sub_hstop = sub_hstart + runtime
 
         # Set restart variable (only takes effect for ICON)
-        if time == start:
+        if startdate_sim == cfg.startdate:
             setattr(cfg, "lrestart", '.FALSE.')
         else:
             setattr(cfg, "lrestart", '.TRUE.')
 
-        print("Starting run with starttime {}".format(time))
+        print("Starting run with startdate {}".format(startdate_sim))
 
         run_chain(work_root=work_root,
                   model_cfg=model_cfg,
                   cfg=cfg,
-                  start_time=start,
-                  hstart=sub_hstart,
-                  hstop=sub_hstop,
+                  startdate_sim=startdate_sim,
+                  enddate_sim=enddate_sim,
                   job_names=job_names,
                   force=force)
 
 
-def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop,
-                        job_names, force):
+def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
     """Starts the subchains in the specified intervals.
     
-    Slices the total runtime of the chain according to ``cfg.restart_step``.
+    Slices the total runtime of the chain according to ``cfg.restart_step_hours``.
     Calls ``run_chain()`` for each step.
 
     Runs custom "restarts" (= simulations with spin-up and tracer recycling).
-    The first simulation is a normal one, with ``run_time = cfg.restart_step``.
+    The first simulation is a normal one, with ``run_time = cfg.restart_step_hours``.
     Consecutive simulations start at
-    ``start + N * cfg.restart_step - cfg.spinup``.
+    ``start + N * cfg.restart_step_hours - cfg.spinup``.
     
     Parameters
     ----------
@@ -519,10 +519,6 @@ def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop,
         Object holding all user-configuration parameters as attributes
     start : datetime-object
         The startdate
-    hstart : int
-        Offset (in hours) of the actual start from the startdate (start param)
-    hstop : int
-        Length of simulation (in hours)
     job_names : list of str
         List of the names of jobs to execute on every timeslice.
         Jobs are .py files in the jobs/ directory with a main() function
@@ -530,55 +526,42 @@ def restart_runs_spinup(work_root, model_cfg, cfg, start, hstart, hstop,
     force : bool
         If True will do job regardless of completion status
     """
-
-    for time in tools.iter_hours(start, hstart, hstop, cfg.restart_step):
-        if time == start:
+    for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
+                                          cfg.restart_step_hours):
+        if startdate_sim == cfg.startdate:
             setattr(cfg, "first_one", True)
             setattr(cfg, "second_one", False)
             setattr(cfg, "lrestart", '.FALSE.')
-            run_time = min(cfg.restart_step, hstop - hstart)
-            print('First simulation')
-        elif time == start + timedelta(hours=cfg.restart_step):
+            run_time = cfg.restart_step_hours
+            startdate_sim_spinup = startdate_sim
+        elif startdate_sim == cfg.startdate + timedelta(
+                hours=cfg.restart_step_hours):
             setattr(cfg, "first_one", False)
             setattr(cfg, "second_one", True)
             setattr(cfg, "lrestart", '.TRUE.')
-            run_time = min(cfg.restart_step + cfg.spinup, hstop - hstart)
-            print('Second simulation')
+            run_time = cfg.restart_step_hours + cfg.spinup
+            startdate_sim_spinup = startdate_sim - timedelta(hours=cfg.spinup)
         else:
             setattr(cfg, "first_one", False)
             setattr(cfg, "second_one", False)
             setattr(cfg, "lrestart", '.TRUE.')
-            run_time = min(cfg.restart_step + cfg.spinup, hstop - hstart)
+            run_time = cfg.restart_step_hours + cfg.spinup
+            startdate_sim_spinup = startdate_sim - timedelta(hours=cfg.spinup)
 
-        if run_time == 0:
-            # don't start simuation with 0 runtime
-            continue
-
-        endtime_act_sim = time - timedelta(hours=cfg.restart_step) \
-                               + timedelta(hours=run_time)
-        if endtime_act_sim > start + timedelta(hours=hstop):
+        # If current enddate is later than global enddate, skip
+        enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
+        if enddate_sim > cfg.enddate:
             continue
 
         print(f'Runtime of sub-simulation: {run_time} h')
 
-        if cfg.first_one:
-            run_chain(work_root=work_root,
-                      model_cfg=model_cfg,
-                      cfg=cfg,
-                      start_time=time,
-                      hstart=0,
-                      hstop=run_time,
-                      job_names=job_names,
-                      force=force)
-        else:
-            run_chain(work_root=work_root,
-                      model_cfg=model_cfg,
-                      cfg=cfg,
-                      start_time=time,
-                      hstart=-cfg.spinup,
-                      hstop=run_time - cfg.spinup,
-                      job_names=job_names,
-                      force=force)
+        run_chain(work_root=work_root,
+                  model_cfg=model_cfg,
+                  cfg=cfg,
+                  startdate_sim=startdate_sim_spinup,
+                  enddate_sim=enddate_sim,
+                  job_names=job_names,
+                  force=force)
 
 
 def load_model_config_yaml(yamlfile):
@@ -598,6 +581,9 @@ if __name__ == '__main__':
         # Convert relative to absolute paths
         cfg.convert_paths_to_absolute()
 
+        # Set restart step in hours
+        cfg.set_restart_step_hours()
+
         # Print config before duplication of dict variables
         cfg.print_config()
 
@@ -615,13 +601,10 @@ if __name__ == '__main__':
         # check for restart compatibility and spinup
         if 'restart' in model_cfg['models'][cfg.model]['features']:
             if hasattr(cfg, 'spinup'):
-                print("This is a spinup simulation.")
+                print("Spinup restart is used.")
                 restart_runs_spinup(work_root=cfg.work_root,
                                     model_cfg=model_cfg,
                                     cfg=cfg,
-                                    start=cfg.startdate,
-                                    hstart=cfg.hstart,
-                                    hstop=cfg.hstop,
                                     job_names=args.job_list,
                                     force=args.force)
             else:
@@ -629,18 +612,14 @@ if __name__ == '__main__':
                 restart_runs(work_root=cfg.work_root,
                              model_cfg=model_cfg,
                              cfg=cfg,
-                             start=cfg.startdate,
-                             hstart=cfg.hstart,
-                             hstop=cfg.hstop,
                              job_names=args.job_list,
                              force=args.force)
         else:
             print("No restart is used.")
             run_chain(work_root=cfg.work_root,
                       cfg=cfg,
-                      start_time=cfg.startdate,
-                      hstart=cfg.hstart,
-                      hstop=cfg.hstop,
+                      startdate_sim=cfg.startdate,
+                      enddate_sim=cfg.enddate,
                       job_names=args.job_list,
                       force=args.force)
 

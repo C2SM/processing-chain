@@ -3,12 +3,11 @@
 
 import os
 import logging
-import shutil
 
 from . import tools
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Copy photolysis-rate file to the **COSMOART** input directory.
 
     Only necessary for **COSMOART** simulations.

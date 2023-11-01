@@ -18,18 +18,16 @@ from datetime import datetime, timedelta
 from . import tools, prepare_data
 
 
-def set_cfg_variables(cfg, starttime, hstart):
+def set_cfg_variables(cfg, model_cfg):
 
     setattr(cfg, 'int2lm_run', os.path.join(cfg.chain_root, 'int2lm', 'run'))
     setattr(cfg, 'int2lm_output',
             os.path.join(cfg.chain_root, 'int2lm', 'output'))
-    cfg.int2lm['inidate_yyyymmddhh'] = (
-        starttime + timedelta(hours=hstart)).strftime('%Y%m%d%H')
 
     return cfg
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Setup the namelist for **int2lm** and submit the job to the queue.
 
     Necessary for both **COSMO** and **COSMOART** simulations.
@@ -66,8 +64,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = prepare_data.set_cfg_variables(cfg, starttime, hstart, hstop)
-    cfg = set_cfg_variables(cfg, starttime, hstart)
+    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
+    cfg = set_cfg_variables(cfg, model_cfg)
 
     # Total number of processes
     np_tot = cfg.int2lm['np_x'] * cfg.int2lm['np_y']
@@ -130,7 +128,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                                           input_art_filename)
 
     # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
-    if starttime < datetime(2007, 8, 2, tzinfo=pytz.UTC):
+    if cfg.startdate_sim < datetime(2007, 8, 2, tzinfo=pytz.UTC):
         multi_layer = ".FALSE."
     else:
         multi_layer = ".TRUE."
@@ -171,8 +169,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             int2lm_runscript.format(cfg=cfg,
                                     **cfg.int2lm,
                                     int2lm_run=int2lm_run,
-                                    ini_day=cfg.inidate_yyyymmddhh[0:8],
-                                    ini_hour=cfg.inidate_yyyymmddhh[8:],
+                                    ini_day=cfg.startdate_sim_yyyymmddhh[0:8],
+                                    ini_hour=cfg.startdate_sim_yyyymmddhh[8:],
                                     np_tot=np_tot,
                                     hstop_int2lm=hstop_int2lm,
                                     logfile=logfile,

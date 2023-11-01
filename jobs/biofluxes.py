@@ -16,11 +16,10 @@
 
 import os
 import logging
-import shutil
-from . import tools
+from . import tools, prepare_data
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Prepare the biofluxes-files for the simulation.
 
     Only necessary for **COSMO** simulations.
@@ -30,22 +29,17 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
     Parameters
     ----------	
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
     tools.check_model(cfg, 'cosmo-ghg')
+    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
 
     scratch_path = os.path.join(cfg.int2lm_input, 'vprm')
 
     tools.create_dir(scratch_path, "biofluxes input")
 
-    for time in tools.iter_hours(starttime, hstart, hstop):
+    for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim):
         logging.info(time)
 
         for prefix in cfg.vprm['prefix']:

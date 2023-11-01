@@ -15,10 +15,9 @@ import logging
 import os
 import subprocess
 from . import tools, prepare_data
-from datetime import timedelta
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Setup the namelists for an **ICON** tracer run and submit the job to
     the queue
 
@@ -50,7 +49,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = prepare_data.set_cfg_variables(cfg, starttime, hstart, hstop)
+    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
 
     logfile = os.path.join(cfg.log_working_dir, "icon")
     logfile_finish = os.path.join(cfg.log_finished_dir, "icon")
@@ -75,11 +74,10 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         inidata_filename = os.path.join(cfg.icon_input_icbc,
                                         cfg.inicond_filename)
     else:
-        starttime_real = starttime + timedelta(hours=hstart)
         inidata_filename = os.path.join(
             cfg.icon_input_icbc,
-            starttime_real.strftime(cfg.meteo['prefix'] +
-                                    cfg.meteo['nameformat']) + '.nc')
+            cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
+                                       cfg.meteo['nameformat']) + '.nc')
 
     # Write run script (run_icon.job)
     icon_runjob = os.path.join(cfg.case_path, cfg.icon_runjob_filename)

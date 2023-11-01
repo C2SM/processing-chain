@@ -1,21 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#################
-##  TODO :
-##  - The 3h increment could be a parameter as well
-#################
-
 import logging
 import os
-import shutil
 import glob
 import netCDF4 as nc
 from datetime import datetime, timedelta
 from . import tools, int2lm
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Combine multiple **int2lm** tracer-output files into a single one for
     **COSMO**.
 
@@ -31,20 +25,13 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     
     Parameters
     ----------	
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = int2lm.set_cfg_variables(cfg, starttime, hstart)
+    cfg = int2lm.set_cfg_variables(cfg, model_cfg)
 
     # Int2lm processing always starts at hstart=0, thus modifying inidate
-    inidate_int2lm_yyyymmddhh = (starttime +
-                                 timedelta(hours=hstart)).strftime('%Y%m%d%H')
+    inidate_int2lm_yyyymmddhh = cfg.startdate_sim_yyyymmddhh
 
     chem_list = cfg.post_int2lm['species']
 
@@ -66,15 +53,17 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     # normal lbfd files, because CAMS tracers are only every 3 hours.
     # We add it 4 times to hour-1, hour+0, hour+1 and hour+2
     for f in sorted(glob.glob(os.path.join(cfg.int2lm_output, 'lbfd*t.nc'))):
-        logging.info(f)
+        logging.info(f'Reading tracer file {f}')
         yyyymmddhh_str = os.path.basename(f)[4:-4]
         yyyymmddhh = datetime.strptime(yyyymmddhh_str, '%Y%m%d%H')
+        yyyymmddhh_prev = yyyymmddhh - timedelta(hours=1)
+        yyyymmddhh_next2 = yyyymmddhh + timedelta(hours=2)
 
-        for hour in tools.iter_hours(yyyymmddhh, -1, 2):
-            outfile1 = os.path.join(cfg.int2lm_output,
-                                    hour.strftime('lbfd%Y%m%d%H' + '.nc'))
-            if os.path.exists(outfile1):
-                with nc.Dataset(outfile1, 'a') as outf, nc.Dataset(f) as inf:
+        for hour in tools.iter_hours(yyyymmddhh_prev, yyyymmddhh_next2, 1):
+            outfile = os.path.join(cfg.int2lm_output,
+                                   hour.strftime('lbfd%Y%m%d%H' + '.nc'))
+            if os.path.exists(outfile):
+                with nc.Dataset(outfile, 'a') as outf, nc.Dataset(f) as inf:
                     for chem in chem_list:
                         try:
                             outf.createVariable(chem, inf[chem].dtype,
@@ -82,11 +71,11 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                             for attr in inf[chem].ncattrs():
                                 outf[chem].setncattr(attr,
                                                      inf[chem].getncattr(attr))
-                            logging.info('Variable ' + chem + 'added.')
+                            logging.info(f'Variable {chem} added to {outfile}')
                         except RuntimeError:
                             logging.warning(
                                 'Variable {} already present in {}'.format(
-                                    chem, outfile1))
+                                    chem, outfile))
                         outf[chem][:] = inf[chem][:]
     logging.info("OK")
 
@@ -98,7 +87,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
             'INITIAL CONDITIONS (RECYCLING): Adding tracers %s from last COSMO run (%s) to regular int2lm files.'
             % (str(var_list), cfg.last_cosmo_output))
 
-        infile_name = 'lffd' + starttime.strftime('%Y%m%d%H') + '*.nc'
+        infile_name = 'lffd' + cfg.startdate_sim_yyyymmddhh + '*.nc'
         infile_paths = sorted(
             glob.glob(os.path.join(cfg.last_cosmo_output, infile_name)))
         outfile_name = 'laf' + inidate_int2lm_yyyymmddhh + '.nc'

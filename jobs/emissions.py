@@ -17,10 +17,10 @@
 import os
 import logging
 
-from . import tools
+from . import tools, prepare_data
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Copy emission files to the **int2lm** input directory.
 
     Necessary for both **COSMO** and **COSMOART** simulations.
@@ -49,6 +49,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
+    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
     dest_prefix = "emis_"
 
     if not isinstance(cfg.emissions['dir'], list):
@@ -74,7 +75,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                                       "emissions" + str(i + 1))
             tools.create_dir(target_dir, "emissions input")
         # copy data
-        for time in tools.iter_hours(starttime, hstart, hstop):
+        for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim):
             logging.info(time)
             filename_ending = time.strftime('%Y%m%d%H.nc')
             source_path = os.path.join(emis_dir, emis_prefix + filename_ending)

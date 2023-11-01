@@ -21,7 +21,6 @@ from datetime import datetime, timedelta
 
 
 def set_cfg_variables(cfg, model_cfg):
-
     setattr(cfg, 'cosmo_base', os.path.join(cfg.chain_root, 'cosmo'))
     setattr(cfg, 'cosmo_input', os.path.join(cfg.chain_root, 'cosmo', 'input'))
     setattr(cfg, 'cosmo_run', os.path.join(cfg.chain_root, 'cosmo', 'run'))
@@ -63,7 +62,7 @@ def set_cfg_variables(cfg, model_cfg):
     return cfg
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Setup the namelists for a **COSMO** tracer run and submit the job to
     the queue
 
@@ -91,12 +90,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
     Parameters
     ----------
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
@@ -122,19 +115,16 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         ini_dir = os.path.join(cfg.cosmo_input, "initial")
         tools.create_dir(ini_dir, "cosmo_input_initial")
         startfiletime = datetime.strptime(cfg.laf_startfile[-10:], "%Y%m%d%H")
-        starttime_real = starttime + timedelta(hours=hstart)
-        if starttime_real >= startfiletime:
-            starttime_last = starttime_real - timedelta(hours=cfg.restart_step)
-            job_id_last_run = starttime_last.strftime('%Y%m%d%H') + \
-                              "_" + str(int(hstart)) + \
-                              "_" + str(int(hstop))
+        if cfg.startdate_sim >= startfiletime:
+            starttime_last = cfg.startdate_sim - timedelta(
+                hours=cfg.restart_step)
             work_root = os.path.dirname(os.path.dirname(cfg.chain_root))
             last_output_path = os.path.join(work_root, cfg.casename,
-                                            job_id_last_run, 'cosmo', 'output')
-            laf_output_refdate = starttime_real.strftime("%Y%m%d%H")
+                                            cfg.job_id_prev, 'cosmo', 'output')
+            laf_output_refdate = cfg.startdate_sim.strftime("%Y%m%d%H")
             last_laf_filename = "laf" + laf_output_refdate
             # At the beginning, use original laf_startfile
-            if starttime_real == startfiletime:
+            if cfg.startdate_sim == startfiletime:
                 last_laf_startfile = cfg.laf_startfile
             else:
                 last_laf_startfile = os.path.join(last_output_path,
@@ -146,7 +136,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 # Check if merge should be done for initial file
                 if not hasattr(cfg, 'do_merge_at_start'):
                     setattr(cfg, 'do_merge_at_start', False)
-                if starttime_real == startfiletime and not cfg.do_merge_at_start:
+                if cfg.startdate_sim == startfiletime and not cfg.do_merge_at_start:
                     # Just copy the existing laf file
                     tools.copy_file(last_laf_startfile, ini_dir)
                 else:
@@ -182,7 +172,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         else:
             raise ValueError(
                 "Start time %s must not be smaller than in laf_starttime %s." %
-                (str(starttime), str(startfiletime)))
+                (str(cfg.starttime_sim), str(startfiletime)))
 
     # Create restart directory if feature is present and
     # if there is no spinup
@@ -225,8 +215,6 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 cosmo_namelist = cosmo_namelist.format(cfg=cfg,
                                                        **cfg.cosmo,
                                                        **cfg.oem,
-                                                       hstart=hstart,
-                                                       hstop=hstop,
                                                        restart_start=12,
                                                        restart_stop=0,
                                                        restart_step=12)
@@ -236,9 +224,9 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                     cfg=cfg,
                     **cfg.cosmo,
                     **cfg.oem,
-                    restart_start=cfg.hstart + cfg.restart_step,
-                    restart_stop=cfg.hstop,
-                    restart_step=cfg.restart_step)
+                    restart_start=0,
+                    restart_stop=cfg.restart_step_hours,
+                    restart_step=cfg.restart_step_hours)
             outf.write(cosmo_namelist)
 
     # Append INPUT_GHG namelist with tracer definitions from csv file

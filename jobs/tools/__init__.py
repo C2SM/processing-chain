@@ -74,47 +74,40 @@ def iso8601_duration_to_hours(iso8601_duration):
     return total_hours
 
 
-def iter_hours(starttime, hstart, hstop, step=1):
-    """Return a generator that yields datetime-objects from 
-    ``starttime + hstart`` up to (and possibly including) ``starttime + hstop`` 
-    in ``step``-increments.
-    
-    If no ```step`` is given, the stepsize is 1 hour
+def iter_hours(startdate, enddate, step=1):
+    """Generate datetime objects in hourly increments from the start date up to and possibly including the end date.
+
+    This function returns a generator that yields datetime objects starting from the `startdate` and progressing by `step` hours, up to (and potentially including) the `enddate`.
 
     Parameters
     ----------
-    starttime : datetime-object
-        The start-date if the iteration
-    hstart : int
-        Offset (in hours) from the starttime where the iteration starts
-    hstop : int
-        Offset (in hours) from the starttime where the iteration stops
+    startdate : datetime object
+        The starting date for the iteration.
+    enddate : datetime object
+        The ending date for the iteration.
     step : int, optional
-        Stepsize, defaults to 1
-        
+        The number of hours to increment between datetime objects. Defaults to 1 hour.
+
     Yields
     ------
-    datetime-object
-        The next timepoint in the iteration
-        
+    datetime object
+        The next datetime object in the iteration.
+
     Examples
     --------
-    If the timeperiod is divisible by the step, the last timepoint will be
-    exactly ``starttime + hstop``. If not, the last timepoint will be before
-    that.
+    If the time period is divisible by the step, the last datetime object will be exactly equal to `enddate`. If not, the last datetime object will be just before `enddate`.
 
     >>> import datetime
     >>> date = datetime.datetime.strptime("20150101", "%Y%m%d")
-    >>> [t.hour for t in iter_hours(date, 10, 14, 2)]
-    [10, 12, 14]
-    >>> [t.hour for t in iter_hours(date, 9, 16, 3)]
-    [9, 12, 15]
+    >>> [t.hour for t in iter_hours(date, date + timedelta(hours=4), 2)]
+    [0, 2, 4]
+    >>> [t.hour for t in iter_hours(date, date + timedelta(hours=7), 3)]
+    [0, 3, 6]
     """
-    assert hstop > hstart, "Start has to be before stop (hstop > hstart)"
-    current = starttime + timedelta(hours=hstart)
-    stoptime = starttime + timedelta(hours=hstop)
+    assert enddate > startdate, "Start has to be before stop (enddate > startdate)"
+    current = startdate
 
-    while current <= stoptime:
+    while current <= enddate:
         yield current
         current += timedelta(hours=step)
 

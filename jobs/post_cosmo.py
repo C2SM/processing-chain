@@ -7,9 +7,7 @@
 
 import logging
 import os
-import shutil
 import datetime
-import glob
 from subprocess import call
 
 from . import tools, int2lm, cosmo
@@ -51,7 +49,7 @@ def runscript_commands_template():
     ])
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Copy the output of a **COSMO**-run to a user-defined position.
 
     Write a runscript to copy all files (**COSMO** settings & output,
@@ -66,16 +64,10 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     
     Parameters
     ----------	
-    start_time : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the start_time
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = int2lm.set_cfg_variables(cfg, starttime, hstart)
+    cfg = int2lm.set_cfg_variables(cfg, model_cfg)
     cfg = cosmo.set_cfg_variables(cfg, model_cfg)
 
     logfile = os.path.join(cfg.log_working_dir, "post_cosmo")
@@ -83,8 +75,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     runscript_path = os.path.join(cfg.cosmo_run, "post_cosmo.job")
     copy_path = os.path.join(
         cfg.post_cosmo['output_root'],
-        starttime.strftime('%Y%m%d%H') + "_" + str(int(hstart)) + "_" +
-        str(int(hstop)))
+        cfg.startdate_sim_yyyymmddhh + "_" + cfg.enddate_sim_yyyymmddhh)
 
     logging.info(logfile_header_template().format(
         "STARTS", str(datetime.datetime.today())))
