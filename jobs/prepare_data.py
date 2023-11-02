@@ -349,6 +349,7 @@ def main(cfg, model_cfg):
                                         datafile_list=datafile_list,
                                         datafile_list_rest=datafile_list_rest,
                                         datafile_list_chem=datafile_list_chem))
+                logging.info(f" Starting icontools runscript {runscript}.")
                 result = subprocess.run([
                     "sbatch", "--wait",
                     os.path.join(cfg.icon_work, "%s.job" % runscript)
@@ -357,7 +358,7 @@ def main(cfg, model_cfg):
                 if exitcode != 0:
                     raise RuntimeError(
                         "sbatch returned exitcode {}".format(exitcode))
-                logging.info("%s successfully executed." % runscript)
+                logging.info(f"{runscript} successfully executed.")
 
             #-----------------------------------------------------
             # Add GEOSP to all meteo files
