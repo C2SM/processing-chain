@@ -1,4 +1,4 @@
-# Configuration file for the 'icon-test' case with ICON
+# Configuration file for the 'icon-art-oem-test' case with ICON
 
 model: icon-art-oem
 constraint: gpu
