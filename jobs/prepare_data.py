@@ -414,33 +414,34 @@ def main(cfg, model_cfg):
                     cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
                                                cfg.meteo['nameformat']) +
                     '.nc')
-                merged_file = os.path.join(
-                    cfg.icon_input_icbc,
-                    cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
-                                               cfg.meteo['nameformat']) +
-                    '_merged.nc')
-                ds = xr.open_dataset(meteo_file)
-                merging = False
-                if 'PS' not in ds:
-                    if 'LNPS' not in ds:
-                        raise KeyError(
-                            f"'LNPS' must be found in the initial conditions file {meteo_file}"
-                        )
-                    merging = True
-                    ds['PS'] = ds['LNPS']
-                    ds['PS'].attrs = ds['LNPS'].attrs
-                    ds['PS'] = np.exp(ds['PS'])
-                    ds['PS'] = ds['PS'].squeeze(dim='lev_2')
-                    ds['PS'].attrs["long_name"] = 'surface pressure'
-                    ds['PS'].attrs['units'] = 'Pa'
-                    logging.info(f"Added PS to file {meteo_file}")
-                if 'Q' not in ds:
-                    merging = True
-                    ds['Q'] = ds['QV']
-                    logging.info(f"Added Q to file {meteo_file}")
-                if merging:
-                    ds.to_netcdf(merged_file)
-                    tools.rename_file(merged_file, meteo_file)
+                if os.path.isfile(meteo_file):
+                    merged_file = os.path.join(
+                        cfg.icon_input_icbc,
+                        cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
+                                                cfg.meteo['nameformat']) +
+                        '_merged.nc')
+                    ds = xr.open_dataset(meteo_file)
+                    merging = False
+                    if 'PS' not in ds:
+                        if 'LNPS' not in ds:
+                            raise KeyError(
+                                f"'LNPS' must be found in the initial conditions file {meteo_file}"
+                            )
+                        merging = True
+                        ds['PS'] = ds['LNPS']
+                        ds['PS'].attrs = ds['LNPS'].attrs
+                        ds['PS'] = np.exp(ds['PS'])
+                        ds['PS'] = ds['PS'].squeeze(dim='lev_2')
+                        ds['PS'].attrs["long_name"] = 'surface pressure'
+                        ds['PS'].attrs['units'] = 'Pa'
+                        logging.info(f"Added PS to file {meteo_file}")
+                    if 'Q' not in ds:
+                        merging = True
+                        ds['Q'] = ds['QV']
+                        logging.info(f"Added Q to file {meteo_file}")
+                    if merging:
+                        ds.to_netcdf(merged_file)
+                        tools.rename_file(merged_file, meteo_file)
 
             #-----------------------------------------------------
             # In case of OEM: merge chem tracers with meteo-files
@@ -457,31 +458,32 @@ def main(cfg, model_cfg):
                             cfg.icon_input_icbc,
                             time.strftime(cfg.meteo['prefix'] +
                                           cfg.meteo['nameformat']) + '.nc')
-                        chem_file = os.path.join(
-                            cfg.icon_input_icbc, cfg.chem['prefix'] +
-                            time.strftime(cfg.chem['nameformat']) + '.nc')
-                        merged_file = os.path.join(
-                            cfg.icon_input_icbc,
-                            time.strftime(cfg.meteo['prefix'] +
-                                          cfg.meteo['nameformat']) +
-                            '_merged.nc')
-                        ds_meteo = xr.open_dataset(meteo_file)
-                        ds_chem = xr.open_dataset(chem_file)
-                        # LNPS --> PS
-                        ds_chem['PS'] = ds_chem['LNPS']
-                        ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
-                        ds_chem['PS'] = ds_chem['PS'].squeeze(dim='lev_2')
-                        ds_chem['PS'].attrs["long_name"] = 'surface pressure'
-                        # merge:
-                        ds_merged = xr.merge([ds_meteo, ds_chem],
-                                             compat="override")
-                        #ds_merged.attrs = ds.attrs
-                        ds_merged.to_netcdf(merged_file)
-                        # Rename file to get original file name
-                        tools.rename_file(merged_file, meteo_file)
-                        tools.remove_file(chem_file)
-                        logging.info("Added chemical tracer to file {}".format(
-                            merged_file))
+                        if os.path.isfile(meteo_file):
+                            chem_file = os.path.join(
+                                cfg.icon_input_icbc, cfg.chem['prefix'] +
+                                time.strftime(cfg.chem['nameformat']) + '.nc')
+                            merged_file = os.path.join(
+                                cfg.icon_input_icbc,
+                                time.strftime(cfg.meteo['prefix'] +
+                                            cfg.meteo['nameformat']) +
+                                '_merged.nc')
+                            ds_meteo = xr.open_dataset(meteo_file)
+                            ds_chem = xr.open_dataset(chem_file)
+                            # LNPS --> PS
+                            ds_chem['PS'] = ds_chem['LNPS']
+                            ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
+                            ds_chem['PS'] = ds_chem['PS'].squeeze(dim='lev_2')
+                            ds_chem['PS'].attrs["long_name"] = 'surface pressure'
+                            # merge:
+                            ds_merged = xr.merge([ds_meteo, ds_chem],
+                                                compat="override")
+                            #ds_merged.attrs = ds.attrs
+                            ds_merged.to_netcdf(merged_file)
+                            # Rename file to get original file name
+                            tools.rename_file(merged_file, meteo_file)
+                            tools.remove_file(chem_file)
+                            logging.info("Added chemical tracer to file {}".format(
+                                merged_file))
 
                     #------------
                     # Merge LBC:
