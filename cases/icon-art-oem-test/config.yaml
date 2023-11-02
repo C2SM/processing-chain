@@ -19,7 +19,7 @@ inidata_filename_suffix: .nc
 output_filename: icon-art-oem-test
 filename_format: <output_filename>_DOM<physdom>_<ddhhmmss>
 lateral_boundary_grid_order: lateral_boundary
-art_input_folder: ./src/icon-art
+art_input_folder: ./input/icon-art-oem/ART
 
 meteo:
     dir: ./input/meteo
