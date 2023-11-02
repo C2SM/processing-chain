@@ -419,7 +419,7 @@ def main(cfg, model_cfg):
                     merged_file = os.path.join(
                         cfg.icon_input_icbc,
                         cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
-                                                cfg.meteo['nameformat']) +
+                                                   cfg.meteo['nameformat']) +
                         '_merged.nc')
                     ds = xr.open_dataset(meteo_file)
                     merging = False
@@ -466,7 +466,7 @@ def main(cfg, model_cfg):
                             merged_file = os.path.join(
                                 cfg.icon_input_icbc,
                                 time.strftime(cfg.meteo['prefix'] +
-                                            cfg.meteo['nameformat']) +
+                                              cfg.meteo['nameformat']) +
                                 '_merged.nc')
                             ds_meteo = xr.open_dataset(meteo_file)
                             ds_chem = xr.open_dataset(chem_file)
@@ -474,17 +474,19 @@ def main(cfg, model_cfg):
                             ds_chem['PS'] = ds_chem['LNPS']
                             ds_chem['PS'].attrs = ds_chem['LNPS'].attrs
                             ds_chem['PS'] = ds_chem['PS'].squeeze(dim='lev_2')
-                            ds_chem['PS'].attrs["long_name"] = 'surface pressure'
+                            ds_chem['PS'].attrs[
+                                "long_name"] = 'surface pressure'
                             # merge:
                             ds_merged = xr.merge([ds_meteo, ds_chem],
-                                                compat="override")
+                                                 compat="override")
                             #ds_merged.attrs = ds.attrs
                             ds_merged.to_netcdf(merged_file)
                             # Rename file to get original file name
                             tools.rename_file(merged_file, meteo_file)
                             tools.remove_file(chem_file)
-                            logging.info("Added chemical tracer to file {}".format(
-                                merged_file))
+                            logging.info(
+                                "Added chemical tracer to file {}".format(
+                                    merged_file))
 
                     #------------
                     # Merge LBC:
