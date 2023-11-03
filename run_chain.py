@@ -63,6 +63,16 @@ def parse_arguments():
                         type=int,
                         default=1)
 
+    resume_help = ("Resume the processing chain by restarting the last unfinished job."
+                  " WARNING: Only the logfile gets deleted,"
+                  " other effects of a given job (copied files etc.)"
+                  " are simply overwritten. This may cause errors.")
+    parser.add_argument("-r",
+                        "--resume",
+                        help=resume_help,
+                        dest="resume",
+                        action='store_true')
+
     args = parser.parse_args()
 
     return args
@@ -249,7 +259,7 @@ class Config():
 
 
 def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
-              force):
+              force, resume):
     """Run chain ignoring already finished jobs.
 
     Sets configuration values derived from user-provided ones, for example the
@@ -281,7 +291,9 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         Jobs are ``.py`` files in the ``jobs/`` directory with a ``main()``
         function that will be called from ``run_chain()``.
     force : bool
-        If True will do job regardless of completion status
+        If True, will do job regardless of completion status
+    resume : bool
+        If True, will resume the last unfinished job
     """
 
     # Write current start and end dates to config variables
@@ -394,6 +406,9 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
                         print('Skip "%s" for chain "%s"' % (job, cfg.job_id))
                         skip = True
                         break
+                    elif resume:
+                        resume = False
+                        break
                     else:
                         print('Wait for "%s" of chain "%s"' %
                               (job, cfg.job_id))
@@ -452,7 +467,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
                 raise RuntimeError(subject)
 
 
-def restart_runs(work_root, model_cfg, cfg, job_names, force):
+def restart_runs(work_root, model_cfg, cfg, job_names, force, resume):
     """Starts the subchains in the specified intervals.
     
     Slices the total runtime of the chain according to ``cfg.restart_step_hours``.
@@ -473,6 +488,8 @@ def restart_runs(work_root, model_cfg, cfg, job_names, force):
         that will be called from run_chain().
     force : bool
         If True will do job regardless of completion status
+    resume : bool
+        If True, will resume the last unfinished job
     """
     # run restarts
     for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
@@ -496,10 +513,11 @@ def restart_runs(work_root, model_cfg, cfg, job_names, force):
                   startdate_sim=startdate_sim,
                   enddate_sim=enddate_sim,
                   job_names=job_names,
-                  force=force)
+                  force=force,
+                  resume=resume)
 
 
-def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
+def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force, resume):
     """Starts the subchains in the specified intervals.
     
     Slices the total runtime of the chain according to ``cfg.restart_step_hours``.
@@ -525,6 +543,8 @@ def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
         that will be called from run_chain().
     force : bool
         If True will do job regardless of completion status
+    resume : bool
+        If True, will resume the last unfinished job
     """
     for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
                                           cfg.restart_step_hours):
@@ -561,7 +581,8 @@ def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
                   startdate_sim=startdate_sim_spinup,
                   enddate_sim=enddate_sim,
                   job_names=job_names,
-                  force=force)
+                  force=force,
+                  resume=resume)
 
 
 def load_model_config_yaml(yamlfile):
@@ -606,14 +627,16 @@ if __name__ == '__main__':
                                     model_cfg=model_cfg,
                                     cfg=cfg,
                                     job_names=args.job_list,
-                                    force=args.force)
+                                    force=args.force,
+                                    resume=args.resume)
             else:
                 print("Built-in model restart is used.")
                 restart_runs(work_root=cfg.work_root,
                              model_cfg=model_cfg,
                              cfg=cfg,
                              job_names=args.job_list,
-                             force=args.force)
+                             force=args.force,
+                             resume=args.resume)
         else:
             print("No restart is used.")
             run_chain(work_root=cfg.work_root,
@@ -621,6 +644,7 @@ if __name__ == '__main__':
                       startdate_sim=cfg.startdate,
                       enddate_sim=cfg.enddate,
                       job_names=args.job_list,
-                      force=args.force)
+                      force=args.force,
+                      resume=args.resume)
 
-    print('>>> finished chain for good or bad! <<<')
+    print('>>> Finished chain for good or bad! <<<')
