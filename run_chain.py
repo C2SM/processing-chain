@@ -799,10 +799,10 @@ if __name__ == '__main__':
 
         print(f"Starting chain for case {casename} and model {cfg.model}")
 
-        # check for restart compatibility and spinup
+        # Check for restart compatibility and spinup
         if 'restart' in model_cfg['models'][cfg.model]['features']:
             if hasattr(cfg, 'spinup'):
-                print("Spinup restart is used.")
+                print("Using spin-up restarts.")
                 restart_runs_spinup(work_root=cfg.work_root,
                                     model_cfg=model_cfg,
                                     cfg=cfg,
@@ -810,7 +810,7 @@ if __name__ == '__main__':
                                     force=args.force,
                                     resume=args.resume)
             else:
-                print("Built-in model restart is used.")
+                print("Using built-in model restarts.")
                 restart_runs(work_root=cfg.work_root,
                              model_cfg=model_cfg,
                              cfg=cfg,
@@ -818,7 +818,7 @@ if __name__ == '__main__':
                              force=args.force,
                              resume=args.resume)
         else:
-            print("No restart is used.")
+            print("No restarts are used.")
             run_chain(work_root=cfg.work_root,
                       cfg=cfg,
                       startdate_sim=cfg.startdate,
@@ -827,4 +827,4 @@ if __name__ == '__main__':
                       force=args.force,
                       resume=args.resume)
 
-    print('>>> Finished chain for good or bad! <<<')
+    print('>>> Finished the processing chain successfully <<<')
