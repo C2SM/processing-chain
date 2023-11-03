@@ -224,7 +224,7 @@ def main(cfg, model_cfg):
                     # -- Check the extension of tracer variables in the restart file
                     ds_restart = xr.open_dataset(cfg.restart_file)
                     tracer_name = cfg.species2restart[0]
-                    # FIXME: 
+                    # FIXME:
                     # var_restart = [
                     # IndexError: list index out of range
                     # var_restart = [
