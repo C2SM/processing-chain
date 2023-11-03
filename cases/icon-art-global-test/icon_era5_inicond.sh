@@ -6,7 +6,7 @@ cd {cfg.icon_input_icbc}
 # -- Pre-processing
 # ---------------------------------
 
-rm -f {cfg.inicond_filename_scratch}
+rm -f {cfg.input_files_scratch_inicond_filename}
 
 # -- Convert the GRIB files to NetCDF
 cdo -t ecmwf -f nc copy era5_ml.grib era5_ml.nc
@@ -27,7 +27,7 @@ rm tmp.nc era5_surf.nc era5_ml.nc era5_original.nc
 # ---------------------------------
 
 # -- Retrieve the dynamic horizontal grid
-cdo -s selgrid,2 {cfg.dynamics_grid_filename_scratch} triangular-grid.nc
+cdo -s selgrid,2 {cfg.input_files_scratch_dynamics_grid_filename} triangular-grid.nc
 
 # -- Create the weights for remapping ERA5 latlon grid onto the triangular grid
 cdo gendis,triangular-grid.nc data_in.nc weights.nc
@@ -35,7 +35,7 @@ cdo gendis,triangular-grid.nc data_in.nc weights.nc
 # -- Extract the land-sea mask variable in input and output files
 cdo selname,LSM data_in.nc LSM_in.nc
 ncrename -h -v LSM,FR_LAND LSM_in.nc
-cdo selname,FR_LAND {cfg.extpar_filename_scratch} LSM_out_tmp.nc
+cdo selname,FR_LAND {cfg.input_files_scratch_extpar_filename} LSM_out_tmp.nc
 
 # -- Add time dimension to LSM_out.nc
 ncecat -O -u time LSM_out_tmp.nc LSM_out_tmp.nc
@@ -171,7 +171,7 @@ rm tmp.nc
 # -- Rename dimensions and order alphabetically
 ncrename -h -d cell,ncells era5_final.nc
 ncrename -h -d nv,vertices era5_final.nc
-ncks era5_final.nc {cfg.inicond_filename_scratch} 
+ncks era5_final.nc {cfg.input_files_scratch_inicond_filename} 
 rm era5_final.nc
 
 # -- Clean the repository

@@ -103,7 +103,7 @@ def create_oh_for_restart(cfg, month, ext_restart):
     ds_restart = xr.open_dataset(cfg.restart_filename_scratch)
     nlevels = 65
 
-    ds = xr.open_dataset(cfg.OH_MOLEC_FILENAME)
+    ds = xr.open_dataset(cfg.input_files_scratch_oh_molec_filename)
     oh = ds['OH'][month - 1]
     pres_surf = ds['PSURF'][month - 1]
     pmid_transcom = compute_pmid_transcom(oh, ds['A'], ds['B'], pres_surf)
@@ -152,12 +152,12 @@ def create_oh_for_restart(cfg, month, ext_restart):
 
 def create_oh_for_inicond(cfg, month):
 
-    ds_inicond = xr.open_dataset(cfg.inicond_filename_scratch)
+    ds_inicond = xr.open_dataset(cfg.input_files_scratch_inicond_filename)
     pmid_era5 = compute_pmid_era5(ds_inicond)
     temp_era5 = ds_inicond['T']
     nlevels = len(temp_era5.lev)
 
-    ds = xr.open_dataset(cfg.oh_molec_filename)
+    ds = xr.open_dataset(cfg.input_files_scratch_oh_molec_filename)
     oh = ds['OH'][month - 1]
     pres_surf = ds['PSURF'][month - 1]
     pmid_transcom = compute_pmid_transcom(oh, ds['A'], ds['B'], pres_surf)
@@ -195,5 +195,5 @@ def create_oh_for_inicond(cfg, month):
     ds_inicond['TROH'] = pmid_era5.copy()
     ds_inicond['TROH'][:] = oh_regrid.data
 
-    os.remove(cfg.inicond_filename_scratch)
-    ds_inicond.to_netcdf(cfg.inicond_filename_scratch)
+    os.remove(cfg.input_files_scratch_inicond_filename)
+    ds_inicond.to_netcdf(cfg.input_files_scratch_inicond_filename)
