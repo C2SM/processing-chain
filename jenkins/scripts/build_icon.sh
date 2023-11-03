@@ -21,9 +21,10 @@ pushd src
 rm -fr icon
 
 # Clone icon
-git clone --depth 1 --recurse-submodules --shallow-submodules -b ${BRANCH} ${GIT_REMOTE}
+git clone --depth 1 --recurse-submodules --shallow-submodules -b ${BRANCH} ${GIT_REMOTE} icon
+SPACK_TAG=`cat icon/config/cscs/SPACK_TAG`
     pushd icon
-    spack env activate -p -d config/cscs/spack/v0.18.1.4/daint_cpu_nvhpc
+    spack env activate -p -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc
     spack install -u build
     popd
 popd

@@ -22,8 +22,9 @@ rm -fr icon-art
 
 # Clone icon-art
 git clone --depth 1 --recurse-submodules --shallow-submodules -b ${BRANCH} ${GIT_REMOTE} icon-art
+SPACK_TAG=`cat icon-art/config/cscs/SPACK_TAG`
     pushd icon-art
-    spack env activate -p -d config/cscs/spack/v0.18.1.7/art_daint_cpu_nvhpc
+    spack env activate -p -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc_art
     spack install -u build
     popd
 popd
