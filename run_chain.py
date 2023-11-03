@@ -63,10 +63,11 @@ def parse_arguments():
                         type=int,
                         default=1)
 
-    resume_help = ("Resume the processing chain by restarting the last unfinished job."
-                  " WARNING: Only the logfile gets deleted,"
-                  " other effects of a given job (copied files etc.)"
-                  " are simply overwritten. This may cause errors.")
+    resume_help = (
+        "Resume the processing chain by restarting the last unfinished job."
+        " WARNING: Only the logfile gets deleted,"
+        " other effects of a given job (copied files etc.)"
+        " are simply overwritten. This may cause errors.")
     parser.add_argument("-r",
                         "--resume",
                         help=resume_help,
