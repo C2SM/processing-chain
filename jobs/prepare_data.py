@@ -83,8 +83,10 @@ def set_cfg_variables(cfg, model_cfg):
 
         if cfg.lrestart == '.TRUE.':
             cfg.restart_filename = 'restart_atm_DOM01.nc'
-            cfg.restart_file = os.path.join(cfg.icon_restart_in, cfg.restart_filename)
-            cfg.restart_file_scratch = os.path.join(cfg.icon_work, cfg.restart_filename)
+            cfg.restart_file = os.path.join(cfg.icon_restart_in,
+                                            cfg.restart_filename)
+            cfg.restart_file_scratch = os.path.join(cfg.icon_work,
+                                                    cfg.restart_filename)
 
     return cfg
 
@@ -192,7 +194,10 @@ def main(cfg, model_cfg):
                     filename = cfg.input_files_scratch_inicond_filename
 
                     # -- Copy the script for processing external tracer data in workdir
-                    with open(os.path.join(cfg.case_path, cfg.icon_species_inijob)) as input_file:
+                    with open(
+                            os.path.join(
+                                cfg.case_path,
+                                cfg.icon_species_inijob)) as input_file:
                         to_write = input_file.read()
                     output_file = os.path.join(cfg.icon_input_icbc,
                                                cfg.icon_species_inijob)
@@ -206,9 +211,7 @@ def main(cfg, model_cfg):
                                             day=cfg.startdate_sim.day))
 
                     # -- Run ERA5 processing script
-                    process = subprocess.Popen([
-                        "bash", output_file
-                    ],
+                    process = subprocess.Popen(["bash", output_file],
                                                stdout=subprocess.PIPE)
                     process.communicate()
 
