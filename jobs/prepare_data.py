@@ -219,19 +219,21 @@ def main(cfg, model_cfg):
                 else:
 
                     # -- Check the extension of tracer variables in the restart file
-                    ds_restart = xr.open_dataset(cfg.restart_filename_scratch)
+                    ds_restart = xr.open_dataset(cfg.restart_file)
                     tracer_name = cfg.species2restart[0]
-                    var_restart = [
-                        var for var in ds_restart.data_vars.keys()
-                        if var.startswith(tracer_name)
-                    ][0]
-                    ext_restart = var_restart.replace(tracer_name, '')
-                    filename = cfg.restart_filename_scratch
+                    # FIXME: 
+                    # var_restart = [
+                    # IndexError: list index out of range
+                    # var_restart = [
+                    #     var for var in ds_restart.data_vars.keys()
+                    #     if var.startswith(tracer_name)
+                    # ][0]
+                    # ext_restart = var_restart.replace(tracer_name, '')
 
                     # -- Change OH concentrations in the restart file
-                    if 'TROH' in cfg.species2restart:
-                        create_oh_for_restart(cfg, cfg.startdate_sim.month,
-                                              ext_restart)
+                    # if 'TROH' in cfg.species2restart:
+                    #     create_oh_for_restart(cfg, cfg.startdate_sim.month,
+                    #                           ext_restart)
 
             # -----------------------------------------------------
             # Create meteorological and tracer nudging conditions
@@ -307,13 +309,6 @@ def main(cfg, model_cfg):
                         ],
                                                    stdout=subprocess.PIPE)
                         process.communicate()
-
-            # -----------------------------------------------------
-            # Create symlink to the restart file if lrestart is True
-            # -----------------------------------------------------
-            if cfg.lrestart == '.TRUE.':
-                os.symlink(cfg.restart_filename_scratch,
-                           os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 
         else:  # non-global ICON-ART
             #-----------------------------------------------------

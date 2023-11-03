@@ -100,7 +100,7 @@ def compute_pmid_transcom(field, ap, bp, psurf):
 
 def create_oh_for_restart(cfg, month, ext_restart):
 
-    ds_restart = xr.open_dataset(cfg.restart_filename_scratch)
+    ds_restart = xr.open_dataset(cfg.restart_file)
     nlevels = 65
 
     ds = xr.open_dataset(cfg.input_files_scratch_oh_molec_filename)
@@ -146,8 +146,8 @@ def create_oh_for_restart(cfg, month, ext_restart):
     ds_restart['TROH' + ext_restart] = exner_icon.copy()
     ds_restart['TROH' + ext_restart][:] = oh_regrid.data
 
-    os.remove(cfg.restart_filename_scratch)
-    ds_restart.to_netcdf(cfg.restart_filename_scratch)
+    os.remove(cfg.restart_file)
+    ds_restart.to_netcdf(cfg.restart_file)
 
 
 def create_oh_for_inicond(cfg, month):
