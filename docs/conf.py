@@ -12,8 +12,6 @@
 import os
 import sys
 
-from PSphinxTheme.utils import set_psphinxtheme
-
 # -- Project information ------------------------------------------------
 
 project = 'Processing Chain'
