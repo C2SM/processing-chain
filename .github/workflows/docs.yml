@@ -3,7 +3,7 @@ name: Build and Deploy Documentation
 on:
   push:
     branches:
-      - gh-pages
+      - gh_pages
 
 jobs:
   deploy-docs:
