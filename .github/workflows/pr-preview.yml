@@ -1,33 +1,32 @@
-name: PR Documentation Preview
+name: Deploy PR previews
 
 on:
   pull_request:
     types:
       - opened
+      - reopened
       - synchronize
+      - closed
+
+concurrency: preview-${{ github.ref }}
 
 jobs:
-  build:
+  deploy-preview:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Build docs
+        uses: C2SM/sphinx-action@sphinx-latest
         with:
-          python-version: 3.x
+          pre-build-command: "pip install sphinx_rtd_theme && pip install sphinx-copybutton"
+          build-command: "sphinx-build -b html . _build"
+          docs-folder: "docs/"
 
-      - name: Install dependencies
-        run: pip install -r docs/requirements.txt
-
-      - name: Build HTML documentation
-        run: sphinx-build -b html docs docs/_build
-
-      - name: Deploy PR Documentation Preview
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy preview
+        uses: rossjrw/pr-preview-action@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_build/html
-
+          source-dir: docs/_build
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: auto
