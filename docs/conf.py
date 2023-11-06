@@ -24,9 +24,9 @@ author = 'Processing Chain Administrators'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autosectionlabel', 'sphinx.ext.todo',
-    'sphinx_rtd_theme', 'sphinx_copybutton', 'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig', 'sphinx.ext.viewcode', 'sphinx.ext.napoleon'
+    'sphinx.ext.autosectionlabel', 'sphinx.ext.todo', 'sphinx_rtd_theme',
+    'sphinx_copybutton', 'sphinx.ext.mathjax', 'sphinx.ext.ifconfig',
+    'sphinx.ext.viewcode', 'sphinx.ext.napoleon'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
