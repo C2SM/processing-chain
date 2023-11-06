@@ -113,7 +113,7 @@ To run the test cases manually, type:
 
 For more information about the file structure, configuration options,
 namelist templates etc., please read the official
-[documentation](c2sm.github.io/processing-chain/).
+[documentation](https://c2sm.github.io/processing-chain/).
 
 ## Contributing
 
