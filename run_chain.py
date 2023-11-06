@@ -16,11 +16,16 @@ from jobs import tools
 
 
 def parse_arguments():
-    """Parse the command line arguments given to this script
+    """Parse command line arguments for the processing chain script.
+
+    Parses and retrieves command line arguments, allowing users to specify
+    run identifiers, jobs to execute, and various options to control the
+    execution of the processing chain.
 
     Returns
     -------
-    Namespace-object
+    argparse.Namespace
+        A namespace object containing parsed command line arguments.
     """
     parser = argparse.ArgumentParser(description="Run the processing chain.")
 
@@ -63,6 +68,17 @@ def parse_arguments():
                         type=int,
                         default=1)
 
+    resume_help = (
+        "Resume the processing chain by restarting the last unfinished job."
+        " WARNING: Only the logfile gets deleted,"
+        " other effects of a given job (copied files etc.)"
+        " are simply overwritten. This may cause errors.")
+    parser.add_argument("-r",
+                        "--resume",
+                        help=resume_help,
+                        dest="resume",
+                        action='store_true')
+
     args = parser.parse_args()
 
     return args
@@ -71,6 +87,40 @@ def parse_arguments():
 class Config():
 
     def __init__(self, casename):
+        """Initialize an instance of the Config class.
+
+        Initializes an instance of the Config class with user-specific
+        and default attributes. The class represents a processing chain for a
+        particular case, and its attributes are populated based on the provided
+        `casename`.
+
+        Parameters
+        ----------
+        casename : str
+            The identifier for the case, typically specifying the configuration
+            and settings to be used in the processing chain.
+
+        Attributes
+        ----------
+        user_name : str
+            The username of the current user, obtained from the 'USER' environment variable.
+        email : str
+            The user's email address, initially set to None and updated using the `set_email` method.
+        casename : str
+            The specified case name for the processing chain.
+        chain_src_dir : str
+            The source directory for the processing chain, typically the current working directory.
+        case_path : str
+            The path to the case directory under 'cases/' for the specified `casename`.
+        work_root : str
+            The root directory for processing chain execution, typically located under the source directory.
+
+        Notes
+        -----
+        The method also loads user-defined attributes from the configuration file,
+        sets specific settings based on the node type ('gpu' or 'mc'), and initializes
+        other instance-specific attributes.
+        """
         # Global attributes (initialized with default values)
         self.user_name = os.environ['USER']
         self.set_email()
@@ -89,21 +139,33 @@ class Config():
         self.set_node_info()
 
     def load_config_file(self, casename):
-        """
-        Load the configuration settings from a YAML file.
+        """Load configuration settings from a YAML file and set them as attributes.
 
         This method reads the configuration settings from a YAML file located in
         the 'cases/casename' directory and sets them as attributes of the instance.
 
-        Parameters:
-        - casename (str): Name of the folder in 'cases/' where the configuration
-          files are stored.
+        Parameters
+        ----------
+        casename : str
+            Name of the folder in 'cases/' where the configuration files are stored.
 
-        Returns:
-        - self (Config): The same `Config` instance with configuration settings as
-          attributes.
+        Returns
+        -------
+        Config
+            The same `Config` instance with configuration settings as attributes.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the specified configuration file or case directory is not found.
+
+        Notes
+        -----
+        If the configuration file does not exist, the method will attempt to suggest
+        a similar case directory based on a Levenshtein distance comparison with
+        existing case directories. The method directly assigns values from the
+        configuration file to instance attributes for easy access.
         """
-
         cfg_file = os.path.join('cases', casename, 'config.yaml')
 
         if not os.path.isfile(cfg_file):
@@ -131,6 +193,25 @@ class Config():
         return self
 
     def set_account(self):
+        """Set the compute account based on user information.
+
+        This method determines the compute account to be used based on the user's
+        name and system configuration.
+
+        Returns
+        -------
+        Config
+            The same `Config` instance with the `compute_account` attribute set.
+
+        Notes
+        -----
+        - If the user name is 'jenkins', the compute account is set to 'g110' for
+        Jenkins testing.
+        - If an account is specified in the user's '~/.acct' file, it will be used
+        as the compute account.
+        - If neither of the above conditions is met, the standard account is
+        determined using the 'id -gn' command.
+        """
         if self.user_name == 'jenkins':
             # g110 account for Jenkins testing
             self.compute_account = 'g110'
@@ -145,6 +226,22 @@ class Config():
         return self
 
     def set_node_info(self):
+        """Set node-specific information based on configuration settings.
+
+        This method configures node-specific settings, such as the number of tasks
+        per node and CUDA-related environment variables, based on the provided
+        configuration settings in the instance.
+
+        Returns
+        -------
+        Config
+            The same `Config` instance with updated node-specific attributes.
+
+        Raises
+        ------
+        ValueError
+            If the 'constraint' or 'run_on' configuration values are invalid.
+        """
         if self.constraint == 'gpu':
             if self.model.startswith('icon'):
                 if self.run_on == 'gpu':
@@ -171,10 +268,40 @@ class Config():
         return self
 
     def set_restart_step_hours(self):
+        """Set the restart step in hours.
+
+        Converts the 'restart_step' attribute, which is in ISO8601 duration format,
+        to hours and stores the result in the 'restart_step_hours' attribute.
+
+        Returns
+        -------
+        Config
+            The same `Config` instance with the 'restart_step_hours' attribute set.
+        """
         self.restart_step_hours = int(
             tools.iso8601_duration_to_hours(self.restart_step))
 
+        return self
+
     def set_email(self):
+        """Set the user's email address based on system configuration.
+
+        This method determines the user's email address based on the user's name
+        and system configuration.
+
+        Returns
+        -------
+        Config
+            The same `Config` instance with the `user_mail` attribute set.
+
+        Notes
+        -----
+        - If the user name is 'jenkins', the user's email address is set to None.
+        - If an email address is specified in the user's '~/.forward' file, it will
+        be used as the user's email address.
+        - If neither of the above conditions is met, the user's email address is set
+        to None.
+        """
         if self.user_name == 'jenkins':
             self.user_mail = None
         elif os.path.exists(os.environ['HOME'] + '/.forward'):
@@ -186,7 +313,20 @@ class Config():
         return self
 
     def print_config(self):
-        # Print the configuration
+        """Print the configuration attributes and their values.
+
+        This method displays the configuration attributes and their corresponding
+        values in a formatted manner. Lists and dictionaries within the configuration
+        are also displayed with appropriate indentation.
+
+        Notes
+        -----
+        - The maximum column width for the attribute names is automatically determined.
+        - The method prints the attribute name, its type, and its value.
+        - If an attribute is a list, it is displayed with each item indented.
+        - If an attribute is a dictionary, it is also displayed with each key-value
+        pair indented.
+        """
         # max_col_width = max(len(key) for key in vars(self)) + 1
         max_col_width = 27
 
@@ -214,6 +354,18 @@ class Config():
                 print(f"{key:<{max_col_width}} {key_type:<4} {value}")
 
     def convert_paths_to_absolute(self):
+        """Convert relative file paths to absolute paths in the configuration.
+
+        This method iterates through all variables and their dictionary entries in
+        the configuration and checks for string values that represent file paths.
+        If a file path is relative (starts with './'), it is converted to an
+        absolute path using `os.path.abspath`.
+
+        Returns
+        -------
+        Config
+            The same `Config` instance with relative file paths converted to absolute paths.
+        """
         # Loop through all variables and their dictionary entries
         for attr_name, attr_value in self.__dict__.items():
             if isinstance(attr_value, str):
@@ -238,6 +390,18 @@ class Config():
         return self
 
     def create_vars_from_dicts(self):
+        """Create instance attributes from dictionary entries in the configuration.
+
+        This method iterates through the instance's attribute dictionary and checks
+        for dictionary values. For each dictionary encountered, it creates new
+        instance attributes by concatenating the original attribute name and the
+        dictionary key, and assigns the corresponding values.
+
+        Returns
+        -------
+        Config
+            The same `Config` instance with new attributes created from dictionary entries.
+        """
         # Create a copy of the object's __dict__ to avoid modifying it during iteration
         object_dict = vars(self).copy()
 
@@ -249,41 +413,42 @@ class Config():
 
 
 def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
-              force):
-    """Run chain ignoring already finished jobs.
+              force, resume):
+    """Run the processing chain, managing job execution and logging.
 
-    Sets configuration values derived from user-provided ones, for example the
-    folder-structure inside the working directory.
-
-    Sets up the logging module used by the jobs.
-
-    Creates directories for each job.
-
-    Decides which jobs to run and then runs them; first it checks wether the
-    job was already executed or is currently running (depending on the logging
-    file of the job). Then if the job has to be run, it calls the main()-
-    function of the job. If force is True, the logging-file of the job will
-    be deleted (if it exists) and the job will be executed regardless.
+    This function sets up and manages the execution of a processing chain, handling
+    job execution, logging, and various configuration settings.
 
     Parameters
     ----------
     work_root : str
-        The path to the directory in which the chain writes files during
-        execution (typically scratch)
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+        The path to the directory where the processing chain writes files during execution.
+    model_cfg : dict
+        Configuration settings for the modeling framework.
+    cfg : Config
+        Object holding user-defined configuration parameters as attributes.
     startdate_sim : datetime-object
-        The startdate of the simulation
+        The start date of the simulation.
     enddate_sim : datetime-object
-        The enddate of the simulation
+        The end date of the simulation.
     job_names : list of str
-        List of the names of jobs to execute on every timeslice.
-        Jobs are ``.py`` files in the ``jobs/`` directory with a ``main()``
-        function that will be called from ``run_chain()``.
+        List of names of jobs to execute on every timeslice.
     force : bool
-        If True will do job regardless of completion status
-    """
+        If True, it will force the execution of jobs regardless of their completion status.
+    resume : bool
+        If True, it will resume the last unfinished job.
 
+    Raises
+    ------
+    RuntimeError
+        If an error or timeout occurs during job execution.
+
+    Notes
+    -----
+    - This function sets various configuration values based on the provided parameters.
+    - It checks for job completion status and resumes or forces execution accordingly.
+    - Job log files are managed, and errors or timeouts are handled with notifications.
+    """
     # Write current start and end dates to config variables
     cfg.startdate_sim = startdate_sim
     cfg.enddate_sim = enddate_sim
@@ -394,6 +559,9 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
                         print('Skip "%s" for chain "%s"' % (job, cfg.job_id))
                         skip = True
                         break
+                    elif resume:
+                        resume = False
+                        break
                     else:
                         print('Wait for "%s" of chain "%s"' %
                               (job, cfg.job_id))
@@ -452,27 +620,32 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
                 raise RuntimeError(subject)
 
 
-def restart_runs(work_root, model_cfg, cfg, job_names, force):
-    """Starts the subchains in the specified intervals.
-    
-    Slices the total runtime of the chain according to ``cfg.restart_step_hours``.
-    Calls ``run_chain()`` for each step.
-    
+def restart_runs(work_root, model_cfg, cfg, job_names, force, resume):
+    """Start subchains in specified intervals and manage restarts.
+
+    This function slices the total runtime of the processing chain according to the
+    `cfg.restart_step_hours` configuration. It calls `run_chain()` for each
+    specified interval.
+
     Parameters
     ----------
     work_root : str
-        The path to the directory in which the chain writes files during
-        execution (typically scratch)
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
-    start : datetime-object
-        The startdate
+        The path to the directory in which the chain writes files during execution.
+    model_cfg : dict
+        Configuration settings for the modeling framework.
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
     job_names : list of str
-        List of the names of jobs to execute on every timeslice.
-        Jobs are .py files in the jobs/ directory with a main() function
-        that will be called from run_chain().
+        List of names of jobs to execute on every timeslice.
     force : bool
-        If True will do job regardless of completion status
+        If True, it will force the execution of jobs regardless of their completion status.
+    resume : bool
+        If True, it will resume the last unfinished job.
+
+    Notes
+    -----
+    - The function iterates over specified intervals, calling `run_chain()` for each.
+    - It manages restart settings and logging for each subchain.
     """
     # run restarts
     for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
@@ -496,35 +669,36 @@ def restart_runs(work_root, model_cfg, cfg, job_names, force):
                   startdate_sim=startdate_sim,
                   enddate_sim=enddate_sim,
                   job_names=job_names,
-                  force=force)
+                  force=force,
+                  resume=resume)
 
 
-def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
-    """Starts the subchains in the specified intervals.
-    
-    Slices the total runtime of the chain according to ``cfg.restart_step_hours``.
-    Calls ``run_chain()`` for each step.
+def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force, resume):
+    """Start subchains in specified intervals and manage restarts with spin-up.
 
-    Runs custom "restarts" (= simulations with spin-up and tracer recycling).
-    The first simulation is a normal one, with ``run_time = cfg.restart_step_hours``.
-    Consecutive simulations start at
-    ``start + N * cfg.restart_step_hours - cfg.spinup``.
-    
+    This function slices the total runtime of the processing chain according to the
+    `cfg.restart_step_hours` configuration. It calls `run_chain()` for each specified
+    interval, managing restarts with spin-up.
+
     Parameters
     ----------
     work_root : str
-        The path to the directory in which the chain writes files during
-        execution (typically scratch)
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
-    start : datetime-object
-        The startdate
+        The path to the directory in which the chain writes files during execution.
+    model_cfg : dict
+        Configuration settings for the modeling framework.
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
     job_names : list of str
-        List of the names of jobs to execute on every timeslice.
-        Jobs are .py files in the jobs/ directory with a main() function
-        that will be called from run_chain().
+        List of names of jobs to execute on every timeslice.
     force : bool
-        If True will do job regardless of completion status
+        If True, it will force the execution of jobs regardless of their completion status.
+    resume : bool
+        If True, it will resume the last unfinished job.
+
+    Notes
+    -----
+    - The function iterates over specified intervals, calling `run_chain()` for each.
+    - It manages restart settings and logging for each subchain, including spin-up.
     """
     for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
                                           cfg.restart_step_hours):
@@ -561,16 +735,43 @@ def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force):
                   startdate_sim=startdate_sim_spinup,
                   enddate_sim=enddate_sim,
                   job_names=job_names,
-                  force=force)
+                  force=force,
+                  resume=resume)
 
 
 def load_model_config_yaml(yamlfile):
+    """Load model configuration from a YAML file.
+
+    Parameters
+    ----------
+    yamlfile : str
+        The path to the YAML file containing the model configuration.
+
+    Returns
+    -------
+    dict
+        A dictionary representing the model configuration loaded from the YAML file.
+    """
     with open(yamlfile) as file:
         model_cfg = yaml.safe_load(file)
     return model_cfg
 
 
 if __name__ == '__main__':
+    """Main script for running a processing chain.
+
+    This script handles the execution of a processing chain for one or more specified cases. It loads model configurations, prepares the environment, and starts the chain based on the provided settings.
+
+    Parameters
+    ----------
+    None (Command-line arguments are parsed internally)
+
+    Notes
+    -----
+    - This script uses command-line arguments to specify cases and job lists.
+    - It loads model configurations, converts paths to absolute, sets restart settings, and starts the chain.
+    - Depending on the model's features, it may run with or without restarts or utilize spin-up restarts.
+    """
     args = parse_arguments()
 
     for casename in args.casenames:
@@ -598,29 +799,32 @@ if __name__ == '__main__':
 
         print(f"Starting chain for case {casename} and model {cfg.model}")
 
-        # check for restart compatibility and spinup
+        # Check for restart compatibility and spinup
         if 'restart' in model_cfg['models'][cfg.model]['features']:
             if hasattr(cfg, 'spinup'):
-                print("Spinup restart is used.")
+                print("Using spin-up restarts.")
                 restart_runs_spinup(work_root=cfg.work_root,
                                     model_cfg=model_cfg,
                                     cfg=cfg,
                                     job_names=args.job_list,
-                                    force=args.force)
+                                    force=args.force,
+                                    resume=args.resume)
             else:
-                print("Built-in model restart is used.")
+                print("Using built-in model restarts.")
                 restart_runs(work_root=cfg.work_root,
                              model_cfg=model_cfg,
                              cfg=cfg,
                              job_names=args.job_list,
-                             force=args.force)
+                             force=args.force,
+                             resume=args.resume)
         else:
-            print("No restart is used.")
+            print("No restarts are used.")
             run_chain(work_root=cfg.work_root,
                       cfg=cfg,
                       startdate_sim=cfg.startdate,
                       enddate_sim=cfg.enddate,
                       job_names=args.job_list,
-                      force=args.force)
+                      force=args.force,
+                      resume=args.resume)
 
-    print('>>> finished chain for good or bad! <<<')
+    print('>>> Finished the processing chain successfully <<<')
