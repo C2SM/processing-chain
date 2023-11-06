@@ -116,18 +116,3 @@ Running the ``cosmo-ghg-11km-test``-case therefore produces the following direct
 			     \ finished    # 1 logfile per finished job
 
 
-Functions in ``run_chain.py``
------------------------------
-
-.. autofunction:: run_chain.restart_runs
-
-.. autofunction:: run_chain.restart_runs_spinup
-
-.. autofunction:: run_chain.run_chain
-
-.. autofunction:: run_chain.load_config_file
-
-.. autofunction:: run_chain.set_simulation_type
-
-.. autofunction:: run_chain.parse_arguments
-
