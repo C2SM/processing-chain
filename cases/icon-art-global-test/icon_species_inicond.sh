@@ -35,7 +35,7 @@ if [[ "${{species2restart[*]}}" =~ "TRCH4" || "${{species2restart[*]}}" =~ "TRCO
     # cdo -t ecmwf -f nc copy cams.grib cams.nc
 
     # # -- Retrieve the dynamic horizontal grid
-    # cdo -s selgrid,2 {cfg.dynamics_grid_filename_scratch} triangular-grid.nc
+    # cdo -s selgrid,2 {cfg.input_files_scratch_dynamics_grid_filename} triangular-grid.nc
 
     # # -- Remap
     # cdo -s remapdis,triangular-grid.nc cams.nc cams_final.nc

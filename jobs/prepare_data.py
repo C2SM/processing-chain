@@ -73,6 +73,21 @@ def set_cfg_variables(cfg, model_cfg):
             cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime(
                 '%Y%m%d_%H')
 
+        if cfg.model == 'icon-art-global':
+            # Nudge type (global or nothing)
+            cfg.nudge_type = 2 if cfg.era5_global_nudging else 0
+            # Time step for global nudging in seconds
+            cfg.nudging_step_seconds = cfg.nudging_step * 3600
+            # Prescribed initial conditions for CH4, CO and/or OH
+            cfg.iart_init_gas = 4 if cfg.species_inicond else 0
+
+        if cfg.lrestart == '.TRUE.':
+            cfg.restart_filename = 'restart_atm_DOM01.nc'
+            cfg.restart_file = os.path.join(cfg.icon_restart_in,
+                                            cfg.restart_filename)
+            cfg.restart_file_scratch = os.path.join(cfg.icon_work,
+                                                    cfg.restart_filename)
+
     return cfg
 
 
@@ -176,13 +191,16 @@ def main(cfg, model_cfg):
                 if cfg.lrestart == '.FALSE.':
 
                     ext_restart = ''
-                    filename = cfg.inicond_filename_scratch
+                    filename = cfg.input_files_scratch_inicond_filename
 
                     # -- Copy the script for processing external tracer data in workdir
-                    with open(cfg.icon_species_inijob) as input_file:
+                    with open(
+                            os.path.join(
+                                cfg.case_path,
+                                cfg.icon_species_inijob)) as input_file:
                         to_write = input_file.read()
                     output_file = os.path.join(cfg.icon_input_icbc,
-                                               'icon_species_inicond.sh')
+                                               cfg.icon_species_inijob)
                     with open(output_file, "w") as outf:
                         outf.write(
                             to_write.format(cfg=cfg,
@@ -193,11 +211,7 @@ def main(cfg, model_cfg):
                                             day=cfg.startdate_sim.day))
 
                     # -- Run ERA5 processing script
-                    process = subprocess.Popen([
-                        "bash",
-                        os.path.join(cfg.icon_input_icbc,
-                                     'icon_species_inicond.sh')
-                    ],
+                    process = subprocess.Popen(["bash", output_file],
                                                stdout=subprocess.PIPE)
                     process.communicate()
 
@@ -208,19 +222,21 @@ def main(cfg, model_cfg):
                 else:
 
                     # -- Check the extension of tracer variables in the restart file
-                    ds_restart = xr.open_dataset(cfg.restart_filename_scratch)
+                    ds_restart = xr.open_dataset(cfg.restart_file)
                     tracer_name = cfg.species2restart[0]
-                    var_restart = [
-                        var for var in ds_restart.data_vars.keys()
-                        if var.startswith(tracer_name)
-                    ][0]
-                    ext_restart = var_restart.replace(tracer_name, '')
-                    filename = cfg.restart_filename_scratch
+                    # FIXME:
+                    # var_restart = [
+                    # IndexError: list index out of range
+                    # var_restart = [
+                    #     var for var in ds_restart.data_vars.keys()
+                    #     if var.startswith(tracer_name)
+                    # ][0]
+                    # ext_restart = var_restart.replace(tracer_name, '')
 
                     # -- Change OH concentrations in the restart file
-                    if 'TROH' in cfg.species2restart:
-                        create_oh_for_restart(cfg, cfg.startdate_sim.month,
-                                              ext_restart)
+                    # if 'TROH' in cfg.species2restart:
+                    #     create_oh_for_restart(cfg, cfg.startdate_sim.month,
+                    #                           ext_restart)
 
             # -----------------------------------------------------
             # Create meteorological and tracer nudging conditions
@@ -241,7 +257,7 @@ def main(cfg, model_cfg):
                     # -- If initial time, copy the initial conditions to be used as boundary conditions
                     if time == cfg.startdate_sim and cfg.era5_inicond:
                         shutil.copy(
-                            cfg.inicond_filename_scratch,
+                            cfg.input_files_scratch_inicond_filename,
                             os.path.join(cfg.icon_input_icbc, filename))
                         continue
 
@@ -296,13 +312,6 @@ def main(cfg, model_cfg):
                         ],
                                                    stdout=subprocess.PIPE)
                         process.communicate()
-
-            # -----------------------------------------------------
-            # Create symlink to the restart file if lrestart is True
-            # -----------------------------------------------------
-            if cfg.lrestart == '.TRUE.':
-                os.symlink(cfg.restart_filename_scratch,
-                           os.path.join(cfg.icon_work, 'restart_atm_DOM01.nc'))
 
         else:  # non-global ICON-ART
             #-----------------------------------------------------
