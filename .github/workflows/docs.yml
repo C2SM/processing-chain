@@ -3,7 +3,6 @@ name: Build and Deploy Documentation
 on:
   push:
     branches:
-      - main
       - v3.0-rc
 
 jobs:
