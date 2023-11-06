@@ -26,15 +26,9 @@ author = 'Processing Chain Administrators'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosectionlabel',
-    'sphinx.ext.todo',
-    'sphinx_rtd_theme',
-    'sphinx_copybutton',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.autodoc', 'sphinx.ext.autosectionlabel', 'sphinx.ext.todo',
+    'sphinx_rtd_theme', 'sphinx_copybutton', 'sphinx.ext.mathjax',
+    'sphinx.ext.ifconfig', 'sphinx.ext.viewcode', 'sphinx.ext.napoleon'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -85,6 +79,7 @@ html_static_path = ['_static']
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
 
 # Include css file to control disable horizontal table scrollbar
 def setup(app):
