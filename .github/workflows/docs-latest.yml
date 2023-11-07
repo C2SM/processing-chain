@@ -1,9 +1,11 @@
-name: Build and Deploy Documentation
+name: Build and Deploy Documentation to Latest
+env:
+  DOCS_VERSION: latest
 
 on:
   push:
     branches:
-      - v3.0-rc
+      - main
 
 jobs:
   deploy-docs:
