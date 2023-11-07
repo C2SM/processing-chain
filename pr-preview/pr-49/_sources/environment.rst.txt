@@ -1,6 +1,6 @@
 .. _environment-section:
 
-Conda environment
+Conda Environment
 =================
 
 The following steps allow you to create and use your own virtual environment to run the Processing Chain. We recommend using a conda environment for the usage of the provided scripts. Please follow the instructions for the installation. The following steps only need to be performed once.

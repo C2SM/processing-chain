@@ -18,6 +18,7 @@ adding new jobs or custom scripts.
     :maxdepth: 2
     :caption: Getting Started
 
+    features
     environment
     howtorun
 
