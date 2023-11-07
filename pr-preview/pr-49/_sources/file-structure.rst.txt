@@ -8,11 +8,11 @@ File Structure
     + LICENSE                       # license file
     + README.md                     # README file
     + run_chain.py                  # main script
-    + cases/                        # example test cases
-    |    + cosmo-ghg-spinup-test/   # COSMO-GHG example with spinup
+    + cases/                        # folder where all cases are stored
+    |    + cosmo-ghg-spinup-test/   # COSMO-GHG test case with spinup restart
     |    |    + config.yaml         # case configuration file
     |    |    \ *.cfg               # templates for namelists & batch jobs
-    |    \ cosmo-ghg-test/          # COSMO-GHG example with standard restart
+    |    \ cosmo-ghg-test/          # COSMO-GHG testcase with standard restart
     |    |    + config.yaml         
     |    |    \ *.cfg               
     |    \ icon-art-global-test     # ICON-ART test case (global domain)
@@ -29,8 +29,12 @@ File Structure
     + docs/                         
     |    + conf.py                  # configuration file for the Sphinx documentation builder
     |    \ *.rst                    # documentation files (reStructuredText)
-    + env/
+    + env/                          
+    |    + environment.yml          # conda environment file
     + jenkins
+    |    + Jenkinsfile              # Text file containing the Jenkins pipeline
+    |    \ scripts/
+    |    |    + *.sh                # individual Shell scripts for Jenkins testing
     + jobs/
     |    + *.py                     # job scripts
     |    \ tools/

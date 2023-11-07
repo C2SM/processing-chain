@@ -1,11 +1,11 @@
-.. _script-section:
+.. _howtorun-section:
 
 How to Run
 ==========
 
 The Python file ``run_chain.py`` in the root directory is the main script of the
 Processing Chain.
-It reads the user's input from the command line and from the ``config.py`` file of the
+It reads the user's input from the command line and from the ``config.yaml`` file of the
 respective case.
 Then it will start the Processing Chain.
 
@@ -14,7 +14,7 @@ Starting the Chain
 
 The chain has to be run with the following command: ::
 
-    $ python run_chain.py <casename> <startdate> <hstart> <hstop> -j [jobs]
+    $ python run_chain.py <casename> -j [jobs]
 
 ``<casename>`` is the name of a directory in the ``cases/``-directory where
 there is a ``config.py``-file specifying the configurations, as well as templates

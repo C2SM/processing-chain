@@ -23,8 +23,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="How to Run" href="howtorun.html" />
-    <link rel="prev" title="Processing Chain" href="index.html" /> 
+    <link rel="next" title="Configuration File" href="config.html" />
+    <link rel="prev" title="How to Run" href="howtorun.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,8 +47,8 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">File Structure</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environment.html">Setting up conda environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="howtorun.html">How to Run</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howtorun.html#starting-the-chain">Starting the Chain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howtorun.html#what-it-does">What it Does</a></li>
@@ -56,7 +56,8 @@
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
-<ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">File Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">Configuration File</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="config.html#general-variables-in-config-py">General Variables in <code class="docutils literal notranslate"><span class="pre">config.py</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-biofluxes-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
@@ -117,11 +118,11 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+</span> <span class="n">LICENSE</span>                       <span class="c1"># license file</span>
 <span class="o">+</span> <span class="n">README</span><span class="o">.</span><span class="n">md</span>                     <span class="c1"># README file</span>
 <span class="o">+</span> <span class="n">run_chain</span><span class="o">.</span><span class="n">py</span>                  <span class="c1"># main script</span>
-<span class="o">+</span> <span class="n">cases</span><span class="o">/</span>                        <span class="c1"># example test cases</span>
-<span class="o">|</span>    <span class="o">+</span> <span class="n">cosmo</span><span class="o">-</span><span class="n">ghg</span><span class="o">-</span><span class="n">spinup</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>   <span class="c1"># COSMO-GHG example with spinup</span>
+<span class="o">+</span> <span class="n">cases</span><span class="o">/</span>                        <span class="c1"># folder where all cases are stored</span>
+<span class="o">|</span>    <span class="o">+</span> <span class="n">cosmo</span><span class="o">-</span><span class="n">ghg</span><span class="o">-</span><span class="n">spinup</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>   <span class="c1"># COSMO-GHG test case with spinup restart</span>
 <span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>         <span class="c1"># case configuration file</span>
 <span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>               <span class="c1"># templates for namelists &amp; batch jobs</span>
-<span class="o">|</span>    \ <span class="n">cosmo</span><span class="o">-</span><span class="n">ghg</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>          <span class="c1"># COSMO-GHG example with standard restart</span>
+<span class="o">|</span>    \ <span class="n">cosmo</span><span class="o">-</span><span class="n">ghg</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>          <span class="c1"># COSMO-GHG testcase with standard restart</span>
 <span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
 <span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
 <span class="o">|</span>    \ <span class="n">icon</span><span class="o">-</span><span class="n">art</span><span class="o">-</span><span class="k">global</span><span class="o">-</span><span class="n">test</span>     <span class="c1"># ICON-ART test case (global domain)</span>
@@ -139,7 +140,11 @@
 <span class="o">|</span>    <span class="o">+</span> <span class="n">conf</span><span class="o">.</span><span class="n">py</span>                  <span class="c1"># configuration file for the Sphinx documentation builder</span>
 <span class="o">|</span>    \ <span class="o">*.</span><span class="n">rst</span>                    <span class="c1"># documentation files (reStructuredText)</span>
 <span class="o">+</span> <span class="n">env</span><span class="o">/</span>
+<span class="o">|</span>    <span class="o">+</span> <span class="n">environment</span><span class="o">.</span><span class="n">yml</span>          <span class="c1"># conda environment file</span>
 <span class="o">+</span> <span class="n">jenkins</span>
+<span class="o">|</span>    <span class="o">+</span> <span class="n">Jenkinsfile</span>              <span class="c1"># Text file containing the Jenkins pipeline</span>
+<span class="o">|</span>    \ <span class="n">scripts</span><span class="o">/</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="o">*.</span><span class="n">sh</span>                <span class="c1"># individual Shell scripts for Jenkins testing</span>
 <span class="o">+</span> <span class="n">jobs</span><span class="o">/</span>
 <span class="o">|</span>    <span class="o">+</span> <span class="o">*.</span><span class="n">py</span>                     <span class="c1"># job scripts</span>
 <span class="o">|</span>    \ <span class="n">tools</span><span class="o">/</span>
@@ -153,8 +158,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Processing Chain" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="howtorun.html" class="btn btn-neutral float-right" title="How to Run" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="howtorun.html" class="btn btn-neutral float-left" title="How to Run" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="config.html" class="btn btn-neutral float-right" title="Configuration File" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

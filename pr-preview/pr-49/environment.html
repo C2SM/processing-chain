@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Processing Chain &mdash; Processing Chain  documentation</title>
+  <title>Setting up conda environment &mdash; Processing Chain  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -23,7 +23,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Setting up conda environment" href="environment.html" /> 
+    <link rel="next" title="How to Run" href="howtorun.html" />
+    <link rel="prev" title="Processing Chain" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -34,7 +35,7 @@
 
           
           
-          <a href="#" class="icon icon-home">
+          <a href="index.html" class="icon icon-home">
             Processing Chain
           </a>
 <div role="search">
@@ -46,8 +47,8 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="environment.html">Setting up conda environment</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setting up conda environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="howtorun.html">How to Run</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howtorun.html#starting-the-chain">Starting the Chain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howtorun.html#what-it-does">What it Does</a></li>
@@ -94,17 +95,17 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #5d6d7e" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Processing Chain</a>
+          <a href="index.html">Processing Chain</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Processing Chain</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Setting up conda environment</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/environment.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -112,70 +113,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="processing-chain">
-<h1>Processing Chain<a class="headerlink" href="#processing-chain" title="Permalink to this heading"></a></h1>
-<p>The Processing Chain is a collection of Python scripts to prepare the
-necessary input data, submit the compute jobs to the queue on Piz Daint
-and to apply post-processing steps. In addition to the standard versions
-of the COSMO and ICON models, it can als handle several variants of these
-models, namely COSMO-GHG, COSMO-ART and ICON-ART. The chain can be flexibly
-adapted according to your needs, e.g., by creating your own case,
-adding new jobs or custom scripts.</p>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="environment.html">Setting up conda environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="howtorun.html">How to Run</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="howtorun.html#starting-the-chain">Starting the Chain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="howtorun.html#what-it-does">What it Does</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="file-structure.html">File Structure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration File</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="config.html#general-variables-in-config-py">General Variables in <code class="docutils literal notranslate"><span class="pre">config.py</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-biofluxes-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-cosmo-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-emissions-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-icon-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-int2lm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-prepare-data-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-oae-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oae.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-obs-nudging-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-octe-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-online-vprm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-photo-rate-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-post-int2lm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-reduce-output-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-verify-chain-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="namelists.html">Namelist Templates</a></li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Jobs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="jobs.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jobs.html#adding-new-jobs">Adding new jobs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jobs.html#list-of-available-jobs">List of available jobs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tools.html#conversion-functions">Conversion Functions</a></li>
-</ul>
-</li>
-</ul>
-</div>
+  <section id="setting-up-conda-environment">
+<span id="environment-section"></span><h1>Setting up conda environment<a class="headerlink" href="#setting-up-conda-environment" title="Permalink to this heading"></a></h1>
+<p>TODO</p>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="environment.html" class="btn btn-neutral float-right" title="Setting up conda environment" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Processing Chain" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="howtorun.html" class="btn btn-neutral float-right" title="How to Run" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
