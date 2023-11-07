@@ -1,8 +1,8 @@
 .. _config-section:
 
-The processing chain uses cases to describe a simulation. A case is a
-subdirectory in ``cases/``, containing a :ref:`config.py` and several
-:ref:`namelists` (for example ``int2lm_INPUT.cfg``) which define the
+The Processing Chain uses cases to describe a simulation. A case is a
+subdirectory in ``cases/``, containing a `config.yaml` and several
+`namelists` (for example ``int2lm_INPUT.cfg``) which define the
 simulation.
 
 .. _config.py:
