@@ -1,9 +1,9 @@
-name: Build and Deploy Documentation
+name: Build and Deploy Documentation to Tags
 
 on:
   push:
-    branches:
-      - v3.0-rc
+    tags:
+      - '*'
 
 jobs:
   deploy-docs:
@@ -11,6 +11,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.3.2
+        env: GITHUB_TOKEN: ${{ github.token }}
       - name: Build docs
         uses: C2SM/sphinx-action@sphinx-latest
         with:
@@ -21,5 +25,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_build
-          destination_dir: ${{ env.DOCS_VERSION }}
+          destination_dir: ${{ steps.get_release.outputs.tag_name }}
           allow_empty_commit: true
