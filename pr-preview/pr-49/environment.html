@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Setting up conda environment &mdash; Processing Chain  documentation</title>
+  <title>Conda environment &mdash; Processing Chain  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -48,7 +48,12 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Setting up conda environment</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Conda environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install-miniconda">1. Install Miniconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-the-conda-environment">2. Create the Conda Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#store-user-specific-data">3. Store user-specific data</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="howtorun.html">How to Run</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howtorun.html#starting-the-chain">Starting the Chain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howtorun.html#what-it-does">What it Does</a></li>
@@ -103,7 +108,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Setting up conda environment</li>
+      <li class="breadcrumb-item active">Conda environment</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/environment.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -113,9 +118,48 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="setting-up-conda-environment">
-<span id="environment-section"></span><h1>Setting up conda environment<a class="headerlink" href="#setting-up-conda-environment" title="Permalink to this heading"></a></h1>
-<p>TODO</p>
+  <section id="conda-environment">
+<span id="environment-section"></span><h1>Conda environment<a class="headerlink" href="#conda-environment" title="Permalink to this heading"></a></h1>
+<p>The following steps allow you to create and use your own virtual environment to run the Processing Chain. We recommend using a conda environment for the usage of the provided scripts. Please follow the instructions for the installation. The following steps only need to be performed once.</p>
+<section id="install-miniconda">
+<h2>1. Install Miniconda<a class="headerlink" href="#install-miniconda" title="Permalink to this heading"></a></h2>
+<p>Install Miniconda as user-specific Miniconda, e.g., in your <code class="docutils literal notranslate"><span class="pre">$HOME</span></code> directory, which is the default location.</p>
+<p>&gt; <strong>Note</strong>: Only conda itself should be installed in your <code class="docutils literal notranslate"><span class="pre">$HOME</span></code>. All environments should be stored in your <code class="docutils literal notranslate"><span class="pre">$PROJECT</span></code> directory; otherwise, you risk filling up your <code class="docutils literal notranslate"><span class="pre">$HOME</span></code> directory. See below for instructions.</p>
+<p>To install the latest Miniconda, type:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash<span class="w"> </span>Miniconda3-latest-Linux-x86_64.sh
+</pre></div>
+</div>
+<p>Further details on Miniconda can be found on the <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda documentation page</a>.</p>
+</section>
+<section id="create-the-conda-environment">
+<h2>2. Create the Conda Environment<a class="headerlink" href="#create-the-conda-environment" title="Permalink to this heading"></a></h2>
+<p>Create a conda environment <code class="docutils literal notranslate"><span class="pre">proc-chain</span></code> and install the requirements:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>--prefix<span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain<span class="w"> </span>-f<span class="w"> </span>env/environment.yml
+</pre></div>
+</div>
+<p>To be able to activate your conda environment by simply using <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">proc-chain</span></code> instead of the full path, add the following to your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">CONDA_ENVS_PATH</span><span class="o">=</span><span class="nv">$PROJECT</span>/envs
+</pre></div>
+</div>
+<p>Activate the environment (use “source activate” in case “conda activate” does not work):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>proc-chain
+</pre></div>
+</div>
+<p>If you already have the environment but want to update it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>update<span class="w"> </span>--file<span class="w"> </span>env/environment.yml<span class="w"> </span>--prune
+</pre></div>
+</div>
+</section>
+<section id="store-user-specific-data">
+<h2>3. Store user-specific data<a class="headerlink" href="#store-user-specific-data" title="Permalink to this heading"></a></h2>
+<p>To register your email address and standard project account, store them in these files within your home directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span>&lt;your_account_id&gt;<span class="w"> </span>&gt;<span class="w"> </span>~/.acct
+<span class="nb">echo</span><span class="w"> </span>&lt;your_email_address&gt;<span class="w"> </span>&gt;<span class="w"> </span>~/.forward
+</pre></div>
+</div>
+<p>These settings are optional. The Processing Chain will first check the content of those files. If desired, the corresponding variables can be overridden by setting the <code class="docutils literal notranslate"><span class="pre">compute_account</span></code> and <code class="docutils literal notranslate"><span class="pre">user_mail</span></code> variables in the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> file.</p>
+</section>
 </section>
 
 
