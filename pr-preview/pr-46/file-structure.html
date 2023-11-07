@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File Structure &mdash; Processing Chain  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=a5fa425f"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to Run" href="howtorun.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #5d6d7e" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Processing Chain
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">File Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howtorun.html">How to Run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howtorun.html#starting-the-chain">Starting the Chain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howtorun.html#what-it-does">What it Does</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="config.html#general-variables-in-config-py">General Variables in <code class="docutils literal notranslate"><span class="pre">config.py</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-biofluxes-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-cosmo-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-emissions-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-icon-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-int2lm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-prepare-data-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-oae-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oae.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-obs-nudging-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-octe-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-online-vprm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-photo-rate-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-post-int2lm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-reduce-output-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-verify-chain-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="namelists.html">Namelist Templates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Jobs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html#adding-new-jobs">Adding new jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html#list-of-available-jobs">List of available jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#conversion-functions">Conversion Functions</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #5d6d7e" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Processing Chain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">File Structure</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/file-structure.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="file-structure">
+<span id="file-structure-section"></span><h1>File Structure<a class="headerlink" href="#file-structure" title="Permalink to this heading"></a></h1>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+</span> <span class="n">README</span><span class="o">.</span><span class="n">rst</span>
+<span class="o">+</span> <span class="n">run_script</span><span class="o">.</span><span class="n">py</span>                 <span class="c1"># main script</span>
+<span class="o">+</span> <span class="n">jobs</span><span class="o">/</span>
+<span class="o">|</span>    <span class="o">+</span> <span class="o">*.</span><span class="n">py</span>                     <span class="c1"># jobs-files</span>
+<span class="o">|</span>    \ <span class="n">tools</span><span class="o">/</span>                   <span class="c1"># tools-files</span>
+<span class="o">+</span> <span class="n">cases</span><span class="o">/</span>                        <span class="c1"># example test cases</span>
+<span class="o">|</span>    <span class="o">+</span> <span class="n">cosmo</span><span class="o">-</span><span class="n">ghg</span><span class="o">-</span><span class="mi">11</span><span class="n">km</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>     <span class="c1"># COSMO-GHG example</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">py</span>           <span class="c1"># user-configuration</span>
+<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>               <span class="c1"># templates for namelists &amp; batch-jobs</span>
+<span class="o">|</span>    <span class="o">+</span> <span class="n">cosmo</span><span class="o">-</span><span class="n">art</span><span class="o">-</span><span class="n">mother</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>   <span class="c1"># COSMO-ART example (mother domain)</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
+<span class="o">|</span>    <span class="o">+</span> <span class="n">cosmo</span><span class="o">-</span><span class="n">art</span><span class="o">-</span><span class="n">nested</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>   <span class="c1"># COSMO-ART example (nested domain)</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
+<span class="o">|</span>    \ <span class="n">icon</span><span class="o">-</span><span class="n">test</span>                <span class="c1"># ICON example</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
+<span class="o">|</span>    \ <span class="n">icon</span><span class="o">-</span><span class="n">oem</span><span class="o">-</span><span class="n">test</span>            <span class="c1"># ICON-OEM example</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
+<span class="o">+</span> <span class="n">docs</span><span class="o">/</span>
+     <span class="o">+</span> <span class="n">source</span><span class="o">/</span>                  <span class="c1"># *.rst documentation files</span>
+     \ <span class="n">Makefile</span>                 <span class="c1"># Makefile for generating docs</span>
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="howtorun.html" class="btn btn-neutral float-right" title="How to Run" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018-2023, C2SM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
