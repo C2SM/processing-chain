@@ -22,15 +22,14 @@ adding new jobs or custom scripts.
     howtorun
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :caption: Configuration
 
     config
     namelists
 
-
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :caption: Jobs
 
     jobs
