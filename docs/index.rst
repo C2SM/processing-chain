@@ -18,13 +18,14 @@ adding new jobs or custom scripts.
     :maxdepth: 2
     :caption: Getting Started
 
-    file-structure
+    environment
     howtorun
 
 .. toctree::
     :maxdepth: 2
     :caption: Configuration
 
+    file-structure
     config
     namelists
 
