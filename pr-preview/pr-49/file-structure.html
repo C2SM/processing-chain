@@ -114,30 +114,37 @@
              
   <section id="file-structure">
 <span id="file-structure-section"></span><h1>File Structure<a class="headerlink" href="#file-structure" title="Permalink to this heading"></a></h1>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+</span> <span class="n">README</span><span class="o">.</span><span class="n">rst</span>
-<span class="o">+</span> <span class="n">run_script</span><span class="o">.</span><span class="n">py</span>                 <span class="c1"># main script</span>
-<span class="o">+</span> <span class="n">jobs</span><span class="o">/</span>
-<span class="o">|</span>    <span class="o">+</span> <span class="o">*.</span><span class="n">py</span>                     <span class="c1"># jobs-files</span>
-<span class="o">|</span>    \ <span class="n">tools</span><span class="o">/</span>                   <span class="c1"># tools-files</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+</span> <span class="n">LICENSE</span>                       <span class="c1"># license file</span>
+<span class="o">+</span> <span class="n">README</span><span class="o">.</span><span class="n">md</span>                     <span class="c1"># README file</span>
+<span class="o">+</span> <span class="n">run_chain</span><span class="o">.</span><span class="n">py</span>                  <span class="c1"># main script</span>
 <span class="o">+</span> <span class="n">cases</span><span class="o">/</span>                        <span class="c1"># example test cases</span>
-<span class="o">|</span>    <span class="o">+</span> <span class="n">cosmo</span><span class="o">-</span><span class="n">ghg</span><span class="o">-</span><span class="mi">11</span><span class="n">km</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>     <span class="c1"># COSMO-GHG example</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">py</span>           <span class="c1"># user-configuration</span>
-<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>               <span class="c1"># templates for namelists &amp; batch-jobs</span>
-<span class="o">|</span>    <span class="o">+</span> <span class="n">cosmo</span><span class="o">-</span><span class="n">art</span><span class="o">-</span><span class="n">mother</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>   <span class="c1"># COSMO-ART example (mother domain)</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>    <span class="o">+</span> <span class="n">cosmo</span><span class="o">-</span><span class="n">ghg</span><span class="o">-</span><span class="n">spinup</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>   <span class="c1"># COSMO-GHG example with spinup</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>         <span class="c1"># case configuration file</span>
+<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>               <span class="c1"># templates for namelists &amp; batch jobs</span>
+<span class="o">|</span>    \ <span class="n">cosmo</span><span class="o">-</span><span class="n">ghg</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>          <span class="c1"># COSMO-GHG example with standard restart</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
 <span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
-<span class="o">|</span>    <span class="o">+</span> <span class="n">cosmo</span><span class="o">-</span><span class="n">art</span><span class="o">-</span><span class="n">nested</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>   <span class="c1"># COSMO-ART example (nested domain)</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>    \ <span class="n">icon</span><span class="o">-</span><span class="n">art</span><span class="o">-</span><span class="k">global</span><span class="o">-</span><span class="n">test</span>     <span class="c1"># ICON-ART test case (global domain)</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
 <span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
-<span class="o">|</span>    \ <span class="n">icon</span><span class="o">-</span><span class="n">test</span>                <span class="c1"># ICON example</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>    \ <span class="n">icon</span><span class="o">-</span><span class="n">art</span><span class="o">-</span><span class="n">oem</span><span class="o">-</span><span class="n">test</span>        <span class="c1"># ICON-ART test case with online emissions</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
 <span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
-<span class="o">|</span>    \ <span class="n">icon</span><span class="o">-</span><span class="n">oem</span><span class="o">-</span><span class="n">test</span>            <span class="c1"># ICON-OEM example</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>    \ <span class="n">icon</span><span class="o">-</span><span class="n">test</span>                <span class="c1"># ICON test case</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
 <span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
+<span class="o">+</span> <span class="n">config</span><span class="o">/</span>
+<span class="o">|</span>    <span class="o">+</span> <span class="n">models</span><span class="o">.</span><span class="n">yaml</span>              <span class="c1"># file to store model features and standard jobs</span>
 <span class="o">+</span> <span class="n">docs</span><span class="o">/</span>
-     <span class="o">+</span> <span class="n">source</span><span class="o">/</span>                  <span class="c1"># *.rst documentation files</span>
-     \ <span class="n">Makefile</span>                 <span class="c1"># Makefile for generating docs</span>
+<span class="o">|</span>    <span class="o">+</span> <span class="n">conf</span><span class="o">.</span><span class="n">py</span>                  <span class="c1"># configuration file for the Sphinx documentation builder</span>
+<span class="o">|</span>    \ <span class="o">*.</span><span class="n">rst</span>                    <span class="c1"># documentation files (reStructuredText)</span>
+<span class="o">+</span> <span class="n">env</span><span class="o">/</span>
+<span class="o">+</span> <span class="n">jenkins</span>
+<span class="o">+</span> <span class="n">jobs</span><span class="o">/</span>
+<span class="o">|</span>    <span class="o">+</span> <span class="o">*.</span><span class="n">py</span>                     <span class="c1"># job scripts</span>
+<span class="o">|</span>    \ <span class="n">tools</span><span class="o">/</span>
+<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="o">*.</span><span class="n">py</span>                <span class="c1"># tool scripts</span>
+<span class="o">+</span> <span class="n">src</span><span class="o">/</span>                          <span class="c1"># path to store source codes (spack, models, etc.)</span>
 </pre></div>
 </div>
 </section>
