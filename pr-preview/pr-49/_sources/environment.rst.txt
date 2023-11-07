@@ -10,7 +10,8 @@ The following steps allow you to create and use your own virtual environment to 
 
 Install Miniconda as user-specific Miniconda, e.g., in your ``$HOME`` directory, which is the default location.
 
-> **Note**: Only conda itself should be installed in your ``$HOME``. All environments should be stored in your ``$PROJECT`` directory; otherwise, you risk filling up your ``$HOME`` directory. See below for instructions.
+.. note::
+   Only conda itself should be installed in your ``$HOME``. All environments should be stored in your ``$PROJECT`` directory; otherwise, you risk filling up your ``$HOME`` directory. See below for instructions.
 
 To install the latest Miniconda, type:
 
