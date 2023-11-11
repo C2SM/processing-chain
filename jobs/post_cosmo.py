@@ -7,12 +7,10 @@
 
 import logging
 import os
-import shutil
 import datetime
-import glob
 from subprocess import call
 
-from . import tools
+from . import tools, int2lm, cosmo
 
 
 def logfile_header_template():
@@ -29,7 +27,7 @@ def runscript_header_template():
         "#SBATCH --job-name=post_cosmo", "#SBATCH --partition=xfer",
         "#SBATCH --constraint={constraint}",
         "#SBATCH --account={compute_account}", "#SBATCH --output={logfile}",
-        "#SBATCH --open-mode=append", "#SBATCH --chdir={cosmo_work}",
+        "#SBATCH --open-mode=append", "#SBATCH --chdir={cosmo_run}",
         "#SBATCH --time=00:30:00", "", ""
     ])
 
@@ -44,19 +42,19 @@ def runscript_commands_template():
     commands = list()
 
     return '\n'.join([
-        "srun cp -Raf {int2lm_work_src}/. {int2lm_work_dest}/",
-        "srun cp -Raf {cosmo_work_src}/. {cosmo_work_dest}/",
+        "srun cp -Raf {int2lm_run_src}/. {int2lm_run_dest}/",
+        "srun cp -Raf {cosmo_run_src}/. {cosmo_run_dest}/",
         "srun cp -Raf {cosmo_output_src}/. {cosmo_output_dest}/",
         "srun cp -Raf {logs_src}/. {logs_dest}/"
     ])
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Copy the output of a **COSMO**-run to a user-defined position.
 
     Write a runscript to copy all files (**COSMO** settings & output,
-    **int2lm** settings, logfiles) from ``cfg.cosmo_work``,
-    ``cfg.cosmo_output``, ``cfg.int2lm_work``, ``cfg.log_finished_dir`` to
+    **int2lm** settings, logfiles) from ``cfg.cosmo_run``,
+    ``cfg.cosmo_output``, ``cfg.int2lm_run``, ``cfg.log_finished_dir`` to
     ``cfg.output_root/...`` .
     If the job ``reduce_output`` has been run before ``post_cosmo``, a 
     directory ``cfg.cosmo_output_reduced`` is created. In this case,
@@ -66,27 +64,18 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     
     Parameters
     ----------	
-    start_time : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the start_time
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    if cfg.compute_host != "daint":
-        logging.error("The copy script is supposed to be run on daint only,"
-                      "not on {}".format(cfg.compute_host))
-        raise RuntimeError("Wrong compute host for copy-script")
+    cfg = int2lm.set_cfg_variables(cfg, model_cfg)
+    cfg = cosmo.set_cfg_variables(cfg, model_cfg)
 
     logfile = os.path.join(cfg.log_working_dir, "post_cosmo")
-    cosmo_work_dir = cfg.cosmo_work
-    runscript_path = os.path.join(cfg.cosmo_work, "post_cosmo.job")
+    cosmo_run_dir = cfg.cosmo_run
+    runscript_path = os.path.join(cfg.cosmo_run, "post_cosmo.job")
     copy_path = os.path.join(
-        cfg.output_root,
-        starttime.strftime('%Y%m%d%H') + "_" + str(int(hstart)) + "_" +
-        str(int(hstop)))
+        cfg.post_cosmo['output_root'],
+        cfg.startdate_sim_yyyymmddhh + "_" + cfg.enddate_sim_yyyymmddhh)
 
     logging.info(logfile_header_template().format(
         "STARTS", str(datetime.datetime.today())))
@@ -97,7 +86,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
         compute_account=cfg.compute_account,
         logfile=logfile,
         constraint=cfg.constraint,
-        cosmo_work=cfg.cosmo_work)
+        cosmo_run=cfg.cosmo_run)
 
     if os.path.isdir(cfg.cosmo_output_reduced):
         cosmo_output_src = cfg.cosmo_output_reduced.rstrip('/')
@@ -113,17 +102,22 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     os.makedirs(cosmo_output_dest, exist_ok=True)
     os.makedirs(os.path.join(copy_path, "logs"), exist_ok=True)
 
+    int2lm_run_path = os.path.abspath(os.path.join(copy_path, "int2lm_run"))
+    cosmo_run_path = os.path.abspath(os.path.join(copy_path, "cosmo_run"))
+    cosmo_output_dest_path = os.path.abspath(cosmo_output_dest)
+    logs_path = os.path.abspath(os.path.join(copy_path, "logs"))
+
     # Format the runscript
     runscript_content += runscript_commands_template().format(
         target_dir=copy_path.rstrip('/'),
-        int2lm_work_src=cfg.int2lm_work.rstrip('/'),
-        int2lm_work_dest=os.path.join(copy_path, "int2lm_run").rstrip('/'),
-        cosmo_work_src=cfg.cosmo_work.rstrip('/'),
-        cosmo_work_dest=os.path.join(copy_path, "cosmo_run").rstrip('/'),
+        int2lm_run_src=cfg.int2lm_run.rstrip('/'),
+        int2lm_run_dest=int2lm_run_path.rstrip('/'),
+        cosmo_run_src=cfg.cosmo_run.rstrip('/'),
+        cosmo_run_dest=cosmo_run_path.rstrip('/'),
         cosmo_output_src=cosmo_output_src,
-        cosmo_output_dest=cosmo_output_dest,
+        cosmo_output_dest=cosmo_output_dest_path,
         logs_src=cfg.log_finished_dir.rstrip('/'),
-        logs_dest=os.path.join(copy_path, "logs").rstrip('/'))
+        logs_dest=logs_path.rstrip('/'))
 
     # Wait for Cosmo to finish first
     tools.check_job_completion(cfg.log_finished_dir, "cosmo")

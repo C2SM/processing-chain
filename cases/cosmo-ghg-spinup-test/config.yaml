@@ -1,0 +1,106 @@
+# Configuration file for the 'cosmo-ghg-spinup-test' case with COSMO-GHG
+
+model: cosmo-ghg
+constraint: gpu
+ntasks_per_node: 12
+restart_step: PT6H
+variant: spinup
+spinup: 3
+startdate: 2015-01-01T00:00:00Z
+enddate: 2015-01-01T18:00:00Z
+
+meteo:
+    dir: ./input/cosmo-ghg/meteo
+    prefix: laf
+    nameformat: laf%Y%m%d%H
+    inc: 1
+
+cams:
+    dir_orig: ./input/cosmo-ghg/icbc
+    dir_proc: ./input/cosmo-ghg/icbc/processed
+    suffix: cams_co2
+    inc: 3
+
+emissions:
+    dir: ./input/cosmo-ghg/emissions_coarse
+    gridname: co2_
+
+vprm:
+    dir: ./input/cosmo-ghg/vprm_smartcarb/processed
+    prefix:
+        - vprm2_
+
+oem:
+    dir: ./input/cosmo-ghg/oem
+    gridded_emissions_nc: emissions.nc
+    vertical_profiles_nc: vertical_profiles.nc
+    hourofday_nc: hourofday.nc
+    hourofyear_nc: hourofyear.nc
+    dayofweek_nc: dayofweek.nc
+    monthofyear_nc: monthofyear.nc
+
+online_vprm:
+    dir: ./input/cosmo-ghg/online_vprm
+    modis_filename: MODIS_sur_refl_Example_20150101-20150201.nc
+    vegetation_filename: VPRM_VegClasses_example_vprm.nc
+
+int2lm:
+    extpar_dir: ./input/cosmo-ghg/extpar
+    extpar_filename: test_domain.nc
+    binary_file: ./src/int2lm/test/testsuite/int2lm
+    namelist_filename: int2lm_INPUT.cfg
+    runjob_filename: int2lm_runjob.cfg
+    compute_queue: normal
+    walltime: 01:00:00
+    nodes: 2
+    np_x: 8
+    np_y: 3
+
+post_int2lm:
+    species:
+        - CO2_BG
+    species_spinup:
+        - CO2_BG
+        - CO2_GPP
+        - CO2_RA
+        - CO2_A
+        - CO2_GPP2
+        - CO2_RA2
+        - CO2_A2
+
+cosmo:
+    binary_file: ./src/cosmo-ghg/cosmo/ACC/cosmo_gpu
+    namelist_prefix: cosmo_INPUT_
+    runjob_filename: cosmo_runjob.cfg
+    compute_queue: normal
+    walltime: "00:30:00"
+    np_x: 6
+    np_y: 4
+    np_io: 0
+
+reduce_output:
+    convert_gas: true
+    output_levels: 20
+
+post_cosmo:
+    output_root: ./output/cosmo-ghg-spinup
+
+verify_chain:
+    reference_dir: null  # Set this value based on your use case
+    output_dir: null  # Set this value based on your use case
+    values_to_check:
+        - cosmo-ghg_pgi_gpu_e5e9e5a_lffd2015010200.nc
+        - lffd2015010200.nc
+        - T
+        - P
+        - U
+        - V
+        - W
+        - CO2_BG
+        - CO2_A
+        - CO2_GPP
+        - CO2_RA
+        - CO2_A2
+        - CO2_GPP2
+        - CO2_RA2
+

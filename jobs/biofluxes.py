@@ -16,40 +16,34 @@
 
 import os
 import logging
-import shutil
-from . import tools
+from . import tools, prepare_data
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Prepare the biofluxes-files for the simulation.
 
     Only necessary for **COSMO** simulations.
 
-    Copy biofluxes files from project folder (``cfg.vprm_dir``) to int2lm input
+    Copy biofluxes files from project folder (``cfg.vprm['dir']``) to int2lm input
     folder on scratch (``cfg.int2lm_input/vprm``).
 
     Parameters
     ----------	
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
     tools.check_model(cfg, 'cosmo-ghg')
+    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
 
     scratch_path = os.path.join(cfg.int2lm_input, 'vprm')
 
     tools.create_dir(scratch_path, "biofluxes input")
 
-    for time in tools.iter_hours(starttime, hstart, hstop):
+    for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim):
         logging.info(time)
 
-        for prefix in cfg.vprm_prefix:
-            filename = os.path.join(cfg.vprm_dir,
+        for prefix in cfg.vprm['prefix']:
+            filename = os.path.join(cfg.vprm['dir'],
                                     prefix + time.strftime('%Y%m%d%H.nc'))
             filename_sc = os.path.join(scratch_path,
                                        prefix + time.strftime('%Y%m%d%H.nc'))
@@ -57,7 +51,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
                 logging.error(
                     "File %s not found. Consider using the vprmsplit.py script prior",
                     filename)
-                #tools.vprmsplit.main(time.strftime("%Y%m%d%H"),cfg.vprm_dir_orig,cfg.vprm_dir_proc,cfg)
+                #tools.vprmsplit.main(time.strftime("%Y%m%d%H"),cfg.vprm['dir']_orig,cfg.vprm['dir']_proc,cfg)
 
             tools.copy_file(filename, scratch_path)
 

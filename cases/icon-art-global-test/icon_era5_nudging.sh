@@ -27,7 +27,7 @@ rm tmp.nc era5_surf_nudging.nc era5_ml_nudging.nc era5_original_nudging.nc
 # ---------------------------------
 
 # -- Retrieve the dynamic horizontal grid
-cdo -s selgrid,2 {cfg.dynamics_grid_filename_scratch} triangular-grid.nc
+cdo -s selgrid,2 {cfg.input_files_scratch_dynamics_grid_filename} triangular-grid.nc
 
 # -- Create the weights for remapping ERA5 latlon grid onto the triangular grid
 cdo gendis,triangular-grid.nc data_in.nc weights.nc

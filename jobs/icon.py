@@ -14,11 +14,10 @@
 import logging
 import os
 import subprocess
-from . import tools
-from datetime import timedelta
+from . import tools, prepare_data
 
 
-def main(starttime, hstart, hstop, cfg, model_cfg):
+def main(cfg, model_cfg):
     """Setup the namelists for an **ICON** tracer run and submit the job to
     the queue
 
@@ -29,7 +28,7 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     and ``cfg.icon_restart_out``).
 
     Copy the **ICON**-executable from
-    ``cfg.icon_bin`` to ``cfg.icon_work/icon.exe``.
+    ``cfg.icon_binary_file`` to ``cfg.icon_work/icon.exe``.
 
     Use the tracer-csv-file to append **ICON**-namelist file.
 
@@ -50,6 +49,8 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
+    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
+
     logfile = os.path.join(cfg.log_working_dir, "icon")
     logfile_finish = os.path.join(cfg.log_finished_dir, "icon")
 
@@ -58,20 +59,26 @@ def main(starttime, hstart, hstop, cfg, model_cfg):
 
     # Copy icon executable
     execname = 'icon.exe'
-    tools.copy_file(cfg.icon_bin, os.path.join(cfg.icon_work, execname))
+    tools.copy_file(cfg.icon_binary_file, os.path.join(cfg.icon_work,
+                                                       execname))
+
+    # Symlink the restart file to the last run into the icon/run folder
+    if cfg.lrestart == '.TRUE.':
+        tools.symlink_file(cfg.restart_file, cfg.restart_file_scratch)
 
     # Get name of initial file
     if hasattr(cfg, 'inicond_filename'):
         inidata_filename = os.path.join(cfg.icon_input_icbc,
                                         cfg.inicond_filename)
     else:
-        starttime_real = starttime + timedelta(hours=hstart)
         inidata_filename = os.path.join(
             cfg.icon_input_icbc,
-            starttime_real.strftime(cfg.meteo_nameformat) + '.nc')
+            cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
+                                       cfg.meteo['nameformat']) + '.nc')
 
     # Write run script (run_icon.job)
-    with open(cfg.icon_runjob) as input_file:
+    icon_runjob = os.path.join(cfg.case_path, cfg.icon_runjob_filename)
+    with open(icon_runjob) as input_file:
         to_write = input_file.read()
     output_file = os.path.join(cfg.icon_work, "run_icon.job")
     with open(output_file, "w") as outf:

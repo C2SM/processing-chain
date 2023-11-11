@@ -104,7 +104,7 @@ def main(csv_filename, namelist_filename, cfg=None):
 
         with open(namelist_filename, 'a') as nml_file:
             for group in reader:
-                if cfg.variant == 'spinup' and not cfg.first_one:
+                if hasattr(cfg, 'spinup') and not cfg.first_one:
                     nml_file.write(group2text(group, recycling=True))
                 else:
                     nml_file.write(group2text(group))
