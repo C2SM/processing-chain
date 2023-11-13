@@ -1,4 +1,4 @@
-# <img src="https://polybox.ethz.ch/index.php/s/yc3zMmoXKyI2rJm/download" width="64" valign="middle" alt="Spack"/> Processing Chain for COSMO and ICON Simulations
+# <img src="https://polybox.ethz.ch/index.php/s/yc3zMmoXKyI2rJm/download" width="64" valign="middle" alt="Spack"/> Processing Chain
 
 The Processing Chain is a python script that prepares necessary input
 data, submits compute-jobs to the queue on Piz Daint and does
