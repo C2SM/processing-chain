@@ -30,10 +30,13 @@ release = 'v3.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autosectionlabel', 'sphinx.ext.todo', 'sphinx_rtd_theme',
-    'sphinx_copybutton', 'sphinx.ext.mathjax', 'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode', 'sphinx.ext.napoleon', 'sphinx.ext.autodoc'
+    'sphinx.ext.autodoc', 'sphinx.ext.autosectionlabel', 'sphinx.ext.todo',
+    'sphinx_rtd_theme', 'sphinx_copybutton', 'sphinx.ext.mathjax',
+    'sphinx.ext.ifconfig', 'sphinx.ext.viewcode', 'sphinx.ext.napoleon'
 ]
+
+# autodoc options
+autodoc_member_order = 'bysource'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
