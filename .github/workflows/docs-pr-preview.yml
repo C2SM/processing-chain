@@ -22,9 +22,6 @@ jobs:
         with:
           environment-file: env/environment.yml
 
-      - name: Activate Conda Environment
-        run: conda activate proc-chain
-
       - name: Build docs
         uses: C2SM/sphinx-action@sphinx-latest
         with:
