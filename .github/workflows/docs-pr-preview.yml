@@ -16,10 +16,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Setup Conda Environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          environment-file: env/environment.yml
+
+      - name: Activate Conda Environment
+        run: conda activate proc-chain
+
       - name: Build docs
         uses: C2SM/sphinx-action@sphinx-latest
         with:
-          pre-build-command: "pip install sphinx_rtd_theme && pip install sphinx-copybutton"
           build-command: "sphinx-build -b html . _build"
           docs-folder: "docs/"
 
