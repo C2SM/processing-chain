@@ -137,7 +137,7 @@ Then it will start the Processing Chain.</p>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">&lt;casename&gt;</span></code> is the name of a directory in the <code class="docutils literal notranslate"><span class="pre">cases/</span></code>-directory where
-there is a <code class="docutils literal notranslate"><span class="pre">config.py</span></code>-file specifying the configurations, as well as templates
+there is a <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>-file specifying the configurations, as well as templates
 for the necessary namelist files for <strong>int2lm</strong>, <strong>COSMO</strong> or <strong>ICON</strong>.</p>
 <p>If you don’t supply a joblist, the default joblist defined in
 <code class="docutils literal notranslate"><span class="pre">config/models.yaml</span></code> will be executed.</p>
@@ -152,7 +152,7 @@ for the necessary namelist files for <strong>int2lm</strong>, <strong>COSMO</str
 <h2>What it Does<a class="headerlink" href="#what-it-does" title="Permalink to this heading"></a></h2>
 <p>The script <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code> reads the command-line arguments and the config-file.
 It then calls the function <code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.restart_runs()</span></code> which divides the
-simuation time according to the specified restart steps. Then it calls
+simulation time according to the specified restart steps. Then it calls
 <code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.run_chain()</span></code> for each sub-run. This function sets up the directory
 structure of the chain and then starts the specified <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">jobs</span></a>
 sequentially.</p>

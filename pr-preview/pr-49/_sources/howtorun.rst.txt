@@ -12,12 +12,12 @@ Then it will start the Processing Chain.
 Starting the Chain
 ------------------
 
-The chain has to be run with the following command: ::
+The chain has to be run with the following command::
 
     $ python run_chain.py <casename> -j [jobs]
 
 ``<casename>`` is the name of a directory in the ``cases/``-directory where
-there is a ``config.py``-file specifying the configurations, as well as templates
+there is a ``config.yaml``-file specifying the configurations, as well as templates
 for the necessary namelist files for **int2lm**, **COSMO** or **ICON**.
 
 If you don't supply a joblist, the default joblist defined in
@@ -35,7 +35,7 @@ What it Does
 
 The script ``run_chain.py`` reads the command-line arguments and the config-file.
 It then calls the function :func:`run_chain.restart_runs` which divides the
-simuation time according to the specified restart steps. Then it calls
+simulation time according to the specified restart steps. Then it calls
 :func:`run_chain.run_chain` for each sub-run. This function sets up the directory
 structure of the chain and then starts the specified :ref:`jobs<jobs-section>`
 sequentially.
