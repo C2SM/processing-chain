@@ -17,8 +17,8 @@ import sys
 project = 'Processing Chain'
 copyright = '2018-2023, C2SM'
 author = 'Processing Chain Administrators'
-version = '3.1'
-release = '3.1'
+version = 'v3.1'
+release = 'v3.1'
 
 # -- General configuration ------------------------------------------------
 
