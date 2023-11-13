@@ -20,51 +20,21 @@ The chain has to be run with the following command: ::
 there is a ``config.py``-file specifying the configurations, as well as templates
 for the necessary namelist files for **int2lm**, **COSMO** or **ICON**.
 
-If you don't supply a joblist, the default joblist will be executed.
+If you don't supply a joblist, the default joblist defined in
+``config/models.yaml`` will be executed.
 
-For **COSMO**, that is ``prepare_data`` ``emissions`` ``biofluxes`` ``int2lm``
-``post_int2lm`` ``cosmo`` ``post_cosmo``,
+The following test cases are available:
+* ``cosmo-ghg-spinup-test``
+* ``cosmo-ghg-test``
+* ``icon-test``
+* ``icon-art-oem-test``
+* ``icon-art-global-test``
 
-For **COSMOART** it is ``prepare_data`` ``emissions`` ``obs_nudging``
-``photo_rate`` ``int2lm`` ``cosmo`` ``post_cosmo``.
-
-For **ICON** it is ``prepare_data`` ``icon``.
-
-For **ICONART** it is ``prepare_data`` ``icon``.
-
-For **ICONARTOEM** it is ``prepare_data`` ``oae`` ``icon``.
-
-The model type can be chosen by setting the variable ``target`` in the ``config.py``-file.
-
-To run the **COSMO-GHG** example test case, run::
-
-    $ python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -j prepare_data emissions biofluxes int2lm post_int2lm cosmo post_cosmo
-
-To run the **COSMO-ART** example case, run::
-
-    $ python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 24 -j prepare_data emissions obs_nudging photo_rate int2lm cosmo post_cosmo
-
-To run the **ICON** or **ICON-ART** example cases, run::
-
-    $ python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon
-
-or::
-
-    $ python run_chain.py icon-art-test 2018-01-01 0 24 -j prepare_data icon
-
-To run the **ICON-OEM** example cases, run::
-
-    $ python run_chain.py icon-oem-test 2018-01-01 0 24 -j prepare_data oae icon
-
-or::
-
-    $ python run_chain.py icon-oem-ensembles-test 2018-01-01 0 24 -j prepare_data oae icon
-        
 What it Does
 ------------
 
 The script ``run_chain.py`` reads the command-line arguments and the config-file.
-It then calls the function :func:`run_chain.restart_runs` which divides the
+It then calls the function ``run_chain.restart_runs()`` which divides the
 simuation time according to the specified restart steps. Then it calls
 :func:`run_chain.run_chain` for each sub-run. This function sets up the directory
 structure of the chain and then starts the specified :ref:`jobs<jobs-section>`
@@ -115,4 +85,4 @@ Running the ``cosmo-ghg-11km-test``-case therefore produces the following direct
 			     + working/    # 1 logfile per started job
 			     \ finished    # 1 logfile per finished job
 
-
+.. autofunction:: run_chain.restart_runs
