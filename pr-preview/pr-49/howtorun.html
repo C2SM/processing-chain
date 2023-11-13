@@ -139,44 +139,19 @@ Then it will start the Processing Chain.</p>
 <p><code class="docutils literal notranslate"><span class="pre">&lt;casename&gt;</span></code> is the name of a directory in the <code class="docutils literal notranslate"><span class="pre">cases/</span></code>-directory where
 there is a <code class="docutils literal notranslate"><span class="pre">config.py</span></code>-file specifying the configurations, as well as templates
 for the necessary namelist files for <strong>int2lm</strong>, <strong>COSMO</strong> or <strong>ICON</strong>.</p>
-<p>If you don’t supply a joblist, the default joblist will be executed.</p>
-<p>For <strong>COSMO</strong>, that is <code class="docutils literal notranslate"><span class="pre">prepare_data</span></code> <code class="docutils literal notranslate"><span class="pre">emissions</span></code> <code class="docutils literal notranslate"><span class="pre">biofluxes</span></code> <code class="docutils literal notranslate"><span class="pre">int2lm</span></code>
-<code class="docutils literal notranslate"><span class="pre">post_int2lm</span></code> <code class="docutils literal notranslate"><span class="pre">cosmo</span></code> <code class="docutils literal notranslate"><span class="pre">post_cosmo</span></code>,</p>
-<p>For <strong>COSMOART</strong> it is <code class="docutils literal notranslate"><span class="pre">prepare_data</span></code> <code class="docutils literal notranslate"><span class="pre">emissions</span></code> <code class="docutils literal notranslate"><span class="pre">obs_nudging</span></code>
-<code class="docutils literal notranslate"><span class="pre">photo_rate</span></code> <code class="docutils literal notranslate"><span class="pre">int2lm</span></code> <code class="docutils literal notranslate"><span class="pre">cosmo</span></code> <code class="docutils literal notranslate"><span class="pre">post_cosmo</span></code>.</p>
-<p>For <strong>ICON</strong> it is <code class="docutils literal notranslate"><span class="pre">prepare_data</span></code> <code class="docutils literal notranslate"><span class="pre">icon</span></code>.</p>
-<p>For <strong>ICONART</strong> it is <code class="docutils literal notranslate"><span class="pre">prepare_data</span></code> <code class="docutils literal notranslate"><span class="pre">icon</span></code>.</p>
-<p>For <strong>ICONARTOEM</strong> it is <code class="docutils literal notranslate"><span class="pre">prepare_data</span></code> <code class="docutils literal notranslate"><span class="pre">oae</span></code> <code class="docutils literal notranslate"><span class="pre">icon</span></code>.</p>
-<p>The model type can be chosen by setting the variable <code class="docutils literal notranslate"><span class="pre">target</span></code> in the <code class="docutils literal notranslate"><span class="pre">config.py</span></code>-file.</p>
-<p>To run the <strong>COSMO-GHG</strong> example test case, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -j prepare_data emissions biofluxes int2lm post_int2lm cosmo post_cosmo
-</pre></div>
-</div>
-<p>To run the <strong>COSMO-ART</strong> example case, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 24 -j prepare_data emissions obs_nudging photo_rate int2lm cosmo post_cosmo
-</pre></div>
-</div>
-<p>To run the <strong>ICON</strong> or <strong>ICON-ART</strong> example cases, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon
-</pre></div>
-</div>
-<p>or:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py icon-art-test 2018-01-01 0 24 -j prepare_data icon
-</pre></div>
-</div>
-<p>To run the <strong>ICON-OEM</strong> example cases, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py icon-oem-test 2018-01-01 0 24 -j prepare_data oae icon
-</pre></div>
-</div>
-<p>or:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py icon-oem-ensembles-test 2018-01-01 0 24 -j prepare_data oae icon
-</pre></div>
-</div>
+<p>If you don’t supply a joblist, the default joblist defined in
+<code class="docutils literal notranslate"><span class="pre">config/models.yaml</span></code> will be executed.</p>
+<p>The following test cases are available:
+* <code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code>
+* <code class="docutils literal notranslate"><span class="pre">cosmo-ghg-test</span></code>
+* <code class="docutils literal notranslate"><span class="pre">icon-test</span></code>
+* <code class="docutils literal notranslate"><span class="pre">icon-art-oem-test</span></code>
+* <code class="docutils literal notranslate"><span class="pre">icon-art-global-test</span></code></p>
 </section>
 <section id="what-it-does">
 <h2>What it Does<a class="headerlink" href="#what-it-does" title="Permalink to this heading"></a></h2>
 <p>The script <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code> reads the command-line arguments and the config-file.
-It then calls the function <code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.restart_runs()</span></code> which divides the
+It then calls the function <code class="docutils literal notranslate"><span class="pre">run_chain.restart_runs()</span></code> which divides the
 simuation time according to the specified restart steps. Then it calls
 <code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.run_chain()</span></code> for each sub-run. This function sets up the directory
 structure of the chain and then starts the specified <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">jobs</span></a>
