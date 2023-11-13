@@ -51,10 +51,8 @@ This script calls other scripts that are located in `jenkins/scripts/` and will:
 
 To run the test cases manually, type:
 
-```console
     # replace <casename> with one of the above tests
     python run_chain.py <casename>
-```
 
 ## Documentation
 
