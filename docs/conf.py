@@ -86,8 +86,6 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-html_baseurl = '/processing-chain'
-
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
 
