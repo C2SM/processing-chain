@@ -22,16 +22,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Conda Environment
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          miniconda-version: "latest"
-          environment-file: env/environment.yml
-
       - name: Build docs
         uses: C2SM/sphinx-action@sphinx-latest
         with:
-          build-command: "conda activate proc-chain && sphinx-build -b html . _build"
+          build-command: "sphinx-build -b html . _build"
           docs-folder: "docs/"
 
       - name: Deploy preview
