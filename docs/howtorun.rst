@@ -24,6 +24,7 @@ If you don't supply a joblist, the default joblist defined in
 ``config/models.yaml`` will be executed.
 
 The following test cases are available:
+
 * ``cosmo-ghg-spinup-test``
 * ``cosmo-ghg-test``
 * ``icon-test``
@@ -85,4 +86,3 @@ Running the ``cosmo-ghg-11km-test``-case therefore produces the following direct
 			     + working/    # 1 logfile per started job
 			     \ finished    # 1 logfile per finished job
 
-.. autofunction:: run_chain.run_chain
