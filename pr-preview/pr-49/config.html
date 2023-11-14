@@ -93,7 +93,25 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="jobs.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jobs.html#adding-new-jobs">Adding new jobs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jobs.html#list-of-available-jobs">List of available jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html#list-of-available-jobs">List of available jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.prepare_data.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tools.html#conversion-functions">Conversion Functions</a></li>
 </ul>
@@ -154,7 +172,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">constraint</span></code></p></td>
 <td><p>Either ‘gpu’ or ‘mc’. Controls on which nodes int2lm and cosmo run. Make sure your executables are compiled for the chosen architecure.</p></td>
-<td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></p></td>
+<td><p><a class="reference internal" href="jobs.html#jobs.cosmo.main" title="jobs.cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.int2lm.main" title="jobs.int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mail_address</span></code></p></td>
 <td><p>The processing-chain sends encountered errors to this address</p></td>
@@ -162,15 +180,15 @@ it can contain python expression which are evaluated at runtime.</p>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">compute_host</span></code></p></td>
 <td><p>On which infrastructure the processing chain is run. Usually ‘daint’</p></td>
-<td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></p></td>
+<td><p><a class="reference internal" href="jobs.html#jobs.post_cosmo.main" title="jobs.post_cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.reduce_output.main" title="jobs.reduce_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">compute_queue</span></code></p></td>
 <td><p>Either ‘debug’ or ‘normal’</p></td>
-<td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></p></td>
+<td><p><a class="reference internal" href="jobs.html#jobs.int2lm.main" title="jobs.int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.cosmo.main" title="jobs.cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">compute_account</span></code></p></td>
 <td><p>Which project the simulation belongs to</p></td>
-<td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></p></td>
+<td><p><a class="reference internal" href="jobs.html#jobs.int2lm.main" title="jobs.int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.cosmo.main" title="jobs.cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chain_src_dir</span></code></p></td>
 <td><p>Path to the root of the chain</p></td>
@@ -186,7 +204,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">output_root</span></code></p></td>
 <td><p>Path to where the results, logs and nameslists are copied to after the simulation is done</p></td>
-<td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></p></td>
+<td><p><a class="reference internal" href="jobs.html#jobs.post_cosmo.main" title="jobs.post_cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">work_root</span></code></p></td>
 <td><p>Path to where the processing chain copies the input files to and starts the simulation from</p></td>
@@ -199,7 +217,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-biofluxes-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code><a class="headerlink" href="#variables-for-jobs-biofluxes-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.biofluxes.main" title="jobs.biofluxes.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-biofluxes-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -221,7 +239,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-cosmo-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code><a class="headerlink" href="#variables-for-jobs-cosmo-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.cosmo.main" title="jobs.cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-cosmo-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -272,7 +290,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </table>
 </section>
 <section id="variables-for-jobs-emissions-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code><a class="headerlink" href="#variables-for-jobs-emissions-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.emissions.main" title="jobs.emissions.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-emissions-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -294,7 +312,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-icon-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code><a class="headerlink" href="#variables-for-jobs-icon-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-icon-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -348,7 +366,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-int2lm-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code><a class="headerlink" href="#variables-for-jobs-int2lm-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.int2lm.main" title="jobs.int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-int2lm-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -434,7 +452,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-prepare-data-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code><a class="headerlink" href="#variables-for-jobs-prepare-data-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.prepare_data.main" title="jobs.prepare_data.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-prepare-data-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -578,7 +596,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-obs-nudging-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code><a class="headerlink" href="#variables-for-jobs-obs-nudging-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.obs_nudging.main" title="jobs.obs_nudging.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-obs-nudging-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -604,7 +622,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-octe-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code><a class="headerlink" href="#variables-for-jobs-octe-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.octe.main" title="jobs.octe.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-octe-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -626,7 +644,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-online-vprm-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code><a class="headerlink" href="#variables-for-jobs-online-vprm-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.online_vprm.main" title="jobs.online_vprm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-online-vprm-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -652,7 +670,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-photo-rate-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code><a class="headerlink" href="#variables-for-jobs-photo-rate-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.photo_rate.main" title="jobs.photo_rate.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-photo-rate-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -670,7 +688,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-post-int2lm-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code><a class="headerlink" href="#variables-for-jobs-post-int2lm-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.post_int2lm.main" title="jobs.post_int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-post-int2lm-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -688,7 +706,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-reduce-output-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code><a class="headerlink" href="#variables-for-jobs-reduce-output-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.reduce_output.main" title="jobs.reduce_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-reduce-output-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -710,7 +728,7 @@ it can contain python expression which are evaluated at runtime.</p>
 </div>
 </section>
 <section id="variables-for-jobs-verify-chain-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code><a class="headerlink" href="#variables-for-jobs-verify-chain-main" title="Permalink to this heading"></a></h2>
+<h2>Variables for <a class="reference internal" href="jobs.html#jobs.verify_chain.main" title="jobs.verify_chain.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a><a class="headerlink" href="#variables-for-jobs-verify-chain-main" title="Permalink to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><strong>Name</strong></p></td>
@@ -722,7 +740,7 @@ it can contain python expression which are evaluated at runtime.</p>
 <td><p>COSMO, COSMO-ART, ICON</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">output_dir</span></code></p></td>
-<td><p>Path to the output of cosmo. If the <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code> job is executed, this can be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> and the path of the post_cosmo-job will be used</p></td>
+<td><p>Path to the output of cosmo. If the <a class="reference internal" href="jobs.html#jobs.post_cosmo.main" title="jobs.post_cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a> job is executed, this can be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> and the path of the post_cosmo-job will be used</p></td>
 <td><p>COSMO, COSMO-ART, ICON</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">values_to_check</span></code></p></td>

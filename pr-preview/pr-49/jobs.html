@@ -93,7 +93,25 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#adding-new-jobs">Adding new jobs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#list-of-available-jobs">List of available jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#list-of-available-jobs">List of available jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.prepare_data.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tools.html#conversion-functions">Conversion Functions</a></li>
 </ul>
@@ -132,43 +150,43 @@ As some jobs depend on the result of others, the order indicated here
 has to be respected.</p>
 <p><strong>COSMO</strong>:</p>
 <ol class="arabic simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code> | <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code> |
-<code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code> | <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code> |
-<code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oae.main()</span></code> | <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code> | <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></p></li>
+<li><p><a class="reference internal" href="#jobs.biofluxes.main" title="jobs.biofluxes.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a> | <a class="reference internal" href="#jobs.prepare_data.main" title="jobs.prepare_data.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a> |
+<a class="reference internal" href="#jobs.emissions.main" title="jobs.emissions.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a> | <a class="reference internal" href="#jobs.online_vprm.main" title="jobs.online_vprm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a> |
+<a class="reference internal" href="#jobs.oem.main" title="jobs.oem.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a> | <a class="reference internal" href="#jobs.obs_nudging.main" title="jobs.obs_nudging.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.int2lm.main" title="jobs.int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.post_int2lm.main" title="jobs.post_int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.octe.main" title="jobs.octe.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.cosmo.main" title="jobs.cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.check_output.main" title="jobs.check_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.reduce_output.main" title="jobs.reduce_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.post_cosmo.main" title="jobs.post_cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a> | <a class="reference internal" href="#jobs.verify_chain.main" title="jobs.verify_chain.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></p></li>
 </ol>
 <p><strong>COSMOART</strong>:</p>
 <ol class="arabic simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code> | <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code> |
-<code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code> | <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code> |
-<code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code> | <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oae.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code> | <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></p></li>
+<li><p><a class="reference internal" href="#jobs.emissions.main" title="jobs.emissions.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a> | <a class="reference internal" href="#jobs.prepare_data.main" title="jobs.prepare_data.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a> |
+<a class="reference internal" href="#jobs.photo_rate.main" title="jobs.photo_rate.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a> | <a class="reference internal" href="#jobs.obs_nudging.main" title="jobs.obs_nudging.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a> |
+<a class="reference internal" href="#jobs.online_vprm.main" title="jobs.online_vprm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a> | <a class="reference internal" href="#jobs.oem.main" title="jobs.oem.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.int2lm.main" title="jobs.int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.cosmo.main" title="jobs.cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.check_output.main" title="jobs.check_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.reduce_output.main" title="jobs.reduce_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.post_cosmo.main" title="jobs.post_cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a> | <a class="reference internal" href="#jobs.verify_chain.main" title="jobs.verify_chain.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></p></li>
 </ol>
 <p><strong>ICON</strong>:</p>
 <ol class="arabic simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></p></li>
+<li><p><a class="reference internal" href="#jobs.prepare_data.main" title="jobs.prepare_data.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></p></li>
 </ol>
 <p><strong>ICONART</strong>:</p>
 <ol class="arabic simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></p></li>
+<li><p><a class="reference internal" href="#jobs.prepare_data.main" title="jobs.prepare_data.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></p></li>
 </ol>
 <p><strong>ICONARTOEM</strong>:</p>
 <ol class="arabic simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oae.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></p></li>
+<li><p><a class="reference internal" href="#jobs.prepare_data.main" title="jobs.prepare_data.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.oem.main" title="jobs.oem.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></p></li>
 </ol>
 </section>
 <section id="adding-new-jobs">
@@ -186,23 +204,408 @@ at <code class="docutils literal notranslate"><span class="pre">doc/source/jobs.
 <section id="list-of-available-jobs">
 <h1>List of available jobs<a class="headerlink" href="#list-of-available-jobs" title="Permalink to this heading"></a></h1>
 <ul class="simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oae.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></p></li>
+<li><p><a class="reference internal" href="#jobs.biofluxes.main" title="jobs.biofluxes.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.check_output.main" title="jobs.check_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.cosmo.main" title="jobs.cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.emissions.main" title="jobs.emissions.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.int2lm.main" title="jobs.int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.prepare_data.main" title="jobs.prepare_data.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.oem.main" title="jobs.oem.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.obs_nudging.main" title="jobs.obs_nudging.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.octe.main" title="jobs.octe.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.online_vprm.main" title="jobs.online_vprm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.photo_rate.main" title="jobs.photo_rate.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.post_cosmo.main" title="jobs.post_cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.post_int2lm.main" title="jobs.post_int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.reduce_output.main" title="jobs.reduce_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.verify_chain.main" title="jobs.verify_chain.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></p></li>
 </ul>
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.biofluxes.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.biofluxes.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/biofluxes.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.biofluxes.main" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare the biofluxes-files for the simulation.</p>
+<p>Only necessary for <strong>COSMO</strong> simulations.</p>
+<p>Copy biofluxes files from project folder (<code class="docutils literal notranslate"><span class="pre">cfg.vprm['dir']</span></code>) to int2lm input
+folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/vprm</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.check_output.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.check_output.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/check_output.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.check_output.main" title="Permalink to this definition"></a></dt>
+<dd><p>Checks output variables whether they are in a phyiscally reasonable
+range.</p>
+<p>Stores the time series of the minimum, the maximum, the mean, and
+the std of the variables as a pandas object into a pickle file.</p>
+<p>Creates per-variable plots from the stored time series data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.cosmo.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.cosmo.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/cosmo.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.cosmo.main" title="Permalink to this definition"></a></dt>
+<dd><p>Setup the namelists for a <strong>COSMO</strong> tracer run and submit the job to
+the queue</p>
+<p>Necessary for both <strong>COSMO</strong> and <strong>COSMOART</strong> simulations.</p>
+<p>Decide if the soil model should be TERRA or TERRA multi-layer depending on
+<code class="docutils literal notranslate"><span class="pre">startdate</span></code> of the simulation.</p>
+<p>Create necessary directory structure to run <strong>COSMO</strong> (run, output and
+restart directories, defined in <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_run</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_output</span></code>
+and <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_restart_out</span></code>).</p>
+<p>Copy the <strong>COSMO</strong>-executable from
+<code class="docutils literal notranslate"><span class="pre">cfg.cosmo_bin</span></code> to <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_run/cosmo</span></code>.</p>
+<p>Convert the tracer-csv-file to a <strong>COSMO</strong>-namelist file.</p>
+<p>Format the <strong>COSMO</strong>-namelist-templates
+(<strong>COSMO</strong>: <code class="docutils literal notranslate"><span class="pre">AF,ORG,IO,DYN,PHY,DIA,ASS</span></code>,
+<strong>COSMOART</strong>: <code class="docutils literal notranslate"><span class="pre">ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY</span></code>)
+using the information in <code class="docutils literal notranslate"><span class="pre">cfg</span></code>.</p>
+<p>Format the runscript-template and submit the job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.emissions.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.emissions.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/emissions.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.emissions.main" title="Permalink to this definition"></a></dt>
+<dd><p>Copy emission files to the <strong>int2lm</strong> input directory.</p>
+<p>Necessary for both <strong>COSMO</strong> and <strong>COSMOART</strong> simulations.</p>
+<p>Copy emission files from project folder (<code class="docutils literal notranslate"><span class="pre">cfg.emissions['dir']</span></code>) to
+<strong>int2lm</strong> input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/emissions</span></code>).</p>
+<p>For <strong>COSMO</strong> simulations, converts the the netCDF-variable-names
+from <code class="docutils literal notranslate"><span class="pre">string</span></code> to <code class="docutils literal notranslate"><span class="pre">char</span></code> (necessary for <strong>int2lm</strong>).</p>
+<p>If there are multiple emission-datasets (cfg.emissions[‘dir’] is a list of
+paths), they are copied as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfg</span><span class="o">.</span><span class="n">emissions</span><span class="p">[</span><span class="s1">&#39;dir&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">cfg</span><span class="o">.</span><span class="n">emissions</span><span class="p">[</span><span class="s1">&#39;gridname&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="n">YYYYMMDD</span><span class="o">.</span><span class="n">nc</span> <span class="o">-&gt;</span> <span class="n">int2lm_input</span><span class="o">/</span><span class="n">emissions</span><span class="o">/</span><span class="n">emis_YYYYMMDD</span><span class="o">.</span><span class="n">nc</span>
+<span class="n">cfg</span><span class="o">.</span><span class="n">emissions</span><span class="p">[</span><span class="s1">&#39;dir&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">cfg</span><span class="o">.</span><span class="n">emissions</span><span class="p">[</span><span class="s1">&#39;gridname&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="n">YYYYMMDD</span><span class="o">.</span><span class="n">nc</span> <span class="o">-&gt;</span> <span class="n">int2lm_input</span><span class="o">/</span><span class="n">emissions2</span><span class="o">/</span><span class="n">emis_YYYYMMDD</span><span class="o">.</span><span class="n">nc</span>
+<span class="n">cfg</span><span class="o">.</span><span class="n">emissions</span><span class="p">[</span><span class="s1">&#39;dir&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">cfg</span><span class="o">.</span><span class="n">emissions</span><span class="p">[</span><span class="s1">&#39;gridname&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="n">YYYYMMDD</span><span class="o">.</span><span class="n">nc</span> <span class="o">-&gt;</span> <span class="n">int2lm_input</span><span class="o">/</span><span class="n">emissions3</span><span class="o">/</span><span class="n">emis_YYYYMMDD</span><span class="o">.</span><span class="n">nc</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
+<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
+<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.icon.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.icon.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/icon.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.icon.main" title="Permalink to this definition"></a></dt>
+<dd><p>Setup the namelists for an <strong>ICON</strong> tracer run and submit the job to
+the queue</p>
+<p>Necessary for both <strong>ICON</strong> and <strong>ICONART</strong> simulations.</p>
+<p>Create necessary directory structure to run <strong>ICON</strong> (run, output and
+restart directories, defined in <code class="docutils literal notranslate"><span class="pre">cfg.icon_work</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.icon_output</span></code>
+and <code class="docutils literal notranslate"><span class="pre">cfg.icon_restart_out</span></code>).</p>
+<p>Copy the <strong>ICON</strong>-executable from
+<code class="docutils literal notranslate"><span class="pre">cfg.icon_binary_file</span></code> to <code class="docutils literal notranslate"><span class="pre">cfg.icon_work/icon.exe</span></code>.</p>
+<p>Use the tracer-csv-file to append <strong>ICON</strong>-namelist file.</p>
+<p>Format the <strong>ICON</strong>-namelist-templates:
+<code class="docutils literal notranslate"><span class="pre">icon_master.namelist.cfg,</span> <span class="pre">icon_NAMELIST_NWP.cfg</span></code>,
+using the information in <code class="docutils literal notranslate"><span class="pre">cfg</span></code>.</p>
+<p>Format the runscript-template and submit the job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
+<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
+<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.int2lm.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.int2lm.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/int2lm.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.int2lm.main" title="Permalink to this definition"></a></dt>
+<dd><p>Setup the namelist for <strong>int2lm</strong> and submit the job to the queue.</p>
+<p>Necessary for both <strong>COSMO</strong> and <strong>COSMOART</strong> simulations.</p>
+<p>Decide if the soil model should be TERRA or TERRA multi-layer depending on
+<code class="docutils literal notranslate"><span class="pre">startdate</span></code> of the simulation.</p>
+<p>Create necessary directory structure to run <strong>int2lm</strong> (run and output
+directories, defined in <code class="docutils literal notranslate"><span class="pre">cfg.int2lm</span></code> and <code class="docutils literal notranslate"><span class="pre">cfg.int2lm['output']</span></code>).</p>
+<p>Copy the <strong>int2lm</strong>-executable from <code class="docutils literal notranslate"><span class="pre">cfg.int2lm['binary_file']</span></code> to
+<code class="docutils literal notranslate"><span class="pre">cfg.int2lm['work']/int2lm</span></code>.</p>
+<p>Copy the extpar-file <code class="docutils literal notranslate"><span class="pre">cfg.int2lm['extpar_file']</span></code> to
+<code class="docutils literal notranslate"><span class="pre">cfg.int2lm_run/work</span></code>.</p>
+<p><strong>COSMOART</strong>: Copy the <code class="docutils literal notranslate"><span class="pre">libgrib_api</span></code> files to
+<code class="docutils literal notranslate"><span class="pre">cfg.int2lm['work']/libgrib_api</span></code>.</p>
+<p><strong>COSMO</strong>: Convert the tracer-csv-files into a <strong>int2lm</strong>-namelist file.</p>
+<p>Format the <strong>int2lm</strong>-namelist-template using the information in <code class="docutils literal notranslate"><span class="pre">cfg</span></code>.</p>
+<p>Format the runscript-template and submit the job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
+<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
+<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.prepare_data.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.prepare_data.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/prepare_data.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.prepare_data.main" title="Permalink to this definition"></a></dt>
+<dd><p><strong>ICON</strong></p>
+<blockquote>
+<div><p>Create necessary directories <code class="docutils literal notranslate"><span class="pre">cfg.icon_input_icbc</span></code>
+and ‘’cfg.icon_work’’</p>
+<p>Submitting the runscript for the DWD ICON tools to remap the meteo files.</p>
+<p>All runscripts specified in <code class="docutils literal notranslate"><span class="pre">cfg.icontools_runjobs</span></code> are submitted.</p>
+<p>The meteo files are read-in from the original input directory
+(<code class="docutils literal notranslate"><span class="pre">cfg.input_root_meteo</span></code>) and the remapped meteo files are
+saved in the input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.icon_input/icbc</span></code>).</p>
+<p>The constant variable ‘GEOSP’ is added to the files not containing it
+using python-cdo bindings.</p>
+</div></blockquote>
+<p><strong>COSMO</strong></p>
+<blockquote>
+<div><p>Copy meteo files to <strong>int2lm</strong> input.</p>
+<p>Create necessary directory <code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/meteo</span></code>. Copy meteo files
+from project directory (<code class="docutils literal notranslate"><span class="pre">cfg.meteo['dir']/cfg.meteo['prefix']YYYYMMDDHH</span></code>) to
+int2lm input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/meteo</span></code>).</p>
+<p>For nested runs (meteo files are cosmo-output: <code class="docutils literal notranslate"><span class="pre">cfg.meteo['prefix']</span> <span class="pre">==</span>
+<span class="pre">'lffd'</span></code>), also the <code class="docutils literal notranslate"><span class="pre">*c.nc</span></code>-file with constant parameters is copied.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>startdate</strong> (<em>datetime-object</em>) – The start date of the simulation</p></li>
+<li><p><strong>enddate</strong> (<em>datetime-object</em>) – The end date of the simulation</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.oem.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.oem.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/oem.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.oem.main" title="Permalink to this definition"></a></dt>
+<dd><p>Copy emission and profile files to the <strong>cosmo</strong> or <strong>icon</strong> input
+directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
+<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
+<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.obs_nudging.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.obs_nudging.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/obs_nudging.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.obs_nudging.main" title="Permalink to this definition"></a></dt>
+<dd><p>Copy and rename the obs_nudging files to the <strong>COSMO</strong> input directory.</p>
+<p>In the folder <code class="docutils literal notranslate"><span class="pre">cfg.obs_nudging_dir</span></code>, the files are saved in the format
+<code class="docutils literal notranslate"><span class="pre">{prefix}-YYYYMMDD000000-YYYYMMDD000000</span></code>. <strong>COSMO</strong> expects files in the
+format <code class="docutils literal notranslate"><span class="pre">{prefix}x</span></code>, where <code class="docutils literal notranslate"><span class="pre">x</span></code> is <code class="docutils literal notranslate"><span class="pre">[nothing],</span> <span class="pre">.2,</span> <span class="pre">.3,</span> <span class="pre">.4,</span> <span class="pre">...</span></code>. This
+job handles this filename-change and copies them to the <strong>COSMO</strong> input
+folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.cosmo_input/obs_nudging</span></code>).</p>
+<p>Missing observation files are ignored.</p>
+<p>Also copies the blacklist-file blklsttmp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.octe.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.octe.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/octe.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.octe.main" title="Permalink to this definition"></a></dt>
+<dd><p>Copy necessary input files for <strong>COSMO</strong> and perturb BG.</p>
+<p>Copies the NetCDF-files found at cfg.octe_maps and cfg.octe_lambdas to
+the <strong>COSMO</strong> input-directory.</p>
+<p>Perturbs the background tracer field. To do that, it reads the lambda-value
+from the cfg.octe_lambdas (last value along the nparam-dimension) and
+scales the BG-field produced by int2lm, creating a new variable for each
+ensemble.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
+<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
+<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.online_vprm.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.online_vprm.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/online_vprm.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.online_vprm.main" title="Permalink to this definition"></a></dt>
+<dd><p>Copy MODIS surface reflectance data and vegatation class fraction file
+to the <strong>cosmo</strong> input directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
+<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
+<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.photo_rate.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.photo_rate.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/photo_rate.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.photo_rate.main" title="Permalink to this definition"></a></dt>
+<dd><p>Copy photolysis-rate file to the <strong>COSMOART</strong> input directory.</p>
+<p>Only necessary for <strong>COSMOART</strong> simulations.</p>
+<p>Copy the photolysis-rate file from the project (<code class="docutils literal notranslate"><span class="pre">cfg.photo_rate_file</span></code>) to
+the <strong>COSMOART</strong> input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.cosmo_input/art_photolysis</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_time</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
+<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the start_time</p></li>
+<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.post_cosmo.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.post_cosmo.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/post_cosmo.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.post_cosmo.main" title="Permalink to this definition"></a></dt>
+<dd><p>Copy the output of a <strong>COSMO</strong>-run to a user-defined position.</p>
+<p>Write a runscript to copy all files (<strong>COSMO</strong> settings &amp; output,
+<strong>int2lm</strong> settings, logfiles) from <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_run</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cfg.cosmo_output</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.int2lm_run</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.log_finished_dir</span></code> to
+<code class="docutils literal notranslate"><span class="pre">cfg.output_root/...</span></code> .
+If the job <code class="docutils literal notranslate"><span class="pre">reduce_output</span></code> has been run before <code class="docutils literal notranslate"><span class="pre">post_cosmo</span></code>, a
+directory <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_output_reduced</span></code> is created. In this case,
+<code class="docutils literal notranslate"><span class="pre">cfg.cosmo_output_reduced</span></code> is copied instead of <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_output</span></code>.</p>
+<p>Submit the job to the xfer-queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.post_int2lm.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.post_int2lm.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/post_int2lm.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.post_int2lm.main" title="Permalink to this definition"></a></dt>
+<dd><p>Combine multiple <strong>int2lm</strong> tracer-output files into a single one for
+<strong>COSMO</strong>.</p>
+<p>Only necessary for <strong>COSMO</strong> simulations.</p>
+<p><strong>int2lm</strong> puts tracers into different netCDF files. Combine the files
+specified in <code class="docutils literal notranslate"><span class="pre">cfg.post_int2lm_species</span></code> into a single netCDF file for
+<strong>COSMO</strong>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">cfg.spinup</span></code> and <code class="docutils literal notranslate"><span class="pre">cfg.post_int2lm_species_spinup</span></code> are present,
+also read in the specified variables and take them as an input for
+<strong>COSMO</strong>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.reduce_output.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.reduce_output.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/reduce_output.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.reduce_output.main" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates 2D column data and writes them into a new netCDF file.
+Only a fixed number of levels from <strong>COSMO</strong> output are considered.
+Those files are written into a new directory <code class="docutils literal notranslate"><span class="pre">cosmo_output_reduced</span></code>.</p>
+<p>The number of levels is set by the configuration variable
+<code class="docutils literal notranslate"><span class="pre">cfg.output_levels</span></code> (default = all levels).</p>
+<p><strong>Important</strong>: If several <code class="docutils literal notranslate"><span class="pre">GRIBOUT</span></code> sections are used to split the output
+data, then this code only works in case of the following:
+The tracers, for which the column-averaged dry-air (<code class="docutils literal notranslate"><span class="pre">X</span></code>) and
+moist-air (<code class="docutils literal notranslate"><span class="pre">Y</span></code>) mole fractions are calculated, have to be</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>saved in a separate output file and</p></li>
+<li><p>the output file appears alphabetically <strong>after</strong> the meteorological
+variables.</p></li>
+</ol>
+</div></blockquote>
+<p>For example, use a GRIBOUT section suffix <code class="docutils literal notranslate"><span class="pre">_met</span></code> for standard <strong>COSMO</strong>
+output, and <code class="docutils literal notranslate"><span class="pre">_trc</span></code> for tracers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
+<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
+<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.verify_chain.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.verify_chain.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/verify_chain.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.verify_chain.main" title="Permalink to this definition"></a></dt>
+<dd><p>Compare outputs of the chain to a reference.</p>
+<p>Looks for the reference-file in <code class="docutils literal notranslate"><span class="pre">cfg.reference_dir</span></code>.</p>
+<p>Looks for the output file in <code class="docutils literal notranslate"><span class="pre">cfg.output_dir</span></code> (if not <code class="docutils literal notranslate"><span class="pre">None</span></code>), else it
+goes to the output directory created by the <strong>COSMO</strong>-job.</p>
+<p>In the dict <code class="docutils literal notranslate"><span class="pre">cfg.values_to_check</span></code>, the user specifies the names of the
+files to be compared as keys, and the variables to compare as a list.</p>
+<p>To compare the temperatures of the last output of the example case, the
+following variables should be added to the <code class="docutils literal notranslate"><span class="pre">config.py</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">reference_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_root</span><span class="p">,</span> <span class="s2">&quot;reference_output&quot;</span><span class="p">)</span>
+<span class="n">output_dir</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">values_to_check</span> <span class="o">=</span> <span class="p">{(</span><span class="s2">&quot;reference_lffd2015010200.nc&quot;</span><span class="p">,</span><span class="s2">&quot;lffd2015010200.nc&quot;</span><span class="p">):</span>
+      <span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_time</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
+<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the start_time</p></li>
+<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 

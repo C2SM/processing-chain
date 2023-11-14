@@ -12,7 +12,7 @@ has to be respected.
 
 1.  :func:`jobs.biofluxes.main` | :func:`jobs.prepare_data.main` | 
     :func:`jobs.emissions.main` | :func:`jobs.online_vprm.main` | 
-    :func:`jobs.oae.main` | :func:`jobs.obs_nudging.main`
+    :func:`jobs.oem.main` | :func:`jobs.obs_nudging.main`
 2.  :func:`jobs.int2lm.main`
 3.  :func:`jobs.post_int2lm.main`
 4.  :func:`jobs.octe.main`
@@ -25,7 +25,7 @@ has to be respected.
 
 1. :func:`jobs.emissions.main` | :func:`jobs.prepare_data.main` |
    :func:`jobs.photo_rate.main` | :func:`jobs.obs_nudging.main` |
-   :func:`jobs.online_vprm.main` | :func:`jobs.oae.main`
+   :func:`jobs.online_vprm.main` | :func:`jobs.oem.main`
 2. :func:`jobs.int2lm.main`
 3. :func:`jobs.cosmo.main`
 4. :func:`jobs.check_output.main`
@@ -46,7 +46,7 @@ has to be respected.
 **ICONARTOEM**:
 
 1.  :func:`jobs.prepare_data.main` 
-2.  :func:`jobs.oae.main`
+2.  :func:`jobs.oem.main`
 3.  :func:`jobs.icon.main`
 
 
@@ -72,7 +72,7 @@ List of available jobs
 * :func:`jobs.icon.main`
 * :func:`jobs.int2lm.main`
 * :func:`jobs.prepare_data.main`
-* :func:`jobs.oae.main`
+* :func:`jobs.oem.main`
 * :func:`jobs.obs_nudging.main`
 * :func:`jobs.octe.main`
 * :func:`jobs.online_vprm.main`  
@@ -82,3 +82,66 @@ List of available jobs
 * :func:`jobs.reduce_output.main`
 * :func:`jobs.verify_chain.main`
 
+-------------------------------------------
+
+.. autofunction:: jobs.biofluxes.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.check_output.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.cosmo.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.emissions.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.icon.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.int2lm.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.prepare_data.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.oem.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.obs_nudging.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.octe.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.online_vprm.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.photo_rate.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.post_cosmo.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.post_int2lm.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.reduce_output.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.verify_chain.main

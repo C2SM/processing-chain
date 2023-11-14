@@ -90,7 +90,25 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../jobs.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../jobs.html#adding-new-jobs">Adding new jobs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../jobs.html#list-of-available-jobs">List of available jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../jobs.html#list-of-available-jobs">List of available jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.prepare_data.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../tools.html">Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../tools.html#conversion-functions">Conversion Functions</a></li>
 </ul>
@@ -536,7 +554,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
 
-<div class="viewcode-block" id="run_chain"><a class="viewcode-back" href="../howtorun.html#run_chain.run_chain">[docs]</a><span class="k">def</span> <span class="nf">run_chain</span><span class="p">(</span><span class="n">work_root</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">startdate_sim</span><span class="p">,</span> <span class="n">enddate_sim</span><span class="p">,</span> <span class="n">job_names</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">run_chain</span><span class="p">(</span><span class="n">work_root</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">startdate_sim</span><span class="p">,</span> <span class="n">enddate_sim</span><span class="p">,</span> <span class="n">job_names</span><span class="p">,</span>
               <span class="n">force</span><span class="p">,</span> <span class="n">resume</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the processing chain, managing job execution and logging.</span>
 
@@ -741,7 +759,7 @@
                         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_working_dir</span><span class="p">,</span> <span class="n">job</span><span class="p">))</span>
                     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Sending log file to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">cfg</span><span class="o">.</span><span class="n">user_mail</span><span class="p">)</span>
                     <span class="n">tools</span><span class="o">.</span><span class="n">send_mail</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">user_mail</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span></div>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="restart_runs"><a class="viewcode-back" href="../howtorun.html#run_chain.restart_runs">[docs]</a><span class="k">def</span> <span class="nf">restart_runs</span><span class="p">(</span><span class="n">work_root</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">job_names</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">resume</span><span class="p">):</span>

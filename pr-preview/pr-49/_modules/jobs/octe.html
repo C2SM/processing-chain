@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jobs.octe &mdash; Processing Chain v3.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/processing-chain-favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=de725823"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=a5fa425f"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #5d6d7e" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v3.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../features.html">Feature Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environment.html">Conda Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#install-miniconda">1. Install Miniconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtorun.html">How to Run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#starting-the-chain">Starting the Chain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#what-it-does">What it Does</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../file-structure.html">File Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config.html">Configuration File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#general-variables-in-config-py">General Variables in <code class="docutils literal notranslate"><span class="pre">config.py</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-biofluxes-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-cosmo-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-emissions-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-icon-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-int2lm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-prepare-data-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-oae-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oae.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-obs-nudging-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-octe-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-online-vprm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-photo-rate-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-post-int2lm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-reduce-output-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-for-jobs-verify-chain-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../namelists.html">Namelist Templates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Jobs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html#adding-new-jobs">Adding new jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html#list-of-available-jobs">List of available jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.prepare_data.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jobs.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools.html">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tools.html#conversion-functions">Conversion Functions</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #5d6d7e" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Processing Chain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">jobs.octe</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for jobs.octe</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">scandir</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">basename</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tools</span>
+
+
+<span class="k">def</span> <span class="nf">create_dir_and_copy_input</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">,</span> <span class="n">lambdas_src</span><span class="p">,</span> <span class="n">maps_src</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a directory at dest_dir (**COSMO** input) and copy src there.</span>
+
+<span class="sd">    lambdas_src -&gt; dest_dir/lambdas.nc</span>
+<span class="sd">    maps_src   -&gt; dest_dir/maps.nc</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dest_dir : str</span>
+<span class="sd">    lambdas_src : str</span>
+<span class="sd">    maps_src : str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;input data for OCTE&quot;</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">copy_file</span><span class="p">(</span><span class="n">lambdas_src</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s1">&#39;lambdas.nc&#39;</span><span class="p">))</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">copy_file</span><span class="p">(</span><span class="n">maps_src</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s1">&#39;maps.nc&#39;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">read_lambdas</span><span class="p">(</span><span class="n">nc_dataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the lambda values from the nc_dataset.</span>
+
+<span class="sd">    The relevant lambda values are the last ones along the</span>
+<span class="sd">    dimension ~nparam~. They are returned in a list of length</span>
+<span class="sd">    ~nensembles~.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nc_dataset : netCDF4.Dataset</span>
+<span class="sd">        Contains a variable called ~lambda~ with dimensions,</span>
+<span class="sd">        ~(nensembles, nparam)~</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list(float)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lambda_var</span> <span class="o">=</span> <span class="n">nc_dataset</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lambda_var</span><span class="o">.</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">&quot;Number of dimensions of &#39;lambda&#39; variable doesn&#39;t match&quot;</span><span class="p">)</span>
+    <span class="c1"># this would not be a problem in python, but COSMO breaks if</span>
+    <span class="c1"># this doesn&#39;t hold:</span>
+    <span class="k">assert</span> <span class="n">lambda_var</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;nparam&#39;</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">&quot;Dimension ordering of &#39;lambda&#39; variable incorrect&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">lambda_var</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">perturb_bg_in_dataset</span><span class="p">(</span><span class="n">nc_dataset</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create BG fields from lambdas in nc_dataset.</span>
+
+<span class="sd">    Perturb the background CO2 field in nc_dataset based on lambda values in</span>
+<span class="sd">    lambdas.</span>
+<span class="sd">    The pertubation is just a global scaling of the field by one</span>
+<span class="sd">    of the lambda values. For each ensemble member (=each lambda), a new</span>
+<span class="sd">    variable is created.</span>
+
+<span class="sd">    The perturbed fields are created by multiplying the values of</span>
+<span class="sd">    a variable called ~CO2_BG~ with one of the lambda-values. The new</span>
+<span class="sd">    field is stored in a newly created variable called ~CO2_BGnnn~,</span>
+<span class="sd">    where ~nnn~ runs from ~001~ to ~{nensembles:03d}~.</span>
+
+<span class="sd">    If there is no variable ~CO2_BG~ in nc_dataset, do nothing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nc_dataset : netCDF4.Dataset</span>
+<span class="sd">        If this doesn&#39;t contain a variable ~CO2_BG~, do nothing. If it does,</span>
+<span class="sd">        create a new variable for each lambda value with the original field</span>
+<span class="sd">        scaled.</span>
+<span class="sd">    lambdas : list(float)</span>
+<span class="sd">        For each value in the list, create an ensemble member</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">basevar_name</span> <span class="o">=</span> <span class="s1">&#39;CO2_BG&#39;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">nc_dataset</span><span class="o">.</span><span class="n">filepath</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">basevar_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nc_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No BG in dataset </span><span class="si">{}</span><span class="s2">, doing nothing&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+        <span class="k">return</span>
+
+    <span class="n">basevar</span> <span class="o">=</span> <span class="n">nc_dataset</span><span class="p">[</span><span class="n">basevar_name</span><span class="p">]</span>
+
+    <span class="n">field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">basevar</span><span class="p">[:])</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">basevar</span><span class="o">.</span><span class="n">datatype</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="n">basevar</span><span class="o">.</span><span class="n">dimensions</span>
+    <span class="n">attr_names</span> <span class="o">=</span> <span class="n">basevar</span><span class="o">.</span><span class="n">ncattrs</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Remove fill value from ncattrs because setting it after</span>
+        <span class="c1"># construction is not possible</span>
+        <span class="n">attr_names</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;_FillValue&#39;</span><span class="p">)</span>
+        <span class="n">fill_value</span> <span class="o">=</span> <span class="n">basevar</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="s1">&#39;_FillValue&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">fill_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">attrs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">basevar</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="n">name</span><span class="p">))</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">attr_names</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lambda_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lambdas</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">basevar_name</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{:03d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">nc_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">varname</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                        <span class="n">datatype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                                        <span class="n">dimensions</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span>
+                                        <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
+        <span class="n">var</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">field</span> <span class="o">*</span> <span class="n">lambda_</span>
+        <span class="k">for</span> <span class="n">attrname</span><span class="p">,</span> <span class="n">attrval</span> <span class="ow">in</span> <span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">var</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">attrname</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">attrval</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Created BG ensemble in dataset </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">perturb_bgs_in_dir</span><span class="p">(</span><span class="n">lambdas_nc</span><span class="p">,</span> <span class="n">directory</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create perturbed BG fields from read lambda values in all NetCDF-files</span>
+<span class="sd">    in the directory.</span>
+
+<span class="sd">    Perturb the background CO2 field in all the NetCDF-files</span>
+<span class="sd">    found in directory based on lambda values from lambdas_nc.</span>
+<span class="sd">    The pertubation is just a global scaling of the field by one</span>
+<span class="sd">    lambda value. For each ensemble, a new variable is created.</span>
+
+<span class="sd">    Lambda values and the number of ensembles are read from the file</span>
+<span class="sd">    lambdas_nc. The lambda-value for the BG is assumed to be the last</span>
+<span class="sd">    value along the ~nparam~-dimension of the ~lambda~-variable.</span>
+
+<span class="sd">    The perturbed fields are then created by multiplying the values of</span>
+<span class="sd">    a variable called ~CO2_BG~ with one of the lambda-values. The new</span>
+<span class="sd">    field is stored in a newly created variable called ~CO2_BGnnn~,</span>
+<span class="sd">    where ~nnn~ runs from ~001~ to ~{nensembles:03d}~</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lambdas_nc : str</span>
+<span class="sd">        Path to the file storing the lambda-values.</span>
+<span class="sd">        Contains a variable called ~lambda~ with dimensions,</span>
+<span class="sd">        ~(nensembles, nparam)~.</span>
+<span class="sd">    directory : str</span>
+<span class="sd">        Path to the output-dir of int2lm. Add perturbed BG-fields to all</span>
+<span class="sd">        netcdf-files there containing a variable called ~CO2_BG~.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">lambdas_nc</span><span class="p">)</span> <span class="k">as</span> <span class="n">lambdas_file</span><span class="p">:</span>
+        <span class="n">lambdas</span> <span class="o">=</span> <span class="n">read_lambdas</span><span class="p">(</span><span class="n">lambdas_file</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">scandir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="k">as</span> <span class="n">dir_iterator</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">dir_iterator</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">nc_dataset</span><span class="p">:</span>
+                        <span class="n">perturb_bg_in_dataset</span><span class="p">(</span><span class="n">nc_dataset</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;File </span><span class="si">{}</span><span class="s2"> is not a netCDF-file.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../jobs.html#jobs.octe.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy necessary input files for **COSMO** and perturb BG.</span>
+
+<span class="sd">    Copies the NetCDF-files found at cfg.octe_maps and cfg.octe_lambdas to</span>
+<span class="sd">    the **COSMO** input-directory.</span>
+
+<span class="sd">    Perturbs the background tracer field. To do that, it reads the lambda-value</span>
+<span class="sd">    from the cfg.octe_lambdas (last value along the nparam-dimension) and</span>
+<span class="sd">    scales the BG-field produced by int2lm, creating a new variable for each</span>
+<span class="sd">    ensemble.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    starttime : datetime-object</span>
+<span class="sd">        The starting date of the simulation</span>
+<span class="sd">    hstart : int</span>
+<span class="sd">        Offset (in hours) of the actual start from the starttime</span>
+<span class="sd">    hstop : int</span>
+<span class="sd">        Length of simulation (in hours)</span>
+<span class="sd">    cfg : config-object</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_input</span><span class="p">,</span> <span class="s1">&#39;octe&#39;</span><span class="p">)</span>
+    <span class="n">create_dir_and_copy_input</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="n">dest_dir</span><span class="p">,</span>
+                              <span class="n">lambdas_src</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">octe_lambdas</span><span class="p">,</span>
+                              <span class="n">maps_src</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">octe_maps</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Copied OCTE files </span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2"> to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">octe_lambdas</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">octe_maps</span><span class="p">,</span> <span class="n">dest_dir</span><span class="p">))</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to create BG-ensembles in &quot;</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">int2lm_output</span><span class="p">)</span>
+    <span class="n">perturb_bgs_in_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">octe_lambdas</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">int2lm_output</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finished creating BG-ensembles&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018-2023, C2SM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
