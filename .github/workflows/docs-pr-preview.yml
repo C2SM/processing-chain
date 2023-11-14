@@ -21,6 +21,11 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           environment-file: env/environment.yml
+          
+      - name: Install Dependencies
+        run: |
+          conda activate proc-chain
+          pip install sphinx_rtd_theme sphinx-copybutton          
 
       - name: Build docs
         uses: C2SM/sphinx-action@sphinx-latest
