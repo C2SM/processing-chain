@@ -2,6 +2,8 @@ name: Deploy PR previews
 
 on:
   pull_request:
+    paths:
+      - 'docs/**'  
     types:
       - opened
       - reopened
@@ -24,8 +26,7 @@ jobs:
           
       - name: Install Dependencies
         run: |
-          conda activate proc-chain
-          pip install sphinx_rtd_theme sphinx-copybutton          
+          conda run -n proc-chain pip install sphinx_rtd_theme sphinx-copybutton
 
       - name: Build docs
         uses: C2SM/sphinx-action@sphinx-latest
