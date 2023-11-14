@@ -1,4 +1,4 @@
-name: Deploy PR previews
+name: Build and Deploy Documentation to PR Previews
 
 on:
   pull_request:
