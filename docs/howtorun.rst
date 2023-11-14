@@ -64,8 +64,8 @@ The following test cases are available:
 What it Does
 ------------
 
-The script ``run_chain.py`` reads the command-line arguments and the config-file.
-It then calls the function :func:`run_chain.restart_runs` which divides the
+The script ``run_chain.py`` reads the command line arguments and the config file.
+It then calls the function :func:`run_chain.restart_runs`, which divides the
 simulation time according to the specified restart steps. Then it calls
 :func:`run_chain.run_chain` for each sub-run. This function sets up the directory
 structure of the chain and then starts the specified :ref:`jobs<jobs-section>`
@@ -116,5 +116,7 @@ Running the ``cosmo-ghg-11km-test``-case therefore produces the following direct
 			     + working/    # 1 logfile per started job
 			     \ finished    # 1 logfile per finished job
 
+-------------------------------------------
 .. autofunction:: run_chain.run_chain
+-------------------------------------------	
 .. autofunction:: run_chain.restart_runs
