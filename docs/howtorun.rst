@@ -116,3 +116,5 @@ Running the ``cosmo-ghg-11km-test``-case therefore produces the following direct
 			     + working/    # 1 logfile per started job
 			     \ finished    # 1 logfile per finished job
 
+.. autofunction:: run_chain.run_chain
+.. autofunction:: run_chain.restart_runs
