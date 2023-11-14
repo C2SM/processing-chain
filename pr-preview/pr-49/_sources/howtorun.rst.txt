@@ -14,14 +14,44 @@ Starting the Chain
 
 The chain has to be run with the following command::
 
-    $ python run_chain.py <casename> -j [jobs]
+    $ ./run_chain.py <casename>
 
-``<casename>`` is the name of a directory in the ``cases/``-directory where
-there is a ``config.yaml``-file specifying the configurations, as well as templates
-for the necessary namelist files for **int2lm**, **COSMO** or **ICON**.
+Here, ``<casename>`` is the name of a directory in the ``cases/``-directory where
+there is a ``config.yaml``-file specifying the configuration, as well as templates
+for the necessary namelist files for **int2lm**, **COSMO** or **ICON**. It may also
+contain additional runscripts to be submitted via ``sbatch``.
 
-If you don't supply a joblist, the default joblist defined in
+Without specifiying a job list, the default joblist defined in
 ``config/models.yaml`` will be executed.
+
+There are several optional arguments available to change the behavior of the chain:
+
+* ``-h``, ``--help``
+  	Show a help message and exit.
+* ``-j [JOB_LIST ...]``, ``--jobs [JOB_LIST ...]``
+    List of job names to be executed.
+    A job is a .py-file in jobs/ with a ``main()`` function, which
+    handles one aspect of the Processing Chain, for
+    example copying ``meteo`` input data or launching a
+    job for ``int2lm``. Jobs are executed in the order
+    in which they are given here. If no jobs are
+    given, default jobs will be executedas defined
+    in config/models.yaml.
+* ``-f``, ``--force``
+    Force the processing chain to redo all specified
+    jobs, even if they have been started already or
+    were finished previously. WARNING: Only logfiles
+    get deleted, other effects of a given job
+    (copied files etc.) are simply overwritten. This
+    may cause errors.
+* ``-t NTRY``, ``--try NTRY``
+	Amount of time the cosmo job is re-tried before crashing. Default is 1.
+* ``-r``, ``--resume`` 
+    Resume the processing chain by restarting the
+    last unfinished job. WARNING: Only the logfile
+    gets deleted, other effects of a given job
+    (copied files etc.) are simply overwritten. This
+    may cause errors.
 
 The following test cases are available:
 

@@ -134,14 +134,59 @@ Then it will start the Processing Chain.</p>
 <section id="starting-the-chain">
 <h2>Starting the Chain<a class="headerlink" href="#starting-the-chain" title="Permalink to this heading"></a></h2>
 <p>The chain has to be run with the following command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py &lt;casename&gt; -j [jobs]
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./run_chain.py &lt;casename&gt;
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">&lt;casename&gt;</span></code> is the name of a directory in the <code class="docutils literal notranslate"><span class="pre">cases/</span></code>-directory where
-there is a <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>-file specifying the configurations, as well as templates
-for the necessary namelist files for <strong>int2lm</strong>, <strong>COSMO</strong> or <strong>ICON</strong>.</p>
-<p>If you don’t supply a joblist, the default joblist defined in
+<p>Here, <code class="docutils literal notranslate"><span class="pre">&lt;casename&gt;</span></code> is the name of a directory in the <code class="docutils literal notranslate"><span class="pre">cases/</span></code>-directory where
+there is a <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>-file specifying the configuration, as well as templates
+for the necessary namelist files for <strong>int2lm</strong>, <strong>COSMO</strong> or <strong>ICON</strong>. It may also
+contain additional runscripts to be submitted via <code class="docutils literal notranslate"><span class="pre">sbatch</span></code>.</p>
+<p>Without specifiying a job list, the default joblist defined in
 <code class="docutils literal notranslate"><span class="pre">config/models.yaml</span></code> will be executed.</p>
+<p>There are several optional arguments available to change the behavior of the chain:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code></dt><dd><p>Show a help message and exit.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">-j</span> <span class="pre">[JOB_LIST</span> <span class="pre">...]</span></code>, <code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">[JOB_LIST</span> <span class="pre">...]</span></code></dt><dd><p>List of job names to be executed.
+A job is a .py-file in jobs/ with a <code class="docutils literal notranslate"><span class="pre">main()</span></code> function, which
+handles one aspect of the Processing Chain, for
+example copying <code class="docutils literal notranslate"><span class="pre">meteo</span></code> input data or launching a
+job for <code class="docutils literal notranslate"><span class="pre">int2lm</span></code>. Jobs are executed in the order
+in which they are given here. If no jobs are
+given, default jobs will be executedas defined
+in config/models.yaml.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">-f</span></code>, <code class="docutils literal notranslate"><span class="pre">--force</span></code></dt><dd><p>Force the processing chain to redo all specified
+jobs, even if they have been started already or
+were finished previously. WARNING: Only logfiles
+get deleted, other effects of a given job
+(copied files etc.) are simply overwritten. This
+may cause errors.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">NTRY</span></code>, <code class="docutils literal notranslate"><span class="pre">--try</span> <span class="pre">NTRY</span></code></dt><dd><p>Amount of time the cosmo job is re-tried before crashing. Default is 1.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">-r</span></code>, <code class="docutils literal notranslate"><span class="pre">--resume</span></code></dt><dd><p>Resume the processing chain by restarting the
+last unfinished job. WARNING: Only the logfile
+gets deleted, other effects of a given job
+(copied files etc.) are simply overwritten. This
+may cause errors.</p>
+</dd>
+</dl>
+</li>
+</ul>
 <p>The following test cases are available:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code></p></li>
