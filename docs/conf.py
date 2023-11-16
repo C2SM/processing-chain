@@ -39,7 +39,6 @@ extensions = [
 autodoc_member_order = 'bysource'
 toc_object_entries_show_parents = 'all'
 
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -90,6 +89,7 @@ html_static_path = ['_static']
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
 
 # Include css file to control disable horizontal table scrollbar
 def setup(app):
