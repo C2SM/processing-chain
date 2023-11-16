@@ -72,7 +72,8 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="code-structure.html">Code Structure</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration File</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#general-variables-in-config-py">General Variables in <code class="docutils literal notranslate"><span class="pre">config.py</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#general-variables-in-run-chain-py">General variables in <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#variables-to-set-in-config-yaml">Variables to set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-biofluxes-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-cosmo-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-emissions-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
@@ -145,34 +146,150 @@
            <div itemprop="articleBody">
              
   <p id="config-section">The Processing Chain uses cases to describe a simulation. A case is a
-subdirectory in <code class="docutils literal notranslate"><span class="pre">cases/</span></code>, containing a <cite>config.yaml</cite> and several
+subdirectory in <code class="docutils literal notranslate"><span class="pre">cases/</span></code>, containing a <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> and several
 <cite>namelists</cite> (for example <code class="docutils literal notranslate"><span class="pre">int2lm_INPUT.cfg</span></code>) which define the
 simulation.</p>
 <section id="configuration-file">
-<span id="config-py"></span><h1>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this heading"></a></h1>
-<p>The configuration file contains most of the information that the <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">Overview</span></a> need to prepare and run the simulation, for example the location of the input data.
+<span id="config-yaml"></span><h1>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this heading"></a></h1>
+<p>The configuration file contains most of the information that the <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">jobs</span></a> need to prepare and run the simulation, for example the location of the input data.
 This configuration-file is imported as a module in <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code>, and therefore
 it can contain python expression which are evaluated at runtime.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<section id="general-variables-in-config-py">
-<h2>General Variables in <code class="docutils literal notranslate"><span class="pre">config.py</span></code><a class="headerlink" href="#general-variables-in-config-py" title="Permalink to this heading"></a></h2>
+<section id="general-variables-in-run-chain-py">
+<h2>General variables in <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code><a class="headerlink" href="#general-variables-in-run-chain-py" title="Permalink to this heading"></a></h2>
+<p>Here is a list of configuration variables used in the main script of the Processing Chain:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>case_path</p></td>
+<td><p>The path to the case directory under ‘cases/’ for the specified
+casename.</p></td>
+</tr>
+<tr class="row-odd"><td><p>casename</p></td>
+<td><p>The name of the case.</p></td>
+</tr>
+<tr class="row-even"><td><p>chain_src_dir</p></td>
+<td><p>The source directory for the processing chain, typically the current
+working directory.</p></td>
+</tr>
+<tr class="row-odd"><td><p>compute_account</p></td>
+<td><p>The compute account to be used based on user information.</p></td>
+</tr>
+<tr class="row-even"><td><p>constraint</p></td>
+<td><p>The computational constraint (‘gpu’ or ‘mc’).</p></td>
+</tr>
+<tr class="row-odd"><td><p>convert_gas</p></td>
+<td><p>Switch for unit conversion for ‘reduce_output’ job.</p></td>
+</tr>
+<tr class="row-even"><td><p>cosmo_restart_in</p></td>
+<td><p>The path to the COSMO model restart input directory.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cosmo_restart_out</p></td>
+<td><p>The path to the COSMO model restart output directory.</p></td>
+</tr>
+<tr class="row-even"><td><p>email</p></td>
+<td><p>The user’s email address, initially set to None and updated using the
+set_email method.</p></td>
+</tr>
+<tr class="row-odd"><td><p>enddate</p></td>
+<td><p>The end date of the simulation.</p></td>
+</tr>
+<tr class="row-even"><td><p>force</p></td>
+<td><p>Boolean indicating whether to force the processing chain to redo all
+specified jobs.</p></td>
+</tr>
+<tr class="row-odd"><td><p>job_list</p></td>
+<td><p>List of job-names to be executed.</p></td>
+</tr>
+<tr class="row-even"><td><p>last_cosmo_output</p></td>
+<td><p>The path to the last COSMO model output in spin-up simulations.</p></td>
+</tr>
+<tr class="row-odd"><td><p>log_finished_dir</p></td>
+<td><p>The directory for finished log files.</p></td>
+</tr>
+<tr class="row-even"><td><p>log_working_dir</p></td>
+<td><p>The directory for working log files.</p></td>
+</tr>
+<tr class="row-odd"><td><p>meteo.dir</p></td>
+<td><p>The path to the meteorological input data directory.</p></td>
+</tr>
+<tr class="row-even"><td><p>meteo.inc</p></td>
+<td><p>Increment for meteorological input data.</p></td>
+</tr>
+<tr class="row-odd"><td><p>meteo.prefix</p></td>
+<td><p>Prefix for meteorological input data.</p></td>
+</tr>
+<tr class="row-even"><td><p>model</p></td>
+<td><p>The model used in the simulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p>mpich_cuda</p></td>
+<td><p>CUDA-related environment variables, set based on the configuration
+settings.</p></td>
+</tr>
+<tr class="row-even"><td><p>ntry</p></td>
+<td><p>Amount of time the cosmo job is re-tried before crashing.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ntasks_per_node</p></td>
+<td><p>The number of tasks per node, based on the node type (‘gpu’ or ‘mc’).</p></td>
+</tr>
+<tr class="row-even"><td><p>output_levels</p></td>
+<td><p>Number of levels for output.</p></td>
+</tr>
+<tr class="row-odd"><td><p>restart_step_hours</p></td>
+<td><p>The restart step in hours, derived from the ‘restart_step’ attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p>resume</p></td>
+<td><p>Boolean indicating whether to resume the processing chain by
+restarting the last unfinished job.</p></td>
+</tr>
+<tr class="row-odd"><td><p>run_on</p></td>
+<td><p>The architecture the model runs on (‘cpu’ or ‘gpu’).</p></td>
+</tr>
+<tr class="row-even"><td><p>spinup</p></td>
+<td><p>Spin-up duration in hours.</p></td>
+</tr>
+<tr class="row-odd"><td><p>startdate</p></td>
+<td><p>The start date of the simulation.</p></td>
+</tr>
+<tr class="row-even"><td><p>user_mail</p></td>
+<td><p>The user’s email address, determined based on system configuration.</p></td>
+</tr>
+<tr class="row-odd"><td><p>user_name</p></td>
+<td><p>The username of the current user, obtained from the ‘USER’ environment
+variable.</p></td>
+</tr>
+<tr class="row-even"><td><p>work_root</p></td>
+<td><p>The root directory for processing chain execution, typically located
+under the source directory.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="variables-to-set-in-config-yaml">
+<h2>Variables to set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code><a class="headerlink" href="#variables-to-set-in-config-yaml" title="Permalink to this heading"></a></h2>
+<p>The following list shows the variables that are typically set in the configuration file, i.e., they
+are not set by the Processing Chain directly or are overwritten by the user configuration.</p>
 <table class="docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
+<tr class="row-odd"><td><p><strong>Variable</strong></p></td>
 <td><p><strong>Description</strong></p></td>
 <td><p><strong>Used in</strong></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">model</span></code></p></td>
 <td><p><strong>COSMO</strong> or <strong>COSMOART</strong>, defaults to <strong>COSMO</strong> if omitted</p></td>
 <td><p>all</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">subtarget</span></code></p></td>
-<td><p><strong>NONE</strong> or <strong>SPINUP</strong>, defaults to <strong>NONE</strong> if omitted</p></td>
-<td><p>all</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">constraint</span></code></p></td>
+<td><p>Either ‘gpu’ or ‘mc’. Controls on which nodes int2lm and cosmo run. Make sure your executables are compiled for the chosen architecure.</p></td>
+<td><p><a class="reference internal" href="jobs.html#jobs.cosmo.main" title="jobs.cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.int2lm.main" title="jobs.int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">constraint</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">run_on</span></code></p></td>
 <td><p>Either ‘gpu’ or ‘mc’. Controls on which nodes int2lm and cosmo run. Make sure your executables are compiled for the chosen architecure.</p></td>
 <td><p><a class="reference internal" href="jobs.html#jobs.cosmo.main" title="jobs.cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a>, <a class="reference internal" href="jobs.html#jobs.int2lm.main" title="jobs.int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></p></td>
 </tr>
@@ -197,7 +314,7 @@ it can contain python expression which are evaluated at runtime.</p>
 <td><p>all</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">casename</span></code></p></td>
-<td><p>Name of the simulation, the same as the directory-name the <code class="docutils literal notranslate"><span class="pre">config.py</span></code>-file is in</p></td>
+<td><p>Name of the simulation, the same as the directory-name the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>-file is in</p></td>
 <td><p>all</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">input_root</span></code></p></td>
@@ -518,7 +635,7 @@ it can contain python expression which are evaluated at runtime.</p>
 <td><p>COSMO</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cams_parameters</span></code></p></td>
-<td><p>Parameters for the processing of CAMS-data, more information in <code class="docutils literal notranslate"><span class="pre">config.py</span></code> of example case</p></td>
+<td><p>Parameters for the processing of CAMS-data, more information in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> of example case</p></td>
 <td><p>COSMO</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">icontools_dir</span></code></p></td>
