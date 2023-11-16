@@ -53,14 +53,6 @@ There are several optional arguments available to change the behavior of the cha
     (copied files etc.) are simply overwritten. This
     may cause errors.
 
-The following test cases are available:
-
-* ``cosmo-ghg-spinup-test``
-* ``cosmo-ghg-test``
-* ``icon-test``
-* ``icon-art-oem-test``
-* ``icon-art-global-test``
-
 What it Does
 ------------
 
@@ -70,6 +62,26 @@ simulation time according to the specified restart steps. Then it calls
 :func:`run_chain.run_chain` for each sub-run. This function sets up the directory
 structure of the chain and then starts the specified :ref:`jobs<jobs-section>`
 sequentially.
+
+Test Cases
+----------
+
+The following test cases are available:
+
+* ``cosmo-ghg-spinup-test``
+* ``cosmo-ghg-test``
+* ``icon-test``
+* ``icon-art-oem-test``
+* ``icon-art-global-test``
+
+To be able to run these test cases, it is necessary to provide the input data,
+to setup spack and to compile the models and tools. All this is automized via
+the script::
+
+	$ ./jenkins/scripts/jenkins.sh
+
+This will run all the individual scripts in ``jenkins/scripts/``, which 
+can also be launched separately if desired.
 
 Directory Structure
 -------------------
@@ -91,7 +103,7 @@ run looks like this:::
 	│   │   ├── cfg.int2lm_work/
 	│   │   ├── cfg.int2lm_output/
                    
-Running the ``cosmo-ghg-test``-case therefore produces the following
+Running the ``cosmo-ghg-test`` case therefore produces the following
 directories and files (showing four levels of directories deep):::
 
 	work/cosmo-ghg-test
