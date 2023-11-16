@@ -25,6 +25,7 @@ adding new jobs or custom scripts.
 .. toctree::
     :maxdepth: 2
     :caption: Configuration
+    :titlesonly:
 
     code-structure
     config
