@@ -14,9 +14,6 @@ The configuration file contains most of the information that the :ref:`jobs<jobs
 This configuration-file is imported as a module in ``run_chain.py``, and therefore
 it can contain python expression which are evaluated at runtime.
 
-..
-    Creating these tables by hand is a pain. Use the script/csv in the tables/ director
-
 General variables in ``run_chain.py``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
