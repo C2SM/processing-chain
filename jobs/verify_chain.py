@@ -50,11 +50,13 @@ def main(cfg, model_cfg):
         Object holding all user-configuration parameters as attributes
     """
     logging.info("Started verification")
-    for (ref_file, run_file), variables in cfg.verify_chain['values_to_check'].items():
+    for (ref_file,
+         run_file), variables in cfg.verify_chain['values_to_check'].items():
         logging.info("Comparing " + str(variables))
 
         # reference file location
-        ref_file_path = os.path.join(cfg.verify_chain['reference_dir'], ref_file)
+        ref_file_path = os.path.join(cfg.verify_chain['reference_dir'],
+                                     ref_file)
 
         # run data location
         if cfg.verify_chain['output_dir'] is None:
@@ -64,7 +66,8 @@ def main(cfg, model_cfg):
                 cfg.enddate_sim_yyyymmddhh, "cosmo_output", run_file)
         else:
             # User-provided output location
-            run_file_path = os.path.join(cfg.verify_chain['output_dir'], run_file)
+            run_file_path = os.path.join(cfg.verify_chain['output_dir'],
+                                         run_file)
 
         logging.info("Output file: " + str(run_file_path))
         logging.info("Reference file: " + str(ref_file_path))
