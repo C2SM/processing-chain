@@ -17,8 +17,6 @@ it can contain python expression which are evaluated at runtime.
 ..
     Creating these tables by hand is a pain. Use the script/csv in the tables/ director
 
-|
-
 General variables in ``run_chain.py``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -100,7 +98,7 @@ Here are two examples of which general variables should be set by the user in th
 case configuration file.
 
 Header of ``config.yaml`` for the ``cosmo-ghg-spinup-test`` case
-----------------------------------------------------------------
+================================================================
 
 ::
 
@@ -114,7 +112,7 @@ Header of ``config.yaml`` for the ``cosmo-ghg-spinup-test`` case
     enddate: 2015-01-01T18:00:00Z
 
 Header of ``config.yaml`` for the ``icon-art-oem-test`` case
-----------------------------------------------------------------
+============================================================
 
 ::
 

@@ -76,8 +76,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#variables-to-set-in-config-yaml">Variables to set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#header-of-config-yaml-for-the-cosmo-ghg-spinup-test-case">Header of <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> for the <code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code> case</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#header-of-config-yaml-for-the-icon-art-oem-test-case">Header of <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> for the <code class="docutils literal notranslate"><span class="pre">icon-art-oem-test</span></code> case</a></li>
 <li class="toctree-l1"><a class="reference internal" href="namelists.html">Namelist Templates</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Jobs</span></p>
@@ -142,9 +140,6 @@ simulation.</p>
 <p>The configuration file contains most of the information that the <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">jobs</span></a> need to prepare and run the simulation, for example the location of the input data.
 This configuration-file is imported as a module in <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code>, and therefore
 it can contain python expression which are evaluated at runtime.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <section id="general-variables-in-run-chain-py">
 <h2>General variables in <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code><a class="headerlink" href="#general-variables-in-run-chain-py" title="Permalink to this heading"></a></h2>
 <p>This is a list of configuration variables used in the main script of the Processing Chain:</p>
@@ -254,10 +249,8 @@ under the source directory.</p></td>
 <h2>Variables to set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code><a class="headerlink" href="#variables-to-set-in-config-yaml" title="Permalink to this heading"></a></h2>
 <p>Here are two examples of which general variables should be set by the user in the
 case configuration file.</p>
-</section>
-</section>
 <section id="header-of-config-yaml-for-the-cosmo-ghg-spinup-test-case">
-<h1>Header of <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> for the <code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code> case<a class="headerlink" href="#header-of-config-yaml-for-the-cosmo-ghg-spinup-test-case" title="Permalink to this heading"></a></h1>
+<h3>Header of <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> for the <code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code> case<a class="headerlink" href="#header-of-config-yaml-for-the-cosmo-ghg-spinup-test-case" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="p">:</span> <span class="n">cosmo</span><span class="o">-</span><span class="n">ghg</span>
 <span class="n">constraint</span><span class="p">:</span> <span class="n">gpu</span>
 <span class="n">ntasks_per_node</span><span class="p">:</span> <span class="mi">12</span>
@@ -270,7 +263,7 @@ case configuration file.</p>
 </div>
 </section>
 <section id="header-of-config-yaml-for-the-icon-art-oem-test-case">
-<h1>Header of <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> for the <code class="docutils literal notranslate"><span class="pre">icon-art-oem-test</span></code> case<a class="headerlink" href="#header-of-config-yaml-for-the-icon-art-oem-test-case" title="Permalink to this heading"></a></h1>
+<h3>Header of <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> for the <code class="docutils literal notranslate"><span class="pre">icon-art-oem-test</span></code> case<a class="headerlink" href="#header-of-config-yaml-for-the-icon-art-oem-test-case" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="p">:</span> <span class="n">icon</span><span class="o">-</span><span class="n">art</span><span class="o">-</span><span class="n">oem</span>
 <span class="n">constraint</span><span class="p">:</span> <span class="n">gpu</span>
 <span class="n">run_on</span><span class="p">:</span> <span class="n">cpu</span>
@@ -293,6 +286,8 @@ case configuration file.</p>
 <span class="n">art_input_folder</span><span class="p">:</span> <span class="o">./</span><span class="nb">input</span><span class="o">/</span><span class="n">icon</span><span class="o">-</span><span class="n">art</span><span class="o">-</span><span class="n">oem</span><span class="o">/</span><span class="n">ART</span>
 </pre></div>
 </div>
+</section>
+</section>
 </section>
 
 
