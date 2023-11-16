@@ -220,7 +220,7 @@ may cause errors.</p>
 <p>The script <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code> reads the command line arguments and the config file.
 It then calls the function <a class="reference internal" href="#run_chain.restart_runs" title="run_chain.restart_runs"><code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.restart_runs()</span></code></a>, which divides the
 simulation time according to the specified restart steps. Then it calls
-<code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.run_chain()</span></code> for each sub-run. This function sets up the directory
+<a class="reference internal" href="#run_chain.run_chain" title="run_chain.run_chain"><code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.run_chain()</span></code></a> for each sub-run. This function sets up the directory
 structure of the chain and then starts the specified <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">jobs</span></a>
 sequentially.</p>
 </section>
@@ -354,8 +354,39 @@ directories and files (showing four levels of directories deep)::</p>
                         ├── YU*
 </pre></div>
 </div>
-<section id="autofunction-run-chain-run-chain">
-<h3>.. autofunction:: run_chain.run_chain<a class="headerlink" href="#autofunction-run-chain-run-chain" title="Permalink to this heading"></a></h3>
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="run_chain.run_chain">
+<span class="sig-prename descclassname"><span class="pre">run_chain.</span></span><span class="sig-name descname"><span class="pre">run_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">work_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate_sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate_sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/run_chain.html#run_chain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#run_chain.run_chain" title="Permalink to this definition"></a></dt>
+<dd><p>Run the processing chain, managing job execution and logging.</p>
+<p>This function sets up and manages the execution of a processing chain, handling
+job execution, logging, and various configuration settings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>work_root</strong> (<em>str</em>) – The path to the directory where the processing chain writes files during execution.</p></li>
+<li><p><strong>model_cfg</strong> (<em>dict</em>) – Configuration settings for the modeling framework.</p></li>
+<li><p><strong>cfg</strong> (<em>Config</em>) – Object holding user-defined configuration parameters as attributes.</p></li>
+<li><p><strong>startdate_sim</strong> (<em>datetime-object</em>) – The start date of the simulation.</p></li>
+<li><p><strong>enddate_sim</strong> (<em>datetime-object</em>) – The end date of the simulation.</p></li>
+<li><p><strong>job_names</strong> (<em>list</em><em> of </em><em>str</em>) – List of names of jobs to execute on every timeslice.</p></li>
+<li><p><strong>force</strong> (<em>bool</em>) – If True, it will force the execution of jobs regardless of their completion status.</p></li>
+<li><p><strong>resume</strong> (<em>bool</em>) – If True, it will resume the last unfinished job.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If an error or timeout occurs during job execution.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>This function sets various configuration values based on the provided parameters.</p></li>
+<li><p>It checks for job completion status and resumes or forces execution accordingly.</p></li>
+<li><p>Job log files are managed, and errors or timeouts are handled with notifications.</p></li>
+</ul>
+</dd></dl>
+
+<hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="run_chain.restart_runs">
 <span class="sig-prename descclassname"><span class="pre">run_chain.</span></span><span class="sig-name descname"><span class="pre">restart_runs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">work_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/run_chain.html#restart_runs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#run_chain.restart_runs" title="Permalink to this definition"></a></dt>
@@ -382,7 +413,6 @@ specified interval.</p>
 </ul>
 </dd></dl>
 
-</section>
 </section>
 </section>
 
