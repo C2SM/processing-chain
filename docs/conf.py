@@ -37,7 +37,7 @@ extensions = [
 
 # autodoc options
 autodoc_member_order = 'bysource'
-toc_object_entries_show_parents = 'domain'
+toc_object_entries_show_parents = 'all'
 
 
 # Add any paths that contain templates here, relative to this directory.
