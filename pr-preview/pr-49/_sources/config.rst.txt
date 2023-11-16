@@ -139,7 +139,7 @@ Further variables
 
 Furthermore, there are additional variables to set that are tied to the individual jobs.
 These config variables themselves are dictionaries. Let's have a look at and example
-for the the ``cfg.meteo`` variable:::
+for the the ``cfg.meteo`` variable::
 
     meteo:
         dir: ./input/cosmo-ghg/meteo
