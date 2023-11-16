@@ -203,6 +203,9 @@ directories and files (showing four levels of directories deep):::
 				├── YU*
 
 -------------------------------------------
+
 .. autofunction:: run_chain.run_chain
+
 -------------------------------------------	
+
 .. autofunction:: run_chain.restart_runs
