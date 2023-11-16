@@ -26,7 +26,7 @@ adding new jobs or custom scripts.
     :maxdepth: 2
     :caption: Configuration
 
-    file-structure
+    code-structure
     config
     namelists
 
