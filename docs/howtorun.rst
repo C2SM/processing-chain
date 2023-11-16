@@ -192,8 +192,8 @@ directories and files (showing four levels of directories deep):::
 			│   ├── meteo
 			│   └── vprm
 			├── output/
-	│       │   ├── laf*.nc
-	│       │   ├── lbfd*.nc
+			│   ├── laf*.nc
+			│   ├── lbfd*.nc
 			└── run/
 				├── INPUT
 				├── INPUT_ART
