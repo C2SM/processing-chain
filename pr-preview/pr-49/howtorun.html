@@ -63,6 +63,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">How to Run</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#starting-the-chain">Starting the Chain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#what-it-does">What it Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-cases">Test Cases</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#directory-structure">Directory Structure</a></li>
 </ul>
 </li>
@@ -206,14 +207,6 @@ may cause errors.</p>
 </dl>
 </li>
 </ul>
-<p>The following test cases are available:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-test</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">icon-test</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">icon-art-oem-test</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">icon-art-global-test</span></code></p></li>
-</ul>
 </section>
 <section id="what-it-does">
 <h2>What it Does<a class="headerlink" href="#what-it-does" title="Permalink to this heading"></a></h2>
@@ -223,6 +216,25 @@ simulation time according to the specified restart steps. Then it calls
 <a class="reference internal" href="#run_chain.run_chain" title="run_chain.run_chain"><code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.run_chain()</span></code></a> for each sub-run. This function sets up the directory
 structure of the chain and then starts the specified <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">jobs</span></a>
 sequentially.</p>
+</section>
+<section id="test-cases">
+<h2>Test Cases<a class="headerlink" href="#test-cases" title="Permalink to this heading"></a></h2>
+<p>The following test cases are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-test</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">icon-test</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">icon-art-oem-test</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">icon-art-global-test</span></code></p></li>
+</ul>
+<p>To be able to run these test cases, it is necessary to provide the input data,
+to setup spack and to compile the models and tools. All this is automized via
+the script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./jenkins/scripts/jenkins.sh
+</pre></div>
+</div>
+<p>This will run all the individual scripts in <code class="docutils literal notranslate"><span class="pre">jenkins/scripts/</span></code>, which
+can also be launched separately if desired.</p>
 </section>
 <section id="directory-structure">
 <h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Permalink to this heading"></a></h2>
@@ -243,7 +255,7 @@ run looks like this::</p>
 │   │   ├── cfg.int2lm_output/
 </pre></div>
 </div>
-<p>Running the <code class="docutils literal notranslate"><span class="pre">cosmo-ghg-test</span></code>-case therefore produces the following
+<p>Running the <code class="docutils literal notranslate"><span class="pre">cosmo-ghg-test</span></code> case therefore produces the following
 directories and files (showing four levels of directories deep)::</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>work/cosmo-ghg-test
 ├── 2015010100_2015010106/
