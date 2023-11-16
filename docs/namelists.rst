@@ -24,9 +24,9 @@ from ``.csv``-files containing all necessary information.
 
 ----------------------------------------------------	
 
-.. autofunction:: jobs.tools.write_int2lm_input_art
+.. autofunction:: jobs.tools.write_int2lm_input_art.main
 
 ----------------------------------------------------	
 
-.. autofunction:: jobs.tools.write_cosmo_input_ghg
+.. autofunction:: jobs.tools.write_cosmo_input_ghg.main
 
