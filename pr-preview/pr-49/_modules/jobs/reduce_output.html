@@ -154,7 +154,7 @@
 <span class="sd">    Those files are written into a new directory ``cosmo_output_reduced``.</span>
 
 <span class="sd">    The number of levels is set by the configuration variable</span>
-<span class="sd">    ``cfg.output_levels`` (default = all levels).</span>
+<span class="sd">    ``cfg.reduce_output[&#39;output_levels&#39;]`` (default = all levels).</span>
 <span class="sd">    </span>
 <span class="sd">    **Important**: If several ``GRIBOUT`` sections are used to split the output</span>
 <span class="sd">    data, then this code only works in case of the following:</span>
@@ -256,9 +256,9 @@
         <span class="s2">&quot;sbatch&quot;</span><span class="p">,</span> <span class="s1">&#39;--output=&#39;</span> <span class="o">+</span> <span class="n">logfile</span><span class="p">,</span> <span class="s1">&#39;--open-mode=append&#39;</span><span class="p">,</span> <span class="s1">&#39;--wait&#39;</span><span class="p">,</span>
         <span class="n">bash_file</span><span class="p">,</span> <span class="n">py_file</span><span class="p">,</span> <span class="n">cosmo_output</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">str_startdate</span><span class="p">,</span>
         <span class="n">str_enddate</span><span class="p">,</span>
-        <span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">output_levels</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">reduce_output</span><span class="p">[</span><span class="s1">&#39;output_levels&#39;</span><span class="p">]),</span>
         <span class="nb">str</span><span class="p">(</span><span class="n">output_step</span><span class="p">),</span> <span class="n">alternate_csv_file</span><span class="p">,</span>
-        <span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">convert_gas</span><span class="p">)</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">reduce_output</span><span class="p">[</span><span class="s1">&#39;convert_gas&#39;</span><span class="p">])</span>
     <span class="p">])</span>
     <span class="n">exitcode</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span>
 

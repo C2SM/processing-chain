@@ -156,3 +156,10 @@ as they are Python dictionaries. However, in the :ref:`namelist template<namelis
 in Python. For that reason, the Processing Chain automatically creates new variables in the form of
 ``cfg.meteo_dir``, ``cfg.meteo_prefix``, etc. at the start the make them available for namelist
 and runjob templates.
+
+List of dictionary variables
+****************************
+
+The following is a list of dictionary variables that exist for the Processing Chain.
+For the individual elements of those variables, please refer to the ``config.yaml``
+files for the test cases.

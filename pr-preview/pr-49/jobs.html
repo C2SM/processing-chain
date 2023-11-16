@@ -539,7 +539,7 @@ also read in the specified variables and take them as an input for
 Only a fixed number of levels from <strong>COSMO</strong> output are considered.
 Those files are written into a new directory <code class="docutils literal notranslate"><span class="pre">cosmo_output_reduced</span></code>.</p>
 <p>The number of levels is set by the configuration variable
-<code class="docutils literal notranslate"><span class="pre">cfg.output_levels</span></code> (default = all levels).</p>
+<code class="docutils literal notranslate"><span class="pre">cfg.reduce_output['output_levels']</span></code> (default = all levels).</p>
 <p><strong>Important</strong>: If several <code class="docutils literal notranslate"><span class="pre">GRIBOUT</span></code> sections are used to split the output
 data, then this code only works in case of the following:
 The tracers, for which the column-averaged dry-air (<code class="docutils literal notranslate"><span class="pre">X</span></code>) and
@@ -570,16 +570,16 @@ output, and <code class="docutils literal notranslate"><span class="pre">_trc</s
 <dt class="sig sig-object py" id="jobs.verify_chain.main">
 <span class="sig-prename descclassname"><span class="pre">jobs.verify_chain.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/verify_chain.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.verify_chain.main" title="Permalink to this definition"></a></dt>
 <dd><p>Compare outputs of the chain to a reference.</p>
-<p>Looks for the reference-file in <code class="docutils literal notranslate"><span class="pre">cfg.reference_dir</span></code>.</p>
-<p>Looks for the output file in <code class="docutils literal notranslate"><span class="pre">cfg.output_dir</span></code> (if not <code class="docutils literal notranslate"><span class="pre">None</span></code>), else it
+<p>Looks for the reference-file in <code class="docutils literal notranslate"><span class="pre">cfg.verify_chain['reference_dir']</span></code>.</p>
+<p>Looks for the output file in <code class="docutils literal notranslate"><span class="pre">cfg.verify_chain['output_dir']</span></code> (if not <code class="docutils literal notranslate"><span class="pre">None</span></code>), else it
 goes to the output directory created by the <strong>COSMO</strong>-job.</p>
-<p>In the dict <code class="docutils literal notranslate"><span class="pre">cfg.values_to_check</span></code>, the user specifies the names of the
+<p>In the dict <code class="docutils literal notranslate"><span class="pre">cfg.verify_chain['values_to_check']</span></code>, the user specifies the names of the
 files to be compared as keys, and the variables to compare as a list.</p>
 <p>To compare the temperatures of the last output of the example case, the
-following variables should be added to the <code class="docutils literal notranslate"><span class="pre">config.py</span></code> file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">reference_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_root</span><span class="p">,</span> <span class="s2">&quot;reference_output&quot;</span><span class="p">)</span>
-<span class="n">output_dir</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">values_to_check</span> <span class="o">=</span> <span class="p">{(</span><span class="s2">&quot;reference_lffd2015010200.nc&quot;</span><span class="p">,</span><span class="s2">&quot;lffd2015010200.nc&quot;</span><span class="p">):</span>
+following variables should be added to the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">verify_chain</span><span class="p">[</span><span class="s1">&#39;reference_dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_root</span><span class="p">,</span> <span class="s2">&quot;reference_output&quot;</span><span class="p">)</span>
+<span class="n">verify_chain</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">verify_chain</span><span class="p">[</span><span class="s1">&#39;values_to_check&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{(</span><span class="s2">&quot;reference_lffd2015010200.nc&quot;</span><span class="p">,</span><span class="s2">&quot;lffd2015010200.nc&quot;</span><span class="p">):</span>
       <span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]}</span>
 </pre></div>
 </div>
