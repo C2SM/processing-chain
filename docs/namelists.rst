@@ -1,4 +1,4 @@
-.. _namelists:
+.. _namelists-section:
 
 Namelist Templates
 ------------------
