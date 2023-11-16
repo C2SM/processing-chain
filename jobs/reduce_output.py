@@ -23,7 +23,7 @@ def main(startdate, enddate, cfg, model_cfg):
     Those files are written into a new directory ``cosmo_output_reduced``.
 
     The number of levels is set by the configuration variable
-    ``cfg.output_levels`` (default = all levels).
+    ``cfg.reduce_output['output_levels']`` (default = all levels).
     
     **Important**: If several ``GRIBOUT`` sections are used to split the output
     data, then this code only works in case of the following:
@@ -125,9 +125,9 @@ def main(startdate, enddate, cfg, model_cfg):
         "sbatch", '--output=' + logfile, '--open-mode=append', '--wait',
         bash_file, py_file, cosmo_output, output_path, str_startdate,
         str_enddate,
-        str(cfg.output_levels),
+        str(cfg.reduce_output['output_levels']),
         str(output_step), alternate_csv_file,
-        str(cfg.convert_gas)
+        str(cfg.reduce_output['convert_gas'])
     ])
     exitcode = result.returncode
 
