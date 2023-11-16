@@ -181,11 +181,13 @@
 <span class="sd">        Object holding all user-configuration parameters as attributes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Started verification&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">ref_file</span><span class="p">,</span> <span class="n">run_file</span><span class="p">),</span> <span class="n">variables</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">verify_chain</span><span class="p">[</span><span class="s1">&#39;values_to_check&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">ref_file</span><span class="p">,</span>
+         <span class="n">run_file</span><span class="p">),</span> <span class="n">variables</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">verify_chain</span><span class="p">[</span><span class="s1">&#39;values_to_check&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comparing &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">variables</span><span class="p">))</span>
 
         <span class="c1"># reference file location</span>
-        <span class="n">ref_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">verify_chain</span><span class="p">[</span><span class="s1">&#39;reference_dir&#39;</span><span class="p">],</span> <span class="n">ref_file</span><span class="p">)</span>
+        <span class="n">ref_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">verify_chain</span><span class="p">[</span><span class="s1">&#39;reference_dir&#39;</span><span class="p">],</span>
+                                     <span class="n">ref_file</span><span class="p">)</span>
 
         <span class="c1"># run data location</span>
         <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">verify_chain</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -195,7 +197,8 @@
                 <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim_yyyymmddhh</span><span class="p">,</span> <span class="s2">&quot;cosmo_output&quot;</span><span class="p">,</span> <span class="n">run_file</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># User-provided output location</span>
-            <span class="n">run_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">verify_chain</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">],</span> <span class="n">run_file</span><span class="p">)</span>
+            <span class="n">run_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">verify_chain</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">],</span>
+                                         <span class="n">run_file</span><span class="p">)</span>
 
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Output file: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">run_file_path</span><span class="p">))</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reference file: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ref_file_path</span><span class="p">))</span>
