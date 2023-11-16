@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>File Structure &mdash; Processing Chain v3.1 documentation</title>
+  <title>Code Structure &mdash; Processing Chain v3.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -23,9 +23,7 @@
         <script src="_static/copybutton.js?v=a5fa425f"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Configuration File" href="config.html" />
-    <link rel="prev" title="How to Run" href="howtorun.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -69,8 +67,7 @@
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">File Structure</a></li>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="config.html">Configuration File</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="config.html#general-variables-in-config-py">General Variables in <code class="docutils literal notranslate"><span class="pre">config.py</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-biofluxes-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
@@ -134,9 +131,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">File Structure</li>
+      <li class="breadcrumb-item active">Code Structure</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/file-structure.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/code-structure.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -144,43 +141,55 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="file-structure">
-<span id="file-structure-section"></span><h1>File Structure<a class="headerlink" href="#file-structure" title="Permalink to this heading"></a></h1>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+</span> <span class="n">LICENSE</span>                       <span class="c1"># license file</span>
-<span class="o">+</span> <span class="n">README</span><span class="o">.</span><span class="n">md</span>                     <span class="c1"># README file</span>
-<span class="o">+</span> <span class="n">run_chain</span><span class="o">.</span><span class="n">py</span>                  <span class="c1"># main script</span>
-<span class="o">+</span> <span class="n">cases</span><span class="o">/</span>                        <span class="c1"># folder where all cases are stored</span>
-<span class="o">|</span>    <span class="o">+</span> <span class="n">cosmo</span><span class="o">-</span><span class="n">ghg</span><span class="o">-</span><span class="n">spinup</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>   <span class="c1"># COSMO-GHG test case with spinup restart</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>         <span class="c1"># case configuration file</span>
-<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>               <span class="c1"># templates for namelists &amp; batch jobs</span>
-<span class="o">|</span>    \ <span class="n">cosmo</span><span class="o">-</span><span class="n">ghg</span><span class="o">-</span><span class="n">test</span><span class="o">/</span>          <span class="c1"># COSMO-GHG testcase with standard restart</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
-<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
-<span class="o">|</span>    \ <span class="n">icon</span><span class="o">-</span><span class="n">art</span><span class="o">-</span><span class="k">global</span><span class="o">-</span><span class="n">test</span>     <span class="c1"># ICON-ART test case (global domain)</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
-<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
-<span class="o">|</span>    \ <span class="n">icon</span><span class="o">-</span><span class="n">art</span><span class="o">-</span><span class="n">oem</span><span class="o">-</span><span class="n">test</span>        <span class="c1"># ICON-ART test case with online emissions</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
-<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
-<span class="o">|</span>    \ <span class="n">icon</span><span class="o">-</span><span class="n">test</span>                <span class="c1"># ICON test case</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
-<span class="o">|</span>    <span class="o">|</span>    \ <span class="o">*.</span><span class="n">cfg</span>
-<span class="o">+</span> <span class="n">config</span><span class="o">/</span>
-<span class="o">|</span>    <span class="o">+</span> <span class="n">models</span><span class="o">.</span><span class="n">yaml</span>              <span class="c1"># file to store model features and standard jobs</span>
-<span class="o">+</span> <span class="n">docs</span><span class="o">/</span>
-<span class="o">|</span>    <span class="o">+</span> <span class="n">conf</span><span class="o">.</span><span class="n">py</span>                  <span class="c1"># configuration file for the Sphinx documentation builder</span>
-<span class="o">|</span>    \ <span class="o">*.</span><span class="n">rst</span>                    <span class="c1"># documentation files (reStructuredText)</span>
-<span class="o">+</span> <span class="n">env</span><span class="o">/</span>
-<span class="o">|</span>    <span class="o">+</span> <span class="n">environment</span><span class="o">.</span><span class="n">yml</span>          <span class="c1"># conda environment file</span>
-<span class="o">+</span> <span class="n">jenkins</span>
-<span class="o">|</span>    <span class="o">+</span> <span class="n">Jenkinsfile</span>              <span class="c1"># Text file containing the Jenkins pipeline</span>
-<span class="o">|</span>    \ <span class="n">scripts</span><span class="o">/</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="o">*.</span><span class="n">sh</span>                <span class="c1"># individual Shell scripts for Jenkins testing</span>
-<span class="o">+</span> <span class="n">jobs</span><span class="o">/</span>
-<span class="o">|</span>    <span class="o">+</span> <span class="o">*.</span><span class="n">py</span>                     <span class="c1"># job scripts</span>
-<span class="o">|</span>    \ <span class="n">tools</span><span class="o">/</span>
-<span class="o">|</span>    <span class="o">|</span>    <span class="o">+</span> <span class="o">*.</span><span class="n">py</span>                <span class="c1"># tool scripts</span>
-<span class="o">+</span> <span class="n">src</span><span class="o">/</span>                          <span class="c1"># path to store source codes (spack, models, etc.)</span>
+  <section id="code-structure">
+<span id="code-structure-section"></span><h1>Code Structure<a class="headerlink" href="#code-structure" title="Permalink to this heading"></a></h1>
+<p>The Processing Code is structured as follows::</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tree -L 3 -F --dirsfirst
+.
+├── cases/                      # folder where all cases are stored
+│   ├── cosmo-ghg-spinup-test/  # COSMO-GHG test case with spinup restart
+│   │   ├── config.yaml         # case configuration file
+│   │   ├── *.cfg               # templates for namelists &amp; batch jobs
+│   │   └── *.csv               # CSV files with tracer information
+│   ├── cosmo-ghg-test/         # COSMO-GHG testcase with standard restart
+│   │   ├── config.yaml
+│   │   ├── *.cfg
+│   │   └── *.csv
+│   ├── icon-art-global-test/   # ICON-ART test case (global domain)
+│   │   ├── config.yaml
+│   │   ├── icon_runjob.cfg     # template for ICON-ART runjob
+│   │   ├── *.sh                # pre-processing scripts
+│   │   └── mypartab
+│   ├── icon-art-oem-test/      # ICON-ART test case with online emissions
+│   │   ├── config.yaml
+│   │   └── *.cfg
+│   └── icon-test/              # ICON test case
+│       ├── config.yaml
+│       └── *.cfg
+├── config/
+│   └── models.yaml             # file to store model features and default jobs
+├── docs/                       # folder for Sphinx documentation
+│   ├── _static/                # folder for static assets
+│   │   ├── custom.css          # custom CSS styles
+│   │   └── *.png|ico           # additional image assets
+│   ├── tables/                 # folder for tables used in documentation
+│   │   └── *.csv               # CSV files containing table data
+│   ├── conf.py                 # configuration file for the Sphinx builder
+│   └── *.rst                   # documentation files (reStructuredText)
+├── env/
+│   └── environment.yml         # conda environment file
+├── externals/                  # folder for other code (spack, models, etc.)
+├── jenkins/                    # automated Jenkins testing
+│   ├── scripts/
+│   │   └── *.sh                # individual Shell scripts for testing
+│   └── Jenkinsfile             # text file containing the Jenkins pipeline
+├── jobs/
+│   ├── tools/
+│   │   └── *.py                # tool scripts
+│   └── *.py                    # job scripts
+├── LICENSE                     # license file
+├── README.md                   # README file
+└── run_chain.py                # main script
 </pre></div>
 </div>
 </section>
@@ -188,10 +197,7 @@
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="howtorun.html" class="btn btn-neutral float-left" title="How to Run" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="config.html" class="btn btn-neutral float-right" title="Configuration File" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 
