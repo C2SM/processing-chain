@@ -13,9 +13,9 @@ function error {
 TAG=v0.18.1.12
 GIT_REMOTE=https://github.com/C2SM/spack-c2sm.git
 
-rm -fr src/spack-c2sm
+rm -fr externals/spack-c2sm
 
-pushd src
+pushd externals
 git clone --depth 1 --recurse-submodules --shallow-submodules -b ${TAG} ${GIT_REMOTE}
 . spack-c2sm/setup-env.sh
 popd

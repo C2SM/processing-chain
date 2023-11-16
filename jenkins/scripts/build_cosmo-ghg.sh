@@ -13,7 +13,7 @@ function error {
 BRANCH=c2sm
 GIT_REMOTE=git@github.com:C2SM-RCM/cosmo-ghg.git
 
-pushd src
+pushd externals
 # Activate spack
 . spack-c2sm/setup-env.sh
 

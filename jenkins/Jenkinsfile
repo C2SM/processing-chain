@@ -117,7 +117,7 @@ pipeline {
             steps {
                 sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                 conda activate proc-chain
-                . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
+                . ${WORKSPACE}/externals/spack-c2sm/setup-env.sh
                 ./jenkins/scripts/test_cosmo-ghg.sh'''
             }
             post {
@@ -134,7 +134,7 @@ pipeline {
             steps {
                 sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                 conda activate proc-chain
-                . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
+                . ${WORKSPACE}/externals/spack-c2sm/setup-env.sh
                 ./jenkins/scripts/test_cosmo-ghg-spinup.sh'''
             }
             post {
@@ -151,7 +151,7 @@ pipeline {
             steps {
                 sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                 conda activate proc-chain
-                . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
+                . ${WORKSPACE}/externals/spack-c2sm/setup-env.sh
                 ./jenkins/scripts/test_icon.sh'''
             }                     
             post {
@@ -168,7 +168,7 @@ pipeline {
             steps {
                 sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                 conda activate proc-chain
-                . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
+                . ${WORKSPACE}/externals/spack-c2sm/setup-env.sh
                 ./jenkins/scripts/test_icon-art-oem.sh'''
             }                     
             post {
@@ -185,7 +185,7 @@ pipeline {
             steps {
                 sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                 conda activate proc-chain
-                . ${WORKSPACE}/src/spack-c2sm/setup-env.sh
+                . ${WORKSPACE}/externals/spack-c2sm/setup-env.sh
                 ./jenkins/scripts/test_icon-art-global.sh'''
             }                     
             post {
