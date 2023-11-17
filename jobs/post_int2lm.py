@@ -26,7 +26,9 @@ def main(cfg, model_cfg):
     Parameters
     ----------	
     cfg : config-object
-        Object holding all user-configuration parameters as attributes
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : config-object
+        Object holding configuration parameters specific to the model.
     """
     cfg = int2lm.set_cfg_variables(cfg, model_cfg)
 
