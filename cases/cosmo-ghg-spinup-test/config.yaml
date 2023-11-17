@@ -47,7 +47,7 @@ online_vprm:
 int2lm:
     extpar_dir: ./input/cosmo-ghg/extpar
     extpar_filename: test_domain.nc
-    binary_file: ./src/int2lm/test/testsuite/int2lm
+    binary_file: ./ext/int2lm/test/testsuite/int2lm
     namelist_filename: int2lm_INPUT.cfg
     runjob_filename: int2lm_runjob.cfg
     compute_queue: normal
@@ -69,7 +69,7 @@ post_int2lm:
         - CO2_A2
 
 cosmo:
-    binary_file: ./src/cosmo-ghg/cosmo/ACC/cosmo_gpu
+    binary_file: ./ext/cosmo-ghg/cosmo/ACC/cosmo_gpu
     namelist_prefix: cosmo_INPUT_
     runjob_filename: cosmo_runjob.cfg
     compute_queue: normal

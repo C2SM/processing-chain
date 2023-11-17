@@ -41,7 +41,7 @@ input_files:
     map_file_ana: ./input/icon/mapping/map_file.ana
 
 icon:
-    binary_file: ./src/icon/bin/icon
+    binary_file: ./ext/icon/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
     walltime: '00:10:00'
