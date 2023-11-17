@@ -51,7 +51,7 @@ def main(cfg, model_cfg):
     Write a runscript to copy all files (**COSMO** settings & output,
     **int2lm** settings, logfiles) from ``cfg.cosmo_run``,
     ``cfg.cosmo_output``, ``cfg.int2lm_run``, ``cfg.log_finished_dir`` to
-    ``cfg.output_root/...`` .
+    ``cfg.output_root/...``.
     If the job ``reduce_output`` has been run before ``post_cosmo``, a 
     directory ``cfg.cosmo_output_reduced`` is created. In this case,
     ``cfg.cosmo_output_reduced`` is copied instead of ``cfg.cosmo_output``.
@@ -61,7 +61,9 @@ def main(cfg, model_cfg):
     Parameters
     ----------	
     cfg : config-object
-        Object holding all user-configuration parameters as attributes
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : config-object
+        Object holding configuration parameters specific to the model.
     """
     cfg = int2lm.set_cfg_variables(cfg, model_cfg)
     cfg = cosmo.set_cfg_variables(cfg, model_cfg)
