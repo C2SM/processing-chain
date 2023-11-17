@@ -135,16 +135,6 @@
   <h1>Source code for jobs.cosmo</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="c1">#</span>
-<span class="c1"># Setup the namelist for a COSMO tracer run and submit the job to the queue</span>
-<span class="c1">#</span>
-<span class="c1"># result in case of success: forecast fields found in</span>
-<span class="c1">#                            ${cosmo_output}</span>
-<span class="c1">#</span>
-<span class="c1"># Dominik Brunner, July 2013</span>
-<span class="c1">#</span>
-<span class="c1"># 2013-07-21 Initial release, adopted from Christoph Knote&#39;s cosmo.bash (brd)</span>
-<span class="c1"># 2018-07-10 Translated to Python (muq)</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -198,35 +188,35 @@
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../jobs.html#jobs.cosmo.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup the namelists for a **COSMO** tracer run and submit the job to</span>
-<span class="sd">    the queue</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup the namelists for a COSMO tracer run and submit the job to the queue.</span>
 
-<span class="sd">    Necessary for both **COSMO** and **COSMOART** simulations.</span>
+<span class="sd">    Necessary for both COSMO and COSMOART simulations.</span>
 
 <span class="sd">    Decide if the soil model should be TERRA or TERRA multi-layer depending on</span>
-<span class="sd">    ``startdate`` of the simulation.</span>
+<span class="sd">    the ``startdate`` of the simulation.</span>
 
-<span class="sd">    Create necessary directory structure to run **COSMO** (run, output and</span>
-<span class="sd">    restart directories, defined in ``cfg.cosmo_run``, ``cfg.cosmo_output``</span>
+<span class="sd">    Create necessary directory structure to run COSMO (run, output, and</span>
+<span class="sd">    restart directories, defined in ``cfg.cosmo_run``, ``cfg.cosmo_output``,</span>
 <span class="sd">    and ``cfg.cosmo_restart_out``).</span>
 
-<span class="sd">    Copy the **COSMO**-executable from</span>
+<span class="sd">    Copy the COSMO-executable from</span>
 <span class="sd">    ``cfg.cosmo_bin`` to ``cfg.cosmo_run/cosmo``.</span>
 
-<span class="sd">    Convert the tracer-csv-file to a **COSMO**-namelist file.</span>
+<span class="sd">    Convert the tracer-csv-file to a COSMO-namelist file.</span>
 
-<span class="sd">    Format the **COSMO**-namelist-templates</span>
-<span class="sd">    (**COSMO**: ``AF,ORG,IO,DYN,PHY,DIA,ASS``,</span>
-<span class="sd">    **COSMOART**: ``ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY``)</span>
+<span class="sd">    Format the COSMO-namelist-templates</span>
+<span class="sd">    (COSMO: ``AF,ORG,IO,DYN,PHY,DIA,ASS``,</span>
+<span class="sd">    COSMOART: ``ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY``)</span>
 <span class="sd">    using the information in ``cfg``.</span>
 
 <span class="sd">    Format the runscript-template and submit the job.</span>
 
-
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    cfg : config-object</span>
-<span class="sd">        Object holding all user-configuration parameters as attributes</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+<span class="sd">    model_cfg : dict</span>
+<span class="sd">        Model configuration settings loaded from the models.yaml file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>
     <span class="n">logfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span><span class="p">,</span> <span class="s2">&quot;cosmo&quot;</span><span class="p">)</span>

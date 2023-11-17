@@ -135,19 +135,6 @@
   <h1>Source code for jobs.emissions</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="c1">#</span>
-<span class="c1"># Create anthropogenic emissions and put them into the input folder</span>
-<span class="c1">#</span>
-<span class="c1"># Result in case of success: all emission input-files necessary are found in</span>
-<span class="c1">#                            ${int2lm_input}/emissions/</span>
-<span class="c1">#</span>
-<span class="c1"># Dominik Brunner, July 2013</span>
-<span class="c1">#</span>
-<span class="c1"># 2013-07-18 Initial release, based on Christoph Knotes&#39; emissions.bash</span>
-<span class="c1">#            In the current version, the program only checks for the presence</span>
-<span class="c1">#            of the constant-in-time emissions file and creates a soft link in</span>
-<span class="c1">#            the int2lm input directory (brd)</span>
-<span class="c1"># 2018-06-25 Translated to Python (arp)</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -156,15 +143,15 @@
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../jobs.html#jobs.emissions.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy emission files to the **int2lm** input directory.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy emission files to the int2lm input directory.</span>
 
-<span class="sd">    Necessary for both **COSMO** and **COSMOART** simulations.</span>
+<span class="sd">    Necessary for both COSMO and COSMOART simulations.</span>
 
 <span class="sd">    Copy emission files from project folder (``cfg.emissions[&#39;dir&#39;]``) to</span>
-<span class="sd">    **int2lm** input folder on scratch (``cfg.int2lm_input/emissions``).</span>
+<span class="sd">    int2lm input folder on scratch (``cfg.int2lm_input/emissions``).</span>
 
-<span class="sd">    For **COSMO** simulations, converts the the netCDF-variable-names </span>
-<span class="sd">    from ``string`` to ``char`` (necessary for **int2lm**).</span>
+<span class="sd">    For COSMO simulations, converts the netCDF-variable-names </span>
+<span class="sd">    from ``string`` to ``char`` (necessary for int2lm).</span>
 
 <span class="sd">    If there are multiple emission-datasets (cfg.emissions[&#39;dir&#39;] is a list of</span>
 <span class="sd">    paths), they are copied as follows::</span>
@@ -175,14 +162,10 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------	</span>
-<span class="sd">    starttime : datetime-object</span>
-<span class="sd">        The starting date of the simulation</span>
-<span class="sd">    hstart : int</span>
-<span class="sd">        Offset (in hours) of the actual start from the starttime</span>
-<span class="sd">    hstop : int</span>
-<span class="sd">        Length of simulation (in hours)</span>
-<span class="sd">    cfg : config-object</span>
-<span class="sd">        Object holding all user-configuration parameters as attributes</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+<span class="sd">    model_cfg : dict</span>
+<span class="sd">        Model configuration settings loaded from the models.yaml file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">prepare_data</span><span class="o">.</span><span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>
     <span class="n">dest_prefix</span> <span class="o">=</span> <span class="s2">&quot;emis_&quot;</span>

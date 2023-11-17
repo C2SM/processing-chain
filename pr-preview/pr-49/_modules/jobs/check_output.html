@@ -835,18 +835,20 @@
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../jobs.html#jobs.check_output.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks output variables whether they are in a phyiscally reasonable</span>
-<span class="sd">    range.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check output variables for physical reasonability and create plots.</span>
 
-<span class="sd">    Stores the time series of the minimum, the maximum, the mean, and</span>
-<span class="sd">    the std of the variables as a pandas object into a pickle file.</span>
+<span class="sd">    This function checks the output variables to ensure they are in a physically</span>
+<span class="sd">    reasonable range. It stores the time series of the minimum, maximum, mean, and</span>
+<span class="sd">    standard deviation of the variables as a pandas object into a pickle file.</span>
 
-<span class="sd">    Creates per-variable plots from the stored time series data.</span>
+<span class="sd">    It also creates per-variable plots from the stored time series data.</span>
 
 <span class="sd">    Parameters</span>
-<span class="sd">    ----------	</span>
-<span class="sd">    cfg : config-object</span>
-<span class="sd">        Object holding all user-configuration parameters as attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+<span class="sd">    model_cfg : dict</span>
+<span class="sd">        Model configuration settings loaded from the models.yaml file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
 

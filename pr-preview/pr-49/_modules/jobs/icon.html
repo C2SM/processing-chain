@@ -135,16 +135,6 @@
   <h1>Source code for jobs.icon</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="c1">#</span>
-<span class="c1"># Setup the namelist for an ICON run and submit the job to the queue</span>
-<span class="c1">#</span>
-<span class="c1"># result in case of success: forecast fields found in</span>
-<span class="c1">#                            ${icon_output}</span>
-<span class="c1">#</span>
-<span class="c1"># Michael Jähn, February 2021</span>
-<span class="c1">#</span>
-<span class="c1"># 2021-04-26 Initial release</span>
-<span class="c1"># 2021-11-21 Updated for ICON-ART</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -153,36 +143,32 @@
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../jobs.html#jobs.icon.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup the namelists for an **ICON** tracer run and submit the job to</span>
-<span class="sd">    the queue</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup the namelists for an ICON tracer run and submit the job to</span>
+<span class="sd">    the queue.</span>
 
-<span class="sd">    Necessary for both **ICON** and **ICONART** simulations.</span>
+<span class="sd">    Necessary for both ICON and ICONART simulations.</span>
 
-<span class="sd">    Create necessary directory structure to run **ICON** (run, output and</span>
-<span class="sd">    restart directories, defined in ``cfg.icon_work``, ``cfg.icon_output``</span>
+<span class="sd">    Create necessary directory structure to run ICON (run, output, and</span>
+<span class="sd">    restart directories, defined in ``cfg.icon_work``, ``cfg.icon_output``,</span>
 <span class="sd">    and ``cfg.icon_restart_out``).</span>
 
-<span class="sd">    Copy the **ICON**-executable from</span>
+<span class="sd">    Copy the ICON-executable from</span>
 <span class="sd">    ``cfg.icon_binary_file`` to ``cfg.icon_work/icon.exe``.</span>
 
-<span class="sd">    Use the tracer-csv-file to append **ICON**-namelist file.</span>
+<span class="sd">    Use the tracer-csv-file to append ICON-namelist file.</span>
 
-<span class="sd">    Format the **ICON**-namelist-templates:</span>
+<span class="sd">    Format the ICON-namelist-templates:</span>
 <span class="sd">    ``icon_master.namelist.cfg, icon_NAMELIST_NWP.cfg``,</span>
 <span class="sd">    using the information in ``cfg``.</span>
 
 <span class="sd">    Format the runscript-template and submit the job.</span>
 
 <span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    starttime : datetime-object</span>
-<span class="sd">        The starting date of the simulation</span>
-<span class="sd">    hstart : int</span>
-<span class="sd">        Offset (in hours) of the actual start from the starttime</span>
-<span class="sd">    hstop : int</span>
-<span class="sd">        Length of simulation (in hours)</span>
-<span class="sd">    cfg : config-object</span>
-<span class="sd">        Object holding all user-configuration parameters as attributes</span>
+<span class="sd">    ----------	</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+<span class="sd">    model_cfg : dict</span>
+<span class="sd">        Model configuration settings loaded from the models.yaml file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">prepare_data</span><span class="o">.</span><span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>
 

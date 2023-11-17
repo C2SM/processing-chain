@@ -136,10 +136,6 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="c1"># Copy cosmo output from scratch to store (or anywhere else)</span>
-
-<span class="c1">### DEVELOPMENT VERSION ###</span>
-
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
@@ -190,7 +186,7 @@
 <span class="sd">    Write a runscript to copy all files (**COSMO** settings &amp; output,</span>
 <span class="sd">    **int2lm** settings, logfiles) from ``cfg.cosmo_run``,</span>
 <span class="sd">    ``cfg.cosmo_output``, ``cfg.int2lm_run``, ``cfg.log_finished_dir`` to</span>
-<span class="sd">    ``cfg.output_root/...`` .</span>
+<span class="sd">    ``cfg.output_root/...``.</span>
 <span class="sd">    If the job ``reduce_output`` has been run before ``post_cosmo``, a </span>
 <span class="sd">    directory ``cfg.cosmo_output_reduced`` is created. In this case,</span>
 <span class="sd">    ``cfg.cosmo_output_reduced`` is copied instead of ``cfg.cosmo_output``.</span>
@@ -200,7 +196,9 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------	</span>
 <span class="sd">    cfg : config-object</span>
-<span class="sd">        Object holding all user-configuration parameters as attributes</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+<span class="sd">    model_cfg : config-object</span>
+<span class="sd">        Object holding configuration parameters specific to the model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">int2lm</span><span class="o">.</span><span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>

@@ -258,14 +258,17 @@ to the int2lm input folder on scratch (<code class="xref py py-attr docutils lit
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.check_output.main">
 <span class="sig-prename descclassname"><span class="pre">jobs.check_output.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/check_output.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.check_output.main" title="Permalink to this definition"></a></dt>
-<dd><p>Checks output variables whether they are in a phyiscally reasonable
-range.</p>
-<p>Stores the time series of the minimum, the maximum, the mean, and
-the std of the variables as a pandas object into a pickle file.</p>
-<p>Creates per-variable plots from the stored time series data.</p>
+<dd><p>Check output variables for physical reasonability and create plots.</p>
+<p>This function checks the output variables to ensure they are in a physically
+reasonable range. It stores the time series of the minimum, maximum, mean, and
+standard deviation of the variables as a pandas object into a pickle file.</p>
+<p>It also creates per-variable plots from the stored time series data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfg</strong> (<em>Config</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>dict</em>) – Model configuration settings loaded from the models.yaml file.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -274,25 +277,27 @@ the std of the variables as a pandas object into a pickle file.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.cosmo.main">
 <span class="sig-prename descclassname"><span class="pre">jobs.cosmo.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/cosmo.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.cosmo.main" title="Permalink to this definition"></a></dt>
-<dd><p>Setup the namelists for a <strong>COSMO</strong> tracer run and submit the job to
-the queue</p>
-<p>Necessary for both <strong>COSMO</strong> and <strong>COSMOART</strong> simulations.</p>
+<dd><p>Setup the namelists for a COSMO tracer run and submit the job to the queue.</p>
+<p>Necessary for both COSMO and COSMOART simulations.</p>
 <p>Decide if the soil model should be TERRA or TERRA multi-layer depending on
-<code class="docutils literal notranslate"><span class="pre">startdate</span></code> of the simulation.</p>
-<p>Create necessary directory structure to run <strong>COSMO</strong> (run, output and
-restart directories, defined in <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_run</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_output</span></code>
+the <code class="docutils literal notranslate"><span class="pre">startdate</span></code> of the simulation.</p>
+<p>Create necessary directory structure to run COSMO (run, output, and
+restart directories, defined in <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_run</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_output</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_restart_out</span></code>).</p>
-<p>Copy the <strong>COSMO</strong>-executable from
+<p>Copy the COSMO-executable from
 <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_bin</span></code> to <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_run/cosmo</span></code>.</p>
-<p>Convert the tracer-csv-file to a <strong>COSMO</strong>-namelist file.</p>
-<p>Format the <strong>COSMO</strong>-namelist-templates
-(<strong>COSMO</strong>: <code class="docutils literal notranslate"><span class="pre">AF,ORG,IO,DYN,PHY,DIA,ASS</span></code>,
-<strong>COSMOART</strong>: <code class="docutils literal notranslate"><span class="pre">ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY</span></code>)
+<p>Convert the tracer-csv-file to a COSMO-namelist file.</p>
+<p>Format the COSMO-namelist-templates
+(COSMO: <code class="docutils literal notranslate"><span class="pre">AF,ORG,IO,DYN,PHY,DIA,ASS</span></code>,
+COSMOART: <code class="docutils literal notranslate"><span class="pre">ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY</span></code>)
 using the information in <code class="docutils literal notranslate"><span class="pre">cfg</span></code>.</p>
 <p>Format the runscript-template and submit the job.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfg</strong> (<em>Config</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>dict</em>) – Model configuration settings loaded from the models.yaml file.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -301,12 +306,12 @@ using the information in <code class="docutils literal notranslate"><span class=
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.emissions.main">
 <span class="sig-prename descclassname"><span class="pre">jobs.emissions.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/emissions.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.emissions.main" title="Permalink to this definition"></a></dt>
-<dd><p>Copy emission files to the <strong>int2lm</strong> input directory.</p>
-<p>Necessary for both <strong>COSMO</strong> and <strong>COSMOART</strong> simulations.</p>
+<dd><p>Copy emission files to the int2lm input directory.</p>
+<p>Necessary for both COSMO and COSMOART simulations.</p>
 <p>Copy emission files from project folder (<code class="docutils literal notranslate"><span class="pre">cfg.emissions['dir']</span></code>) to
-<strong>int2lm</strong> input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/emissions</span></code>).</p>
-<p>For <strong>COSMO</strong> simulations, converts the the netCDF-variable-names
-from <code class="docutils literal notranslate"><span class="pre">string</span></code> to <code class="docutils literal notranslate"><span class="pre">char</span></code> (necessary for <strong>int2lm</strong>).</p>
+int2lm input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/emissions</span></code>).</p>
+<p>For COSMO simulations, converts the netCDF-variable-names
+from <code class="docutils literal notranslate"><span class="pre">string</span></code> to <code class="docutils literal notranslate"><span class="pre">char</span></code> (necessary for int2lm).</p>
 <p>If there are multiple emission-datasets (cfg.emissions[‘dir’] is a list of
 paths), they are copied as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfg</span><span class="o">.</span><span class="n">emissions</span><span class="p">[</span><span class="s1">&#39;dir&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">cfg</span><span class="o">.</span><span class="n">emissions</span><span class="p">[</span><span class="s1">&#39;gridname&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="n">YYYYMMDD</span><span class="o">.</span><span class="n">nc</span> <span class="o">-&gt;</span> <span class="n">int2lm_input</span><span class="o">/</span><span class="n">emissions</span><span class="o">/</span><span class="n">emis_YYYYMMDD</span><span class="o">.</span><span class="n">nc</span>
@@ -317,10 +322,8 @@ paths), they are copied as follows:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
-<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
-<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
-<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+<li><p><strong>cfg</strong> (<em>Config</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>dict</em>) – Model configuration settings loaded from the models.yaml file.</p></li>
 </ul>
 </dd>
 </dl>
@@ -330,26 +333,24 @@ paths), they are copied as follows:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.icon.main">
 <span class="sig-prename descclassname"><span class="pre">jobs.icon.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/icon.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.icon.main" title="Permalink to this definition"></a></dt>
-<dd><p>Setup the namelists for an <strong>ICON</strong> tracer run and submit the job to
-the queue</p>
-<p>Necessary for both <strong>ICON</strong> and <strong>ICONART</strong> simulations.</p>
-<p>Create necessary directory structure to run <strong>ICON</strong> (run, output and
-restart directories, defined in <code class="docutils literal notranslate"><span class="pre">cfg.icon_work</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.icon_output</span></code>
+<dd><p>Setup the namelists for an ICON tracer run and submit the job to
+the queue.</p>
+<p>Necessary for both ICON and ICONART simulations.</p>
+<p>Create necessary directory structure to run ICON (run, output, and
+restart directories, defined in <code class="docutils literal notranslate"><span class="pre">cfg.icon_work</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.icon_output</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">cfg.icon_restart_out</span></code>).</p>
-<p>Copy the <strong>ICON</strong>-executable from
+<p>Copy the ICON-executable from
 <code class="docutils literal notranslate"><span class="pre">cfg.icon_binary_file</span></code> to <code class="docutils literal notranslate"><span class="pre">cfg.icon_work/icon.exe</span></code>.</p>
-<p>Use the tracer-csv-file to append <strong>ICON</strong>-namelist file.</p>
-<p>Format the <strong>ICON</strong>-namelist-templates:
+<p>Use the tracer-csv-file to append ICON-namelist file.</p>
+<p>Format the ICON-namelist-templates:
 <code class="docutils literal notranslate"><span class="pre">icon_master.namelist.cfg,</span> <span class="pre">icon_NAMELIST_NWP.cfg</span></code>,
 using the information in <code class="docutils literal notranslate"><span class="pre">cfg</span></code>.</p>
 <p>Format the runscript-template and submit the job.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
-<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
-<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
-<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+<li><p><strong>cfg</strong> (<em>Config</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>dict</em>) – Model configuration settings loaded from the models.yaml file.</p></li>
 </ul>
 </dd>
 </dl>
@@ -359,28 +360,26 @@ using the information in <code class="docutils literal notranslate"><span class=
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.int2lm.main">
 <span class="sig-prename descclassname"><span class="pre">jobs.int2lm.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/int2lm.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.int2lm.main" title="Permalink to this definition"></a></dt>
-<dd><p>Setup the namelist for <strong>int2lm</strong> and submit the job to the queue.</p>
-<p>Necessary for both <strong>COSMO</strong> and <strong>COSMOART</strong> simulations.</p>
+<dd><p>Setup the namelist for int2lm and submit the job to the queue.</p>
+<p>Necessary for both COSMO and COSMOART simulations.</p>
 <p>Decide if the soil model should be TERRA or TERRA multi-layer depending on
-<code class="docutils literal notranslate"><span class="pre">startdate</span></code> of the simulation.</p>
-<p>Create necessary directory structure to run <strong>int2lm</strong> (run and output
+<cite>startdate</cite> of the simulation.</p>
+<p>Create necessary directory structure to run int2lm (run and output
 directories, defined in <code class="docutils literal notranslate"><span class="pre">cfg.int2lm</span></code> and <code class="docutils literal notranslate"><span class="pre">cfg.int2lm['output']</span></code>).</p>
-<p>Copy the <strong>int2lm</strong>-executable from <code class="docutils literal notranslate"><span class="pre">cfg.int2lm['binary_file']</span></code> to
+<p>Copy the int2lm-executable from <code class="docutils literal notranslate"><span class="pre">cfg.int2lm['binary_file']</span></code> to
 <code class="docutils literal notranslate"><span class="pre">cfg.int2lm['work']/int2lm</span></code>.</p>
 <p>Copy the extpar-file <code class="docutils literal notranslate"><span class="pre">cfg.int2lm['extpar_file']</span></code> to
 <code class="docutils literal notranslate"><span class="pre">cfg.int2lm_run/work</span></code>.</p>
-<p><strong>COSMOART</strong>: Copy the <code class="docutils literal notranslate"><span class="pre">libgrib_api</span></code> files to
+<p>COSMOART: Copy the <code class="docutils literal notranslate"><span class="pre">libgrib_api</span></code> files to
 <code class="docutils literal notranslate"><span class="pre">cfg.int2lm['work']/libgrib_api</span></code>.</p>
-<p><strong>COSMO</strong>: Convert the tracer-csv-files into a <strong>int2lm</strong>-namelist file.</p>
-<p>Format the <strong>int2lm</strong>-namelist-template using the information in <code class="docutils literal notranslate"><span class="pre">cfg</span></code>.</p>
+<p>COSMO: Convert the tracer-csv-files into an int2lm-namelist file.</p>
+<p>Format the int2lm-namelist-template using the information in <code class="docutils literal notranslate"><span class="pre">cfg</span></code>.</p>
 <p>Format the runscript-template and submit the job.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
-<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
-<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
-<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+<li><p><strong>cfg</strong> (<em>Config</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>dict</em>) – Model configuration settings loaded from the models.yaml file.</p></li>
 </ul>
 </dd>
 </dl>
@@ -400,7 +399,10 @@ folder on scratch (<code class="docutils literal notranslate"><span class="pre">
 <p>Also copies the blacklist-file blklsttmp.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>dict</em>) – Model configuration settings loaded from the models.yaml file.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -410,19 +412,17 @@ folder on scratch (<code class="docutils literal notranslate"><span class="pre">
 <dt class="sig sig-object py" id="jobs.octe.main">
 <span class="sig-prename descclassname"><span class="pre">jobs.octe.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/octe.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.octe.main" title="Permalink to this definition"></a></dt>
 <dd><p>Copy necessary input files for <strong>COSMO</strong> and perturb BG.</p>
-<p>Copies the NetCDF-files found at cfg.octe_maps and cfg.octe_lambdas to
+<p>Copies the NetCDF-files found at <code class="docutils literal notranslate"><span class="pre">cfg.octe_maps</span></code> and <code class="docutils literal notranslate"><span class="pre">cfg.octe_lambdas</span></code> to
 the <strong>COSMO</strong> input-directory.</p>
 <p>Perturbs the background tracer field. To do that, it reads the lambda-value
-from the cfg.octe_lambdas (last value along the nparam-dimension) and
+from the <code class="docutils literal notranslate"><span class="pre">cfg.octe_lambdas</span></code> (last value along the nparam-dimension) and
 scales the BG-field produced by int2lm, creating a new variable for each
 ensemble.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
-<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
-<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
-<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>config-object</em>) – Object holding configuration parameters specific to the model.</p></li>
 </ul>
 </dd>
 </dl>
@@ -437,11 +437,12 @@ directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
-<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
-<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
-<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>config-object</em>) – Object holding configuration parameters specific to the model.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If an error occurs during the process.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -450,15 +451,13 @@ directory.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.online_vprm.main">
 <span class="sig-prename descclassname"><span class="pre">jobs.online_vprm.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/online_vprm.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.online_vprm.main" title="Permalink to this definition"></a></dt>
-<dd><p>Copy MODIS surface reflectance data and vegatation class fraction file
+<dd><p>Copy MODIS surface reflectance data and vegetation class fraction file
 to the <strong>cosmo</strong> input directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
-<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
-<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
-<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>config-object</em>) – Object holding configuration parameters specific to the model.</p></li>
 </ul>
 </dd>
 </dl>
@@ -470,15 +469,13 @@ to the <strong>cosmo</strong> input directory.</p>
 <span class="sig-prename descclassname"><span class="pre">jobs.photo_rate.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/photo_rate.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.photo_rate.main" title="Permalink to this definition"></a></dt>
 <dd><p>Copy photolysis-rate file to the <strong>COSMOART</strong> input directory.</p>
 <p>Only necessary for <strong>COSMOART</strong> simulations.</p>
-<p>Copy the photolysis-rate file from the project (<code class="docutils literal notranslate"><span class="pre">cfg.photo_rate_file</span></code>) to
-the <strong>COSMOART</strong> input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.cosmo_input/art_photolysis</span></code>).</p>
+<p>Copy the photolysis-rate file from the project (<cite>cfg.photo_rate_file</cite>) to
+the <strong>COSMOART</strong> input folder on scratch (<cite>cfg.cosmo_input/art_photolysis</cite>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start_time</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
-<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the start_time</p></li>
-<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
-<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>config-object</em>) – Object holding configuration parameters specific to the model.</p></li>
 </ul>
 </dd>
 </dl>
@@ -492,14 +489,17 @@ the <strong>COSMOART</strong> input folder on scratch (<code class="docutils lit
 <p>Write a runscript to copy all files (<strong>COSMO</strong> settings &amp; output,
 <strong>int2lm</strong> settings, logfiles) from <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_run</span></code>,
 <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_output</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.int2lm_run</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.log_finished_dir</span></code> to
-<code class="docutils literal notranslate"><span class="pre">cfg.output_root/...</span></code> .
+<code class="docutils literal notranslate"><span class="pre">cfg.output_root/...</span></code>.
 If the job <code class="docutils literal notranslate"><span class="pre">reduce_output</span></code> has been run before <code class="docutils literal notranslate"><span class="pre">post_cosmo</span></code>, a
 directory <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_output_reduced</span></code> is created. In this case,
 <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_output_reduced</span></code> is copied instead of <code class="docutils literal notranslate"><span class="pre">cfg.cosmo_output</span></code>.</p>
 <p>Submit the job to the xfer-queue.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>config-object</em>) – Object holding configuration parameters specific to the model.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -519,7 +519,10 @@ also read in the specified variables and take them as an input for
 <strong>COSMO</strong>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>config-object</em>) – Object holding configuration parameters specific to the model.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -528,34 +531,36 @@ also read in the specified variables and take them as an input for
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.prepare_data.main">
 <span class="sig-prename descclassname"><span class="pre">jobs.prepare_data.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/prepare_data.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.prepare_data.main" title="Permalink to this definition"></a></dt>
-<dd><p><strong>ICON</strong></p>
-<blockquote>
-<div><p>Create necessary directories <code class="docutils literal notranslate"><span class="pre">cfg.icon_input_icbc</span></code>
-and ‘’cfg.icon_work’’</p>
-<p>Submitting the runscript for the DWD ICON tools to remap the meteo files.</p>
-<p>All runscripts specified in <code class="docutils literal notranslate"><span class="pre">cfg.icontools_runjobs</span></code> are submitted.</p>
-<p>The meteo files are read-in from the original input directory
-(<code class="docutils literal notranslate"><span class="pre">cfg.input_root_meteo</span></code>) and the remapped meteo files are
-saved in the input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.icon_input/icbc</span></code>).</p>
-<p>The constant variable ‘GEOSP’ is added to the files not containing it
-using python-cdo bindings.</p>
-</div></blockquote>
-<p><strong>COSMO</strong></p>
-<blockquote>
-<div><p>Copy meteo files to <strong>int2lm</strong> input.</p>
-<p>Create necessary directory <code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/meteo</span></code>. Copy meteo files
-from project directory (<code class="docutils literal notranslate"><span class="pre">cfg.meteo['dir']/cfg.meteo['prefix']YYYYMMDDHH</span></code>) to
-int2lm input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/meteo</span></code>).</p>
-<p>For nested runs (meteo files are cosmo-output: <code class="docutils literal notranslate"><span class="pre">cfg.meteo['prefix']</span> <span class="pre">==</span>
-<span class="pre">'lffd'</span></code>), also the <code class="docutils literal notranslate"><span class="pre">*c.nc</span></code>-file with constant parameters is copied.</p>
-</div></blockquote>
+<dd><p><strong>ICON and COSMO Data Preparation</strong></p>
+<p>This function prepares input data for ICON and COSMO simulations by creating necessary directories,
+copying meteorological files, and handling specific data processing for each model.</p>
+<p><strong>ICON:</strong></p>
+<ul class="simple">
+<li><p>Create directories <code class="docutils literal notranslate"><span class="pre">cfg.icon_input_icbc</span></code> and <code class="docutils literal notranslate"><span class="pre">cfg.icon_work</span></code>.</p></li>
+<li><p>Submit the runscript for the DWD ICON tools to remap the meteorological files.</p></li>
+<li><p>All runscripts specified in <code class="docutils literal notranslate"><span class="pre">cfg.icontools_runjobs</span></code> are submitted.</p></li>
+<li><p>The meteorological files are read from the original input directory (<code class="docutils literal notranslate"><span class="pre">cfg.input_root_meteo</span></code>),
+and the remapped meteorological files are saved in the input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.icon_input/icbc</span></code>).</p></li>
+<li><p>The constant variable ‘GEOSP’ is added to the files not containing it using python-cdo bindings.</p></li>
+</ul>
+<p><strong>COSMO:</strong></p>
+<ul class="simple">
+<li><p>Copy meteorological files to <strong>int2lm</strong> input.</p></li>
+<li><p>Create the necessary directory <code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/meteo</span></code>.</p></li>
+<li><p>Copy meteorological files from the project directory (<code class="docutils literal notranslate"><span class="pre">cfg.meteo['dir']/cfg.meteo['prefix']YYYYMMDDHH</span></code>)
+to the int2lm input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/meteo</span></code>).</p></li>
+<li><p>For nested runs (meteorological files are COSMO output: <code class="docutils literal notranslate"><span class="pre">cfg.meteo['prefix']</span> <span class="pre">==</span> <span class="pre">'lffd'</span></code>),
+also copy the <code class="docutils literal notranslate"><span class="pre">*c.nc</span></code>-file with constant parameters.</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>startdate</strong> (<em>datetime-object</em>) – The start date of the simulation</p></li>
-<li><p><strong>enddate</strong> (<em>datetime-object</em>) – The end date of the simulation</p></li>
-<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+<li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>model-config-object</em>) – Object holding model-specific configuration parameters.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If any subprocess returns a non-zero exit code during execution.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -563,7 +568,7 @@ int2lm input folder on scratch (<code class="docutils literal notranslate"><span
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.reduce_output.main">
-<span class="sig-prename descclassname"><span class="pre">jobs.reduce_output.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/reduce_output.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.reduce_output.main" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">jobs.reduce_output.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/reduce_output.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.reduce_output.main" title="Permalink to this definition"></a></dt>
 <dd><p>Calculates 2D column data and writes them into a new netCDF file.
 Only a fixed number of levels from <strong>COSMO</strong> output are considered.
 Those files are written into a new directory <code class="docutils literal notranslate"><span class="pre">cosmo_output_reduced</span></code>.</p>
@@ -585,10 +590,8 @@ output, and <code class="docutils literal notranslate"><span class="pre">_trc</s
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>starttime</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
-<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the starttime</p></li>
-<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
 <li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+<li><p><strong>model_cfg</strong> (<em>model-config-object</em>) – Object holding model-specific configuration parameters.</p></li>
 </ul>
 </dd>
 </dl>
@@ -615,10 +618,8 @@ following variables should be added to the <code class="docutils literal notrans
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start_time</strong> (<em>datetime-object</em>) – The starting date of the simulation</p></li>
-<li><p><strong>hstart</strong> (<em>int</em>) – Offset (in hours) of the actual start from the start_time</p></li>
-<li><p><strong>hstop</strong> (<em>int</em>) – Length of simulation (in hours)</p></li>
 <li><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p></li>
+<li><p><strong>model_cfg</strong> (<em>model-config-object</em>) – Object holding model configuration parameters as attributes</p></li>
 </ul>
 </dd>
 </dl>

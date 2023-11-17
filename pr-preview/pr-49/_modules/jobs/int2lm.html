@@ -135,14 +135,6 @@
   <h1>Source code for jobs.int2lm</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="c1">#</span>
-<span class="c1"># Setup the namelist for int2lm and submit the job to the queue</span>
-<span class="c1">#</span>
-<span class="c1"># Dominik Brunner, July 2013</span>
-<span class="c1">#</span>
-<span class="c1"># 2013-07-20 Initial release, based on Christoph Knote&#39;s int2lm.bash (brd)</span>
-<span class="c1"># 2017-01-15 adapted for hypatia and project SmartCarb (brd)</span>
-<span class="c1"># 2018-08-03 Translated to Python (jae)</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -163,41 +155,37 @@
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../jobs.html#jobs.int2lm.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup the namelist for **int2lm** and submit the job to the queue.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup the namelist for int2lm and submit the job to the queue.</span>
 
-<span class="sd">    Necessary for both **COSMO** and **COSMOART** simulations.</span>
-<span class="sd"> </span>
+<span class="sd">    Necessary for both COSMO and COSMOART simulations.</span>
+
 <span class="sd">    Decide if the soil model should be TERRA or TERRA multi-layer depending on</span>
-<span class="sd">    ``startdate`` of the simulation.</span>
+<span class="sd">    `startdate` of the simulation.</span>
 
-<span class="sd">    Create necessary directory structure to run **int2lm** (run and output</span>
+<span class="sd">    Create necessary directory structure to run int2lm (run and output</span>
 <span class="sd">    directories, defined in ``cfg.int2lm`` and ``cfg.int2lm[&#39;output&#39;]``).</span>
 
-<span class="sd">    Copy the **int2lm**-executable from ``cfg.int2lm[&#39;binary_file&#39;]`` to </span>
+<span class="sd">    Copy the int2lm-executable from ``cfg.int2lm[&#39;binary_file&#39;]`` to </span>
 <span class="sd">    ``cfg.int2lm[&#39;work&#39;]/int2lm``.</span>
 
 <span class="sd">    Copy the extpar-file ``cfg.int2lm[&#39;extpar_file&#39;]`` to</span>
 <span class="sd">    ``cfg.int2lm_run/work``.</span>
 
-<span class="sd">    **COSMOART**: Copy the ``libgrib_api`` files to</span>
+<span class="sd">    COSMOART: Copy the ``libgrib_api`` files to</span>
 <span class="sd">    ``cfg.int2lm[&#39;work&#39;]/libgrib_api``.</span>
 
-<span class="sd">    **COSMO**: Convert the tracer-csv-files into a **int2lm**-namelist file.</span>
+<span class="sd">    COSMO: Convert the tracer-csv-files into an int2lm-namelist file.</span>
 
-<span class="sd">    Format the **int2lm**-namelist-template using the information in ``cfg``.</span>
+<span class="sd">    Format the int2lm-namelist-template using the information in ``cfg``.</span>
 
 <span class="sd">    Format the runscript-template and submit the job.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------	</span>
-<span class="sd">    starttime : datetime-object</span>
-<span class="sd">        The starting date of the simulation</span>
-<span class="sd">    hstart : int</span>
-<span class="sd">        Offset (in hours) of the actual start from the starttime</span>
-<span class="sd">    hstop : int</span>
-<span class="sd">        Length of simulation (in hours)</span>
-<span class="sd">    cfg : config-object</span>
-<span class="sd">        Object holding all user-configuration parameters as attributes</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+<span class="sd">    model_cfg : dict</span>
+<span class="sd">        Model configuration settings loaded from the models.yaml file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">prepare_data</span><span class="o">.</span><span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>

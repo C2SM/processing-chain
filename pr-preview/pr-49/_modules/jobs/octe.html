@@ -299,24 +299,20 @@
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../jobs.html#jobs.octe.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy necessary input files for **COSMO** and perturb BG.</span>
 
-<span class="sd">    Copies the NetCDF-files found at cfg.octe_maps and cfg.octe_lambdas to</span>
+<span class="sd">    Copies the NetCDF-files found at ``cfg.octe_maps`` and ``cfg.octe_lambdas`` to</span>
 <span class="sd">    the **COSMO** input-directory.</span>
 
 <span class="sd">    Perturbs the background tracer field. To do that, it reads the lambda-value</span>
-<span class="sd">    from the cfg.octe_lambdas (last value along the nparam-dimension) and</span>
+<span class="sd">    from the ``cfg.octe_lambdas`` (last value along the nparam-dimension) and</span>
 <span class="sd">    scales the BG-field produced by int2lm, creating a new variable for each</span>
 <span class="sd">    ensemble.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    starttime : datetime-object</span>
-<span class="sd">        The starting date of the simulation</span>
-<span class="sd">    hstart : int</span>
-<span class="sd">        Offset (in hours) of the actual start from the starttime</span>
-<span class="sd">    hstop : int</span>
-<span class="sd">        Length of simulation (in hours)</span>
 <span class="sd">    cfg : config-object</span>
-<span class="sd">        Object holding all user-configuration parameters as attributes</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+<span class="sd">    model_cfg : config-object</span>
+<span class="sd">        Object holding configuration parameters specific to the model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_input</span><span class="p">,</span> <span class="s1">&#39;octe&#39;</span><span class="p">)</span>
     <span class="n">create_dir_and_copy_input</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="n">dest_dir</span><span class="p">,</span>

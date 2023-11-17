@@ -135,29 +135,6 @@
   <h1>Source code for jobs.prepare_data</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="c1">#</span>
-<span class="c1"># Prepare initial and boundary conditions</span>
-<span class="c1">#</span>
-<span class="c1"># In case of ICON:</span>
-<span class="c1"># Prepare input for meteorological initial and boundary conditions</span>
-<span class="c1"># by remapping the files onto the ICON grid (for IC) and the</span>
-<span class="c1"># auxillary lateral-boundary grid (for BC) with the DWD ICON tools</span>
-<span class="c1"># and saving them in the input folder.</span>
-<span class="c1"># Currently, the input files are assumed to be ifs data.</span>
-<span class="c1"># The files are read-in in grib2-format and the the remapped</span>
-<span class="c1"># files are saved in netCDF-format (currently only netCDF works</span>
-<span class="c1"># for ICON when then the simulation is driven by ifs-data).</span>
-<span class="c1">#</span>
-<span class="c1"># result in case of success: all meteo input-files necessary are found in</span>
-<span class="c1">#                            ${int2lm_input}/meteo/</span>
-<span class="c1">#</span>
-<span class="c1"># Dominik Brunner, July 2013</span>
-<span class="c1">#</span>
-<span class="c1"># 2013-07-16 Initial release, based on Christoph Knote script</span>
-<span class="c1"># 2017-01-15 Modified for hypatia and project SmartCarb</span>
-<span class="c1"># 2018-06-21 Translated to Python (kug)</span>
-<span class="c1"># 2021-02-28 Modified for ICON-simulations (stem)</span>
-<span class="c1"># 2021-11-12 Modified for ICON-ART-simulations (mjaehn)</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -228,44 +205,41 @@
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../jobs.html#jobs.prepare_data.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    **ICON** </span>
+<span class="sd">    **ICON and COSMO Data Preparation**</span>
 
-<span class="sd">     Create necessary directories ``cfg.icon_input_icbc``</span>
-<span class="sd">     and &#39;&#39;cfg.icon_work&#39;&#39;</span>
+<span class="sd">    This function prepares input data for ICON and COSMO simulations by creating necessary directories,</span>
+<span class="sd">    copying meteorological files, and handling specific data processing for each model.</span>
 
-<span class="sd">     Submitting the runscript for the DWD ICON tools to remap the meteo files.</span>
+<span class="sd">    **ICON:**</span>
 
-<span class="sd">     All runscripts specified in ``cfg.icontools_runjobs`` are submitted.</span>
+<span class="sd">    - Create directories ``cfg.icon_input_icbc`` and ``cfg.icon_work``.</span>
+<span class="sd">    - Submit the runscript for the DWD ICON tools to remap the meteorological files.</span>
+<span class="sd">    - All runscripts specified in ``cfg.icontools_runjobs`` are submitted.</span>
+<span class="sd">    - The meteorological files are read from the original input directory (``cfg.input_root_meteo``),</span>
+<span class="sd">      and the remapped meteorological files are saved in the input folder on scratch (``cfg.icon_input/icbc``).</span>
+<span class="sd">    - The constant variable &#39;GEOSP&#39; is added to the files not containing it using python-cdo bindings.</span>
 
-<span class="sd">     The meteo files are read-in from the original input directory </span>
-<span class="sd">     (``cfg.input_root_meteo``) and the remapped meteo files are</span>
-<span class="sd">     saved in the input folder on scratch (``cfg.icon_input/icbc``).</span>
+<span class="sd">    **COSMO:**</span>
 
-<span class="sd">     The constant variable &#39;GEOSP&#39; is added to the files not containing it</span>
-<span class="sd">     using python-cdo bindings.</span>
+<span class="sd">    - Copy meteorological files to **int2lm** input.</span>
+<span class="sd">    - Create the necessary directory ``cfg.int2lm_input/meteo``.</span>
+<span class="sd">    - Copy meteorological files from the project directory (``cfg.meteo[&#39;dir&#39;]/cfg.meteo[&#39;prefix&#39;]YYYYMMDDHH``)</span>
+<span class="sd">      to the int2lm input folder on scratch (``cfg.int2lm_input/meteo``).</span>
+<span class="sd">    - For nested runs (meteorological files are COSMO output: ``cfg.meteo[&#39;prefix&#39;] == &#39;lffd&#39;``),</span>
+<span class="sd">      also copy the ``*c.nc``-file with constant parameters.</span>
 
-<span class="sd">    **COSMO**</span>
-
-<span class="sd">     Copy meteo files to **int2lm** input.</span>
-
-<span class="sd">     Create necessary directory ``cfg.int2lm_input/meteo``. Copy meteo files</span>
-<span class="sd">     from project directory (``cfg.meteo[&#39;dir&#39;]/cfg.meteo[&#39;prefix&#39;]YYYYMMDDHH``) to</span>
-<span class="sd">     int2lm input folder on scratch (``cfg.int2lm_input/meteo``).</span>
-
-<span class="sd">     For nested runs (meteo files are cosmo-output: ``cfg.meteo[&#39;prefix&#39;] == </span>
-<span class="sd">     &#39;lffd&#39;``), also the ``*c.nc``-file with constant parameters is copied.</span>
-
-<span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    startdate : datetime-object</span>
-<span class="sd">        The start date of the simulation</span>
-<span class="sd">    enddate : datetime-object</span>
-<span class="sd">        The end date of the simulation</span>
 <span class="sd">    cfg : config-object</span>
-<span class="sd">        Object holding all user-configuration parameters as attributes</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+<span class="sd">    model_cfg : model-config-object</span>
+<span class="sd">        Object holding model-specific configuration parameters.</span>
 
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If any subprocess returns a non-zero exit code during execution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;icon&#39;</span><span class="p">):</span>
