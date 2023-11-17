@@ -241,13 +241,15 @@ at <code class="docutils literal notranslate"><span class="pre">docs/jobs.rst</s
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.biofluxes.main">
 <span class="sig-prename descclassname"><span class="pre">jobs.biofluxes.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/biofluxes.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.biofluxes.main" title="Permalink to this definition"></a></dt>
-<dd><p>Prepare the biofluxes-files for the simulation.</p>
-<p>Only necessary for <strong>COSMO</strong> simulations.</p>
-<p>Copy biofluxes files from project folder (<code class="docutils literal notranslate"><span class="pre">cfg.vprm['dir']</span></code>) to int2lm input
-folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/vprm</span></code>).</p>
+<dd><p>Prepare biofluxes files for COSMO-GHG simulations.</p>
+<p>Copies biofluxes files from the project folder (cfg.vprm[‘dir’]) to the int2lm input
+folder on scratch (cfg.int2lm_input/vprm).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cfg</strong> (<em>config-object</em>) – Object holding all user-configuration parameters as attributes</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfg</strong> (<em>Config</em>) – Object holding all user-configuration parameters as attributes.</p></li>
+<li><p><strong>model_cfg</strong> (<em>dict</em>) – Model configuration settings loaded from the models.yaml file.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

@@ -135,19 +135,6 @@
   <h1>Source code for jobs.biofluxes</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="c1">#</span>
-<span class="c1"># Create VPRM biogenic fluxes from VPRM and put them into the input folder</span>
-<span class="c1">#</span>
-<span class="c1"># result in case of success: all VPRM input-files necessary are found in</span>
-<span class="c1">#                            ${int2lm_input}/vprm/</span>
-<span class="c1">#</span>
-<span class="c1"># Dominik Brunner, July 2013</span>
-<span class="c1">#</span>
-<span class="c1"># 2013-07-18 Initial release, based on Christoph Knotes&#39; emissions.bash</span>
-<span class="c1">#            In the current version, the program only checks for the presence</span>
-<span class="c1">#            of the constant-in-time emissions file and creates a soft link in the int2lm</span>
-<span class="c1">#            input directory (brd)</span>
-<span class="c1"># 2018-06-25 Translated to Python (arp)</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -155,17 +142,17 @@
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../jobs.html#jobs.biofluxes.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare the biofluxes-files for the simulation.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare biofluxes files for COSMO-GHG simulations.</span>
 
-<span class="sd">    Only necessary for **COSMO** simulations.</span>
-
-<span class="sd">    Copy biofluxes files from project folder (``cfg.vprm[&#39;dir&#39;]``) to int2lm input</span>
-<span class="sd">    folder on scratch (``cfg.int2lm_input/vprm``).</span>
+<span class="sd">    Copies biofluxes files from the project folder (cfg.vprm[&#39;dir&#39;]) to the int2lm input</span>
+<span class="sd">    folder on scratch (cfg.int2lm_input/vprm).</span>
 
 <span class="sd">    Parameters</span>
-<span class="sd">    ----------	</span>
-<span class="sd">    cfg : config-object</span>
-<span class="sd">        Object holding all user-configuration parameters as attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+<span class="sd">    model_cfg : dict</span>
+<span class="sd">        Model configuration settings loaded from the models.yaml file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tools</span><span class="o">.</span><span class="n">check_model</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;cosmo-ghg&#39;</span><span class="p">)</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">prepare_data</span><span class="o">.</span><span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>
