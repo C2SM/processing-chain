@@ -700,18 +700,20 @@ def create_animations(cfg):
 
 
 def main(cfg, model_cfg):
-    """Checks output variables whether they are in a phyiscally reasonable
-    range.
+    """Check output variables for physical reasonability and create plots.
 
-    Stores the time series of the minimum, the maximum, the mean, and
-    the std of the variables as a pandas object into a pickle file.
+    This function checks the output variables to ensure they are in a physically
+    reasonable range. It stores the time series of the minimum, maximum, mean, and
+    standard deviation of the variables as a pandas object into a pickle file.
 
-    Creates per-variable plots from the stored time series data.
+    It also creates per-variable plots from the stored time series data.
 
     Parameters
-    ----------	
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    ----------
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the models.yaml file.
     """
     date = dt.datetime.today()
 
