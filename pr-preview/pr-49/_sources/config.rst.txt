@@ -43,7 +43,8 @@ This is a list of configuration variables used in the main script of the Process
 | ``email``              | The user's email address, initially set to None and updated using the  |
 |                        | set_email method.                                                      |
 +------------------------+------------------------------------------------------------------------+
-| ``enddate``            | The end date of the simulation in ISO 8601 format (``YYYY-MM-DDTHH:mm:ssZ``). |
+| ``enddate``            | The end date of the simulation in ISO 8601 format                      |
+|                        | (``YYYY-MM-DDTHH:mm:ssZ``).                                            |
 +------------------------+------------------------------------------------------------------------+
 | ``force``              | Boolean indicating whether to force the processing chain to redo all   |
 |                        | specified jobs.                                                        |
@@ -61,7 +62,7 @@ This is a list of configuration variables used in the main script of the Process
 | ``mpich_cuda``         | CUDA-related environment variables, set based on the configuration     |
 |                        | settings.                                                              |
 +------------------------+------------------------------------------------------------------------+
-| ``ntry``               | Amount of time the cosmo job is re-tried before crashing.              |
+| ``ntry``               | Amount of time the COSMO job is re-tried before crashing.              |
 +------------------------+------------------------------------------------------------------------+
 | ``ntasks_per_node``    | The number of tasks per node, based on the node type.                  |
 +------------------------+------------------------------------------------------------------------+
@@ -78,7 +79,8 @@ This is a list of configuration variables used in the main script of the Process
 +------------------------+------------------------------------------------------------------------+
 | ``spinup``             | Spin-up duration in hours.                                             |
 +------------------------+------------------------------------------------------------------------+
-| ``startdate``          | The start date of the simulation in ISO 8601 format (``YYYY-MM-DDTHH:mm:ssZ``). |
+| ``startdate``          | The start date of the simulation in ISO 8601 format                    |
+|                        | (``YYYY-MM-DDTHH:mm:ssZ``).                                            |
 +------------------------+------------------------------------------------------------------------+
 | ``user_mail``          | The user's email address, determined based on system configuration.    |
 +------------------------+------------------------------------------------------------------------+
