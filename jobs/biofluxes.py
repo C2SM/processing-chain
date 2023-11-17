@@ -1,18 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Create VPRM biogenic fluxes from VPRM and put them into the input folder
-#
-# result in case of success: all VPRM input-files necessary are found in
-#                            ${int2lm_input}/vprm/
-#
-# Dominik Brunner, July 2013
-#
-# 2013-07-18 Initial release, based on Christoph Knotes' emissions.bash
-#            In the current version, the program only checks for the presence
-#            of the constant-in-time emissions file and creates a soft link in the int2lm
-#            input directory (brd)
-# 2018-06-25 Translated to Python (arp)
 
 import os
 import logging
@@ -20,17 +7,17 @@ from . import tools, prepare_data
 
 
 def main(cfg, model_cfg):
-    """Prepare the biofluxes-files for the simulation.
+    """Prepare biofluxes files for COSMO-GHG simulations.
 
-    Only necessary for **COSMO** simulations.
-
-    Copy biofluxes files from project folder (``cfg.vprm['dir']``) to int2lm input
-    folder on scratch (``cfg.int2lm_input/vprm``).
+    Copies biofluxes files from the project folder (cfg.vprm['dir']) to the int2lm input
+    folder on scratch (cfg.int2lm_input/vprm).
 
     Parameters
-    ----------	
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    ----------
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the models.yaml file.
     """
     tools.check_model(cfg, 'cosmo-ghg')
     cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
