@@ -16,7 +16,7 @@ import math
 from . import tools
 
 
-def main(startdate, enddate, cfg, model_cfg):
+def main(cfg, model_cfg):
     """
     Calculates 2D column data and writes them into a new netCDF file.
     Only a fixed number of levels from **COSMO** output are considered.
@@ -39,16 +39,11 @@ def main(startdate, enddate, cfg, model_cfg):
 
     Parameters
     ----------	
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
+    model_cfg : model-config-object
+        Object holding model-specific configuration parameters.
     """
-
     cosmo_output = cfg.cosmo_output
     output_path = cfg.cosmo_output_reduced
 
