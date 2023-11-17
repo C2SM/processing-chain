@@ -1,15 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Setup the namelist for a COSMO tracer run and submit the job to the queue
-#
-# result in case of success: forecast fields found in
-#                            ${cosmo_output}
-#
-# Dominik Brunner, July 2013
-#
-# 2013-07-21 Initial release, adopted from Christoph Knote's cosmo.bash (brd)
-# 2018-07-10 Translated to Python (muq)
 
 import logging
 import os

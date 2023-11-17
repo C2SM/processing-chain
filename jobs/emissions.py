@@ -1,18 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Create anthropogenic emissions and put them into the input folder
-#
-# Result in case of success: all emission input-files necessary are found in
-#                            ${int2lm_input}/emissions/
-#
-# Dominik Brunner, July 2013
-#
-# 2013-07-18 Initial release, based on Christoph Knotes' emissions.bash
-#            In the current version, the program only checks for the presence
-#            of the constant-in-time emissions file and creates a soft link in
-#            the int2lm input directory (brd)
-# 2018-06-25 Translated to Python (arp)
 
 import os
 import logging

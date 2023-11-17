@@ -1,15 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Setup the namelist for an ICON run and submit the job to the queue
-#
-# result in case of success: forecast fields found in
-#                            ${icon_output}
-#
-# Michael Jähn, February 2021
-#
-# 2021-04-26 Initial release
-# 2021-11-21 Updated for ICON-ART
 
 import logging
 import os
