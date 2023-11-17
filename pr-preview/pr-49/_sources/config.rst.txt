@@ -155,7 +155,7 @@ These config variables can be accessed via ``cfg.meteo['dir']``, ``cfg.meteo['pr
 as they are Python dictionaries. However, in the :ref:`namelist template<namelists-section>` files
 (see next section), this accessing does not work because of how the ``.format()`` method is implemented
 in Python. For that reason, the Processing Chain automatically creates new variables in the form of
-``cfg.meteo_dir``, ``cfg.meteo_prefix``, etc. at the start the make them available for namelist
+``cfg.meteo_dir``, ``cfg.meteo_prefix``, etc. at the start to make them available for namelist
 and runjob templates.
 
 List of dictionary variables
