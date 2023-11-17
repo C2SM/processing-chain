@@ -152,7 +152,7 @@ for the the ``cfg.meteo`` variable::
         inc: 1
 
 These config variables can be accessed via ``cfg.meteo['dir']``, ``cfg.meteo['prefix']``, etc.
-as they are Python dictionaries. However, in the :ref:`namelist template<namelists-section>` files
+as they are Python dictionaries. However, in :ref:`namelist and runscript template<namelists-section>` files
 (see next section), this accessing does not work because of how the ``.format()`` method is implemented
 in Python. For that reason, the Processing Chain automatically creates new variables in the form of
 ``cfg.meteo_dir``, ``cfg.meteo_prefix``, etc. at the start to make them available for namelist
@@ -163,7 +163,7 @@ List of dictionary variables
 
 The following is a list of dictionary variables that exist for the Processing Chain.
 For the individual elements of those variables, please refer to the ``config.yaml``
-files for the test cases.
+files within the test cases.
 
 +------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
 | Dictionary variable    | Used in job                                                                                                                          |

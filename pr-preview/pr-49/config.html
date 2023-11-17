@@ -309,7 +309,7 @@ for the the <code class="docutils literal notranslate"><span class="pre">cfg.met
 </pre></div>
 </div>
 <p>These config variables can be accessed via <code class="docutils literal notranslate"><span class="pre">cfg.meteo['dir']</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.meteo['prefix']</span></code>, etc.
-as they are Python dictionaries. However, in the <a class="reference internal" href="namelists.html#namelists-section"><span class="std std-ref">namelist template</span></a> files
+as they are Python dictionaries. However, in <a class="reference internal" href="namelists.html#namelists-section"><span class="std std-ref">namelist and runscript template</span></a> files
 (see next section), this accessing does not work because of how the <code class="docutils literal notranslate"><span class="pre">.format()</span></code> method is implemented
 in Python. For that reason, the Processing Chain automatically creates new variables in the form of
 <code class="docutils literal notranslate"><span class="pre">cfg.meteo_dir</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.meteo_prefix</span></code>, etc. at the start to make them available for namelist
@@ -318,7 +318,7 @@ and runjob templates.</p>
 <h4>List of dictionary variables<a class="headerlink" href="#list-of-dictionary-variables" title="Permalink to this heading"></a></h4>
 <p>The following is a list of dictionary variables that exist for the Processing Chain.
 For the individual elements of those variables, please refer to the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>
-files for the test cases.</p>
+files within the test cases.</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Dictionary variable</p></th>
