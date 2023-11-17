@@ -8,36 +8,32 @@ from . import tools, prepare_data
 
 
 def main(cfg, model_cfg):
-    """Setup the namelists for an **ICON** tracer run and submit the job to
-    the queue
+    """Setup the namelists for an ICON tracer run and submit the job to
+    the queue.
 
-    Necessary for both **ICON** and **ICONART** simulations.
+    Necessary for both ICON and ICONART simulations.
 
-    Create necessary directory structure to run **ICON** (run, output and
-    restart directories, defined in ``cfg.icon_work``, ``cfg.icon_output``
+    Create necessary directory structure to run ICON (run, output, and
+    restart directories, defined in ``cfg.icon_work``, ``cfg.icon_output``,
     and ``cfg.icon_restart_out``).
 
-    Copy the **ICON**-executable from
+    Copy the ICON-executable from
     ``cfg.icon_binary_file`` to ``cfg.icon_work/icon.exe``.
 
-    Use the tracer-csv-file to append **ICON**-namelist file.
+    Use the tracer-csv-file to append ICON-namelist file.
 
-    Format the **ICON**-namelist-templates:
+    Format the ICON-namelist-templates:
     ``icon_master.namelist.cfg, icon_NAMELIST_NWP.cfg``,
     using the information in ``cfg``.
 
     Format the runscript-template and submit the job.
 
     Parameters
-    ----------
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    ----------	
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the models.yaml file.
     """
     cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
 
