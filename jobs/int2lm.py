@@ -1,13 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Setup the namelist for int2lm and submit the job to the queue
-#
-# Dominik Brunner, July 2013
-#
-# 2013-07-20 Initial release, based on Christoph Knote's int2lm.bash (brd)
-# 2017-01-15 adapted for hypatia and project SmartCarb (brd)
-# 2018-08-03 Translated to Python (jae)
 
 import os
 import logging
@@ -28,41 +20,37 @@ def set_cfg_variables(cfg, model_cfg):
 
 
 def main(cfg, model_cfg):
-    """Setup the namelist for **int2lm** and submit the job to the queue.
+    """Setup the namelist for int2lm and submit the job to the queue.
 
-    Necessary for both **COSMO** and **COSMOART** simulations.
- 
+    Necessary for both COSMO and COSMOART simulations.
+
     Decide if the soil model should be TERRA or TERRA multi-layer depending on
-    ``startdate`` of the simulation.
+    `startdate` of the simulation.
 
-    Create necessary directory structure to run **int2lm** (run and output
+    Create necessary directory structure to run int2lm (run and output
     directories, defined in ``cfg.int2lm`` and ``cfg.int2lm['output']``).
 
-    Copy the **int2lm**-executable from ``cfg.int2lm['binary_file']`` to 
+    Copy the int2lm-executable from ``cfg.int2lm['binary_file']`` to 
     ``cfg.int2lm['work']/int2lm``.
 
     Copy the extpar-file ``cfg.int2lm['extpar_file']`` to
     ``cfg.int2lm_run/work``.
 
-    **COSMOART**: Copy the ``libgrib_api`` files to
+    COSMOART: Copy the ``libgrib_api`` files to
     ``cfg.int2lm['work']/libgrib_api``.
 
-    **COSMO**: Convert the tracer-csv-files into a **int2lm**-namelist file.
+    COSMO: Convert the tracer-csv-files into an int2lm-namelist file.
 
-    Format the **int2lm**-namelist-template using the information in ``cfg``.
+    Format the int2lm-namelist-template using the information in ``cfg``.
 
     Format the runscript-template and submit the job.
 
     Parameters
     ----------	
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the models.yaml file.
     """
     cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
     cfg = set_cfg_variables(cfg, model_cfg)
