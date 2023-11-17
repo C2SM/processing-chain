@@ -23,9 +23,11 @@ def main(cfg, model_cfg):
     Also copies the blacklist-file blklsttmp.
 
     Parameters
-    ----------	
+    ----------
     cfg : config-object
-        Object holding all user-configuration parameters as attributes
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the models.yaml file.
     """
     dest_dir = os.path.join(cfg.cosmo_input, "obs_nudging")
     tools.create_dir(dest_dir, "obs nudging input")
