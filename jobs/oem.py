@@ -13,14 +13,15 @@ def main(cfg, model_cfg):
 
     Parameters
     ----------
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
-        Object holding all user-configuration parameters as attributes
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : config-object
+        Object holding configuration parameters specific to the model.
+
+    Raises
+    ------
+    RuntimeError
+        If an error occurs during the process.
     """
     cfg = cosmo.set_cfg_variables(cfg, model_cfg)
 
