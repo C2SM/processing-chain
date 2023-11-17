@@ -63,35 +63,35 @@ def set_cfg_variables(cfg, model_cfg):
 
 
 def main(cfg, model_cfg):
-    """Setup the namelists for a **COSMO** tracer run and submit the job to
-    the queue
+    """Setup the namelists for a COSMO tracer run and submit the job to the queue.
 
-    Necessary for both **COSMO** and **COSMOART** simulations.
+    Necessary for both COSMO and COSMOART simulations.
 
     Decide if the soil model should be TERRA or TERRA multi-layer depending on
-    ``startdate`` of the simulation.
+    the ``startdate`` of the simulation.
 
-    Create necessary directory structure to run **COSMO** (run, output and
-    restart directories, defined in ``cfg.cosmo_run``, ``cfg.cosmo_output``
+    Create necessary directory structure to run COSMO (run, output, and
+    restart directories, defined in ``cfg.cosmo_run``, ``cfg.cosmo_output``,
     and ``cfg.cosmo_restart_out``).
 
-    Copy the **COSMO**-executable from
+    Copy the COSMO-executable from
     ``cfg.cosmo_bin`` to ``cfg.cosmo_run/cosmo``.
 
-    Convert the tracer-csv-file to a **COSMO**-namelist file.
+    Convert the tracer-csv-file to a COSMO-namelist file.
 
-    Format the **COSMO**-namelist-templates
-    (**COSMO**: ``AF,ORG,IO,DYN,PHY,DIA,ASS``,
-    **COSMOART**: ``ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY``)
+    Format the COSMO-namelist-templates
+    (COSMO: ``AF,ORG,IO,DYN,PHY,DIA,ASS``,
+    COSMOART: ``ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY``)
     using the information in ``cfg``.
 
     Format the runscript-template and submit the job.
 
-
     Parameters
     ----------
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the models.yaml file.
     """
     cfg = set_cfg_variables(cfg, model_cfg)
     logfile = os.path.join(cfg.log_working_dir, "cosmo")
