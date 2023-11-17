@@ -70,44 +70,41 @@ def set_cfg_variables(cfg, model_cfg):
 
 def main(cfg, model_cfg):
     """
-    **ICON** 
+    **ICON and COSMO Data Preparation**
 
-     Create necessary directories ``cfg.icon_input_icbc``
-     and ''cfg.icon_work''
+    This function prepares input data for ICON and COSMO simulations by creating necessary directories,
+    copying meteorological files, and handling specific data processing for each model.
 
-     Submitting the runscript for the DWD ICON tools to remap the meteo files.
+    **ICON:**
 
-     All runscripts specified in ``cfg.icontools_runjobs`` are submitted.
+    - Create directories ``cfg.icon_input_icbc`` and ``cfg.icon_work``.
+    - Submit the runscript for the DWD ICON tools to remap the meteorological files.
+    - All runscripts specified in ``cfg.icontools_runjobs`` are submitted.
+    - The meteorological files are read from the original input directory (``cfg.input_root_meteo``),
+      and the remapped meteorological files are saved in the input folder on scratch (``cfg.icon_input/icbc``).
+    - The constant variable 'GEOSP' is added to the files not containing it using python-cdo bindings.
 
-     The meteo files are read-in from the original input directory 
-     (``cfg.input_root_meteo``) and the remapped meteo files are
-     saved in the input folder on scratch (``cfg.icon_input/icbc``).
+    **COSMO:**
 
-     The constant variable 'GEOSP' is added to the files not containing it
-     using python-cdo bindings.
+    - Copy meteorological files to **int2lm** input.
+    - Create the necessary directory ``cfg.int2lm_input/meteo``.
+    - Copy meteorological files from the project directory (``cfg.meteo['dir']/cfg.meteo['prefix']YYYYMMDDHH``)
+      to the int2lm input folder on scratch (``cfg.int2lm_input/meteo``).
+    - For nested runs (meteorological files are COSMO output: ``cfg.meteo['prefix'] == 'lffd'``),
+      also copy the ``*c.nc``-file with constant parameters.
 
-    **COSMO**
-
-     Copy meteo files to **int2lm** input.
-
-     Create necessary directory ``cfg.int2lm_input/meteo``. Copy meteo files
-     from project directory (``cfg.meteo['dir']/cfg.meteo['prefix']YYYYMMDDHH``) to
-     int2lm input folder on scratch (``cfg.int2lm_input/meteo``).
-
-     For nested runs (meteo files are cosmo-output: ``cfg.meteo['prefix'] == 
-     'lffd'``), also the ``*c.nc``-file with constant parameters is copied.
-
-    
     Parameters
     ----------
-    startdate : datetime-object
-        The start date of the simulation
-    enddate : datetime-object
-        The end date of the simulation
     cfg : config-object
-        Object holding all user-configuration parameters as attributes
-    """
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : model-config-object
+        Object holding model-specific configuration parameters.
 
+    Raises
+    ------
+    RuntimeError
+        If any subprocess returns a non-zero exit code during execution.
+    """
     cfg = set_cfg_variables(cfg, model_cfg)
 
     if cfg.model.startswith('icon'):
