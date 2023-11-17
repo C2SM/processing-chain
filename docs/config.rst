@@ -2,8 +2,8 @@
 
 The Processing Chain uses cases to describe a simulation. A case is a
 subdirectory in ``cases/``, containing a ``config.yaml`` and several
-`namelists` (for example ``int2lm_INPUT.cfg``) which define the
-simulation.
+`namelists` (e.g., ``int2lm_INPUT.cfg``) and `runscripts` (e.g.,
+``icon_runjob.cfg``) which define the simulation.
 
 .. _config.yaml:
 
