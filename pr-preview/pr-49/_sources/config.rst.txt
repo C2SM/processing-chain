@@ -43,7 +43,7 @@ This is a list of configuration variables used in the main script of the Process
 | ``email``              | The user's email address, initially set to None and updated using the  |
 |                        | set_email method.                                                      |
 +------------------------+------------------------------------------------------------------------+
-| ``enddate``            | The end date of the simulation.                                        |
+| ``enddate``            | The end date of the simulation in ISO 8601 format (``YYYY-MM-DDTHH:mm:ssZ``). |
 +------------------------+------------------------------------------------------------------------+
 | ``force``              | Boolean indicating whether to force the processing chain to redo all   |
 |                        | specified jobs.                                                        |
@@ -67,6 +67,8 @@ This is a list of configuration variables used in the main script of the Process
 +------------------------+------------------------------------------------------------------------+
 | ``output_levels``      | Number of levels for output.                                           |
 +------------------------+------------------------------------------------------------------------+
+| ``restart_step``       | The restart step in ISO 8601 format.                                   |
++------------------------+------------------------------------------------------------------------+
 | ``restart_step_hours`` | The restart step in hours, derived from the 'restart_step' attribute.  |
 +------------------------+------------------------------------------------------------------------+
 | ``resume``             | Boolean indicating whether to resume the processing chain by           |
@@ -76,7 +78,7 @@ This is a list of configuration variables used in the main script of the Process
 +------------------------+------------------------------------------------------------------------+
 | ``spinup``             | Spin-up duration in hours.                                             |
 +------------------------+------------------------------------------------------------------------+
-| ``startdate``          | The start date of the simulation.                                      |
+| ``startdate``          | The start date of the simulation in ISO 8601 format (``YYYY-MM-DDTHH:mm:ssZ``). |
 +------------------------+------------------------------------------------------------------------+
 | ``user_mail``          | The user's email address, determined based on system configuration.    |
 +------------------------+------------------------------------------------------------------------+
