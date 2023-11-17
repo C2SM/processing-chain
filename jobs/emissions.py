@@ -21,15 +21,15 @@ from . import tools, prepare_data
 
 
 def main(cfg, model_cfg):
-    """Copy emission files to the **int2lm** input directory.
+    """Copy emission files to the int2lm input directory.
 
-    Necessary for both **COSMO** and **COSMOART** simulations.
+    Necessary for both COSMO and COSMOART simulations.
 
     Copy emission files from project folder (``cfg.emissions['dir']``) to
-    **int2lm** input folder on scratch (``cfg.int2lm_input/emissions``).
+    int2lm input folder on scratch (``cfg.int2lm_input/emissions``).
 
-    For **COSMO** simulations, converts the the netCDF-variable-names 
-    from ``string`` to ``char`` (necessary for **int2lm**).
+    For COSMO simulations, converts the netCDF-variable-names 
+    from ``string`` to ``char`` (necessary for int2lm).
 
     If there are multiple emission-datasets (cfg.emissions['dir'] is a list of
     paths), they are copied as follows::
@@ -40,14 +40,10 @@ def main(cfg, model_cfg):
 
     Parameters
     ----------	
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the models.yaml file.
     """
     cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
     dest_prefix = "emis_"
