@@ -1,28 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Prepare initial and boundary conditions
-#
-# In case of ICON:
-# Prepare input for meteorological initial and boundary conditions
-# by remapping the files onto the ICON grid (for IC) and the
-# auxillary lateral-boundary grid (for BC) with the DWD ICON tools
-# and saving them in the input folder.
-# Currently, the input files are assumed to be ifs data.
-# The files are read-in in grib2-format and the the remapped
-# files are saved in netCDF-format (currently only netCDF works
-# for ICON when then the simulation is driven by ifs-data).
-#
-# result in case of success: all meteo input-files necessary are found in
-#                            ${int2lm_input}/meteo/
-#
-# Dominik Brunner, July 2013
-#
-# 2013-07-16 Initial release, based on Christoph Knote script
-# 2017-01-15 Modified for hypatia and project SmartCarb
-# 2018-06-21 Translated to Python (kug)
-# 2021-02-28 Modified for ICON-simulations (stem)
-# 2021-11-12 Modified for ICON-ART-simulations (mjaehn)
 
 import os
 import logging

@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copy cosmo output from scratch to store (or anywhere else)
-
-### DEVELOPMENT VERSION ###
-
 import logging
 import os
 import datetime

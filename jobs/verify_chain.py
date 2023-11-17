@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Job to verify the correctness of the chain. The output of the example-case is
-# compared to a reference output.
-
-# Author: dao, david.ochsner@empa.ch
-
 import os
 import logging
 import netCDF4 as nc
