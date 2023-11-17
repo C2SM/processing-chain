@@ -35,14 +35,10 @@ def main(cfg, model_cfg):
 
     Parameters
     ----------	
-    start_time : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the start_time
-    hstop : int
-        Length of simulation (in hours)
     cfg : config-object
         Object holding all user-configuration parameters as attributes
+    model_cfg : model-config-object
+        Object holding model configuration parameters as attributes
     """
     logging.info("Started verification")
     for (ref_file,
