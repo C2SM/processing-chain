@@ -13,7 +13,7 @@ function error {
 BRANCH=c2sm-features
 GIT_REMOTE=git@github.com:C2SM-RCM/int2lm.git
 
-pushd externals
+pushd ext
 # Activate spack
 . spack-c2sm/setup-env.sh
 
