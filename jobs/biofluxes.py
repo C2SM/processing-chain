@@ -7,10 +7,10 @@ from . import tools, prepare_data
 
 
 def main(cfg, model_cfg):
-    """Prepare biofluxes files for COSMO-GHG simulations.
+    """Prepare biofluxes files for COSMO simulations.
 
-    Copies biofluxes files from the project folder (cfg.vprm['dir']) to the int2lm input
-    folder on scratch (cfg.int2lm_input/vprm).
+    Copies biofluxes files from the project folder (:attr:`cfg.vprm['dir']`)
+    to the int2lm input folder on scratch (:attr:`cfg.int2lm_input`/vprm).
 
     Parameters
     ----------
