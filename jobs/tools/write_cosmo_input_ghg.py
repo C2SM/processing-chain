@@ -96,6 +96,8 @@ def main(csv_filename, namelist_filename, cfg=None):
         Path to the source csv-file
     namelist_filename : str
         Path to the namelist file that will be created
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
     """
 
     with open(csv_filename, 'r') as csv_file:

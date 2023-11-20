@@ -14,7 +14,7 @@ The configuration file contains most of the information that the :ref:`jobs<jobs
 This configuration-file is imported as a module in ``run_chain.py``, and therefore
 it can contain python expression which are evaluated at runtime.
 
-General variables in ``run_chain.py``
+General Variables in ``run_chain.py``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is a list of configuration variables used in the main script of the Processing Chain:
@@ -92,7 +92,7 @@ This is a list of configuration variables used in the main script of the Process
 +------------------------+------------------------------------------------------------------------+
 
 
-Variables to set in ``config.yaml``
+Variables to Set in ``config.yaml``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Here are two examples of which general variables should be set by the user in the

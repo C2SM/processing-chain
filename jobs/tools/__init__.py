@@ -420,7 +420,7 @@ def check_job_completion(log_finished_dir, job, waittime=3000):
 
     log_finished_dir : directory for logfiles of finished jobs
 
-    job: string of job name, e.g. "meteo"
+    job: string of job name, e.g. "prepare_data"
 
     waittime : time to wait (factor of .1 second)
                Defaults to 3000 (300 seconds)

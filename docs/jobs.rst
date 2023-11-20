@@ -72,7 +72,7 @@ has to be respected.
 3.  :func:`jobs.icon.main`
 
 
-Adding new jobs
+Adding New Jobs
 ---------------
 
 Adding a new job to the chain is simple:
@@ -84,7 +84,7 @@ Adding a new job to the chain is simple:
 3. Add the function to the documentation. You find the file describing this page
    at ``docs/jobs.rst``.
 
-List of available jobs
+List of Available Jobs
 ----------------------
 
 * :func:`jobs.biofluxes.main`
