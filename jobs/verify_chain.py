@@ -35,10 +35,10 @@ def main(cfg, model_cfg):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
-    model_cfg : model-config-object
-        Object holding model configuration parameters as attributes
+    model_cfg : dict 
+        Model configuration settings loaded from the ``config\/models.yaml`` file.
     """
     logging.info("Started verification")
     for (ref_file,

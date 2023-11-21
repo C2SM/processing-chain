@@ -60,10 +60,10 @@ def main(cfg, model_cfg):
     
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : config-object
-        Object holding configuration parameters specific to the model.
+    model_cfg : dict
+        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     cfg = int2lm.set_cfg_variables(cfg, model_cfg)
     cfg = cosmo.set_cfg_variables(cfg, model_cfg)

@@ -69,7 +69,7 @@ def timeseries_path(cfg):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
 
     Returns
@@ -89,7 +89,7 @@ def maps_path(cfg):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
 
     Returns
@@ -108,7 +108,7 @@ def animations_path(cfg):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
 
     Returns
@@ -211,7 +211,7 @@ def plot_timeseries(cfg, units):
     
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
     units : dict
         Dictionary containing units os variables
@@ -385,7 +385,7 @@ def merge_data(cfg):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
 
     Returns
@@ -647,7 +647,7 @@ def create_map_directories(cfg, data, units):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
     data: pandas.DataFrame
         Dataframe containing diagnostic values for each variable
@@ -671,7 +671,7 @@ def create_animations(cfg):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
     """
     data_path = pkl_path(cfg.output_root)
@@ -713,7 +713,7 @@ def main(cfg, model_cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     model_cfg : dict
-        Model configuration settings loaded from the models.yaml file.
+        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     date = dt.datetime.today()
 

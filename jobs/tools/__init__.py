@@ -416,7 +416,7 @@ def check_job_completion(log_finished_dir, job, waittime=3000):
 
     Parameters
     ----------
-    cfg : config-object
+    cfg : Config
 
     log_finished_dir : directory for logfiles of finished jobs
 

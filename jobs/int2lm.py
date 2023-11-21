@@ -50,7 +50,7 @@ def main(cfg, model_cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     model_cfg : dict
-        Model configuration settings loaded from the models.yaml file.
+        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
     cfg = set_cfg_variables(cfg, model_cfg)
