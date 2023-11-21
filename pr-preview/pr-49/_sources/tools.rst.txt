@@ -8,7 +8,7 @@ functions are well documented and listed here. For others, one may take
 a look into ``jobs/tools`` directly.
 
 * :func:`jobs.tools.cams4int2cosmo.main`
-* :func:`jobs.tools.check_model.main`
+* :func:`jobs.tools.check_model.check_model`
 * :func:`jobs.tools.comp_nc.datasets_equal`
 * :func:`jobs.tools.ctnoaa4int2cosmo.main`
 * :func:`jobs.tools.mozart2int2lm.main`
@@ -24,7 +24,7 @@ a look into ``jobs/tools`` directly.
 
 -------------------------------------------
 
-.. autofunction:: jobs.tools.check_model.main
+.. autofunction:: jobs.tools.check_model.check_model
 
 -------------------------------------------
 

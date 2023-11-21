@@ -106,6 +106,7 @@
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">List of Available Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.tools.cams4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.check_model.check_model"><code class="docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.tools.comp_nc.datasets_equal"><code class="docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.tools.ctnoaa4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.tools.mozart2int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></li>
@@ -149,7 +150,7 @@ functions are well documented and listed here. For others, one may take
 a look into <code class="docutils literal notranslate"><span class="pre">jobs/tools</span></code> directly.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#jobs.tools.cams4int2cosmo.main" title="jobs.tools.cams4int2cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.check_model.main()</span></code></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.check_model.check_model" title="jobs.tools.check_model.check_model"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.tools.comp_nc.datasets_equal" title="jobs.tools.comp_nc.datasets_equal"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.tools.ctnoaa4int2cosmo.main" title="jobs.tools.ctnoaa4int2cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.tools.mozart2int2lm.main" title="jobs.tools.mozart2int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></p></li>
@@ -210,6 +211,22 @@ otherwise the script should be invoked in the directory of the CAMS data.</p>
 </dd></dl>
 
 <hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.tools.check_model.check_model">
+<span class="sig-prename descclassname"><span class="pre">jobs.tools.check_model.</span></span><span class="sig-name descname"><span class="pre">check_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'COSMO'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/tools/check_model.html#check_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.tools.check_model.check_model" title="Permalink to this definition"></a></dt>
+<dd><p>Check that the model specified in cfg matched the prescribed model.</p>
+<p>Check that cfg.model == model. If not, raises a value-error.
+Ignores capitalization of the strings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfg</strong> (<em>config-object</em>) – </p></li>
+<li><p><strong>model</strong> (<em>str</em>) – Prescribed model</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.tools.comp_nc.datasets_equal">
