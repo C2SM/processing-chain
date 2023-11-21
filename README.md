@@ -21,7 +21,7 @@ To activate your conda environment, type:
 To test if your environment has been successfully set, use the command
 line help to display the available arguments for the main script:
 
-    python run_chain.py -h
+    ./run_chain.py -h
 
 To run the test cases with their standard jobs, please ensure
 that you clone the Processing Chain to `$SCRATCH`, as input and
@@ -52,7 +52,7 @@ This script calls other scripts that are located in `jenkins/scripts/` and will:
 To run the test cases manually, type:
 
     # replace <casename> with one of the above tests
-    python run_chain.py <casename>
+    ./run_chain.py <casename>
 
 ## Documentation
 
