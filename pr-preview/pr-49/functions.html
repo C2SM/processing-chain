@@ -88,7 +88,8 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Function Reference</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Jobs</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#tools">Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
@@ -105,7 +106,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#jobs.prepare_data.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.cams4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.check_model.check_model"><code class="docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.comp_nc.datasets_equal"><code class="docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.ctnoaa4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.mozart2int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.reduce_output_start_end.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.string2char.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -153,6 +163,24 @@
 <li><p><a class="reference internal" href="#jobs.prepare_data.main" title="jobs.prepare_data.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.reduce_output.main" title="jobs.reduce_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.verify_chain.main" title="jobs.verify_chain.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></p></li>
+</ul>
+</section>
+<section id="tools">
+<h1>Tools<a class="headerlink" href="#tools" title="Permalink to this heading"></a></h1>
+<p>The tools are a collection of functions used by the jobs. Most of those
+functions are well documented and listed here. For others, one may take
+a look into <code class="docutils literal notranslate"><span class="pre">jobs/tools</span></code> directly.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#jobs.tools.cams4int2cosmo.main" title="jobs.tools.cams4int2cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.check_model.check_model" title="jobs.tools.check_model.check_model"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.comp_nc.datasets_equal" title="jobs.tools.comp_nc.datasets_equal"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.ctnoaa4int2cosmo.main" title="jobs.tools.ctnoaa4int2cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.mozart2int2lm.main" title="jobs.tools.mozart2int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.reduce_output_start_end.main" title="jobs.tools.reduce_output_start_end.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.string2char.main" title="jobs.tools.string2char.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.vprmsplit.main" title="jobs.tools.vprmsplit.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="namelists.html#jobs.tools.write_cosmo_input_ghg.main" title="jobs.tools.write_cosmo_input_ghg.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="namelists.html#jobs.tools.write_int2lm_input_art.main" title="jobs.tools.write_int2lm_input_art.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></p></li>
 </ul>
 <hr class="docutils" />
 <dl class="py function">
@@ -542,23 +570,6 @@ following variables should be added to the <code class="docutils literal notrans
 </dl>
 </dd></dl>
 
-<section id="tools">
-<h2>Tools<a class="headerlink" href="#tools" title="Permalink to this heading"></a></h2>
-<p>The tools are a collection of functions used by the jobs. Most of those
-functions are well documented and listed here. For others, one may take
-a look into <code class="docutils literal notranslate"><span class="pre">jobs/tools</span></code> directly.</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="#jobs.tools.cams4int2cosmo.main" title="jobs.tools.cams4int2cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></p></li>
-<li><p><a class="reference internal" href="#jobs.tools.check_model.check_model" title="jobs.tools.check_model.check_model"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></p></li>
-<li><p><a class="reference internal" href="#jobs.tools.comp_nc.datasets_equal" title="jobs.tools.comp_nc.datasets_equal"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></p></li>
-<li><p><a class="reference internal" href="#jobs.tools.ctnoaa4int2cosmo.main" title="jobs.tools.ctnoaa4int2cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></p></li>
-<li><p><a class="reference internal" href="#jobs.tools.mozart2int2lm.main" title="jobs.tools.mozart2int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></p></li>
-<li><p><a class="reference internal" href="#jobs.tools.reduce_output_start_end.main" title="jobs.tools.reduce_output_start_end.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></p></li>
-<li><p><a class="reference internal" href="#jobs.tools.string2char.main" title="jobs.tools.string2char.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></p></li>
-<li><p><a class="reference internal" href="#jobs.tools.vprmsplit.main" title="jobs.tools.vprmsplit.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></p></li>
-<li><p><a class="reference internal" href="namelists.html#jobs.tools.write_cosmo_input_ghg.main" title="jobs.tools.write_cosmo_input_ghg.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></p></li>
-<li><p><a class="reference internal" href="namelists.html#jobs.tools.write_int2lm_input_art.main" title="jobs.tools.write_int2lm_input_art.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></p></li>
-</ul>
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.tools.cams4int2cosmo.main">
@@ -703,7 +714,7 @@ Processed files are stored as <code class="docutils literal notranslate"><span c
 <dd><p>Script to reduce output.</p>
 <p>Output: TODO</p>
 <section id="parameters-todo">
-<h3>Parameters (TODO)<a class="headerlink" href="#parameters-todo" title="Permalink to this heading"></a></h3>
+<h2>Parameters (TODO)<a class="headerlink" href="#parameters-todo" title="Permalink to this heading"></a></h2>
 <dl class="simple">
 <dt>opath<span class="classifier">str</span></dt><dd><p>Output path where the processed data is going to be written</p>
 </dd>
@@ -784,8 +795,6 @@ read by <strong>COSMO</strong>.</p>
 </dl>
 </dd></dl>
 
-<hr class="docutils" />
-</section>
 </section>
 
 
