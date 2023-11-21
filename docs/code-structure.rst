@@ -3,7 +3,7 @@
 Code Structure
 --------------
 
-The Processing Chain code is structured as follows:::
+The Processing Chain code is structured as follows::
 
     $ tree -L 3 -F --dirsfirst 
     .
