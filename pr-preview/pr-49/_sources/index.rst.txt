@@ -30,10 +30,16 @@ adding new jobs or custom scripts.
     config
     namelists
 
+
 .. toctree::
     :maxdepth: 2
     :caption: Jobs
 
     jobs
-    tools
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Function Reference
+
+    functions
 
