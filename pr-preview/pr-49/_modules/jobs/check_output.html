@@ -216,7 +216,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------	</span>
-<span class="sd">    cfg : config-object</span>
+<span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes</span>
 
 <span class="sd">    Returns</span>
@@ -236,7 +236,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------	</span>
-<span class="sd">    cfg : config-object</span>
+<span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes</span>
 
 <span class="sd">    Returns</span>
@@ -255,7 +255,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------	</span>
-<span class="sd">    cfg : config-object</span>
+<span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes</span>
 
 <span class="sd">    Returns</span>
@@ -358,7 +358,7 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------	</span>
-<span class="sd">    cfg : config-object</span>
+<span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes</span>
 <span class="sd">    units : dict</span>
 <span class="sd">        Dictionary containing units os variables</span>
@@ -532,7 +532,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------	</span>
-<span class="sd">    cfg : config-object</span>
+<span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes</span>
 
 <span class="sd">    Returns</span>
@@ -794,7 +794,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------	</span>
-<span class="sd">    cfg : config-object</span>
+<span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes</span>
 <span class="sd">    data: pandas.DataFrame</span>
 <span class="sd">        Dataframe containing diagnostic values for each variable</span>
@@ -818,7 +818,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------	</span>
-<span class="sd">    cfg : config-object</span>
+<span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data_path</span> <span class="o">=</span> <span class="n">pkl_path</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">output_root</span><span class="p">)</span>
@@ -860,7 +860,7 @@
 <span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes.</span>
 <span class="sd">    model_cfg : dict</span>
-<span class="sd">        Model configuration settings loaded from the models.yaml file.</span>
+<span class="sd">        Model configuration settings loaded from the ``config/models.yaml`` file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
 

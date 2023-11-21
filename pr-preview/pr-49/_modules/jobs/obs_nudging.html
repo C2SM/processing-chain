@@ -171,10 +171,10 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    cfg : config-object</span>
+<span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes.</span>
 <span class="sd">    model_cfg : dict</span>
-<span class="sd">        Model configuration settings loaded from the models.yaml file.</span>
+<span class="sd">        Model configuration settings loaded from the ``config/models.yaml`` file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_input</span><span class="p">,</span> <span class="s2">&quot;obs_nudging&quot;</span><span class="p">)</span>
     <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;obs nudging input&quot;</span><span class="p">)</span>
