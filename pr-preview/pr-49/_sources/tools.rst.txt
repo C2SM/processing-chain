@@ -9,15 +9,9 @@ a look into ``jobs/tools`` directly.
 
 * :func:`jobs.tools.cams4int2cosmo.main`
 * :func:`jobs.tools.check_model.main`
-* :func:`jobs.tools.comp_nc.main`
-* :func:`jobs.tools.constants.main`
+* :func:`jobs.tools.comp_nc.datasets_equal`
 * :func:`jobs.tools.ctnoaa4int2cosmo.main`
-* :func:`jobs.tools.fetch_external_data.main`
-* :func:`jobs.tools.helper.main`
-* :func:`jobs.tools.interpolate_data.main`
 * :func:`jobs.tools.mozart2int2lm.main`
-* :func:`jobs.tools.nc_operations.main`
-* :func:`jobs.tools.reduce_output_parallel.main`
 * :func:`jobs.tools.reduce_output_start_end.main`
 * :func:`jobs.tools.string2char.main`
 * :func:`jobs.tools.vprmsplit.main`
@@ -34,11 +28,7 @@ a look into ``jobs/tools`` directly.
 
 -------------------------------------------
 
-.. autofunction:: jobs.tools.comp_nc.main
-
--------------------------------------------
-
-.. autofunction:: jobs.tools.constants.main
+.. autofunction:: jobs.tools.comp_nc.datasets_equal
 
 -------------------------------------------
 
@@ -46,27 +36,7 @@ a look into ``jobs/tools`` directly.
 
 -------------------------------------------
 
-.. autofunction:: jobs.tools.fetch_external_data.main
-
--------------------------------------------
-
-.. autofunction:: jobs.tools.helper.main
-
--------------------------------------------
-
-.. autofunction:: jobs.tools.interpolate_data.main
-
--------------------------------------------
-
 .. autofunction:: jobs.tools.mozart2int2lm.main
-
--------------------------------------------
-
-.. autofunction:: jobs.tools.nc_operations.main
-
--------------------------------------------
-
-.. autofunction:: jobs.tools.reduce_output_parallel.main
 
 -------------------------------------------
 

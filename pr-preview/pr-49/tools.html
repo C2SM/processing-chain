@@ -106,6 +106,7 @@
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">List of Available Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.tools.cams4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.comp_nc.datasets_equal"><code class="docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.tools.ctnoaa4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.tools.mozart2int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.tools.reduce_output_start_end.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></li>
@@ -149,15 +150,9 @@ a look into <code class="docutils literal notranslate"><span class="pre">jobs/to
 <ul class="simple">
 <li><p><a class="reference internal" href="#jobs.tools.cams4int2cosmo.main" title="jobs.tools.cams4int2cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></p></li>
 <li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.check_model.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.constants.main()</span></code></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.comp_nc.datasets_equal" title="jobs.tools.comp_nc.datasets_equal"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.tools.ctnoaa4int2cosmo.main" title="jobs.tools.ctnoaa4int2cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.fetch_external_data.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.helper.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.interpolate_data.main()</span></code></p></li>
 <li><p><a class="reference internal" href="#jobs.tools.mozart2int2lm.main" title="jobs.tools.mozart2int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.nc_operations.main()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_parallel.main()</span></code></p></li>
 <li><p><a class="reference internal" href="#jobs.tools.reduce_output_start_end.main" title="jobs.tools.reduce_output_start_end.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.tools.string2char.main" title="jobs.tools.string2char.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.tools.vprmsplit.main" title="jobs.tools.vprmsplit.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></p></li>
@@ -216,7 +211,36 @@ otherwise the script should be invoked in the directory of the CAMS data.</p>
 
 <hr class="docutils" />
 <hr class="docutils" />
-<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.tools.comp_nc.datasets_equal">
+<span class="sig-prename descclassname"><span class="pre">jobs.tools.comp_nc.</span></span><span class="sig-name descname"><span class="pre">datasets_equal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/tools/comp_nc.html#datasets_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.tools.comp_nc.datasets_equal" title="Permalink to this definition"></a></dt>
+<dd><p>Compare the contents of dataset1 and dataset2</p>
+<p>Compare with numpy.isclose whether the two datasets are equal. No check for
+equality (of the values or bitwise of the files) is performed, as numerical
+errors can produce slightly different files for essentially identical
+computations. Rather, the values are compared to absolute and relative
+tolerances, check np.isclose documentation for more detail.</p>
+<p>If variables is not empty, only the provided variables are compared.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset1</strong> (<em>netCDF4.Dataset</em>) – </p></li>
+<li><p><strong>dataset2</strong> (<em>netCDF4.Dataset</em>) – </p></li>
+<li><p><strong>variables</strong> (<em>list</em><em> of </em><em>str</em>) – List of the variables to be compared. If it is empty, all variables
+are compared.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – If True, results will be printed to stdout.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the datasets, or if provided the selected variables, are equal,
+False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.tools.ctnoaa4int2cosmo.main">
@@ -235,9 +259,6 @@ compatible with int2lm</p>
 </dl>
 </dd></dl>
 
-<hr class="docutils" />
-<hr class="docutils" />
-<hr class="docutils" />
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.tools.mozart2int2lm.main">
@@ -259,8 +280,6 @@ Processed files are stored as <code class="docutils literal notranslate"><span c
 </dl>
 </dd></dl>
 
-<hr class="docutils" />
-<hr class="docutils" />
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.tools.reduce_output_start_end.main">
