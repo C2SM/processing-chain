@@ -98,7 +98,7 @@ run looks like this::
 	    │   ├── cfg.cosmo_work/
 	    │   ├── cfg.cosmo_output/
 	    │   ├── cfg.cosmo_restart_out/
-	    ├── cfg.int2lm_base/
+	    └── cfg.int2lm_base/
 	        ├── cfg.int2lm_input/
 	        ├── cfg.int2lm_work/
 	        └── cfg.int2lm_output/
