@@ -107,7 +107,6 @@ Header of ``config.yaml`` for the ``cosmo-ghg-spinup-test`` case
     constraint: gpu
     ntasks_per_node: 12
     restart_step: PT6H
-    variant: spinup
     spinup: 3
     startdate: 2015-01-01T00:00:00Z
     enddate: 2015-01-01T18:00:00Z
