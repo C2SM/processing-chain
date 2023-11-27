@@ -10,6 +10,7 @@ import time
 import shutil
 import argparse
 import yaml
+from pathlib import Path
 
 import jobs
 from jobs import tools
@@ -353,48 +354,33 @@ class Config():
                 key_type = type(key).__name__
                 print(f"{key:<{max_col_width}} {key_type:<4} {value}")
 
-    def convert_paths_to_absolute(self):
+    def convert_paths_to_absolute(self, dct=None):
         """Convert relative file paths to absolute paths in the configuration.
 
-        This method iterates through all variables and their dictionary entries in
-        the configuration and checks for string values that represent file paths.
-        If a file path is relative (starts with './'), it is converted to an
-        absolute path using `os.path.abspath`.
+        Recursively convert all strings starting with './' in the instance
+        attributes to absolute paths.
 
         Returns
         -------
         Config
             The same `Config` instance with relative file paths converted to absolute paths.
         """
-        # Loop through all variables and their dictionary entries
-        for attr_name, attr_value in self.__dict__.items():
-            if isinstance(attr_value, str):
-                if os.path.isabs(attr_value):
-                    # If the value is already an absolute path, continue to the next iteration
-                    continue
-                # Convert relative paths to absolute paths
-                if attr_value.startswith('./'):
-                    self.__dict__[attr_name] = os.path.abspath(attr_value)
-            elif isinstance(attr_value, dict):
-                # If the attribute is a dictionary, loop through its entries
-                for key, value in attr_value.items():
-                    if isinstance(value, str):
-                        if os.path.isabs(value):
-                            # If the value is already an absolute path, continue to the next iteration
-                            continue
-                        # Convert relative paths to absolute paths
-                        if value.startswith('./'):
-                            self.__dict__[attr_name][key] = os.path.abspath(
-                                value)
-
+        if dct is None:
+            self.convert_paths_to_absolute(dct=self.__dict__)
+        else:
+            for k, v in dct.items():
+                if isinstance(v, dict):
+                    self.convert_paths_to_absolute(dct=v)
+                elif isinstance(v, str) and v.startswith('./'):
+                    dct[k] = Path(v).absolute()
         return self
 
-    def create_vars_from_dicts(self):
+    def create_vars_from_dicts(self, dct=None, key=None):
         """Create instance attributes from dictionary entries in the configuration.
 
-        This method iterates through the instance's attribute dictionary and checks
-        for dictionary values. For each dictionary encountered, it creates new
-        instance attributes by concatenating the original attribute name and the
+        This method recursively iterates through the instance's attribute dictionary
+        and checks for dictionary values. For each dictionary encountered, it creates
+        new instance attributes by concatenating the original attribute name and the
         dictionary key, and assigns the corresponding values.
 
         Returns
@@ -402,13 +388,16 @@ class Config():
         Config
             The same `Config` instance with new attributes created from dictionary entries.
         """
-        # Create a copy of the object's __dict__ to avoid modifying it during iteration
-        object_dict = vars(self).copy()
 
-        for key, value in object_dict.items():
-            if isinstance(value, dict):
-                for sub_key, sub_value in value.items():
-                    setattr(self, key + '_' + sub_key, sub_value)
+        if dct is None:
+            self.create_vars_from_dicts(dct=self.__dict__.copy())
+        else:
+            for k, v in dct.items():
+                subkey = k if key is None else key + '_' + k
+                if isinstance(v, dict):
+                    self.create_vars_from_dicts(dct=v, key=subkey)
+                else:
+                    setattr(self, subkey, v)
         return self
 
 
