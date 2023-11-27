@@ -17,7 +17,7 @@ import subprocess
 from . import tools, prepare_data
 
 
-def main(cfg, model_cfg):
+def main(cfg, model_cfg, wait=True, dependencies=None):
     """Setup the namelists for an **ICON** tracer run and submit the job to
     the queue
 
@@ -88,16 +88,30 @@ def main(cfg, model_cfg):
                             logfile=logfile,
                             logfile_finish=logfile_finish))
 
-    result = subprocess.run(
-        ["sbatch", "--wait",
-         os.path.join(cfg.icon_work, 'run_icon.job')])
-    exitcode = result.returncode
+    # Submit run script
+    sbatch_cmd = ['sbatch', '--parsable']
+    if wait:
+        sbatch_cmd.append('--wait')
+    if dependencies:
+        dep_str = ':'.join(map(str, dependencies))
+        sbatch_cmd.append(f'--dependency=afterok:{dep_str}')
+    sbatch_cmd.append(os.path.join(cfg.icon_work, 'run_icon.job'))
+        
+    result = subprocess.run(sbatch_cmd, capture_output=True)
+    job_id = int(result.stdout)
 
-    # In case of ICON-ART, ignore the "invalid pointer" error on successful run
-    if cfg.model.startswith('icon-art'):
-        if tools.grep("free(): invalid pointer", logfile)['success'] and \
-           tools.grep("clean-up finished", logfile)['success']:
-            exitcode = 0
+    # Anything hapenning after submission only makes sense in sequential mode
+    if wait:
+        exitcode = result.returncode
 
-    if exitcode != 0:
-        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+        # In case of ICON-ART, ignore the "invalid pointer" error on successful run
+        if cfg.model.startswith('icon-art'):
+            if tools.grep("free(): invalid pointer", logfile)['success'] and \
+               tools.grep("clean-up finished", logfile)['success']:
+                exitcode = 0
+
+        if exitcode != 0:
+            raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+
+    # Return a tupple of submitted jobs id (only 1 in this case)
+    return job_id,
