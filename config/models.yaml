@@ -13,6 +13,12 @@ models:
     icon:
         jobs: ['prepare_data', 'icon']
         features: ['restart']
+        dependencies:
+            icon:
+                current: 'prepare_data'
+                previous: 'icon'
+            prepare_data:
+                previous: 'prepare_data'
     icon-art:
         jobs: ['prepare_data', 'icon']
         features: ['restart']

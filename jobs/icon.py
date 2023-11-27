@@ -17,7 +17,7 @@ import subprocess
 from . import tools, prepare_data
 
 
-def main(cfg, model_cfg, wait=True, dependencies=None):
+def main(cfg, model_cfg):
     """Setup the namelists for an **ICON** tracer run and submit the job to
     the queue
 
@@ -90,15 +90,23 @@ def main(cfg, model_cfg, wait=True, dependencies=None):
 
     # Submit run script
     sbatch_cmd = ['sbatch', '--parsable']
-    if wait:
+
+    if dep_dict := model_cfg['models'][cfg.model].get('dependencies'):
+        if (deps_icon := dep_dict.get('icon')):
+            deps_ids = []
+            for stage in 'previous', 'current':
+                if dep_current := deps_icon.get(stage):
+                    for job in dep_current:
+                        deps_ids.extend(cfg.job_ids[stage][job])
+            dep_str = ':'.join(map(str, deps_ids))
+            sbatch_cmd.append(f'--dependency=afterok:{dep_str}')
+    else:
         sbatch_cmd.append('--wait')
-    if dependencies:
-        dep_str = ':'.join(map(str, dependencies))
-        sbatch_cmd.append(f'--dependency=afterok:{dep_str}')
+        
     sbatch_cmd.append(os.path.join(cfg.icon_work, 'run_icon.job'))
         
     result = subprocess.run(sbatch_cmd, capture_output=True)
-    job_id = int(result.stdout)
+    cfg.job_ids['current']['icon'] = int(result.stdout),
 
     # Anything hapenning after submission only makes sense in sequential mode
     if wait:
@@ -112,6 +120,3 @@ def main(cfg, model_cfg, wait=True, dependencies=None):
 
         if exitcode != 0:
             raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
-
-    # Return a tupple of submitted jobs id (only 1 in this case)
-    return job_id,

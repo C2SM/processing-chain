@@ -138,6 +138,8 @@ class Config():
         # Specific settings based on the node type ('gpu' or 'mc')
         self.set_node_info()
 
+        self.job_ids = {'current': {}, 'previous': {}}
+
     def load_config_file(self, casename):
         """Load configuration settings from a YAML file and set them as attributes.
 
