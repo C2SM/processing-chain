@@ -102,9 +102,9 @@ def main(cfg, model_cfg):
             sbatch_cmd.append(f'--dependency=afterok:{dep_str}')
     else:
         sbatch_cmd.append('--wait')
-        
+
     sbatch_cmd.append(os.path.join(cfg.icon_work, 'run_icon.job'))
-        
+
     result = subprocess.run(sbatch_cmd, capture_output=True)
     cfg.job_ids['current']['icon'] = int(result.stdout),
 
