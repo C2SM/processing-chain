@@ -128,10 +128,9 @@ class Config():
         self.casename = casename
         self.set_account()
 
-        self.chain_src_dir = os.getcwd()
-        self.case_path = os.path.join(self.chain_src_dir, 'cases',
-                                      self.casename)
-        self.work_root = os.path.join(self.chain_src_dir, 'work')
+        self.chain_src_dir = Path.cwd()
+        self.case_path = self.chain_src_dir / 'cases' / casename
+        self.work_root = self.chain_src_dir / 'work'
 
         # User-defined attributes from config file
         self.load_config_file(casename)
@@ -167,9 +166,9 @@ class Config():
         existing case directories. The method directly assigns values from the
         configuration file to instance attributes for easy access.
         """
-        cfg_file = os.path.join('cases', casename, 'config.yaml')
+        cfg_file = Path('cases', casename, 'config.yaml').resolve()
 
-        if not os.path.isfile(cfg_file):
+        if not cfg_file.is_file():
             all_cases = [
                 path.name for path in os.scandir('cases') if path.is_dir()
             ]
@@ -181,11 +180,11 @@ class Config():
             )
 
         try:
-            with open(cfg_file, 'r') as yaml_file:
+            with cfg_file.open('r') as yaml_file:
                 cfg_data = yaml.load(yaml_file, Loader=yaml.FullLoader)
         except FileNotFoundError:
             raise FileNotFoundError(
-                f"No file 'config.yaml' in {os.path.dirname(cfg_file)}")
+                f"No file 'config.yaml' in {cfg_file.parent}")
 
         # Directly assign values to instance attributes
         for key, value in cfg_data.items():
@@ -216,9 +215,9 @@ class Config():
         if self.user_name == 'jenkins':
             # g110 account for Jenkins testing
             self.compute_account = 'g110'
-        elif os.path.exists(os.environ['HOME'] + '/.acct'):
+        elif (p := Path.home() / '.acct').exists():
             # Use account specified in ~/.acct file
-            with open(os.environ['HOME'] + '/.acct', 'r') as file:
+            with p.open('r') as file:
                 self.compute_account = file.read().rstrip()
         else:
             # Use standard account
@@ -305,8 +304,8 @@ class Config():
         """
         if self.user_name == 'jenkins':
             self.user_mail = None
-        elif os.path.exists(os.environ['HOME'] + '/.forward'):
-            with open(os.environ['HOME'] + '/.forward', 'r') as file:
+        elif (p := Path.home() / '.forward').exists():
+            with p.open('r') as file:
                 self.user_mail = file.read().rstrip()
         else:
             self.user_mail = None
