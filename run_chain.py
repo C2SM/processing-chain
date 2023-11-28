@@ -257,7 +257,7 @@ class Config():
             If the 'constraint' or 'run_on' configuration values are invalid.
         """
         if self.constraint == 'gpu':
-            if self.model.startswith('icon'):
+            if self.workflow_name.startswith('icon'):
                 if self.run_on == 'gpu':
                     self.ntasks_per_node = 1
                 elif self.run_on == 'cpu':
