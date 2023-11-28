@@ -10,6 +10,7 @@ import time
 import shutil
 import argparse
 import yaml
+import subprocess
 
 import jobs
 from jobs import tools
@@ -425,34 +426,52 @@ class Config():
                     setattr(self, key + '_' + sub_key, sub_value)
         return self
 
-    def get_dep_cmd(self, job_name):
-        """Generate the part of the sbatch command that sepcifies dependencies for job_name.
-
-        Returns
-        -------
-        str
-            The relevant part of the sbatch command, can be None
-        """
-
+    def get_dep_ids(self, job_name):
+        """Get dependency job ids for `job_name`"""
+        
+        deps_ids = []
         if self.async:
-            # async case
-            if deps := dep_dict.get(job_name):
-                # job_name has dependencies
-                deps_ids = []
-                # Get job ids of previous and current dependencies
+            if deps := self.workflow['dependencies'].get(job_name):
                 for stage in 'previous', 'current':
                     if dep_stage := deps.get(stage):
                         for job in dep_stage:
-                            deps_ids.extend(self.job_ids[stage][job])
+                            if dep_id := self.job_ids[stage].get(job):
+                                deps_ids.extend(dep_id)
+        return dep_ids
+    
+    def get_dep_cmd(self, job_name):
+        """Generate the part of the sbatch command that sepcifies dependencies for job_name."""
+
+        if self.async:
+            # async case
+            if dep_ids := self.get_dep_ids(job_name):
                 dep_str = ':'.join(map(str, deps_ids))
                 return f'--dependency=afterok:{dep_str}'
             else:
                 # job_name has no dependencies but still belongs to an async workflow
                 # so don't use --wait
-                return 'None
+                return None
         else:
             # sequential case
             return '--wait'
+
+    def wait_for_previous(self):
+        """wait for all jobs of the previous stage to be finished
+
+        Do this by submitting a fake job depending on all jobs from the 'previous' stage.
+        """
+
+        dep_ids = []
+        for ids in self.job_ids['previous'].values():
+            dep_ids.extend(ids)
+        if dep_ids:
+            job_file = 'submit.wait.slurm'
+            with open(job_file, mode='w') as wait_job:
+                wait_job.write("""#!/bin/bash\n#Do nothing\nexit 0""")
+            
+            suprocess.run(['sbatch', '-W', '--nodes=1', '--job-name=wait',
+                           f'--account={self.compute_account}', job_file],
+                          check=True)
 
 
 def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names,
