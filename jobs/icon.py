@@ -17,7 +17,7 @@ import subprocess
 from . import tools, prepare_data
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Setup the namelists for an **ICON** tracer run and submit the job to
     the queue
 
@@ -49,7 +49,7 @@ def main(cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
+    cfg = prepare_data.set_cfg_variables(cfg)
 
     logfile = os.path.join(cfg.log_working_dir, "icon")
     logfile_finish = os.path.join(cfg.log_finished_dir, "icon")
@@ -90,30 +90,19 @@ def main(cfg, model_cfg):
 
     # Submit run script
     sbatch_cmd = ['sbatch', '--parsable']
-
-    if dep_dict := model_cfg['models'][cfg.model].get('dependencies'):
-        if (deps_icon := dep_dict.get('icon')):
-            deps_ids = []
-            for stage in 'previous', 'current':
-                if dep_current := deps_icon.get(stage):
-                    for job in dep_current:
-                        deps_ids.extend(cfg.job_ids[stage][job])
-            dep_str = ':'.join(map(str, deps_ids))
-            sbatch_cmd.append(f'--dependency=afterok:{dep_str}')
-    else:
-        sbatch_cmd.append('--wait')
-        
+    if dep_cmd := cfg.get_dep_cmd('icon'):
+        sbatch_cmd.append(dep_cmd)
     sbatch_cmd.append(os.path.join(cfg.icon_work, 'run_icon.job'))
         
     result = subprocess.run(sbatch_cmd, capture_output=True)
     cfg.job_ids['current']['icon'] = int(result.stdout),
 
     # Anything hapenning after submission only makes sense in sequential mode
-    if wait:
+    if not cfg.async:
         exitcode = result.returncode
 
         # In case of ICON-ART, ignore the "invalid pointer" error on successful run
-        if cfg.model.startswith('icon-art'):
+        if cfg.workflow_name.startswith('icon-art'):
             if tools.grep("free(): invalid pointer", logfile)['success'] and \
                tools.grep("clean-up finished", logfile)['success']:
                 exitcode = 0

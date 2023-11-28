@@ -37,12 +37,12 @@ from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 from calendar import monthrange
 
 
-def set_cfg_variables(cfg, model_cfg):
+def set_cfg_variables(cfg):
     # TODO: Change setattr() to direct assignment
-    if cfg.model.startswith('cosmo'):
+    if cfg.workflow_name.startswith('cosmo'):
         setattr(cfg, 'int2lm_root', os.path.join(cfg.chain_root, 'int2lm'))
         setattr(cfg, 'int2lm_input', os.path.join(cfg.int2lm_root, 'input'))
-    elif cfg.model.startswith('icon'):
+    elif cfg.workflow_name.startswith('icon'):
         setattr(cfg, 'icon_base', os.path.join(cfg.chain_root, 'icon'))
         setattr(cfg, 'icon_input', os.path.join(cfg.chain_root, 'icon',
                                                 'input'))
@@ -69,11 +69,11 @@ def set_cfg_variables(cfg, model_cfg):
         cfg.ini_datetime_string = cfg.startdate.strftime('%Y-%m-%dT%H:00:00Z')
         cfg.end_datetime_string = cfg.enddate.strftime('%Y-%m-%dT%H:00:00Z')
 
-        if cfg.model == 'icon-art-oem':
+        if cfg.workflow_name == 'icon-art-oem':
             cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime(
                 '%Y%m%d_%H')
 
-        if cfg.model == 'icon-art-global':
+        if cfg.workflow_name == 'icon-art-global':
             # Nudge type (global or nothing)
             cfg.nudge_type = 2 if cfg.era5_global_nudging else 0
             # Time step for global nudging in seconds
@@ -91,7 +91,7 @@ def set_cfg_variables(cfg, model_cfg):
     return cfg
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """
     **ICON** 
 
@@ -131,9 +131,9 @@ def main(cfg, model_cfg):
         Object holding all user-configuration parameters as attributes
     """
 
-    cfg = set_cfg_variables(cfg, model_cfg)
+    cfg = set_cfg_variables(cfg)
 
-    if cfg.model.startswith('icon'):
+    if cfg.workflow_name.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
 
         #-----------------------------------------------------
@@ -153,7 +153,7 @@ def main(cfg, model_cfg):
                             cfg.input_files_scratch[varname],
                             output_log=True)
 
-        if cfg.model == 'icon-art-global':
+        if cfg.workflow_name == 'icon-art-global':
             # -- Download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
                 # -- Fetch ERA5 data
@@ -325,7 +325,7 @@ def main(cfg, model_cfg):
                 meteo_file = os.path.join(
                     cfg.icon_input_icbc, cfg.meteo['prefix'] +
                     time.strftime(cfg.meteo['nameformat']))
-                if cfg.model == 'icon-art' or cfg.model == 'icon-art-oem':
+                if cfg.workflow_name == 'icon-art' or cfg.workflow_name == 'icon-art-oem':
                     chem_file = os.path.join(
                         cfg.icon_input_icbc, cfg.chem['prefix'] +
                         time.strftime(cfg.chem_nameformat))
@@ -418,7 +418,7 @@ def main(cfg, model_cfg):
             #-----------------------------------------------------
             # Add Q (copy of QV) and/or PS to initial file
             #-----------------------------------------------------
-            if cfg.model.startswith('icon-art'):
+            if cfg.workflow_name.startswith('icon-art'):
                 meteo_file = os.path.join(
                     cfg.icon_input_icbc,
                     cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
@@ -456,7 +456,7 @@ def main(cfg, model_cfg):
             #-----------------------------------------------------
             # In case of OEM: merge chem tracers with meteo-files
             #-----------------------------------------------------
-            if cfg.model == 'icon-art-oem':
+            if cfg.workflow_name == 'icon-art-oem':
                 for time in tools.iter_hours(cfg.startdate_sim,
                                              cfg.enddate_sim,
                                              cfg.meteo['inc']):
@@ -625,7 +625,7 @@ def main(cfg, model_cfg):
 
         # Other IC/BC data
         inv_to_process = []
-        if cfg.model == 'cosmo-ghg':
+        if cfg.workflow_name == 'cosmo-ghg':
             try:
                 CAMS = dict(fullname="CAMS",
                             nickname="cams",
@@ -649,7 +649,7 @@ def main(cfg, model_cfg):
                 inv_to_process.append(CT)
             except AttributeError:
                 pass
-        elif cfg.model == 'cosmo-art':
+        elif cfg.workflow_name == 'cosmo-art':
             try:
                 MOZART = dict(fullname='MOZART',
                               nickname='mozart',
@@ -664,7 +664,7 @@ def main(cfg, model_cfg):
             except AttributeError:
                 pass
 
-        if cfg.model == 'cosmo-ghg' or cfg.model == 'cosmo-art':
+        if cfg.workflow_name == 'cosmo-ghg' or cfg.workflow_name == 'cosmo-art':
             logging.info("Processing " +
                          ", ".join([i["fullname"]
                                     for i in inv_to_process]) + " data")

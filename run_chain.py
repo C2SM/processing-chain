@@ -44,7 +44,7 @@ def parse_arguments():
                  "Jobs are executed in the order in which they are "
                  "given here. "
                  "If no jobs are given, default jobs will be executed"
-                 "as defined in config/models.yaml.")
+                 "as defined in config/workflows.yaml.")
     parser.add_argument("-j",
                         "--jobs",
                         nargs='*',
@@ -138,6 +138,15 @@ class Config():
         # Specific settings based on the node type ('gpu' or 'mc')
         self.set_node_info()
 
+        # Set workflow
+        with open('config/workflows.yaml') as file:
+            workflows = yaml.safe_load(file)
+        self.workflow = workflows[self.workflow_name]
+
+        # Set if async
+        self.async = 'dependencies' in self.workflow
+        
+        # Initiate empty job ids dictionnary so that it can be filled in later
         self.job_ids = {'current': {}, 'previous': {}}
 
     def load_config_file(self, casename):
@@ -191,6 +200,9 @@ class Config():
         # Directly assign values to instance attributes
         for key, value in cfg_data.items():
             setattr(self, key, value)
+
+        # rename the workflow attribute to avoid name clash
+        self.workflow_name = self.workflow
 
         return self
 
@@ -413,8 +425,37 @@ class Config():
                     setattr(self, key + '_' + sub_key, sub_value)
         return self
 
+    def get_dep_cmd(self, job_name):
+        """Generate the part of the sbatch command that sepcifies dependencies for job_name.
 
-def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
+        Returns
+        -------
+        str
+            The relevant part of the sbatch command, can be None
+        """
+
+        if self.async:
+            # async case
+            if deps := dep_dict.get(job_name):
+                # job_name has dependencies
+                deps_ids = []
+                # Get job ids of previous and current dependencies
+                for stage in 'previous', 'current':
+                    if dep_stage := deps.get(stage):
+                        for job in dep_stage:
+                            deps_ids.extend(self.job_ids[stage][job])
+                dep_str = ':'.join(map(str, deps_ids))
+                return f'--dependency=afterok:{dep_str}'
+            else:
+                # job_name has no dependencies but still belongs to an async workflow
+                # so don't use --wait
+                return 'None
+        else:
+            # sequential case
+            return '--wait'
+
+
+def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names,
               force, resume):
     """Run the processing chain, managing job execution and logging.
 
@@ -425,8 +466,6 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
     ----------
     work_root : str
         The path to the directory where the processing chain writes files during execution.
-    model_cfg : dict
-        Configuration settings for the modeling framework.
     cfg : Config
         Object holding user-defined configuration parameters as attributes.
     startdate_sim : datetime-object
@@ -496,7 +535,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         # No restart for spinup simulations (= default values for no restart)
         cfg.cosmo_restart_out = ''
         cfg.cosmo_restart_in = ''
-    elif 'restart' in model_cfg['models'][cfg.model]['features']:
+    elif 'restart' in cfg.workflow['features']:
         cfg.startdate_sim_prev = cfg.startdate_sim - timedelta(
             hours=cfg.restart_step_hours)
         cfg.enddate_sim_prev = cfg.enddate_sim - timedelta(
@@ -522,8 +561,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
                                                  "gpu or mc")
 
     # If nested run: use output of mother-simulation
-    if 'nesting' in model_cfg['models'][
-            cfg.model]['features'] and not os.path.isdir(cfg.meteo.dir):
+    if 'nesting' in cfg.workflow['features'] and not os.path.isdir(cfg.meteo.dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
         mother_name = cfg.meteo.dir
@@ -592,7 +630,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
 
                     # Launch the job
                     to_call = getattr(jobs, job)
-                    to_call.main(cfg, model_cfg)
+                    to_call.main(cfg)
 
                     shutil.copy(logfile, logfile_finish)
 
@@ -622,7 +660,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
                 raise RuntimeError(subject)
 
 
-def restart_runs(work_root, model_cfg, cfg, job_names, force, resume):
+def restart_runs(work_root, cfg, job_names, force, resume):
     """Start subchains in specified intervals and manage restarts.
 
     This function slices the total runtime of the processing chain according to the
@@ -633,8 +671,6 @@ def restart_runs(work_root, model_cfg, cfg, job_names, force, resume):
     ----------
     work_root : str
         The path to the directory in which the chain writes files during execution.
-    model_cfg : dict
-        Configuration settings for the modeling framework.
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     job_names : list of str
@@ -666,7 +702,6 @@ def restart_runs(work_root, model_cfg, cfg, job_names, force, resume):
         print("Starting run with startdate {}".format(startdate_sim))
 
         run_chain(work_root=work_root,
-                  model_cfg=model_cfg,
                   cfg=cfg,
                   startdate_sim=startdate_sim,
                   enddate_sim=enddate_sim,
@@ -675,7 +710,7 @@ def restart_runs(work_root, model_cfg, cfg, job_names, force, resume):
                   resume=resume)
 
 
-def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force, resume):
+def restart_runs_spinup(work_root, cfg, job_names, force, resume):
     """Start subchains in specified intervals and manage restarts with spin-up.
 
     This function slices the total runtime of the processing chain according to the
@@ -686,8 +721,6 @@ def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force, resume):
     ----------
     work_root : str
         The path to the directory in which the chain writes files during execution.
-    model_cfg : dict
-        Configuration settings for the modeling framework.
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     job_names : list of str
@@ -732,31 +765,12 @@ def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force, resume):
         print(f'Runtime of sub-simulation: {run_time} h')
 
         run_chain(work_root=work_root,
-                  model_cfg=model_cfg,
                   cfg=cfg,
                   startdate_sim=startdate_sim_spinup,
                   enddate_sim=enddate_sim,
                   job_names=job_names,
                   force=force,
                   resume=resume)
-
-
-def load_model_config_yaml(yamlfile):
-    """Load model configuration from a YAML file.
-
-    Parameters
-    ----------
-    yamlfile : str
-        The path to the YAML file containing the model configuration.
-
-    Returns
-    -------
-    dict
-        A dictionary representing the model configuration loaded from the YAML file.
-    """
-    with open(yamlfile) as file:
-        model_cfg = yaml.safe_load(file)
-    return model_cfg
 
 
 if __name__ == '__main__':
@@ -778,7 +792,6 @@ if __name__ == '__main__':
 
     for casename in args.casenames:
         # Load configs
-        model_cfg = load_model_config_yaml('config/models.yaml')
         cfg = Config(casename)
 
         # Convert relative to absolute paths
@@ -797,16 +810,15 @@ if __name__ == '__main__':
 
         # Check if jobs are set or if default ones are used
         if args.job_list is None:
-            args.job_list = model_cfg['models'][cfg.model]['jobs']
+            args.job_list = cfg.workflow['jobs']
 
-        print(f"Starting chain for case {casename} and model {cfg.model}")
+        print(f"Starting chain for case {casename} and workflow {cfg.workflow_name}")
 
         # Check for restart compatibility and spinup
-        if 'restart' in model_cfg['models'][cfg.model]['features']:
+        if 'restart' in cfg.workflow['features']:
             if hasattr(cfg, 'spinup'):
                 print("Using spin-up restarts.")
                 restart_runs_spinup(work_root=cfg.work_root,
-                                    model_cfg=model_cfg,
                                     cfg=cfg,
                                     job_names=args.job_list,
                                     force=args.force,
@@ -814,7 +826,6 @@ if __name__ == '__main__':
             else:
                 print("Using built-in model restarts.")
                 restart_runs(work_root=cfg.work_root,
-                             model_cfg=model_cfg,
                              cfg=cfg,
                              job_names=args.job_list,
                              force=args.force,

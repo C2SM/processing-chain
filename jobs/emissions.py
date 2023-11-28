@@ -20,7 +20,7 @@ import logging
 from . import tools, prepare_data
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Copy emission files to the **int2lm** input directory.
 
     Necessary for both **COSMO** and **COSMOART** simulations.
@@ -49,7 +49,7 @@ def main(cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
+    cfg = prepare_data.set_cfg_variables(cfg)
     dest_prefix = "emis_"
 
     if not isinstance(cfg.emissions['dir'], list):
@@ -84,5 +84,5 @@ def main(cfg, model_cfg):
 
             # convert grid_mapping_name from string (NF90_STRING) to char
             # (NF90_CHAR) (needed for int2lm to work)
-            if cfg.model.startswith('cosmo'):
+            if cfg.workflow_name.startswith('cosmo'):
                 tools.string2char.main(dest_path)

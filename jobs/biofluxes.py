@@ -19,7 +19,7 @@ import logging
 from . import tools, prepare_data
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Prepare the biofluxes-files for the simulation.
 
     Only necessary for **COSMO** simulations.
@@ -33,7 +33,7 @@ def main(cfg, model_cfg):
         Object holding all user-configuration parameters as attributes
     """
     tools.check_model(cfg, 'cosmo-ghg')
-    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
+    cfg = prepare_data.set_cfg_variables(cfg)
 
     scratch_path = os.path.join(cfg.int2lm_input, 'vprm')
 

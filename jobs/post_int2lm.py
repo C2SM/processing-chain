@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from . import tools, int2lm
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Combine multiple **int2lm** tracer-output files into a single one for
     **COSMO**.
 
@@ -28,7 +28,7 @@ def main(cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = int2lm.set_cfg_variables(cfg, model_cfg)
+    cfg = int2lm.set_cfg_variables(cfg)
 
     # Int2lm processing always starts at hstart=0, thus modifying inidate
     inidate_int2lm_yyyymmddhh = cfg.startdate_sim_yyyymmddhh

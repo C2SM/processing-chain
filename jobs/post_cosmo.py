@@ -49,7 +49,7 @@ def runscript_commands_template():
     ])
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Copy the output of a **COSMO**-run to a user-defined position.
 
     Write a runscript to copy all files (**COSMO** settings & output,
@@ -67,8 +67,8 @@ def main(cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = int2lm.set_cfg_variables(cfg, model_cfg)
-    cfg = cosmo.set_cfg_variables(cfg, model_cfg)
+    cfg = int2lm.set_cfg_variables(cfg)
+    cfg = cosmo.set_cfg_variables(cfg)
 
     logfile = os.path.join(cfg.log_working_dir, "post_cosmo")
     cosmo_run_dir = cfg.cosmo_run
