@@ -145,8 +145,8 @@ class Config():
         self.workflow = workflows[self.workflow_name]
 
         # Set if async
-        self.async = 'dependencies' in self.workflow
-        
+        self. async = 'dependencies' in self.workflow
+
         # Initiate empty job ids dictionnary so that it can be filled in later
         self.job_ids = {'current': {}, 'previous': {}}
 
@@ -428,9 +428,9 @@ class Config():
 
     def get_dep_ids(self, job_name):
         """Get dependency job ids for `job_name`"""
-        
+
         deps_ids = []
-        if self.async:
+        if self. async:
             if deps := self.workflow['dependencies'].get(job_name):
                 for stage in 'previous', 'current':
                     if dep_stage := deps.get(stage):
@@ -438,11 +438,11 @@ class Config():
                             if dep_id := self.job_ids[stage].get(job):
                                 deps_ids.extend(dep_id)
         return dep_ids
-    
+
     def get_dep_cmd(self, job_name):
         """Generate the part of the sbatch command that sepcifies dependencies for job_name."""
 
-        if self.async:
+        if self. async:
             # async case
             if dep_ids := self.get_dep_ids(job_name):
                 dep_str = ':'.join(map(str, deps_ids))
@@ -468,14 +468,16 @@ class Config():
             job_file = 'submit.wait.slurm'
             with open(job_file, mode='w') as wait_job:
                 wait_job.write("""#!/bin/bash\n#Do nothing\nexit 0""")
-            
-            suprocess.run(['sbatch', '-W', '--nodes=1', '--job-name=wait',
-                           f'--account={self.compute_account}', job_file],
+
+            suprocess.run([
+                'sbatch', '-W', '--nodes=1', '--job-name=wait',
+                f'--account={self.compute_account}', job_file
+            ],
                           check=True)
 
 
-def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names,
-              force, resume):
+def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
+              resume):
     """Run the processing chain, managing job execution and logging.
 
     This function sets up and manages the execution of a processing chain, handling
@@ -580,7 +582,8 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names,
                                                  "gpu or mc")
 
     # If nested run: use output of mother-simulation
-    if 'nesting' in cfg.workflow['features'] and not os.path.isdir(cfg.meteo.dir):
+    if 'nesting' in cfg.workflow['features'] and not os.path.isdir(
+            cfg.meteo.dir):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
         mother_name = cfg.meteo.dir
@@ -831,7 +834,9 @@ if __name__ == '__main__':
         if args.job_list is None:
             args.job_list = cfg.workflow['jobs']
 
-        print(f"Starting chain for case {casename} and workflow {cfg.workflow_name}")
+        print(
+            f"Starting chain for case {casename} and workflow {cfg.workflow_name}"
+        )
 
         # Check for restart compatibility and spinup
         if 'restart' in cfg.workflow['features']:
