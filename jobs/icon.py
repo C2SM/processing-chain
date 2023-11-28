@@ -93,7 +93,7 @@ def main(cfg):
     if dep_cmd := cfg.get_dep_cmd('icon'):
         sbatch_cmd.append(dep_cmd)
     sbatch_cmd.append(os.path.join(cfg.icon_work, 'run_icon.job'))
-        
+
     result = subprocess.run(sbatch_cmd, capture_output=True)
     cfg.job_ids['current']['icon'] = int(result.stdout),
 
