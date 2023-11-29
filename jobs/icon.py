@@ -98,7 +98,7 @@ def main(cfg):
     cfg.job_ids['current']['icon'] = int(result.stdout),
 
     # Anything hapenning after submission only makes sense in sequential mode
-    if not cfg.async:
+    if not cfg. async:
         exitcode = result.returncode
 
         # In case of ICON-ART, ignore the "invalid pointer" error on successful run
