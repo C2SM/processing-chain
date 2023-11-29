@@ -12,11 +12,17 @@
 import os
 import sys
 
+sys.path.insert(0, os.path.abspath('..'))  # Root directory
+sys.path.insert(0, os.path.abspath('../jobs'))  # Jobs subfolder
+sys.path.insert(0, os.path.abspath('../jobs/tools'))  # Tools subfolder
+
 # -- Project information ------------------------------------------------
 
 project = 'Processing Chain'
 copyright = '2018-2023, C2SM'
 author = 'Processing Chain Administrators'
+version = 'v3.1'
+release = 'v3.1'
 
 # -- General configuration ------------------------------------------------
 
@@ -24,10 +30,14 @@ author = 'Processing Chain Administrators'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autosectionlabel', 'sphinx.ext.todo', 'sphinx_rtd_theme',
-    'sphinx_copybutton', 'sphinx.ext.mathjax', 'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode', 'sphinx.ext.napoleon'
+    'sphinx.ext.autodoc', 'sphinx.ext.autosectionlabel', 'sphinx.ext.todo',
+    'sphinx_rtd_theme', 'sphinx_copybutton', 'sphinx.ext.mathjax',
+    'sphinx.ext.ifconfig', 'sphinx.ext.viewcode', 'sphinx.ext.napoleon'
 ]
+
+# autodoc options
+autodoc_member_order = 'bysource'
+toc_object_entries_show_parents = 'all'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -55,8 +65,10 @@ html_theme = 'sphinx_rtd_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
+html_logo = '_static/processing-chain-logo-small.png'
+html_favicon = '_static/processing-chain-favicon.ico'
 html_theme_options = {
-    'logo_only': False,
+    'logo_only': True,
     'display_version': True,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
@@ -65,7 +77,7 @@ html_theme_options = {
     # Toc options
     'collapse_navigation': False,
     'sticky_navigation': True,
-    'navigation_depth': 4,
+    'navigation_depth': 2,
     'includehidden': True,
     'titles_only': False
 }

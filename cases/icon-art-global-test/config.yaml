@@ -59,7 +59,7 @@ input_files:
     pntSrc_xml_filename: ./input/icon-art-global/config/point-sources.xml
 
 icon:
-    binary_file: ./src/icon-art/bin/icon
+    binary_file: ./ext/icon-art/bin/icon
     runjob_filename: icon_runjob.cfg
     era5_inijob: icon_era5_inicond.sh
     era5_nudgingjob: icon_era5_nudging.sh

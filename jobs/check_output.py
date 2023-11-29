@@ -69,7 +69,7 @@ def timeseries_path(cfg):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
 
     Returns
@@ -89,7 +89,7 @@ def maps_path(cfg):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
 
     Returns
@@ -108,7 +108,7 @@ def animations_path(cfg):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
 
     Returns
@@ -211,7 +211,7 @@ def plot_timeseries(cfg, units):
     
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
     units : dict
         Dictionary containing units os variables
@@ -385,7 +385,7 @@ def merge_data(cfg):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
 
     Returns
@@ -647,7 +647,7 @@ def create_map_directories(cfg, data, units):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
     data: pandas.DataFrame
         Dataframe containing diagnostic values for each variable
@@ -671,7 +671,7 @@ def create_animations(cfg):
 
     Parameters
     ----------	
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
     """
     data_path = pkl_path(cfg.output_root)
@@ -700,18 +700,20 @@ def create_animations(cfg):
 
 
 def main(cfg, model_cfg):
-    """Checks output variables whether they are in a phyiscally reasonable
-    range.
+    """Check output variables for physical reasonability and create plots.
 
-    Stores the time series of the minimum, the maximum, the mean, and
-    the std of the variables as a pandas object into a pickle file.
+    This function checks the output variables to ensure they are in a physically
+    reasonable range. It stores the time series of the minimum, maximum, mean, and
+    standard deviation of the variables as a pandas object into a pickle file.
 
-    Creates per-variable plots from the stored time series data.
+    It also creates per-variable plots from the stored time series data.
 
     Parameters
-    ----------	
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    ----------
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     date = dt.datetime.today()
 

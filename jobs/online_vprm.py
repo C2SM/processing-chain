@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
 
 import os
 import logging
@@ -9,21 +8,16 @@ from . import tools
 
 
 def main(cfg, model_cfg):
-    """Copy MODIS surface reflectance data and vegatation class fraction file
+    """Copy MODIS surface reflectance data and vegetation class fraction file
     to the **cosmo** input directory.
 
     Parameters
     ----------	
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
-
     dest_modis = 'modis.nc'
     dest_vegetation = 'vegetation.nc'
 
