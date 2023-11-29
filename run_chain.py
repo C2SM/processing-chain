@@ -431,10 +431,14 @@ class Config():
         
         deps_ids = []
         if self.async:
+            # Couls be that job has no dependency, even in an async config,
+            # e.g., prepare_data
             if deps := self.workflow['dependencies'].get(job_name):
                 for stage in 'previous', 'current':
                     if dep_stage := deps.get(stage):
                         for job in dep_stage:
+                            # Could be that dep job id does not exist, e.g.,
+                            # if it dep job is deactivated or it's the first chunk
                             if dep_id := self.job_ids[stage].get(job):
                                 deps_ids.extend(dep_id)
         return dep_ids
@@ -606,77 +610,90 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names,
     if not hasattr(cfg, 'convert_gas'):
         setattr(cfg, 'convert_gas', True)
 
-    # run jobs (if required)
-    for job in job_names:
-        skip = False
+    
+    if async:
+        # Submit current chunck
+        # - [ ] This bypasses all the logfile moving/checking
+        # - [ ] Still needs a mechanism for resume
+        for job in job_names:
+            getattr(jobs, job).main(cfg)
 
-        # if exists job is currently worked on or has been finished
-        if os.path.exists(os.path.join(log_working_dir, job)):
-            if not force:
-                while True:
-                    if os.path.exists(os.path.join(log_finished_dir, job)):
-                        print('Skip "%s" for chain "%s"' % (job, cfg.job_id))
-                        skip = True
-                        break
-                    elif resume:
-                        resume = False
-                        break
-                    else:
-                        print('Wait for "%s" of chain "%s"' %
-                              (job, cfg.job_id))
-                        sys.stdout.flush()
-                        for _ in range(3000):
-                            time.sleep(0.1)
-            else:
-                os.remove(os.path.join(log_working_dir, job))
-                try:
-                    os.remove(os.path.join(log_finished_dir, job))
-                except FileNotFoundError:
-                    pass
+        # wait for previsouy chunk to be done
+        cfg.wait_for_previous()
+        # cycle
+        cfg.job_ids['previous'] = cfg.job_ids['current']
+    else:
+        # run jobs (if required)
+        for job in job_names:
+            skip = False
 
-        if not skip:
-            print('Process "%s" for chain "%s"' % (job, cfg.job_id))
-            sys.stdout.flush()
+            # if exists job is currently worked on or has been finished
+            if os.path.exists(os.path.join(log_working_dir, job)):
+                if not force:
+                    while True:
+                        if os.path.exists(os.path.join(log_finished_dir, job)):
+                            print('Skip "%s" for chain "%s"' % (job, cfg.job_id))
+                            skip = True
+                            break
+                        elif resume:
+                            resume = False
+                            break
+                        else:
+                            print('Wait for "%s" of chain "%s"' %
+                                  (job, cfg.job_id))
+                            sys.stdout.flush()
+                            for _ in range(3000):
+                                time.sleep(0.1)
+                else:
+                    os.remove(os.path.join(log_working_dir, job))
+                    try:
+                        os.remove(os.path.join(log_finished_dir, job))
+                    except FileNotFoundError:
+                        pass
 
-            try_count = 1 + (args.ntry - 1) * (job == 'cosmo')
-            while try_count > 0:
-                try_count -= 1
-                try:
-                    # Change the log file
-                    logfile = os.path.join(cfg.log_working_dir, job)
-                    logfile_finish = os.path.join(cfg.log_finished_dir, job)
-                    tools.change_logfile(logfile)
+            if not skip:
+                print('Process "%s" for chain "%s"' % (job, cfg.job_id))
+                sys.stdout.flush()
 
-                    # Launch the job
-                    to_call = getattr(jobs, job)
-                    to_call.main(cfg)
+                try_count = 1 + (args.ntry - 1) * (job == 'cosmo')
+                while try_count > 0:
+                    try_count -= 1
+                    try:
+                        # Change the log file
+                        logfile = os.path.join(cfg.log_working_dir, job)
+                        logfile_finish = os.path.join(cfg.log_finished_dir, job)
+                        tools.change_logfile(logfile)
 
-                    shutil.copy(logfile, logfile_finish)
+                        # Launch the job
+                        to_call = getattr(jobs, job)
+                        to_call.main(cfg)
 
-                    exitcode = 0
-                    try_count = 0
-                except:
+                        shutil.copy(logfile, logfile_finish)
+
+                        exitcode = 0
+                        try_count = 0
+                    except:
+                        subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
+                            job, cfg.job_id)
+                        logging.exception(subject)
+                        if cfg.user_mail:
+                            message = tools.prepare_message(
+                                os.path.join(log_working_dir, job))
+                            logging.info('Sending log file to %s' % cfg.user_mail)
+                            tools.send_mail(cfg.user_mail, subject, message)
+                        if try_count == 0:
+                            raise RuntimeError(subject)
+
+                if exitcode != 0 or not os.path.exists(
+                        os.path.join(log_finished_dir, job)):
                     subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
                         job, cfg.job_id)
-                    logging.exception(subject)
                     if cfg.user_mail:
                         message = tools.prepare_message(
                             os.path.join(log_working_dir, job))
                         logging.info('Sending log file to %s' % cfg.user_mail)
                         tools.send_mail(cfg.user_mail, subject, message)
-                    if try_count == 0:
-                        raise RuntimeError(subject)
-
-            if exitcode != 0 or not os.path.exists(
-                    os.path.join(log_finished_dir, job)):
-                subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
-                    job, cfg.job_id)
-                if cfg.user_mail:
-                    message = tools.prepare_message(
-                        os.path.join(log_working_dir, job))
-                    logging.info('Sending log file to %s' % cfg.user_mail)
-                    tools.send_mail(cfg.user_mail, subject, message)
-                raise RuntimeError(subject)
+                    raise RuntimeError(subject)
 
 
 def restart_runs(work_root, cfg, job_names, force, resume):
