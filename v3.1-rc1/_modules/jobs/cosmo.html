@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jobs.cosmo &mdash; Processing Chain v3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=09616d5f" />
+
+  
+    <link rel="shortcut icon" href="../../_static/processing-chain-favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=de725823"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=a5fa425f"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #5d6d7e" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v3.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../features.html">Feature Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environment.html">Conda Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#install-miniconda">1. Install Miniconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtorun.html">How to Run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#starting-the-chain">Starting the Chain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#what-it-does">What it Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#test-cases">Test Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#directory-structure">Directory Structure</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code-structure.html">Code Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config.html">Configuration File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#general-variables-in-run-chain-py">General Variables in <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-to-set-in-config-yaml">Variables to Set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../namelists.html">Namelist and Runscript Templates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../namelists.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../namelists.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Jobs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html#adding-new-jobs">Adding New Jobs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Function Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../functions.html">Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_data.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../functions.html#tools">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.cams4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.check_model.check_model"><code class="docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.comp_nc.datasets_equal"><code class="docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.ctnoaa4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.mozart2int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.reduce_output_start_end.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.string2char.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #5d6d7e" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Processing Chain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">jobs.cosmo</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for jobs.cosmo</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="n">write_cosmo_input_ghg</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tools</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+
+<span class="k">def</span> <span class="nf">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;cosmo_base&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="p">,</span> <span class="s1">&#39;cosmo&#39;</span><span class="p">))</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;cosmo_input&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="p">,</span> <span class="s1">&#39;cosmo&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">))</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;cosmo_run&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="p">,</span> <span class="s1">&#39;cosmo&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">))</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;cosmo_output&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="p">,</span> <span class="s1">&#39;cosmo&#39;</span><span class="p">,</span>
+                                              <span class="s1">&#39;output&#39;</span><span class="p">))</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;cosmo_output_reduced&#39;</span><span class="p">,</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="p">,</span> <span class="s1">&#39;cosmo&#39;</span><span class="p">,</span> <span class="s1">&#39;output_reduced&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Number of tracers</span>
+    <span class="k">if</span> <span class="s1">&#39;tracers&#39;</span> <span class="ow">in</span> <span class="n">model_cfg</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">][</span><span class="n">cfg</span><span class="o">.</span><span class="n">model</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+        <span class="n">tracer_csvfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_src_dir</span><span class="p">,</span> <span class="s1">&#39;cases&#39;</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">casename</span><span class="p">,</span>
+                                      <span class="s1">&#39;cosmo_tracers.csv&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">tracer_csvfile</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tracer_csvfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
+                <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                <span class="n">reader</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reader</span> <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;#&#39;</span><span class="p">]</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;in_tracers&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">reader</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File not found: </span><span class="si">{</span><span class="n">tracer_csvfile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># tracer_start namelist paramter for spinup simulation</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;spinup&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">first_one</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;tracer_start&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;tracer_start&#39;</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">spinup</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;tracer_start&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># asynchronous I/O</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;cfg.cosmo_np_io&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_np_io</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;lasync_io&#39;</span><span class="p">,</span> <span class="s1">&#39;.FALSE.&#39;</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;num_iope_percomm&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;lasync_io&#39;</span><span class="p">,</span> <span class="s1">&#39;.TRUE.&#39;</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;num_iope_percomm&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cfg</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.cosmo.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup the namelists for a COSMO tracer run and submit the job to the queue.</span>
+
+<span class="sd">    Necessary for both COSMO and COSMOART simulations.</span>
+
+<span class="sd">    Decide if the soil model should be TERRA or TERRA multi-layer depending on</span>
+<span class="sd">    the ``startdate`` of the simulation.</span>
+
+<span class="sd">    Create necessary directory structure to run COSMO (run, output, and</span>
+<span class="sd">    restart directories, defined in ``cfg.cosmo_run``, ``cfg.cosmo_output``,</span>
+<span class="sd">    and ``cfg.cosmo_restart_out``).</span>
+
+<span class="sd">    Copy the COSMO-executable from</span>
+<span class="sd">    ``cfg.cosmo_bin`` to ``cfg.cosmo_run/cosmo``.</span>
+
+<span class="sd">    Convert the tracer-csv-file to a COSMO-namelist file.</span>
+
+<span class="sd">    Format the COSMO-namelist-templates</span>
+<span class="sd">    (COSMO: ``AF,ORG,IO,DYN,PHY,DIA,ASS``,</span>
+<span class="sd">    COSMOART: ``ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY``)</span>
+<span class="sd">    using the information in ``cfg``.</span>
+
+<span class="sd">    Format the runscript-template and submit the job.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+<span class="sd">    model_cfg : dict</span>
+<span class="sd">        Model configuration settings loaded from the ``config/models.yaml`` file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>
+    <span class="n">logfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span><span class="p">,</span> <span class="s2">&quot;cosmo&quot;</span><span class="p">)</span>
+    <span class="n">logfile_finish</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_finished_dir</span><span class="p">,</span> <span class="s2">&quot;cosmo&quot;</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setup the namelist for a COSMO tracer run and &quot;</span>
+                 <span class="s2">&quot;submit the job to the queue&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create directories</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_run</span><span class="p">,</span> <span class="s2">&quot;cosmo_run&quot;</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_output</span><span class="p">,</span> <span class="s2">&quot;cosmo_output&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Total number of processes</span>
+    <span class="n">np_tot</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo</span><span class="p">[</span><span class="s1">&#39;np_x&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo</span><span class="p">[</span><span class="s1">&#39;np_y&#39;</span><span class="p">]</span> <span class="o">/</span>
+                 <span class="n">cfg</span><span class="o">.</span><span class="n">ntasks_per_node</span><span class="p">)</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo</span><span class="p">[</span><span class="s1">&#39;np_io&#39;</span><span class="p">]</span>
+
+    <span class="c1"># If an laf* file is used for initialization,</span>
+    <span class="c1"># copy this to to &#39;cosmo/input/initial/&#39; or merge with fieldextra</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;laf_startfile&#39;</span><span class="p">):</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_input</span><span class="p">,</span> <span class="s2">&quot;cosmo_input&quot;</span><span class="p">)</span>
+        <span class="n">ini_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_input</span><span class="p">,</span> <span class="s2">&quot;initial&quot;</span><span class="p">)</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">ini_dir</span><span class="p">,</span> <span class="s2">&quot;cosmo_input_initial&quot;</span><span class="p">)</span>
+        <span class="n">startfiletime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">laf_startfile</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:],</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span> <span class="o">&gt;=</span> <span class="n">startfiletime</span><span class="p">:</span>
+            <span class="n">starttime_last</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span>
+                <span class="n">hours</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">restart_step</span><span class="p">)</span>
+            <span class="n">work_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="p">))</span>
+            <span class="n">last_output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">work_root</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">casename</span><span class="p">,</span>
+                                            <span class="n">cfg</span><span class="o">.</span><span class="n">job_id_prev</span><span class="p">,</span> <span class="s1">&#39;cosmo&#39;</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">)</span>
+            <span class="n">laf_output_refdate</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H&quot;</span><span class="p">)</span>
+            <span class="n">last_laf_filename</span> <span class="o">=</span> <span class="s2">&quot;laf&quot;</span> <span class="o">+</span> <span class="n">laf_output_refdate</span>
+            <span class="c1"># At the beginning, use original laf_startfile</span>
+            <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span> <span class="o">==</span> <span class="n">startfiletime</span><span class="p">:</span>
+                <span class="n">last_laf_startfile</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">laf_startfile</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">last_laf_startfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">last_output_path</span><span class="p">,</span>
+                                                  <span class="n">last_laf_filename</span><span class="p">)</span>
+
+            <span class="c1"># Check if fieldextra is used</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;fieldextra_bin&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+            <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;fieldextra_control_file&#39;</span><span class="p">):</span>
+                <span class="c1"># Check if merge should be done for initial file</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;do_merge_at_start&#39;</span><span class="p">):</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;do_merge_at_start&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span> <span class="o">==</span> <span class="n">startfiletime</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">cfg</span><span class="o">.</span><span class="n">do_merge_at_start</span><span class="p">:</span>
+                    <span class="c1"># Just copy the existing laf file</span>
+                    <span class="n">tools</span><span class="o">.</span><span class="n">copy_file</span><span class="p">(</span><span class="n">last_laf_startfile</span><span class="p">,</span> <span class="n">ini_dir</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">out_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ini_dir</span><span class="p">,</span> <span class="n">last_laf_filename</span><span class="p">)</span>
+                    <span class="n">ifs_in_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">int2lm_output</span><span class="p">,</span>
+                                               <span class="n">last_laf_filename</span><span class="p">)</span>
+                    <span class="c1"># Write control file for fieldextra script (merge.ctl)</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">fieldextra_control_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+                        <span class="n">to_write</span> <span class="o">=</span> <span class="n">input_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+                    <span class="n">output_file_merge</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ini_dir</span><span class="p">,</span> <span class="s2">&quot;merge.ctl&quot;</span><span class="p">)</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file_merge</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+                        <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                            <span class="n">to_write</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                <span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span>
+                                <span class="n">in_file</span><span class="o">=</span><span class="n">last_laf_startfile</span><span class="p">,</span>
+                                <span class="n">ifs_in_file</span><span class="o">=</span><span class="n">ifs_in_file</span><span class="p">,</span>
+                                <span class="n">out_file</span><span class="o">=</span><span class="n">out_file</span><span class="p">,</span>
+                                <span class="n">laf_output_refdate</span><span class="o">=</span><span class="n">laf_output_refdate</span><span class="p">,</span>
+                            <span class="p">))</span>
+                    <span class="c1"># Execute fieldextra</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">logfile</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">log</span><span class="p">:</span>
+                        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                            <span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">fieldextra_bin</span><span class="p">,</span> <span class="n">output_file_merge</span><span class="p">],</span>
+                            <span class="n">stdout</span><span class="o">=</span><span class="n">log</span><span class="p">)</span>
+                        <span class="n">exitcode</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span>
+                    <span class="k">if</span> <span class="n">exitcode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                            <span class="s2">&quot;Fieldextra returned exitcode </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">exitcode</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Just copy the existing laf file</span>
+                <span class="n">tools</span><span class="o">.</span><span class="n">copy_file</span><span class="p">(</span><span class="n">last_laf_startfile</span><span class="p">,</span> <span class="n">ini_dir</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Start time </span><span class="si">%s</span><span class="s2"> must not be smaller than in laf_starttime </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span>
+                <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">starttime_sim</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">startfiletime</span><span class="p">)))</span>
+
+    <span class="c1"># Create restart directory if feature is present and</span>
+    <span class="c1"># if there is no spinup</span>
+    <span class="k">if</span> <span class="s1">&#39;restart&#39;</span> <span class="ow">in</span> <span class="n">model_cfg</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">][</span><span class="n">cfg</span><span class="o">.</span><span class="n">model</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> \
+       <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;spinup&#39;</span><span class="p">):</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_restart_out</span><span class="p">,</span> <span class="s2">&quot;cosmo_restart_out&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Copy cosmo executable</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo</span><span class="p">[</span><span class="s1">&#39;execname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">copy_file</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo</span><span class="p">[</span><span class="s1">&#39;binary_file&#39;</span><span class="p">],</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_run</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo</span><span class="p">[</span><span class="s1">&#39;execname&#39;</span><span class="p">]))</span>
+
+    <span class="c1"># Prepare namelist and submit job</span>
+    <span class="n">tracer_csvfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_src_dir</span><span class="p">,</span> <span class="s1">&#39;cases&#39;</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">casename</span><span class="p">,</span>
+                                  <span class="s1">&#39;cosmo_tracers.csv&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;cosmo&#39;</span><span class="p">:</span>
+        <span class="n">namelist_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ORG&#39;</span><span class="p">,</span> <span class="s1">&#39;IO&#39;</span><span class="p">,</span> <span class="s1">&#39;DYN&#39;</span><span class="p">,</span> <span class="s1">&#39;PHY&#39;</span><span class="p">,</span> <span class="s1">&#39;DIA&#39;</span><span class="p">,</span> <span class="s1">&#39;ASS&#39;</span><span class="p">,</span> <span class="s1">&#39;SAT&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">cfg</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;cosmo-ghg&#39;</span><span class="p">:</span>
+        <span class="n">namelist_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;AF&#39;</span><span class="p">,</span> <span class="s1">&#39;ORG&#39;</span><span class="p">,</span> <span class="s1">&#39;IO&#39;</span><span class="p">,</span> <span class="s1">&#39;DYN&#39;</span><span class="p">,</span> <span class="s1">&#39;GHG&#39;</span><span class="p">,</span> <span class="s1">&#39;PHY&#39;</span><span class="p">,</span> <span class="s1">&#39;DIA&#39;</span><span class="p">,</span> <span class="s1">&#39;ASS&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">cfg</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;cosmo-art&#39;</span><span class="p">:</span>
+        <span class="n">namelist_names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;ART&#39;</span><span class="p">,</span> <span class="s1">&#39;ASS&#39;</span><span class="p">,</span> <span class="s1">&#39;DIA&#39;</span><span class="p">,</span> <span class="s1">&#39;DYN&#39;</span><span class="p">,</span> <span class="s1">&#39;EPS&#39;</span><span class="p">,</span> <span class="s1">&#39;INI&#39;</span><span class="p">,</span> <span class="s1">&#39;IO&#39;</span><span class="p">,</span> <span class="s1">&#39;ORG&#39;</span><span class="p">,</span> <span class="s1">&#39;PHY&#39;</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;oem_dir&#39;</span><span class="p">):</span>
+            <span class="c1"># When doing online emissions in COSMO-ART, an additional</span>
+            <span class="c1"># namelist is required</span>
+            <span class="n">namelist_names</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;OAE&#39;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">namelist_names</span><span class="p">:</span>
+        <span class="n">namelist_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">chain_src_dir</span><span class="p">,</span> <span class="s1">&#39;cases&#39;</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">casename</span><span class="p">,</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo</span><span class="p">[</span><span class="s1">&#39;namelist_prefix&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">section</span> <span class="o">+</span> <span class="s2">&quot;.cfg&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">namelist_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+            <span class="n">cosmo_namelist</span> <span class="o">=</span> <span class="n">input_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_run</span><span class="p">,</span> <span class="s2">&quot;INPUT_&quot;</span> <span class="o">+</span> <span class="n">section</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;spinup&#39;</span><span class="p">):</span>
+                <span class="c1"># no built-in restarts</span>
+                <span class="n">cosmo_namelist</span> <span class="o">=</span> <span class="n">cosmo_namelist</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span>
+                                                       <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo</span><span class="p">,</span>
+                                                       <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">oem</span><span class="p">,</span>
+                                                       <span class="n">restart_start</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+                                                       <span class="n">restart_stop</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                       <span class="n">restart_step</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># built-in restarts</span>
+                <span class="n">cosmo_namelist</span> <span class="o">=</span> <span class="n">cosmo_namelist</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">oem</span><span class="p">,</span>
+                    <span class="n">restart_start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">restart_stop</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">restart_step_hours</span><span class="p">,</span>
+                    <span class="n">restart_step</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">restart_step_hours</span><span class="p">)</span>
+            <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cosmo_namelist</span><span class="p">)</span>
+
+    <span class="c1"># Append INPUT_GHG namelist with tracer definitions from csv file</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">tracer_csvfile</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;cosmo-ghg&#39;</span><span class="p">:</span>
+            <span class="n">input_ghg_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_run</span><span class="p">,</span> <span class="s1">&#39;INPUT_GHG&#39;</span><span class="p">)</span>
+
+            <span class="n">write_cosmo_input_ghg</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">tracer_csvfile</span><span class="p">,</span> <span class="n">input_ghg_filename</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span>
+
+    <span class="c1"># Write run script (run.job)</span>
+    <span class="n">runscript_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_src_dir</span><span class="p">,</span> <span class="s1">&#39;cases&#39;</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">casename</span><span class="p">,</span>
+                                  <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo</span><span class="p">[</span><span class="s1">&#39;runjob_filename&#39;</span><span class="p">])</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">runscript_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+        <span class="n">cosmo_runscript</span> <span class="o">=</span> <span class="n">input_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_run</span><span class="p">,</span> <span class="s2">&quot;run.job&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="n">cosmo_runscript</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span>
+                                   <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo</span><span class="p">,</span>
+                                   <span class="n">np_tot</span><span class="o">=</span><span class="n">np_tot</span><span class="p">,</span>
+                                   <span class="n">logfile</span><span class="o">=</span><span class="n">logfile</span><span class="p">,</span>
+                                   <span class="n">logfile_finish</span><span class="o">=</span><span class="n">logfile_finish</span><span class="p">))</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;sbatch&quot;</span><span class="p">,</span> <span class="s2">&quot;--wait&quot;</span><span class="p">,</span>
+         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_run</span><span class="p">,</span> <span class="s1">&#39;run.job&#39;</span><span class="p">)])</span>
+    <span class="n">exitcode</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span>
+    <span class="k">if</span> <span class="n">exitcode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;sbatch returned exitcode </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">exitcode</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018-2023, C2SM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
