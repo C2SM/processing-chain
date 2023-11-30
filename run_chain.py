@@ -84,7 +84,7 @@ def parse_arguments():
     return args
 
 
-def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
+def run_chain(cfg, startdate_sim, enddate_sim, job_names, force,
               resume):
     """Run the processing chain, managing job execution and logging.
 
@@ -93,8 +93,6 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
 
     Parameters
     ----------
-    work_root : str
-        The path to the directory where the processing chain writes files during execution.
     cfg : Config
         Object holding user-defined configuration parameters as attributes.
     startdate_sim : datetime-object
@@ -133,7 +131,7 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
 
     # Folder naming and structure
     cfg.job_id = f'{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}'
-    cfg.chain_root = os.path.join(work_root, cfg.casename, cfg.job_id)
+    cfg.chain_root = cfg.work_root / cfg.casename / cfg.job_id
 
     # Config variables for spinup runs (datetimes, job-id, etc.)
     if hasattr(cfg, 'spinup'):
@@ -156,10 +154,8 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
                               cfg.spinup)).strftime('%Y%m%d%H')
 
             cfg.job_id_prev = f'{startdate_sim_yyyymmddhh_prev}_{enddate_sim_yyyymmddhh_prev}'
-            cfg.chain_root_prev = os.path.join(work_root, cfg.casename,
-                                               cfg.job_id_prev)
-            cfg.last_cosmo_output = os.path.join(cfg.chain_root_prev, 'cosmo',
-                                                 'output')
+            cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.job_id_prev
+            cfg.last_cosmo_output = cfg.chain_root_prev / 'cosmo' / 'output'
 
         # No restart for spinup simulations (= default values for no restart)
         cfg.cosmo_restart_out = ''
@@ -175,14 +171,11 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
             '%Y%m%d%H')
 
         cfg.job_id_prev = f'{cfg.startdate_sim_prev_yyyymmddhh}_{cfg.enddate_sim_prev_yyyymmddhh}'
-        cfg.chain_root_prev = os.path.join(work_root, cfg.casename,
-                                           cfg.job_id_prev)
+        cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.job_id_prev
 
         # Set restart directories
-        cfg.cosmo_restart_out = os.path.join(cfg.chain_root, 'cosmo',
-                                             'restart')
-        cfg.cosmo_restart_in = os.path.join(cfg.chain_root_prev, 'cosmo',
-                                            'restart')
+        cfg.cosmo_restart_out = cfg.chain_root / 'cosmo' / 'restart'
+        cfg.cosmo_restart_in = cfg.chain_root_prev / 'cosmo' / 'restart'
 
     # Check constraint
     if hasattr(cfg, 'constraint'):
@@ -195,16 +188,15 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
         mother_name = cfg.meteo.dir
-        cfg.meteo.dir = os.path.join(work_root, mother_name, cfg.job_id,
-                                     'cosmo', 'output')
+        cfg.meteo.dir = cfg.work_root / mother_name / cfg.job_id / 'cosmo' / 'output'
         cfg.meteo.inc = 1
         cfg.meteo.prefix = 'lffd'
 
     # Logging
-    log_working_dir = os.path.join(cfg.chain_root, 'checkpoints', 'working')
-    log_finished_dir = os.path.join(cfg.chain_root, 'checkpoints', 'finished')
-    setattr(cfg, 'log_working_dir', log_working_dir)
-    setattr(cfg, 'log_finished_dir', log_finished_dir)
+    log_working_dir = cfg.chain_root / 'checkpoints' / 'working'
+    log_finished_dir = cfg.chain_root / 'checkpoints' / 'finished'
+    cfg.log_working_dir = log_working_dir
+    cfg.log_finished_dir = log_finished_dir
 
     # Create working directories
     tools.create_dir(cfg.chain_root, "chain_root")
@@ -212,10 +204,8 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
     tools.create_dir(log_finished_dir, "log_finished")
 
     # Number of levels and switch for unit conversion for 'reduce_output' job
-    if not hasattr(cfg, 'output_levels'):
-        setattr(cfg, 'output_levels', -1)
-    if not hasattr(cfg, 'convert_gas'):
-        setattr(cfg, 'convert_gas', True)
+    if not hasattr(cfg, 'output_levels'): cfg.output_levels = -1
+    if not hasattr(cfg, 'convert_gas'): cfg.convert_gas = True
 
     if async:
         # Submit current chunck
@@ -234,29 +224,23 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
             skip = False
 
             # if exists job is currently worked on or has been finished
-            if os.path.exists(os.path.join(log_working_dir, job)):
+            if (log_working_dir/job).exists():
                 if not force:
                     while True:
-                        if os.path.exists(os.path.join(log_finished_dir, job)):
-                            print('Skip "%s" for chain "%s"' %
-                                  (job, cfg.job_id))
+                        if (log_finished_dir / job).exists():
+                            print(f"Skip {job} for chain {cfg.job_id}")
                             skip = True
                             break
                         elif resume:
                             resume = False
                             break
                         else:
-                            print('Wait for "%s" of chain "%s"' %
-                                  (job, cfg.job_id))
+                            print(f"Wait for {job} of chain {cfg.job_id}")
                             sys.stdout.flush()
-                            for _ in range(3000):
-                                time.sleep(0.1)
+                            for _ in range(3000): time.sleep(0.1)
                 else:
-                    os.remove(os.path.join(log_working_dir, job))
-                    try:
-                        os.remove(os.path.join(log_finished_dir, job))
-                    except FileNotFoundError:
-                        pass
+                    (log_working_dir / job).unlink()
+                    (log_finished_dir / job).unlink(missing_ok=True)
 
             if not skip:
                 print('Process "%s" for chain "%s"' % (job, cfg.job_id))
@@ -267,9 +251,8 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
                     try_count -= 1
                     try:
                         # Change the log file
-                        logfile = os.path.join(cfg.log_working_dir, job)
-                        logfile_finish = os.path.join(cfg.log_finished_dir,
-                                                      job)
+                        logfile = cfg.log_working_dir / job
+                        logfile_finish = cfg.log_finished_dir / job
                         tools.change_logfile(logfile)
 
                         # Launch the job
@@ -285,27 +268,24 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
                             job, cfg.job_id)
                         logging.exception(subject)
                         if cfg.user_mail:
-                            message = tools.prepare_message(
-                                os.path.join(log_working_dir, job))
+                            message = tools.prepare_message(log_working_dir/job)
                             logging.info('Sending log file to %s' %
                                          cfg.user_mail)
                             tools.send_mail(cfg.user_mail, subject, message)
                         if try_count == 0:
                             raise RuntimeError(subject)
 
-                if exitcode != 0 or not os.path.exists(
-                        os.path.join(log_finished_dir, job)):
+                if exitcode != 0 or not (log_finished_dir/job).exists():
                     subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
                         job, cfg.job_id)
                     if cfg.user_mail:
-                        message = tools.prepare_message(
-                            os.path.join(log_working_dir, job))
+                        message = tools.prepare_message(log_working_dir / job)
                         logging.info('Sending log file to %s' % cfg.user_mail)
                         tools.send_mail(cfg.user_mail, subject, message)
                     raise RuntimeError(subject)
 
 
-def restart_runs(work_root, cfg, job_names, force, resume):
+def restart_runs(cfg, job_names, force, resume):
     """Start subchains in specified intervals and manage restarts.
 
     This function slices the total runtime of the processing chain according to the
@@ -314,8 +294,6 @@ def restart_runs(work_root, cfg, job_names, force, resume):
 
     Parameters
     ----------
-    work_root : str
-        The path to the directory in which the chain writes files during execution.
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     job_names : list of str
@@ -346,8 +324,7 @@ def restart_runs(work_root, cfg, job_names, force, resume):
 
         print("Starting run with startdate {}".format(startdate_sim))
 
-        run_chain(work_root=work_root,
-                  cfg=cfg,
+        run_chain(cfg=cfg,
                   startdate_sim=startdate_sim,
                   enddate_sim=enddate_sim,
                   job_names=job_names,
@@ -355,7 +332,7 @@ def restart_runs(work_root, cfg, job_names, force, resume):
                   resume=resume)
 
 
-def restart_runs_spinup(work_root, cfg, job_names, force, resume):
+def restart_runs_spinup(cfg, job_names, force, resume):
     """Start subchains in specified intervals and manage restarts with spin-up.
 
     This function slices the total runtime of the processing chain according to the
@@ -364,8 +341,6 @@ def restart_runs_spinup(work_root, cfg, job_names, force, resume):
 
     Parameters
     ----------
-    work_root : str
-        The path to the directory in which the chain writes files during execution.
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     job_names : list of str
@@ -409,8 +384,7 @@ def restart_runs_spinup(work_root, cfg, job_names, force, resume):
 
         print(f'Runtime of sub-simulation: {run_time} h')
 
-        run_chain(work_root=work_root,
-                  cfg=cfg,
+        run_chain(cfg=cfg,
                   startdate_sim=startdate_sim_spinup,
                   enddate_sim=enddate_sim,
                   job_names=job_names,
@@ -465,22 +439,19 @@ def main():
         if 'restart' in cfg.workflow['features']:
             if hasattr(cfg, 'spinup'):
                 print("Using spin-up restarts.")
-                restart_runs_spinup(work_root=cfg.work_root,
-                                    cfg=cfg,
+                restart_runs_spinup(cfg=cfg,
                                     job_names=args.job_list,
                                     force=args.force,
                                     resume=args.resume)
             else:
                 print("Using built-in model restarts.")
-                restart_runs(work_root=cfg.work_root,
-                             cfg=cfg,
+                restart_runs(cfg=cfg,
                              job_names=args.job_list,
                              force=args.force,
                              resume=args.resume)
         else:
             print("No restarts are used.")
-            run_chain(work_root=cfg.work_root,
-                      cfg=cfg,
+            run_chain(cfg=cfg,
                       startdate_sim=cfg.startdate,
                       enddate_sim=cfg.enddate,
                       job_names=args.job_list,
