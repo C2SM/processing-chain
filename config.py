@@ -47,7 +47,7 @@ class Config():
         self.set_account()
 
         self.chain_src_dir = Path.cwd()
-        self.case_path = self.chain_src_dir/ 'cases' / casename
+        self.case_path = self.chain_src_dir / 'cases' / casename
         self.work_root = self.chain_src_dir / 'work'
 
         # User-defined attributes from config file
@@ -189,11 +189,11 @@ class Config():
 
     def set_workflow(self):
         """set workflow and async attr, initiate job ids dict"""
-        
+
         with open('workflows.yaml') as file:
             workflows = yaml.safe_load(file)
         self.workflow = workflows[self.workflow_name]
-        self.async = 'dependencies' in self.workflow
+        self. async = 'dependencies' in self.workflow
 
         # Initiate empty job ids dictionnary so that it can be filled in later
         self.job_ids = {'current': {}, 'previous': {}}
@@ -328,7 +328,7 @@ class Config():
         """Get dependency job ids for `job_name`"""
 
         deps_ids = []
-        if self.async:
+        if self. async:
             # Couls be that job has no dependency, even in an async config,
             # e.g., prepare_data
             if deps := self.workflow['dependencies'].get(job_name):
@@ -344,7 +344,7 @@ class Config():
     def get_dep_cmd(self, job_name):
         """Generate the part of the sbatch command that sepcifies dependencies for job_name."""
 
-        if self.async:
+        if self. async:
             # async case
             if dep_ids := self.get_dep_ids(job_name):
                 dep_str = ':'.join(map(str, deps_ids))
