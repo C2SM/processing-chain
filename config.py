@@ -1,5 +1,6 @@
 import subprocess
 import os
+from pathlib import Path
 
 
 class Config():
@@ -45,10 +46,9 @@ class Config():
         self.casename = casename
         self.set_account()
 
-        self.chain_src_dir = os.getcwd()
-        self.case_path = os.path.join(self.chain_src_dir, 'cases',
-                                      self.casename)
-        self.work_root = os.path.join(self.chain_src_dir, 'work')
+        self.chain_src_dir = Path.cwd()
+        self.case_path = self.chain_src_dir/ 'cases' / casename
+        self.work_root = self.chain_src_dir / 'work'
 
         # User-defined attributes from config file
         self.load_config_file(casename)
@@ -56,16 +56,8 @@ class Config():
         # Specific settings based on the node type ('gpu' or 'mc')
         self.set_node_info()
 
-        # Set workflow
-        with open('workflows.yaml') as file:
-            workflows = yaml.safe_load(file)
-        self.workflow = workflows[self.workflow_name]
-
-        # Set if async
-        self. async = 'dependencies' in self.workflow
-
-        # Initiate empty job ids dictionnary so that it can be filled in later
-        self.job_ids = {'current': {}, 'previous': {}}
+        # Set workflow and async attributes and initiate job ids dict
+        self.set_workflow()
 
     def load_config_file(self, casename):
         """Load configuration settings from a YAML file and set them as attributes.
@@ -95,9 +87,9 @@ class Config():
         existing case directories. The method directly assigns values from the
         configuration file to instance attributes for easy access.
         """
-        cfg_file = os.path.join('cases', casename, 'config.yaml')
+        cfg_file = Path('cases', casename, 'config.yaml').resolve()
 
-        if not os.path.isfile(cfg_file):
+        if not cfg_file.is_file():
             all_cases = [
                 path.name for path in os.scandir('cases') if path.is_dir()
             ]
@@ -109,11 +101,11 @@ class Config():
             )
 
         try:
-            with open(cfg_file, 'r') as yaml_file:
+            with cfg_file.open('r') as yaml_file:
                 cfg_data = yaml.load(yaml_file, Loader=yaml.FullLoader)
         except FileNotFoundError:
             raise FileNotFoundError(
-                f"No file 'config.yaml' in {os.path.dirname(cfg_file)}")
+                f"No file 'config.yaml' in {cfg_file.parent}")
 
         # Directly assign values to instance attributes
         for key, value in cfg_data.items():
@@ -147,15 +139,13 @@ class Config():
         if self.user_name == 'jenkins':
             # g110 account for Jenkins testing
             self.compute_account = 'g110'
-        elif os.path.exists(os.environ['HOME'] + '/.acct'):
+        elif (p := Path.home() / '.acct').exists():
             # Use account specified in ~/.acct file
-            with open(os.environ['HOME'] + '/.acct', 'r') as file:
+            with p.open('r') as file:
                 self.compute_account = file.read().rstrip()
         else:
             # Use standard account
             self.compute_account = os.popen("id -gn").read().splitlines()[0]
-
-        return self
 
     def set_node_info(self):
         """Set node-specific information based on configuration settings.
@@ -197,7 +187,16 @@ class Config():
                 "Invalid value for 'constraint' in the configuration."
                 "It should be either 'gpu' or 'mc'.")
 
-        return self
+    def set_workflow(self):
+        """set workflow and async attr, initiate job ids dict"""
+        
+        with open('workflows.yaml') as file:
+            workflows = yaml.safe_load(file)
+        self.workflow = workflows[self.workflow_name]
+        self.async = 'dependencies' in self.workflow
+
+        # Initiate empty job ids dictionnary so that it can be filled in later
+        self.job_ids = {'current': {}, 'previous': {}}
 
     def set_restart_step_hours(self):
         """Set the restart step in hours.
@@ -212,8 +211,6 @@ class Config():
         """
         self.restart_step_hours = int(
             tools.iso8601_duration_to_hours(self.restart_step))
-
-        return self
 
     def set_email(self):
         """Set the user's email address based on system configuration.
@@ -236,13 +233,11 @@ class Config():
         """
         if self.user_name == 'jenkins':
             self.user_mail = None
-        elif os.path.exists(os.environ['HOME'] + '/.forward'):
-            with open(os.environ['HOME'] + '/.forward', 'r') as file:
+        elif (p := Path.home() / '.forward').exists():
+            with p.open('r') as file:
                 self.user_mail = file.read().rstrip()
         else:
             self.user_mail = None
-
-        return self
 
     def print_config(self):
         """Print the configuration attributes and their values.
@@ -285,48 +280,32 @@ class Config():
                 key_type = type(key).__name__
                 print(f"{key:<{max_col_width}} {key_type:<4} {value}")
 
-    def convert_paths_to_absolute(self):
+    def convert_paths_to_absolute(self, dct=None):
         """Convert relative file paths to absolute paths in the configuration.
 
-        This method iterates through all variables and their dictionary entries in
-        the configuration and checks for string values that represent file paths.
-        If a file path is relative (starts with './'), it is converted to an
-        absolute path using `os.path.abspath`.
+        Recursively convert all strings starting with './' in the instance
+        attributes to absolute paths.
 
         Returns
         -------
         Config
             The same `Config` instance with relative file paths converted to absolute paths.
         """
-        # Loop through all variables and their dictionary entries
-        for attr_name, attr_value in self.__dict__.items():
-            if isinstance(attr_value, str):
-                if os.path.isabs(attr_value):
-                    # If the value is already an absolute path, continue to the next iteration
-                    continue
-                # Convert relative paths to absolute paths
-                if attr_value.startswith('./'):
-                    self.__dict__[attr_name] = os.path.abspath(attr_value)
-            elif isinstance(attr_value, dict):
-                # If the attribute is a dictionary, loop through its entries
-                for key, value in attr_value.items():
-                    if isinstance(value, str):
-                        if os.path.isabs(value):
-                            # If the value is already an absolute path, continue to the next iteration
-                            continue
-                        # Convert relative paths to absolute paths
-                        if value.startswith('./'):
-                            self.__dict__[attr_name][key] = os.path.abspath(
-                                value)
+        if dct is None:
+            self.convert_paths_to_absolute(dct=vars(self))
+        else:
+            for k, v in dct.items():
+                if isinstance(v, dict):
+                    self.convert_paths_to_absolute(dct=v)
+                elif isinstance(v, str) and v.startswith('./'):
+                    dct[k] = Path(v).absolute()
 
-        return self
-
-    def create_vars_from_dicts(self):
+    def create_vars_from_dicts(self, dct=None, key=None):
         """Create instance attributes from dictionary entries in the configuration.
 
-        This method iterates through the instance's attribute dictionary and checks
-        for dictionary values. For each dictionary encountered, it creates new
-        instance attributes by concatenating the original attribute name and the
+        This method recursively iterates through the instance's attribute dictionary
+        and checks for dictionary values. For each dictionary encountered, it creates
+        new instance attributes by concatenating the original attribute name and the
         dictionary key, and assigns the corresponding values.
 
         Returns
@@ -334,20 +313,22 @@ class Config():
         Config
             The same `Config` instance with new attributes created from dictionary entries.
         """
-        # Create a copy of the object's __dict__ to avoid modifying it during iteration
-        object_dict = vars(self).copy()
 
-        for key, value in object_dict.items():
-            if isinstance(value, dict):
-                for sub_key, sub_value in value.items():
-                    setattr(self, key + '_' + sub_key, sub_value)
-        return self
+        if dct is None:
+            self.create_vars_from_dicts(dct=vars(self).copy())
+        else:
+            for k, v in dct.items():
+                subkey = k if key is None else key + '_' + k
+                if isinstance(v, dict):
+                    self.create_vars_from_dicts(dct=v, key=subkey)
+                else:
+                    setattr(self, subkey, v)
 
     def get_dep_ids(self, job_name):
         """Get dependency job ids for `job_name`"""
 
         deps_ids = []
-        if self. async:
+        if self.async:
             # Couls be that job has no dependency, even in an async config,
             # e.g., prepare_data
             if deps := self.workflow['dependencies'].get(job_name):
@@ -363,7 +344,7 @@ class Config():
     def get_dep_cmd(self, job_name):
         """Generate the part of the sbatch command that sepcifies dependencies for job_name."""
 
-        if self. async:
+        if self.async:
             # async case
             if dep_ids := self.get_dep_ids(job_name):
                 dep_str = ':'.join(map(str, deps_ids))
