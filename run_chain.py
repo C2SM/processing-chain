@@ -83,6 +83,7 @@ def parse_arguments():
 
     return args
 
+
 def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
               resume):
     """Run the processing chain, managing job execution and logging.
@@ -237,7 +238,8 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
                 if not force:
                     while True:
                         if os.path.exists(os.path.join(log_finished_dir, job)):
-                            print('Skip "%s" for chain "%s"' % (job, cfg.job_id))
+                            print('Skip "%s" for chain "%s"' %
+                                  (job, cfg.job_id))
                             skip = True
                             break
                         elif resume:
@@ -266,7 +268,8 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
                     try:
                         # Change the log file
                         logfile = os.path.join(cfg.log_working_dir, job)
-                        logfile_finish = os.path.join(cfg.log_finished_dir, job)
+                        logfile_finish = os.path.join(cfg.log_finished_dir,
+                                                      job)
                         tools.change_logfile(logfile)
 
                         # Launch the job
@@ -284,7 +287,8 @@ def run_chain(work_root, cfg, startdate_sim, enddate_sim, job_names, force,
                         if cfg.user_mail:
                             message = tools.prepare_message(
                                 os.path.join(log_working_dir, job))
-                            logging.info('Sending log file to %s' % cfg.user_mail)
+                            logging.info('Sending log file to %s' %
+                                         cfg.user_mail)
                             tools.send_mail(cfg.user_mail, subject, message)
                         if try_count == 0:
                             raise RuntimeError(subject)
@@ -485,6 +489,6 @@ def main():
 
     print('>>> Finished the processing chain successfully <<<')
 
-    
+
 if __name__ == '__main__':
     main()

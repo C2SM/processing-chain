@@ -1,6 +1,7 @@
 import subprocess
 import os
 
+
 class Config():
 
     def __init__(self, casename):
@@ -346,7 +347,7 @@ class Config():
         """Get dependency job ids for `job_name`"""
 
         deps_ids = []
-        if self.async:
+        if self. async:
             # Couls be that job has no dependency, even in an async config,
             # e.g., prepare_data
             if deps := self.workflow['dependencies'].get(job_name):
@@ -393,4 +394,4 @@ class Config():
                 'sbatch', '-W', '--nodes=1', '--job-name=wait',
                 f'--account={self.compute_account}', job_file
             ],
-                          check=True)
+                           check=True)
