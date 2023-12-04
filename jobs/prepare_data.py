@@ -25,6 +25,7 @@
 # 2021-11-12 Modified for ICON-ART-simulations (mjaehn)
 
 import os
+from pathlib import Path
 import logging
 import shutil
 import subprocess
@@ -38,32 +39,25 @@ from calendar import monthrange
 
 
 def set_cfg_variables(cfg):
-    # TODO: Change setattr() to direct assignment
     if cfg.workflow_name.startswith('cosmo'):
-        setattr(cfg, 'int2lm_root', os.path.join(cfg.chain_root, 'int2lm'))
-        setattr(cfg, 'int2lm_input', os.path.join(cfg.int2lm_root, 'input'))
+        cfg.int2lm_root = cfg.chain_root / 'int2lm'
+        cfg.int2lm_input = cfg.int2lm_root / 'input'
     elif cfg.workflow_name.startswith('icon'):
-        setattr(cfg, 'icon_base', os.path.join(cfg.chain_root, 'icon'))
-        setattr(cfg, 'icon_input', os.path.join(cfg.chain_root, 'icon',
-                                                'input'))
-        setattr(cfg, 'icon_input_icbc',
-                os.path.join(cfg.chain_root, 'icon', 'input', 'icbc'))
-        setattr(cfg, 'icon_work', os.path.join(cfg.chain_root, 'icon', 'run'))
-        setattr(cfg, 'icon_output',
-                os.path.join(cfg.chain_root, 'icon', 'output'))
-        setattr(cfg, 'icon_output_reduced',
-                os.path.join(cfg.chain_root, 'icon', 'output_reduced'))
-        setattr(cfg, 'icon_restart_out',
-                os.path.join(cfg.chain_root, 'icon', 'restart'))
-        setattr(cfg, 'icon_restart_in',
-                os.path.join(cfg.chain_root_prev, 'icon', 'run'))
-        setattr(cfg, 'icon_input_icbc_prev',
-                os.path.join(cfg.chain_root_prev, 'icon', 'input', 'icbc'))
+        cfg.icon_base = cfg.chain_root / 'icon'
+        cfg.icon_input = cfg.icon_base / 'input'
+        cfg.icon_input_icbc = cfg.icon_input / 'icbc'
+        cfg.icon_work = cfg.icon_base / 'run'
+        cfg.icon_output = cfg.icon_base / 'output'
+        cfg.icon_output_reduced = cfg.icon_base / 'output_reduced'
+        cfg.icon_restart_out = cfg.icon_base / 'restart'
+        cfg.icon_restart_in = cfg.chain_root_prev / 'icon' / 'run'
+        cfg.icon_input_icbc_prev = cfg.chain_root_prev / 'icon' / 'input' / 'icbc'
 
         cfg.input_files_scratch = {}
-        for varname in cfg.input_files:
-            cfg.input_files_scratch[varname] = os.path.join(
-                cfg.icon_input, os.path.basename(cfg.input_files[varname]))
+        for dsc, file in cfg.input_files.items():
+            cfg.input_files[dsc] = (p := Path(file))
+            cfg.input_files_scratch[dsc] = cfg.icon_input / p.name
+
         cfg.create_vars_from_dicts()
 
         cfg.ini_datetime_string = cfg.startdate.strftime('%Y-%m-%dT%H:00:00Z')
@@ -83,10 +77,8 @@ def set_cfg_variables(cfg):
 
         if cfg.lrestart == '.TRUE.':
             cfg.restart_filename = 'restart_atm_DOM01.nc'
-            cfg.restart_file = os.path.join(cfg.icon_restart_in,
-                                            cfg.restart_filename)
-            cfg.restart_file_scratch = os.path.join(cfg.icon_work,
-                                                    cfg.restart_filename)
+            cfg.restart_file = cfg.icon_restart_in / cfg.restart_filename
+            cfg.restart_file_scratch = cfg.icon_work / cfg.restart_filename
 
     return cfg
 
