@@ -84,8 +84,7 @@ def parse_arguments():
     return args
 
 
-def run_chain(cfg, startdate_sim, enddate_sim, job_names, force,
-              resume):
+def run_chain(cfg, startdate_sim, enddate_sim, job_names, force, resume):
     """Run the processing chain, managing job execution and logging.
 
     This function sets up and manages the execution of a processing chain, handling
@@ -224,7 +223,7 @@ def run_chain(cfg, startdate_sim, enddate_sim, job_names, force,
             skip = False
 
             # if exists job is currently worked on or has been finished
-            if (log_working_dir/job).exists():
+            if (log_working_dir / job).exists():
                 if not force:
                     while True:
                         if (log_finished_dir / job).exists():
@@ -237,7 +236,8 @@ def run_chain(cfg, startdate_sim, enddate_sim, job_names, force,
                         else:
                             print(f"Wait for {job} of chain {cfg.job_id}")
                             sys.stdout.flush()
-                            for _ in range(3000): time.sleep(0.1)
+                            for _ in range(3000):
+                                time.sleep(0.1)
                 else:
                     (log_working_dir / job).unlink()
                     (log_finished_dir / job).unlink(missing_ok=True)
@@ -268,14 +268,15 @@ def run_chain(cfg, startdate_sim, enddate_sim, job_names, force,
                             job, cfg.job_id)
                         logging.exception(subject)
                         if cfg.user_mail:
-                            message = tools.prepare_message(log_working_dir/job)
+                            message = tools.prepare_message(log_working_dir /
+                                                            job)
                             logging.info('Sending log file to %s' %
                                          cfg.user_mail)
                             tools.send_mail(cfg.user_mail, subject, message)
                         if try_count == 0:
                             raise RuntimeError(subject)
 
-                if exitcode != 0 or not (log_finished_dir/job).exists():
+                if exitcode != 0 or not (log_finished_dir / job).exists():
                     subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
                         job, cfg.job_id)
                     if cfg.user_mail:
