@@ -77,28 +77,18 @@ def main(cfg):
                                        cfg.meteo['nameformat']) + '.nc')
 
     # Write run script (run_icon.job)
-    icon_runjob = os.path.join(cfg.case_path, cfg.icon_runjob_filename)
-    with open(icon_runjob) as input_file:
-        to_write = input_file.read()
-    output_file = os.path.join(cfg.icon_work, "run_icon.job")
-    with open(output_file, "w") as outf:
-        outf.write(
-            to_write.format(cfg=cfg,
-                            inidata_filename=inidata_filename,
-                            logfile=logfile,
-                            logfile_finish=logfile_finish))
+    template = (cfg.case_path / cfg.icon_runjob_filename).read_text()
+    script_str = template.format(cfg=cfg,
+                                 inidata_filename=inidata_filename,
+                                 logfile=logfile,
+                                 logfile_finish=logfile_finish)
+    script = (cfg.icon_work / 'run_icon.job').write_text(script_str)
 
     # Submit run script
-    sbatch_cmd = ['sbatch', '--parsable']
-    if dep_cmd := cfg.get_dep_cmd('icon'):
-        sbatch_cmd.append(dep_cmd)
-    sbatch_cmd.append(os.path.join(cfg.icon_work, 'run_icon.job'))
-
-    result = subprocess.run(sbatch_cmd, capture_output=True)
-    cfg.job_ids['current']['icon'] = int(result.stdout),
+    cfg.submit('icon', script)
 
     # Anything hapenning after submission only makes sense in sequential mode
-    if not cfg. async:
+    if not cfg.is_async:
         exitcode = result.returncode
 
         # In case of ICON-ART, ignore the "invalid pointer" error on successful run

@@ -84,7 +84,7 @@ def parse_arguments():
     return args
 
 
-def run_chain(cfg, startdate_sim, enddate_sim, job_names, force, resume):
+def run_chain(cfg, force, resume):
     """Run the processing chain, managing job execution and logging.
 
     This function sets up and manages the execution of a processing chain, handling
@@ -94,12 +94,6 @@ def run_chain(cfg, startdate_sim, enddate_sim, job_names, force, resume):
     ----------
     cfg : Config
         Object holding user-defined configuration parameters as attributes.
-    startdate_sim : datetime-object
-        The start date of the simulation.
-    enddate_sim : datetime-object
-        The end date of the simulation.
-    job_names : list of str
-        List of names of jobs to execute on every timeslice.
     force : bool
         If True, it will force the execution of jobs regardless of their completion status.
     resume : bool
@@ -115,18 +109,13 @@ def run_chain(cfg, startdate_sim, enddate_sim, job_names, force, resume):
     - This function sets various configuration values based on the provided parameters.
     - It checks for job completion status and resumes or forces execution accordingly.
     - Job log files are managed, and errors or timeouts are handled with notifications.
-    """
-    # Write current start and end dates to config variables
-    cfg.startdate_sim = startdate_sim
-    cfg.enddate_sim = enddate_sim
-
-    # Set forecast time
+    """# Set forecast time
     cfg.forecasttime = (cfg.enddate_sim -
                         cfg.startdate_sim).total_seconds() / 3600
 
     # String variables for startdate_sim
-    cfg.startdate_sim_yyyymmddhh = startdate_sim.strftime('%Y%m%d%H')
-    cfg.enddate_sim_yyyymmddhh = enddate_sim.strftime('%Y%m%d%H')
+    cfg.startdate_sim_yyyymmddhh = cfg.startdate_sim.strftime('%Y%m%d%H')
+    cfg.enddate_sim_yyyymmddhh = cfg.enddate_sim.strftime('%Y%m%d%H')
 
     # Folder naming and structure
     cfg.job_id = f'{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}'
@@ -203,14 +192,16 @@ def run_chain(cfg, startdate_sim, enddate_sim, job_names, force, resume):
     tools.create_dir(log_finished_dir, "log_finished")
 
     # Number of levels and switch for unit conversion for 'reduce_output' job
-    if not hasattr(cfg, 'output_levels'): cfg.output_levels = -1
-    if not hasattr(cfg, 'convert_gas'): cfg.convert_gas = True
+    if not hasattr(cfg, 'output_levels'):
+        cfg.output_levels = -1
+    if not hasattr(cfg, 'convert_gas'):
+        cfg.convert_gas = True
 
-    if async:
+    if cfg.is_async:
         # Submit current chunck
         # - [ ] This bypasses all the logfile moving/checking
         # - [ ] Still needs a mechanism for resume
-        for job in job_names:
+        for job in cfg.jobs:
             getattr(jobs, job).main(cfg)
 
         # wait for previsouy chunk to be done
@@ -219,7 +210,7 @@ def run_chain(cfg, startdate_sim, enddate_sim, job_names, force, resume):
         cfg.job_ids['previous'] = cfg.job_ids['current']
     else:
         # run jobs (if required)
-        for job in job_names:
+        for job in cfg.jobs:
             skip = False
 
             # if exists job is currently worked on or has been finished
@@ -286,7 +277,7 @@ def run_chain(cfg, startdate_sim, enddate_sim, job_names, force, resume):
                     raise RuntimeError(subject)
 
 
-def restart_runs(cfg, job_names, force, resume):
+def restart_runs(cfg, force, resume):
     """Start subchains in specified intervals and manage restarts.
 
     This function slices the total runtime of the processing chain according to the
@@ -297,8 +288,6 @@ def restart_runs(cfg, job_names, force, resume):
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    job_names : list of str
-        List of names of jobs to execute on every timeslice.
     force : bool
         If True, it will force the execution of jobs regardless of their completion status.
     resume : bool
@@ -318,22 +307,19 @@ def restart_runs(cfg, job_names, force, resume):
             continue
 
         # Set restart variable (only takes effect for ICON)
-        if startdate_sim == cfg.startdate:
-            setattr(cfg, "lrestart", '.FALSE.')
-        else:
-            setattr(cfg, "lrestart", '.TRUE.')
+        cfg.lrestart = '.FALSE.' if startdate_sim == cfg.startdate else '.TRUE.'
 
-        print("Starting run with startdate {}".format(startdate_sim))
+        print(f"Starting run with startdate {startdate_sim}")
 
-        run_chain(cfg=cfg,
-                  startdate_sim=startdate_sim,
-                  enddate_sim=enddate_sim,
-                  job_names=job_names,
+        cfg.startdate_sim = startdate_sim
+        cfg.enddate_sim = enddate_sim
+
+        run_chain(cfg=cfg
                   force=force,
                   resume=resume)
 
 
-def restart_runs_spinup(cfg, job_names, force, resume):
+def restart_runs_spinup(cfg, force, resume):
     """Start subchains in specified intervals and manage restarts with spin-up.
 
     This function slices the total runtime of the processing chain according to the
@@ -343,8 +329,6 @@ def restart_runs_spinup(cfg, job_names, force, resume):
     Parameters
     ----------
     cfg : Config
-        Object holding all user-configuration parameters as attributes.
-    job_names : list of str
         List of names of jobs to execute on every timeslice.
     force : bool
         If True, it will force the execution of jobs regardless of their completion status.
@@ -359,22 +343,22 @@ def restart_runs_spinup(cfg, job_names, force, resume):
     for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
                                           cfg.restart_step_hours):
         if startdate_sim == cfg.startdate:
-            setattr(cfg, "first_one", True)
-            setattr(cfg, "second_one", False)
-            setattr(cfg, "lrestart", '.FALSE.')
+            cfg.first_one = True
+            cfg.second_one = False
+            cfg.lrestart = '.FALSE.'
             run_time = cfg.restart_step_hours
             startdate_sim_spinup = startdate_sim
         elif startdate_sim == cfg.startdate + timedelta(
                 hours=cfg.restart_step_hours):
-            setattr(cfg, "first_one", False)
-            setattr(cfg, "second_one", True)
-            setattr(cfg, "lrestart", '.TRUE.')
+            cfg.first_one = False
+            cfg.second_one = True
+            cfg.lrestart = '.TRUE.'
             run_time = cfg.restart_step_hours + cfg.spinup
             startdate_sim_spinup = startdate_sim - timedelta(hours=cfg.spinup)
         else:
-            setattr(cfg, "first_one", False)
-            setattr(cfg, "second_one", False)
-            setattr(cfg, "lrestart", '.TRUE.')
+            cfg.first_one = False
+            cfg.second_one = False
+            cfg.lrestart = '.TRUE.'
             run_time = cfg.restart_step_hours + cfg.spinup
             startdate_sim_spinup = startdate_sim - timedelta(hours=cfg.spinup)
 
@@ -385,10 +369,10 @@ def restart_runs_spinup(cfg, job_names, force, resume):
 
         print(f'Runtime of sub-simulation: {run_time} h')
 
+        cfg.startdate_sim = startdate_sim_spinup
+        cfg.enddate_sim = enddate_sim
+
         run_chain(cfg=cfg,
-                  startdate_sim=startdate_sim_spinup,
-                  enddate_sim=enddate_sim,
-                  job_names=job_names,
                   force=force,
                   resume=resume)
 
@@ -430,7 +414,9 @@ def main():
 
         # Check if jobs are set or if default ones are used
         if args.job_list is None:
-            args.job_list = cfg.workflow['jobs']
+            cfg.jobs = cfg.workflow['jobs']
+        else:
+            cfg.jobs = args.job_list
 
         print(
             f"Starting chain for case {casename} and workflow {cfg.workflow_name}"
@@ -441,21 +427,18 @@ def main():
             if hasattr(cfg, 'spinup'):
                 print("Using spin-up restarts.")
                 restart_runs_spinup(cfg=cfg,
-                                    job_names=args.job_list,
                                     force=args.force,
                                     resume=args.resume)
             else:
                 print("Using built-in model restarts.")
                 restart_runs(cfg=cfg,
-                             job_names=args.job_list,
                              force=args.force,
                              resume=args.resume)
         else:
             print("No restarts are used.")
+            cfg.startdate_sim = cfg.startdate
+            cfg.enddate_sim = cfg.enddate
             run_chain(cfg=cfg,
-                      startdate_sim=cfg.startdate,
-                      enddate_sim=cfg.enddate,
-                      job_names=args.job_list,
                       force=args.force,
                       resume=args.resume)
 

@@ -80,7 +80,12 @@ def set_cfg_variables(cfg):
             cfg.restart_file = cfg.icon_restart_in / cfg.restart_filename
             cfg.restart_file_scratch = cfg.icon_work / cfg.restart_filename
 
-    return cfg
+        cfg.job_ids['current']['prepare_data'] = []
+
+
+def async_error(cfg, part="This part"):
+    if cfg.is_async:
+        raise NotImplementedError(f"{part} isn't ready for async execution yet")
 
 
 def main(cfg):
@@ -123,7 +128,7 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes
     """
 
-    cfg = set_cfg_variables(cfg)
+    set_cfg_variables(cfg)
 
     if cfg.workflow_name.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
@@ -139,13 +144,29 @@ def main(cfg):
         #-----------------------------------------------------
         # Copy input files
         #-----------------------------------------------------
-        for varname in cfg.input_files:
-            varname_scratch = f'{varname}_scratch'
-            tools.copy_file(cfg.input_files[varname],
-                            cfg.input_files_scratch[varname],
-                            output_log=True)
+        wall_time = getattr(cfg, 'copy_input_walltime', '00:01:00')
+        queue = getattr(cfg, 'copy_input_queue', 'normal')
+        
+        script_lines = ['#!/usr/bin/env bash',
+                        f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
+                        f'#SBATCH --account={cfg.compute_account}',
+                        f'#SBATCH --time={walltime}',
+                        f'#SBATCH --partition={queue}',
+                        '#SBATCH --constraint=gpu',
+                        '#SBATCH --nodes=1',
+                        '']
+        for target, destination in zip(cfg.input_files.values(),
+                                       cfg.input_files_scratch.values()):
+            script_lines.append(f'rsync -av {target} {destination}')
+
+        
+        with (script := cfg.icon_base / 'copy_input.job').open('w') as f:
+            f.write('\n'.join(script_lines))
+
+        cfg.submit('prepare_data', script)
 
         if cfg.workflow_name == 'icon-art-global':
+            async_error(cfg, part='global ICON-ART')
             # -- Download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
                 # -- Fetch ERA5 data
@@ -306,6 +327,7 @@ def main(cfg):
                         process.communicate()
 
         else:  # non-global ICON-ART
+            async_error(cfg, part='non-global ICON-ART')
             #-----------------------------------------------------
             # Create LBC datafile lists (each at 00 UTC and others)
             #-----------------------------------------------------
@@ -523,6 +545,7 @@ def main(cfg):
 
     # If COSMO (and not ICON):
     else:
+        async_error(cfg, part='COSMO')
         logging.info('COSMO analysis data for IC/BC')
 
         dest_path = os.path.join(cfg.int2lm_input, 'meteo')

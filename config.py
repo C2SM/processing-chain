@@ -193,7 +193,7 @@ class Config():
         with open('workflows.yaml') as file:
             workflows = yaml.safe_load(file)
         self.workflow = workflows[self.workflow_name]
-        self. async = 'dependencies' in self.workflow
+        self.is_async = 'dependencies' in self.workflow
 
         # Initiate empty job ids dictionnary so that it can be filled in later
         self.job_ids = {'current': {}, 'previous': {}}
@@ -324,29 +324,41 @@ class Config():
                 else:
                     setattr(self, subkey, v)
 
-    def get_dep_ids(self, job_name):
+    def get_dep_ids(self, job_name, add_dep=None):
         """Get dependency job ids for `job_name`"""
 
-        deps_ids = []
-        if self. async:
-            # Couls be that job has no dependency, even in an async config,
+        # Initial list of dependencies
+        if add_dep is not None:
+            if type(add_dep) is int:
+                dep_id_list = [add_dep]
+            else:
+                try:
+                    dep_id_list = list(add_dep)
+                except TypeError:
+                    print(f'add_dep must be an iterable')
+        else:
+            dep_id_list = []
+
+        # Add job dependencies
+        if self.is_async:
+            # Could be that job has no dependency, even in an async config,
             # e.g., prepare_data
             if deps := self.workflow['dependencies'].get(job_name):
                 for stage in 'previous', 'current':
                     if dep_stage := deps.get(stage):
                         for job in dep_stage:
                             # Could be that dep job id does not exist, e.g.,
-                            # if it dep job is deactivated or it's the first chunk
+                            # if dep job is deactivated or it's the first chunk
                             if dep_id := self.job_ids[stage].get(job):
-                                deps_ids.extend(dep_id)
-        return dep_ids
+                                dep_id_list.extend(dep_id)
+        return dep_id_list
 
-    def get_dep_cmd(self, job_name):
+    def get_dep_cmd(self, job_name, add_dep=None):
         """Generate the part of the sbatch command that sepcifies dependencies for job_name."""
 
-        if self. async:
+        if self.is_async:
             # async case
-            if dep_ids := self.get_dep_ids(job_name):
+            if dep_ids := self.get_dep_ids(job_name, add_dep=add_dep):
                 dep_str = ':'.join(map(str, deps_ids))
                 return f'--dependency=afterok:{dep_str}'
             else:
@@ -356,6 +368,26 @@ class Config():
         else:
             # sequential case
             return '--wait'
+
+    def submit(self, job_name, script, add_dep=None):
+        """Submit job with dependencies"""
+
+        script_path = Path(script)
+        sbatch_cmd = ['sbatch', '--parsable']
+        if dep_cmd := self.get_dep_cmd(job_name, add_dep=add_dep):
+            sbatch_cmd.append(dep_cmd)
+        sbatch_cmd.append(script_path.name)
+            
+        result = subprocess.run(sbatch_cmd, cwd=script_path.parent, capture_output=True)
+        job_id = int(result.stdout)
+        if not job_name in self.job_ids['current']:
+            self.job_ids['current'][job_name] = [job_id]
+        else:
+            self.job_ids['current'][job_name].append(job_id)
+            
+        # If needed internaly in a multi-job task like prepare_data
+        # Can then be passed as add_dep keyword
+        return job_id
 
     def wait_for_previous(self):
         """wait for all jobs of the previous stage to be finished
