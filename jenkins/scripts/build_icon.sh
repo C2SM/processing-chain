@@ -13,7 +13,7 @@ function error {
 BRANCH=main
 GIT_REMOTE=git@github.com:C2SM/icon.git
 
-pushd src
+pushd ext
 # Activate spack
 . spack-c2sm/setup-env.sh
 

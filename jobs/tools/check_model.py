@@ -10,7 +10,8 @@ def check_model(cfg, model='COSMO'):
 
     Parameters
     ----------
-    cfg : config-object
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
 
     model : str
         Prescribed model

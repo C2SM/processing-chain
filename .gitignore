@@ -1,4 +1,5 @@
 docs/build/
+docs/_build/
 *__pycache__/
 *.pyc
 fieldextra.diagnostic
@@ -8,3 +9,4 @@ output/
 work/
 src/*/
 *.code-workspace
+.vscode/

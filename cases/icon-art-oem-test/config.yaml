@@ -60,7 +60,7 @@ input_files:
     oem_monthofyear_nc: ./input/icon-art-oem/OEM/monthofyear.nc
 
 icon:
-    binary_file: ./src/icon-art/bin/icon
+    binary_file: ./ext/icon-art/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
     walltime: '00:10:00'

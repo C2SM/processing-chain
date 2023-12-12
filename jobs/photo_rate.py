@@ -12,19 +12,15 @@ def main(cfg):
 
     Only necessary for **COSMOART** simulations.
 
-    Copy the photolysis-rate file from the project (``cfg.photo_rate_file``) to
-    the **COSMOART** input folder on scratch (``cfg.cosmo_input/art_photolysis``).
+    Copy the photolysis-rate file from the project (`cfg.photo_rate_file`) to
+    the **COSMOART** input folder on scratch (`cfg.cosmo_input/art_photolysis`).
 
     Parameters
-    ----------	
-    start_time : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the start_time
-    hstop : int
-        Length of simulation (in hours)
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    ----------
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     tools.check_model(cfg, 'cosmo-art')
 

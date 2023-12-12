@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copy cosmo output from scratch to store (or anywhere else)
-
-### DEVELOPMENT VERSION ###
-
 import logging
 import os
 import datetime
@@ -55,7 +51,7 @@ def main(cfg):
     Write a runscript to copy all files (**COSMO** settings & output,
     **int2lm** settings, logfiles) from ``cfg.cosmo_run``,
     ``cfg.cosmo_output``, ``cfg.int2lm_run``, ``cfg.log_finished_dir`` to
-    ``cfg.output_root/...`` .
+    ``cfg.output_root/...``.
     If the job ``reduce_output`` has been run before ``post_cosmo``, a 
     directory ``cfg.cosmo_output_reduced`` is created. In this case,
     ``cfg.cosmo_output_reduced`` is copied instead of ``cfg.cosmo_output``.
@@ -64,8 +60,10 @@ def main(cfg):
     
     Parameters
     ----------	
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     cfg = int2lm.set_cfg_variables(cfg)
     cfg = cosmo.set_cfg_variables(cfg)

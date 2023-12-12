@@ -1,28 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Prepare initial and boundary conditions
-#
-# In case of ICON:
-# Prepare input for meteorological initial and boundary conditions
-# by remapping the files onto the ICON grid (for IC) and the
-# auxillary lateral-boundary grid (for BC) with the DWD ICON tools
-# and saving them in the input folder.
-# Currently, the input files are assumed to be ifs data.
-# The files are read-in in grib2-format and the the remapped
-# files are saved in netCDF-format (currently only netCDF works
-# for ICON when then the simulation is driven by ifs-data).
-#
-# result in case of success: all meteo input-files necessary are found in
-#                            ${int2lm_input}/meteo/
-#
-# Dominik Brunner, July 2013
-#
-# 2013-07-16 Initial release, based on Christoph Knote script
-# 2017-01-15 Modified for hypatia and project SmartCarb
-# 2018-06-21 Translated to Python (kug)
-# 2021-02-28 Modified for ICON-simulations (stem)
-# 2021-11-12 Modified for ICON-ART-simulations (mjaehn)
 
 import os
 from pathlib import Path
@@ -90,45 +67,42 @@ def async_error(cfg, part="This part"):
 
 def main(cfg):
     """
-    **ICON** 
+    **ICON and COSMO Data Preparation**
 
-     Create necessary directories ``cfg.icon_input_icbc``
-     and ''cfg.icon_work''
+    This function prepares input data for ICON and COSMO simulations by creating necessary directories,
+    copying meteorological files, and handling specific data processing for each model.
 
-     Submitting the runscript for the DWD ICON tools to remap the meteo files.
+    **ICON:**
 
-     All runscripts specified in ``cfg.icontools_runjobs`` are submitted.
+    - Create directories ``cfg.icon_input_icbc`` and ``cfg.icon_work``.
+    - Submit the runscript for the DWD ICON tools to remap the meteorological files.
+    - All runscripts specified in ``cfg.icontools_runjobs`` are submitted.
+    - The meteorological files are read from the original input directory (``cfg.input_root_meteo``),
+      and the remapped meteorological files are saved in the input folder on scratch (``cfg.icon_input/icbc``).
+    - The constant variable 'GEOSP' is added to the files not containing it using python-cdo bindings.
 
-     The meteo files are read-in from the original input directory 
-     (``cfg.input_root_meteo``) and the remapped meteo files are
-     saved in the input folder on scratch (``cfg.icon_input/icbc``).
+    **COSMO:**
 
-     The constant variable 'GEOSP' is added to the files not containing it
-     using python-cdo bindings.
+    - Copy meteorological files to **int2lm** input.
+    - Create the necessary directory ``cfg.int2lm_input/meteo``.
+    - Copy meteorological files from the project directory (``cfg.meteo['dir']/cfg.meteo['prefix']YYYYMMDDHH``)
+      to the int2lm input folder on scratch (``cfg.int2lm_input/meteo``).
+    - For nested runs (meteorological files are COSMO output: ``cfg.meteo['prefix'] == 'lffd'``),
+      also copy the ``*c.nc``-file with constant parameters.
 
-    **COSMO**
-
-     Copy meteo files to **int2lm** input.
-
-     Create necessary directory ``cfg.int2lm_input/meteo``. Copy meteo files
-     from project directory (``cfg.meteo['dir']/cfg.meteo['prefix']YYYYMMDDHH``) to
-     int2lm input folder on scratch (``cfg.int2lm_input/meteo``).
-
-     For nested runs (meteo files are cosmo-output: ``cfg.meteo['prefix'] == 
-     'lffd'``), also the ``*c.nc``-file with constant parameters is copied.
-
-    
     Parameters
     ----------
-    startdate : datetime-object
-        The start date of the simulation
-    enddate : datetime-object
-        The end date of the simulation
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
-    """
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+    model_cfg : dict
+        Model configuration settings loaded from the ``config\/models.yaml`` file.
 
-    set_cfg_variables(cfg)
+    Raises
+    ------
+    RuntimeError
+        If any subprocess returns a non-zero exit code during execution.
+    """
+    cfg = set_cfg_variables(cfg, model_cfg)
 
     if cfg.workflow_name.startswith('icon'):
         logging.info('ICON input data (IC/BC)')

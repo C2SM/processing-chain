@@ -23,9 +23,9 @@ eval "$(conda shell.bash hook)"
 conda activate proc-chain
 
 # Setup spack
-if [[ -d src/spack-c2sm ]]; then
+if [[ -d ext/spack-c2sm ]]; then
   echo spack folder already exists - activating spack...
-  . src/spack-c2sm/setup-env.sh
+  . ext/spack-c2sm/setup-env.sh
 else
   echo building spack...
   ./jenkins/scripts/setup-spack.sh
@@ -41,7 +41,7 @@ else
 fi
 
 # Build int2lm
-if [[ -f src/int2lm/test/testsuite/int2lm ]]; then
+if [[ -f ext/int2lm/test/testsuite/int2lm ]]; then
   echo int2lm executable already exists - skipping build...
 else
   echo building int2lm...
@@ -49,7 +49,7 @@ else
 fi
 
 # Build COSMO-GHG
-if [[ -f src/cosmo-ghg/cosmo/ACC/cosmo_gpu ]]; then
+if [[ -f ext/cosmo-ghg/cosmo/ACC/cosmo_gpu ]]; then
   echo cosmo executable already exists - skipping build.
 else
   echo building cosmo...
@@ -57,7 +57,7 @@ else
 fi
 
 # Build ICON
-if [[ -f src/icon/bin/icon ]]; then
+if [[ -f ext/icon/bin/icon ]]; then
   echo icon executable already exists - skipping build.
 else
   echo building icon...
@@ -65,7 +65,7 @@ else
 fi
 
 # Build ICON-ART
-if [[ -f src/icon-art/bin/icon ]]; then
+if [[ -f ext/icon-art/bin/icon ]]; then
   echo icon-art executable already exists - skipping build.
 else
   echo building icon-art...
