@@ -314,7 +314,7 @@ def restart_runs(cfg, force, resume):
         cfg.startdate_sim = startdate_sim
         cfg.enddate_sim = enddate_sim
 
-        run_chain(cfg=cfg
+        run_chain(cfg=cfg,
                   force=force,
                   resume=resume)
 
