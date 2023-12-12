@@ -62,7 +62,8 @@ def set_cfg_variables(cfg):
 
 def async_error(cfg, part="This part"):
     if cfg.is_async:
-        raise NotImplementedError(f"{part} isn't ready for async execution yet")
+        raise NotImplementedError(
+            f"{part} isn't ready for async execution yet")
 
 
 def main(cfg):
@@ -120,20 +121,18 @@ def main(cfg):
         #-----------------------------------------------------
         wall_time = getattr(cfg, 'copy_input_walltime', '00:01:00')
         queue = getattr(cfg, 'copy_input_queue', 'normal')
-        
-        script_lines = ['#!/usr/bin/env bash',
-                        f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
-                        f'#SBATCH --account={cfg.compute_account}',
-                        f'#SBATCH --time={walltime}',
-                        f'#SBATCH --partition={queue}',
-                        '#SBATCH --constraint=gpu',
-                        '#SBATCH --nodes=1',
-                        '']
+
+        script_lines = [
+            '#!/usr/bin/env bash',
+            f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
+            f'#SBATCH --account={cfg.compute_account}',
+            f'#SBATCH --time={walltime}', f'#SBATCH --partition={queue}',
+            '#SBATCH --constraint=gpu', '#SBATCH --nodes=1', ''
+        ]
         for target, destination in zip(cfg.input_files.values(),
                                        cfg.input_files_scratch.values()):
             script_lines.append(f'rsync -av {target} {destination}')
 
-        
         with (script := cfg.icon_base / 'copy_input.job').open('w') as f:
             f.write('\n'.join(script_lines))
 
