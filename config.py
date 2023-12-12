@@ -377,14 +377,16 @@ class Config():
         if dep_cmd := self.get_dep_cmd(job_name, add_dep=add_dep):
             sbatch_cmd.append(dep_cmd)
         sbatch_cmd.append(script_path.name)
-            
-        result = subprocess.run(sbatch_cmd, cwd=script_path.parent, capture_output=True)
+
+        result = subprocess.run(sbatch_cmd,
+                                cwd=script_path.parent,
+                                capture_output=True)
         job_id = int(result.stdout)
         if not job_name in self.job_ids['current']:
             self.job_ids['current'][job_name] = [job_id]
         else:
             self.job_ids['current'][job_name].append(job_id)
-            
+
         # If needed internaly in a multi-job task like prepare_data
         # Can then be passed as add_dep keyword
         return job_id
