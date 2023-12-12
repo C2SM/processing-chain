@@ -25,6 +25,7 @@
 # 2021-11-12 Modified for ICON-ART-simulations (mjaehn)
 
 import os
+from pathlib import Path
 import logging
 import shutil
 import subprocess
@@ -37,43 +38,36 @@ from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 from calendar import monthrange
 
 
-def set_cfg_variables(cfg, model_cfg):
-    # TODO: Change setattr() to direct assignment
-    if cfg.model.startswith('cosmo'):
-        setattr(cfg, 'int2lm_root', os.path.join(cfg.chain_root, 'int2lm'))
-        setattr(cfg, 'int2lm_input', os.path.join(cfg.int2lm_root, 'input'))
-    elif cfg.model.startswith('icon'):
-        setattr(cfg, 'icon_base', os.path.join(cfg.chain_root, 'icon'))
-        setattr(cfg, 'icon_input', os.path.join(cfg.chain_root, 'icon',
-                                                'input'))
-        setattr(cfg, 'icon_input_icbc',
-                os.path.join(cfg.chain_root, 'icon', 'input', 'icbc'))
-        setattr(cfg, 'icon_work', os.path.join(cfg.chain_root, 'icon', 'run'))
-        setattr(cfg, 'icon_output',
-                os.path.join(cfg.chain_root, 'icon', 'output'))
-        setattr(cfg, 'icon_output_reduced',
-                os.path.join(cfg.chain_root, 'icon', 'output_reduced'))
-        setattr(cfg, 'icon_restart_out',
-                os.path.join(cfg.chain_root, 'icon', 'restart'))
-        setattr(cfg, 'icon_restart_in',
-                os.path.join(cfg.chain_root_prev, 'icon', 'run'))
-        setattr(cfg, 'icon_input_icbc_prev',
-                os.path.join(cfg.chain_root_prev, 'icon', 'input', 'icbc'))
+def set_cfg_variables(cfg):
+    if cfg.workflow_name.startswith('cosmo'):
+        cfg.int2lm_root = cfg.chain_root / 'int2lm'
+        cfg.int2lm_input = cfg.int2lm_root / 'input'
+    elif cfg.workflow_name.startswith('icon'):
+        cfg.icon_base = cfg.chain_root / 'icon'
+        cfg.icon_input = cfg.icon_base / 'input'
+        cfg.icon_input_icbc = cfg.icon_input / 'icbc'
+        cfg.icon_work = cfg.icon_base / 'run'
+        cfg.icon_output = cfg.icon_base / 'output'
+        cfg.icon_output_reduced = cfg.icon_base / 'output_reduced'
+        cfg.icon_restart_out = cfg.icon_base / 'restart'
+        cfg.icon_restart_in = cfg.chain_root_prev / 'icon' / 'run'
+        cfg.icon_input_icbc_prev = cfg.chain_root_prev / 'icon' / 'input' / 'icbc'
 
         cfg.input_files_scratch = {}
-        for varname in cfg.input_files:
-            cfg.input_files_scratch[varname] = os.path.join(
-                cfg.icon_input, os.path.basename(cfg.input_files[varname]))
+        for dsc, file in cfg.input_files.items():
+            cfg.input_files[dsc] = (p := Path(file))
+            cfg.input_files_scratch[dsc] = cfg.icon_input / p.name
+
         cfg.create_vars_from_dicts()
 
         cfg.ini_datetime_string = cfg.startdate.strftime('%Y-%m-%dT%H:00:00Z')
         cfg.end_datetime_string = cfg.enddate.strftime('%Y-%m-%dT%H:00:00Z')
 
-        if cfg.model == 'icon-art-oem':
+        if cfg.workflow_name == 'icon-art-oem':
             cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime(
                 '%Y%m%d_%H')
 
-        if cfg.model == 'icon-art-global':
+        if cfg.workflow_name == 'icon-art-global':
             # Nudge type (global or nothing)
             cfg.nudge_type = 2 if cfg.era5_global_nudging else 0
             # Time step for global nudging in seconds
@@ -83,15 +77,18 @@ def set_cfg_variables(cfg, model_cfg):
 
         if cfg.lrestart == '.TRUE.':
             cfg.restart_filename = 'restart_atm_DOM01.nc'
-            cfg.restart_file = os.path.join(cfg.icon_restart_in,
-                                            cfg.restart_filename)
-            cfg.restart_file_scratch = os.path.join(cfg.icon_work,
-                                                    cfg.restart_filename)
+            cfg.restart_file = cfg.icon_restart_in / cfg.restart_filename
+            cfg.restart_file_scratch = cfg.icon_work / cfg.restart_filename
 
-    return cfg
+        cfg.job_ids['current']['prepare_data'] = []
 
 
-def main(cfg, model_cfg):
+def async_error(cfg, part="This part"):
+    if cfg.is_async:
+        raise NotImplementedError(f"{part} isn't ready for async execution yet")
+
+
+def main(cfg):
     """
     **ICON** 
 
@@ -131,9 +128,9 @@ def main(cfg, model_cfg):
         Object holding all user-configuration parameters as attributes
     """
 
-    cfg = set_cfg_variables(cfg, model_cfg)
+    set_cfg_variables(cfg)
 
-    if cfg.model.startswith('icon'):
+    if cfg.workflow_name.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
 
         #-----------------------------------------------------
@@ -147,13 +144,29 @@ def main(cfg, model_cfg):
         #-----------------------------------------------------
         # Copy input files
         #-----------------------------------------------------
-        for varname in cfg.input_files:
-            varname_scratch = f'{varname}_scratch'
-            tools.copy_file(cfg.input_files[varname],
-                            cfg.input_files_scratch[varname],
-                            output_log=True)
+        wall_time = getattr(cfg, 'copy_input_walltime', '00:01:00')
+        queue = getattr(cfg, 'copy_input_queue', 'normal')
+        
+        script_lines = ['#!/usr/bin/env bash',
+                        f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
+                        f'#SBATCH --account={cfg.compute_account}',
+                        f'#SBATCH --time={walltime}',
+                        f'#SBATCH --partition={queue}',
+                        '#SBATCH --constraint=gpu',
+                        '#SBATCH --nodes=1',
+                        '']
+        for target, destination in zip(cfg.input_files.values(),
+                                       cfg.input_files_scratch.values()):
+            script_lines.append(f'rsync -av {target} {destination}')
 
-        if cfg.model == 'icon-art-global':
+        
+        with (script := cfg.icon_base / 'copy_input.job').open('w') as f:
+            f.write('\n'.join(script_lines))
+
+        cfg.submit('prepare_data', script)
+
+        if cfg.workflow_name == 'icon-art-global':
+            async_error(cfg, part='global ICON-ART')
             # -- Download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
                 # -- Fetch ERA5 data
@@ -314,6 +327,7 @@ def main(cfg, model_cfg):
                         process.communicate()
 
         else:  # non-global ICON-ART
+            async_error(cfg, part='non-global ICON-ART')
             #-----------------------------------------------------
             # Create LBC datafile lists (each at 00 UTC and others)
             #-----------------------------------------------------
@@ -325,7 +339,7 @@ def main(cfg, model_cfg):
                 meteo_file = os.path.join(
                     cfg.icon_input_icbc, cfg.meteo['prefix'] +
                     time.strftime(cfg.meteo['nameformat']))
-                if cfg.model == 'icon-art' or cfg.model == 'icon-art-oem':
+                if cfg.workflow_name == 'icon-art' or cfg.workflow_name == 'icon-art-oem':
                     chem_file = os.path.join(
                         cfg.icon_input_icbc, cfg.chem['prefix'] +
                         time.strftime(cfg.chem_nameformat))
@@ -418,7 +432,7 @@ def main(cfg, model_cfg):
             #-----------------------------------------------------
             # Add Q (copy of QV) and/or PS to initial file
             #-----------------------------------------------------
-            if cfg.model.startswith('icon-art'):
+            if cfg.workflow_name.startswith('icon-art'):
                 meteo_file = os.path.join(
                     cfg.icon_input_icbc,
                     cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
@@ -456,7 +470,7 @@ def main(cfg, model_cfg):
             #-----------------------------------------------------
             # In case of OEM: merge chem tracers with meteo-files
             #-----------------------------------------------------
-            if cfg.model == 'icon-art-oem':
+            if cfg.workflow_name == 'icon-art-oem':
                 for time in tools.iter_hours(cfg.startdate_sim,
                                              cfg.enddate_sim,
                                              cfg.meteo['inc']):
@@ -531,6 +545,7 @@ def main(cfg, model_cfg):
 
     # If COSMO (and not ICON):
     else:
+        async_error(cfg, part='COSMO')
         logging.info('COSMO analysis data for IC/BC')
 
         dest_path = os.path.join(cfg.int2lm_input, 'meteo')
@@ -625,7 +640,7 @@ def main(cfg, model_cfg):
 
         # Other IC/BC data
         inv_to_process = []
-        if cfg.model == 'cosmo-ghg':
+        if cfg.workflow_name == 'cosmo-ghg':
             try:
                 CAMS = dict(fullname="CAMS",
                             nickname="cams",
@@ -649,7 +664,7 @@ def main(cfg, model_cfg):
                 inv_to_process.append(CT)
             except AttributeError:
                 pass
-        elif cfg.model == 'cosmo-art':
+        elif cfg.workflow_name == 'cosmo-art':
             try:
                 MOZART = dict(fullname='MOZART',
                               nickname='mozart',
@@ -664,7 +679,7 @@ def main(cfg, model_cfg):
             except AttributeError:
                 pass
 
-        if cfg.model == 'cosmo-ghg' or cfg.model == 'cosmo-art':
+        if cfg.workflow_name == 'cosmo-ghg' or cfg.workflow_name == 'cosmo-art':
             logging.info("Processing " +
                          ", ".join([i["fullname"]
                                     for i in inv_to_process]) + " data")

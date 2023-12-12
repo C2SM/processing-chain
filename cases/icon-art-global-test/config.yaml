@@ -1,6 +1,6 @@
 # Configuration file for the 'icon-art-global-test' case with ICON
 
-model: icon-art-global
+workflow: icon-art-global
 constraint: gpu
 run_on: cpu
 compute_queue: normal

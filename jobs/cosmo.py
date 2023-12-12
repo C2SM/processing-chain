@@ -20,7 +20,7 @@ from . import tools
 from datetime import datetime, timedelta
 
 
-def set_cfg_variables(cfg, model_cfg):
+def set_cfg_variables(cfg):
     setattr(cfg, 'cosmo_base', os.path.join(cfg.chain_root, 'cosmo'))
     setattr(cfg, 'cosmo_input', os.path.join(cfg.chain_root, 'cosmo', 'input'))
     setattr(cfg, 'cosmo_run', os.path.join(cfg.chain_root, 'cosmo', 'run'))
@@ -30,7 +30,7 @@ def set_cfg_variables(cfg, model_cfg):
             os.path.join(cfg.chain_root, 'cosmo', 'output_reduced'))
 
     # Number of tracers
-    if 'tracers' in model_cfg['models'][cfg.model]['features']:
+    if 'tracers' in cfg.workflow['features']:
         tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                       'cosmo_tracers.csv')
         if os.path.isfile(tracer_csvfile):
@@ -62,7 +62,7 @@ def set_cfg_variables(cfg, model_cfg):
     return cfg
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Setup the namelists for a **COSMO** tracer run and submit the job to
     the queue
 
@@ -93,7 +93,7 @@ def main(cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = set_cfg_variables(cfg, model_cfg)
+    cfg = set_cfg_variables(cfg)
     logfile = os.path.join(cfg.log_working_dir, "cosmo")
     logfile_finish = os.path.join(cfg.log_finished_dir, "cosmo")
 
@@ -176,23 +176,23 @@ def main(cfg, model_cfg):
 
     # Create restart directory if feature is present and
     # if there is no spinup
-    if 'restart' in model_cfg['models'][cfg.model]['features'] and not \
+    if 'restart' in cfg.workflow['features'] and not \
        hasattr(cfg, 'spinup'):
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
     # Copy cosmo executable
-    cfg.cosmo['execname'] = cfg.model.lower()
+    cfg.cosmo['execname'] = cfg.workflow_name.lower()
     tools.copy_file(cfg.cosmo['binary_file'],
                     os.path.join(cfg.cosmo_run, cfg.cosmo['execname']))
 
     # Prepare namelist and submit job
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                   'cosmo_tracers.csv')
-    if cfg.model == 'cosmo':
+    if cfg.workflow_name == 'cosmo':
         namelist_names = ['ORG', 'IO', 'DYN', 'PHY', 'DIA', 'ASS', 'SAT']
-    elif cfg.model == 'cosmo-ghg':
+    elif cfg.workflow_name == 'cosmo-ghg':
         namelist_names = ['AF', 'ORG', 'IO', 'DYN', 'GHG', 'PHY', 'DIA', 'ASS']
-    elif cfg.model == 'cosmo-art':
+    elif cfg.workflow_name == 'cosmo-art':
         namelist_names = [
             'ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO', 'ORG', 'PHY'
         ]
@@ -231,7 +231,7 @@ def main(cfg, model_cfg):
 
     # Append INPUT_GHG namelist with tracer definitions from csv file
     if os.path.isfile(tracer_csvfile):
-        if cfg.model == 'cosmo-ghg':
+        if cfg.workflow_name == 'cosmo-ghg':
             input_ghg_filename = os.path.join(cfg.cosmo_run, 'INPUT_GHG')
 
             write_cosmo_input_ghg.main(tracer_csvfile, input_ghg_filename, cfg)

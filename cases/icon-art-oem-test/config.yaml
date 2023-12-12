@@ -1,6 +1,6 @@
 # Configuration file for the 'icon-art-oem-test' case with ICON
 
-model: icon-art-oem
+worflow: icon-art-oem
 constraint: gpu
 run_on: cpu
 compute_queue: normal

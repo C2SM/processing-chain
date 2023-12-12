@@ -699,7 +699,7 @@ def create_animations(cfg):
                        duration=300)
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Checks output variables whether they are in a phyiscally reasonable
     range.
 

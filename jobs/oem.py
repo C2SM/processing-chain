@@ -8,7 +8,7 @@ import logging
 from . import tools, cosmo
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Copy emission and profile files to the **cosmo** or **icon** input
     directory.
 
@@ -23,7 +23,7 @@ def main(cfg, model_cfg):
     cfg : config-object
         Object holding all user-configuration parameters as attributes
     """
-    cfg = cosmo.set_cfg_variables(cfg, model_cfg)
+    cfg = cosmo.set_cfg_variables(cfg)
 
     oem_dir = cfg.oem['dir']
     oem_gridded_emissions_nc = os.path.join(oem_dir,
@@ -51,7 +51,7 @@ def main(cfg, model_cfg):
         raise RuntimeError("At least one of (hod/dow/moy) or (hoy) netcdfs "
                            " have to be given for online emissions")
 
-    if cfg.model.startswith('icon'):
+    if cfg.workflow_name.startswith('icon'):
         input_dir = cfg.icon_input
     else:
         input_dir = cfg.cosmo_input
