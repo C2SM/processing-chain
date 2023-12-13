@@ -314,9 +314,7 @@ def restart_runs(cfg, force, resume):
         cfg.startdate_sim = startdate_sim
         cfg.enddate_sim = enddate_sim
 
-        run_chain(cfg=cfg,
-                  force=force,
-                  resume=resume)
+        run_chain(cfg=cfg, force=force, resume=resume)
 
 
 def restart_runs_spinup(cfg, force, resume):
@@ -372,9 +370,7 @@ def restart_runs_spinup(cfg, force, resume):
         cfg.startdate_sim = startdate_sim_spinup
         cfg.enddate_sim = enddate_sim
 
-        run_chain(cfg=cfg,
-                  force=force,
-                  resume=resume)
+        run_chain(cfg=cfg, force=force, resume=resume)
 
 
 def main():
@@ -431,16 +427,12 @@ def main():
                                     resume=args.resume)
             else:
                 print("Using built-in model restarts.")
-                restart_runs(cfg=cfg,
-                             force=args.force,
-                             resume=args.resume)
+                restart_runs(cfg=cfg, force=args.force, resume=args.resume)
         else:
             print("No restarts are used.")
             cfg.startdate_sim = cfg.startdate
             cfg.enddate_sim = cfg.enddate
-            run_chain(cfg=cfg,
-                      force=args.force,
-                      resume=args.resume)
+            run_chain(cfg=cfg, force=args.force, resume=args.resume)
 
     print('>>> Finished the processing chain successfully <<<')
 
