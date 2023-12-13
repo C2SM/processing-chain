@@ -118,7 +118,8 @@ def main(cfg):
             '#!/usr/bin/env bash',
             f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
             f'#SBATCH --account={cfg.compute_account}',
-            f'#SBATCH --time={cfg.prepare_data_walltime}', f'#SBATCH --partition={cfg.compute_queue}',
+            f'#SBATCH --time={cfg.prepare_data_walltime}',
+            f'#SBATCH --partition={cfg.compute_queue}',
             '#SBATCH --constraint=gpu', '#SBATCH --nodes=1', ''
         ]
         for target, destination in zip(cfg.input_files.values(),
