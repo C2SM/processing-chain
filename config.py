@@ -267,13 +267,13 @@ class Config():
                 # If the value is a list, format it with indentation
                 print(f"{key:<{max_col_width}} list")
                 for item in value:
-                    item_type = type(item).__name__
+                    item_type = "Path" if type(item).__name__ == "PosixPath" else type(item).__name__
                     print(f"  - {item:<{max_col_width-4}} {item_type}")
             elif isinstance(value, dict):
                 # If the value is a dictionary, format it as before
                 print(f"{key:<{max_col_width}} dict")
                 for sub_key, sub_value in value.items():
-                    sub_value_type = type(sub_value).__name__
+                    sub_value_type = "Path" if type(sub_value).__name__ == "PosixPath" else type(sub_value).__name__
                     print(
                         f"  - {sub_key:<{max_col_width-4}} {sub_value_type:<4} {sub_value}"
                     )
