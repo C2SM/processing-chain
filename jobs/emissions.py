@@ -30,7 +30,7 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    cfg = prepare_data.set_cfg_variables(cfg)
+    prepare_data.set_cfg_variables(cfg)
     dest_prefix = "emis_"
 
     if not isinstance(cfg.emissions['dir'], list):

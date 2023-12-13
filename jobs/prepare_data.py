@@ -101,7 +101,7 @@ def main(cfg):
     RuntimeError
         If any subprocess returns a non-zero exit code during execution.
     """
-    cfg = set_cfg_variables(cfg)
+    set_cfg_variables(cfg)
 
     if cfg.workflow_name.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
@@ -114,17 +114,11 @@ def main(cfg):
         tools.create_dir(cfg.icon_output, "icon_output")
         tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
 
-        #-----------------------------------------------------
-        # Copy input files
-        #-----------------------------------------------------
-        wall_time = getattr(cfg, 'copy_input_walltime', '00:01:00')
-        queue = getattr(cfg, 'copy_input_queue', 'normal')
-
         script_lines = [
             '#!/usr/bin/env bash',
             f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
             f'#SBATCH --account={cfg.compute_account}',
-            f'#SBATCH --time={walltime}', f'#SBATCH --partition={queue}',
+            f'#SBATCH --time={cfg.prepare_data_walltime}', f'#SBATCH --partition={cfg.compute_queue}',
             '#SBATCH --constraint=gpu', '#SBATCH --nodes=1', ''
         ]
         for target, destination in zip(cfg.input_files.values(),

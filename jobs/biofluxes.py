@@ -18,7 +18,7 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     tools.check_model(cfg, 'cosmo-ghg')
-    cfg = prepare_data.set_cfg_variables(cfg)
+    prepare_data.set_cfg_variables(cfg)
 
     scratch_path = os.path.join(cfg.int2lm_input, 'vprm')
 

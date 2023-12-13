@@ -63,11 +63,10 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    cfg = int2lm.set_cfg_variables(cfg)
-    cfg = cosmo.set_cfg_variables(cfg)
+    int2lm.set_cfg_variables(cfg)
+    cosmo.set_cfg_variables(cfg)
 
     logfile = os.path.join(cfg.log_working_dir, "post_cosmo")
-    cosmo_run_dir = cfg.cosmo_run
     runscript_path = os.path.join(cfg.cosmo_run, "post_cosmo.job")
     copy_path = os.path.join(
         cfg.post_cosmo['output_root'],

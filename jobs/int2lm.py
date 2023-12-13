@@ -11,12 +11,8 @@ from . import tools, prepare_data
 
 
 def set_cfg_variables(cfg):
-
-    setattr(cfg, 'int2lm_run', os.path.join(cfg.chain_root, 'int2lm', 'run'))
-    setattr(cfg, 'int2lm_output',
-            os.path.join(cfg.chain_root, 'int2lm', 'output'))
-
-    return cfg
+    cfg.int2lm_run = cfg.chain_root / 'int2lm' / 'run'
+    cfg.int2lm_output = cfg.chain_root / 'int2lm' / 'output'
 
 
 def main(cfg):
@@ -50,8 +46,8 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    cfg = prepare_data.set_cfg_variables(cfg)
-    cfg = set_cfg_variables(cfg)
+    prepare_data.set_cfg_variables(cfg)
+    set_cfg_variables(cfg)
 
     # Total number of processes
     np_tot = cfg.int2lm['np_x'] * cfg.int2lm['np_y']

@@ -28,7 +28,7 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    cfg = int2lm.set_cfg_variables(cfg)
+    int2lm.set_cfg_variables(cfg)
 
     # Int2lm processing always starts at hstart=0, thus modifying inidate
     inidate_int2lm_yyyymmddhh = cfg.startdate_sim_yyyymmddhh

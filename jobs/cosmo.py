@@ -11,45 +11,40 @@ from datetime import datetime, timedelta
 
 
 def set_cfg_variables(cfg):
-    setattr(cfg, 'cosmo_base', os.path.join(cfg.chain_root, 'cosmo'))
-    setattr(cfg, 'cosmo_input', os.path.join(cfg.chain_root, 'cosmo', 'input'))
-    setattr(cfg, 'cosmo_run', os.path.join(cfg.chain_root, 'cosmo', 'run'))
-    setattr(cfg, 'cosmo_output', os.path.join(cfg.chain_root, 'cosmo',
-                                              'output'))
-    setattr(cfg, 'cosmo_output_reduced',
-            os.path.join(cfg.chain_root, 'cosmo', 'output_reduced'))
+    cfg.cosmo_base = cfg.chain_root / 'cosmo'
+    cfg.cosmo_input = cfg.chain_root / 'cosmo' / 'input'
+    cfg.cosmo_run = cfg.chain_root / 'cosmo' / 'run'
+    cfg.cosmo_output = cfg.chain_root / 'cosmo' / 'output'
+    cfg.cosmo_output_reduced = cfg.chain_root / 'cosmo' / 'output_reduced'
 
     # Number of tracers
     if 'tracers' in cfg.workflow['features']:
-        tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
-                                      'cosmo_tracers.csv')
-        if os.path.isfile(tracer_csvfile):
+        tracer_csvfile = cfg.chain_src_dir / 'cases' / cfg.casename / 'cosmo_tracers.csv'
+        if tracer_csvfile.is_file():
             with open(tracer_csvfile, 'r') as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=',')
                 reader = [r for r in reader if r[''] != '#']
-                setattr(cfg, 'in_tracers', len(reader))
+                cfg.in_tracers = len(reader)
         else:
             raise FileNotFoundError(f"File not found: {tracer_csvfile}")
 
-        # tracer_start namelist paramter for spinup simulation
+        # tracer_start namelist parameter for spinup simulation
         if hasattr(cfg, 'spinup'):
             if cfg.first_one:
-                setattr(cfg, 'tracer_start', 0)
+                cfg.tracer_start = 0
             else:
-                setattr(cfg, 'tracer_start', cfg.spinup)
+                cfg.tracer_start = cfg.spinup
         else:
-            setattr(cfg, 'tracer_start', 0)
+            cfg.tracer_start = 0
 
     # asynchronous I/O
     if hasattr(cfg, 'cfg.cosmo_np_io'):
         if cfg.cosmo_np_io == 0:
-            setattr(cfg, 'lasync_io', '.FALSE.')
-            setattr(cfg, 'num_iope_percomm', 0)
+            cfg.lasync_io = '.FALSE.'
+            cfg.num_iope_percomm = 0
         else:
-            setattr(cfg, 'lasync_io', '.TRUE.')
-            setattr(cfg, 'num_iope_percomm', 1)
-
-    return cfg
+            cfg.lasync_io = '.TRUE.'
+            cfg.num_iope_percomm = 1
 
 
 def main(cfg):
@@ -81,7 +76,7 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    cfg = set_cfg_variables(cfg)
+    set_cfg_variables(cfg)
     logfile = os.path.join(cfg.log_working_dir, "cosmo")
     logfile_finish = os.path.join(cfg.log_finished_dir, "cosmo")
 
