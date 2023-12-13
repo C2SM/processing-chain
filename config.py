@@ -361,7 +361,7 @@ class Config():
         if self.is_async:
             # async case
             if dep_ids := self.get_dep_ids(job_name, add_dep=add_dep):
-                dep_str = ':'.join(map(str, deps_ids))
+                dep_str = ':'.join(map(str, dep_ids))
                 return f'--dependency=afterok:{dep_str}'
             else:
                 # job_name has no dependencies but still belongs to an async workflow

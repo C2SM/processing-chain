@@ -109,7 +109,8 @@ def run_chain(cfg, force, resume):
     - This function sets various configuration values based on the provided parameters.
     - It checks for job completion status and resumes or forces execution accordingly.
     - Job log files are managed, and errors or timeouts are handled with notifications.
-    """# Set forecast time
+    """
+    # Set forecast time
     cfg.forecasttime = (cfg.enddate_sim -
                         cfg.startdate_sim).total_seconds() / 3600
 
@@ -237,7 +238,7 @@ def run_chain(cfg, force, resume):
                 print('Process "%s" for chain "%s"' % (job, cfg.job_id))
                 sys.stdout.flush()
 
-                try_count = 1 + (args.ntry - 1) * (job == 'cosmo')
+                try_count = 1 + (cfg.ntry - 1) * (job == 'cosmo')
                 while try_count > 0:
                     try_count -= 1
                     try:
@@ -376,7 +377,9 @@ def restart_runs_spinup(cfg, force, resume):
 def main():
     """Main script for running a processing chain.
 
-    This script handles the execution of a processing chain for one or more specified cases. It loads model configurations, prepares the environment, and starts the chain based on the provided settings.
+    This script handles the execution of a processing chain for one or more
+    specified cases. It loads model configurations, prepares the environment,
+    and starts the chain based on the provided settings.
 
     Parameters
     ----------
@@ -385,14 +388,19 @@ def main():
     Notes
     -----
     - This script uses command-line arguments to specify cases and job lists.
-    - It loads model configurations, converts paths to absolute, sets restart settings, and starts the chain.
-    - Depending on the model's features, it may run with or without restarts or utilize spin-up restarts.
+    - It loads model configurations, converts paths to absolute, sets restart 
+      settings, and starts the chain.
+    - Depending on the model's features, it may run with or without restarts
+      or utilize spin-up restarts.
     """
     args = parse_arguments()
 
     for casename in args.casenames:
         # Load configs
         cfg = Config(casename)
+
+        # Make ntry a Config variable
+        cfg.ntry = args.ntry
 
         # Convert relative to absolute paths
         cfg.convert_paths_to_absolute()
