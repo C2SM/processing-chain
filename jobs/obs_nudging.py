@@ -26,8 +26,6 @@ def main(cfg):
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     dest_dir = os.path.join(cfg.cosmo_input, "obs_nudging")
     tools.create_dir(dest_dir, "obs nudging input")

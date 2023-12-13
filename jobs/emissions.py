@@ -7,7 +7,7 @@ import logging
 from . import tools, prepare_data
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Copy emission files to the int2lm input directory.
 
     Necessary for both COSMO and COSMOART simulations.
@@ -29,8 +29,6 @@ def main(cfg, model_cfg):
     ----------	
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     cfg = prepare_data.set_cfg_variables(cfg)
     dest_prefix = "emis_"

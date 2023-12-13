@@ -19,8 +19,6 @@ def main(cfg):
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     tools.check_model(cfg, 'cosmo-art')
 

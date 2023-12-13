@@ -6,7 +6,7 @@ import logging
 from . import tools, prepare_data
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Prepare biofluxes files for COSMO simulations.
 
     Copies biofluxes files from the project folder (:attr:`cfg.vprm['dir']`)
@@ -16,8 +16,6 @@ def main(cfg, model_cfg):
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     tools.check_model(cfg, 'cosmo-ghg')
     cfg = prepare_data.set_cfg_variables(cfg)

@@ -19,7 +19,7 @@ def set_cfg_variables(cfg):
     return cfg
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Setup the namelist for int2lm and submit the job to the queue.
 
     Necessary for both COSMO and COSMOART simulations.
@@ -49,8 +49,6 @@ def main(cfg, model_cfg):
     ----------	
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     cfg = prepare_data.set_cfg_variables(cfg)
     cfg = set_cfg_variables(cfg)

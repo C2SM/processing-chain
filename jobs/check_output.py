@@ -699,7 +699,7 @@ def create_animations(cfg):
                        duration=300)
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Check output variables for physical reasonability and create plots.
 
     This function checks the output variables to ensure they are in a physically
@@ -712,8 +712,6 @@ def main(cfg, model_cfg):
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     date = dt.datetime.today()
 

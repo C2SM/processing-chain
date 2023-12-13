@@ -176,8 +176,6 @@ def main(cfg):
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     dest_dir = join(cfg.cosmo_input, 'octe')
     create_dir_and_copy_input(dest_dir=dest_dir,

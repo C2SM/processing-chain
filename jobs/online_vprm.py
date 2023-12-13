@@ -7,7 +7,7 @@ import logging
 from . import tools
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Copy MODIS surface reflectance data and vegetation class fraction file
     to the **cosmo** input directory.
 
@@ -15,8 +15,6 @@ def main(cfg, model_cfg):
     ----------	
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
     dest_modis = 'modis.nc'
     dest_vegetation = 'vegetation.nc'

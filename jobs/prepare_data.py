@@ -95,15 +95,13 @@ def main(cfg):
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config\/models.yaml`` file.
 
     Raises
     ------
     RuntimeError
         If any subprocess returns a non-zero exit code during execution.
     """
-    cfg = set_cfg_variables(cfg, model_cfg)
+    cfg = set_cfg_variables(cfg)
 
     if cfg.workflow_name.startswith('icon'):
         logging.info('ICON input data (IC/BC)')

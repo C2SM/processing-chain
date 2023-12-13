@@ -16,7 +16,7 @@ import math
 from . import tools
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """
     Calculates 2D column data and writes them into a new netCDF file.
     Only a fixed number of levels from **COSMO** output are considered.
@@ -41,8 +41,6 @@ def main(cfg, model_cfg):
     ----------	
     cfg : Config
         Object holding all user-configuration parameters as attributes
-    model_cfg : dict 
-        Model configuration settings loaded from the ``config\/models.yaml`` file.
     """
     cosmo_output = cfg.cosmo_output
     output_path = cfg.cosmo_output_reduced
