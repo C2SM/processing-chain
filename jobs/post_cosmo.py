@@ -84,11 +84,11 @@ def main(cfg):
         cosmo_run=cfg.cosmo_run)
 
     if os.path.isdir(cfg.cosmo_output_reduced):
-        cosmo_output_src = cfg.cosmo_output_reduced.rstrip('/')
+        cosmo_output_src = str(cfg.cosmo_output_reduced).rstrip('/')
         cosmo_output_dest = os.path.join(copy_path,
                                          "cosmo_output_reduced").rstrip('/')
     else:
-        cosmo_output_src = cfg.cosmo_output.rstrip('/')
+        cosmo_output_src = str(cfg.cosmo_output).rstrip('/')
         cosmo_output_dest = os.path.join(copy_path, "cosmo_output").rstrip('/')
 
     # Create new directories
@@ -105,13 +105,13 @@ def main(cfg):
     # Format the runscript
     runscript_content += runscript_commands_template().format(
         target_dir=copy_path.rstrip('/'),
-        int2lm_run_src=cfg.int2lm_run.rstrip('/'),
+        int2lm_run_src=str(cfg.int2lm_run).rstrip('/'),
         int2lm_run_dest=int2lm_run_path.rstrip('/'),
-        cosmo_run_src=cfg.cosmo_run.rstrip('/'),
+        cosmo_run_src=str(cfg.cosmo_run).rstrip('/'),
         cosmo_run_dest=cosmo_run_path.rstrip('/'),
         cosmo_output_src=cosmo_output_src,
         cosmo_output_dest=cosmo_output_dest_path,
-        logs_src=cfg.log_finished_dir.rstrip('/'),
+        logs_src=str(cfg.log_finished_dir).rstrip('/'),
         logs_dest=logs_path.rstrip('/'))
 
     # Wait for Cosmo to finish first

@@ -21,7 +21,7 @@ def main(cfg):
     RuntimeError
         If an error occurs during the process.
     """
-    cfg = cosmo.set_cfg_variables(cfg)
+    cosmo.set_cfg_variables(cfg)
 
     oem_dir = cfg.oem['dir']
     oem_gridded_emissions_nc = os.path.join(oem_dir,
