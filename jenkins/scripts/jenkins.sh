@@ -73,7 +73,7 @@ else
 fi
 
 # Test COSMO-GHG
-if [[ -f work/cosmo-ghg-test/2015010100_6_12/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+if [[ -f work/cosmo-ghg-test/2015010106_2015010112/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg test case already finished - skipping test.
 else
   echo running cosmo-ghg test case...
@@ -81,7 +81,7 @@ else
 fi
 
 # Test COSMO-GHG (spinup)
-if [[ -f work/cosmo-ghg-spinup-test/2015010106_-3_6/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+if [[ -f work/cosmo-ghg-spinup-test/2015010106_2015010112/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg test case already finished - skipping test.
 else
   echo running cosmo-ghg-spinup test case...
@@ -89,7 +89,7 @@ else
 fi
 
 # Test ICON
-if [[ -f work/icon-test/2018010100_6_12/checkpoints/finished/icon && "$force_execution" == false ]]; then
+if [[ -f work/icon-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon test case already finished - skipping test.
 else
   echo running icon test case...
@@ -97,7 +97,7 @@ else
 fi
 
 # Test ICON-ART
-if [[ -f work/icon-art-oem-test/2018010100_0_24/checkpoints/finished/icon && "$force_execution" == false ]]; then
+if [[ -f work/icon-art-oem-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon-art test case already finished - skipping test.
 else
   echo running icon-art-oem test case...
@@ -105,7 +105,7 @@ else
 fi
 
 # Test ICON-ART-GLOBAL
-if [[ -f work/icon-art-global-test/2018010100_0_24/checkpoints/finished/icon && "$force_execution" == false ]]; then
+if [[ -f work/icon-art-global-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon-art-global test case already finished - skipping test.
 else
   echo running icon-art-global test case...
