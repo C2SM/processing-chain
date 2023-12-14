@@ -9,13 +9,16 @@ cosmo-art:
     jobs: ['prepare_data', 'emissions', 'obs_nudging', 'photo_rate',
            'int2lm', 'cosmo', 'post_cosmo']
     features: ['nesting', 'spinup']
-icon:
+icon-async:
     jobs: ['prepare_data', 'icon']
     features: ['restart']
     dependencies:
         icon:
             current: ['prepare_data']
             previous: ['icon']
+icon:
+    jobs: ['prepare_data', 'icon']
+    features: ['restart']
 icon-art:
     jobs: ['prepare_data', 'icon']
     features: ['restart']

@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import os
-import subprocess
 from . import tools, prepare_data
 
 
@@ -33,18 +31,17 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    cfg = prepare_data.set_cfg_variables(cfg)
+    prepare_data.set_cfg_variables(cfg)
 
-    logfile = os.path.join(cfg.log_working_dir, "icon")
-    logfile_finish = os.path.join(cfg.log_finished_dir, "icon")
+    logfile = cfg.log_working_dir / "icon"
+    logfile_finish = cfg.log_finished_dir / "icon"
 
     logging.info("Setup the namelist for an ICON run and "
                  "submit the job to the queue")
 
     # Copy icon executable
     execname = 'icon.exe'
-    tools.copy_file(cfg.icon_binary_file, os.path.join(cfg.icon_work,
-                                                       execname))
+    tools.copy_file(cfg.icon_binary_file, cfg.icon_work / execname)
 
     # Symlink the restart file to the last run into the icon/run folder
     if cfg.lrestart == '.TRUE.':
@@ -52,13 +49,9 @@ def main(cfg):
 
     # Get name of initial file
     if hasattr(cfg, 'inicond_filename'):
-        inidata_filename = os.path.join(cfg.icon_input_icbc,
-                                        cfg.inicond_filename)
+        inidata_filename = cfg.icon_input_icbc / cfg.inicond_filename
     else:
-        inidata_filename = os.path.join(
-            cfg.icon_input_icbc,
-            cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
-                                       cfg.meteo['nameformat']) + '.nc')
+        inidata_filename = cfg.icon_input_icbc / cfg.startdate_sim.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '.nc'
 
     # Write run script (run_icon.job)
     template = (cfg.case_path / cfg.icon_runjob_filename).read_text()
@@ -66,10 +59,11 @@ def main(cfg):
                                  inidata_filename=inidata_filename,
                                  logfile=logfile,
                                  logfile_finish=logfile_finish)
-    script = (cfg.icon_work / 'run_icon.job').write_text(script_str)
+    script = (cfg.icon_work / 'run_icon.job')
+    script.write_text(script_str)
 
     # Submit run script
-    cfg.submit('icon', script)
+    job_id = cfg.submit('icon', script)
 
     # Anything hapenning after submission only makes sense in sequential mode
     if not cfg.is_async:
