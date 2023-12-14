@@ -81,7 +81,7 @@ else
 fi
 
 # Test COSMO-GHG (spinup)
-if [[ -f work/cosmo-ghg-spinup-test/2015010106_2015010112/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+if [[ -f work/cosmo-ghg-spinup-test/2015010109_2015010118/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg test case already finished - skipping test.
 else
   echo running cosmo-ghg-spinup test case...
