@@ -51,7 +51,8 @@ def main(cfg):
     if hasattr(cfg, 'inicond_filename'):
         inidata_filename = cfg.icon_input_icbc / cfg.inicond_filename
     else:
-        inidata_filename = cfg.icon_input_icbc / cfg.startdate_sim.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '.nc'
+        inidata_filename = cfg.icon_input_icbc / cfg.startdate_sim.strftime(
+            cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '.nc'
 
     # Write run script (run_icon.job)
     template = (cfg.case_path / cfg.icon_runjob_filename).read_text()
