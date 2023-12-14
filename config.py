@@ -387,6 +387,8 @@ class Config():
                                 cwd=script_path.parent,
                                 capture_output=True)
         job_id = int(result.stdout)
+        print(f"Submitted batch job {job_id}")
+
         if not job_name in self.job_ids['current']:
             self.job_ids['current'][job_name] = [job_id]
         else:
@@ -394,7 +396,7 @@ class Config():
 
         # If needed internaly in a multi-job task like prepare_data
         # Can then be passed as add_dep keyword
-        return job_id
+        return result, job_id
 
     def wait_for_previous(self):
         """wait for all jobs of the previous stage to be finished

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import subprocess
 from . import tools, prepare_data
 
 
@@ -51,7 +52,7 @@ def main(cfg):
     if hasattr(cfg, 'inicond_filename'):
         inidata_filename = cfg.icon_input_icbc / cfg.inicond_filename
     else:
-        inidata_filename = cfg.icon_input_icbc / cfg.startdate_sim.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '.nc'
+        inidata_filename = cfg.icon_input_icbc / str(cfg.startdate_sim.strftime(cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '.nc')
 
     # Write run script (run_icon.job)
     template = (cfg.case_path / cfg.icon_runjob_filename).read_text()
@@ -63,7 +64,7 @@ def main(cfg):
     script.write_text(script_str)
 
     # Submit run script
-    job_id = cfg.submit('icon', script)
+    result, job_id = cfg.submit('icon', script)
 
     # Anything hapenning after submission only makes sense in sequential mode
     if not cfg.is_async:
