@@ -106,27 +106,33 @@ def main(cfg):
     if cfg.workflow_name.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
 
-        #-----------------------------------------------------
         # Create directories
-        #-----------------------------------------------------
         tools.create_dir(cfg.icon_work, "icon_work")
         tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
         tools.create_dir(cfg.icon_output, "icon_output")
         tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
 
+        # Set logfile
+        logfile = cfg.log_working_dir / 'prepare_data'
+        logfile_finish = cfg.log_finished_dir / 'prepare_data'
+
+        # Copy input files to scratch
         script_lines = [
             '#!/usr/bin/env bash',
             f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
             f'#SBATCH --account={cfg.compute_account}',
-            f'#SBATCH --time={cfg.prepare_data_walltime}',
+            f'#SBATCH --time=00:10:00',
             f'#SBATCH --partition={cfg.compute_queue}',
-            '#SBATCH --constraint=gpu', '#SBATCH --nodes=1', ''
+             '#SBATCH --constraint=gpu', '#SBATCH --nodes=1', 
+            f'#SBATCH --output={logfile}',
+             '#SBATCH --open-mode=append',
+            f'#SBATCH --chdir={cfg.icon_work}',''
         ]
         for target, destination in zip(cfg.input_files.values(),
                                        cfg.input_files_scratch.values()):
             script_lines.append(f'rsync -av {target} {destination}')
 
-        with (script := cfg.icon_base / 'copy_input.job').open('w') as f:
+        with (script := cfg.icon_work / 'copy_input.job').open('w') as f:
             f.write('\n'.join(script_lines))
 
         cfg.submit('prepare_data', script)
@@ -322,9 +328,6 @@ def main(cfg):
             # Write and submit runscripts
             #-----------------------------------------------------
             for runscript in cfg.icontools_runjobs:
-                logfile = os.path.join(cfg.log_working_dir, 'prepare_data')
-                logfile_finish = os.path.join(cfg.log_finished_dir,
-                                              'prepare_data')
                 with open(os.path.join(cfg.case_path,
                                        runscript)) as input_file:
                     to_write = input_file.read()

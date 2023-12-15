@@ -40,9 +40,6 @@ input_files:
     lrtm_filename: ./input/icon/rad/rrtmg_lw.nc
     map_file_ana: ./input/icon/mapping/map_file.ana
 
-prepare_data:
-    walltime: '00:10:00'
-
 icon:
     binary_file: ./ext/icon/bin/icon
     runjob_filename: icon_runjob.cfg
