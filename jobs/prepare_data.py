@@ -123,10 +123,9 @@ def main(cfg):
             f'#SBATCH --account={cfg.compute_account}',
             f'#SBATCH --time=00:10:00',
             f'#SBATCH --partition={cfg.compute_queue}',
-             '#SBATCH --constraint=gpu', '#SBATCH --nodes=1', 
-            f'#SBATCH --output={logfile}',
-             '#SBATCH --open-mode=append',
-            f'#SBATCH --chdir={cfg.icon_work}',''
+            '#SBATCH --constraint=gpu', '#SBATCH --nodes=1',
+            f'#SBATCH --output={logfile}', '#SBATCH --open-mode=append',
+            f'#SBATCH --chdir={cfg.icon_work}', ''
         ]
         for target, destination in zip(cfg.input_files.values(),
                                        cfg.input_files_scratch.values()):
