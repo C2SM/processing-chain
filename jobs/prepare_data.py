@@ -327,12 +327,14 @@ def main(cfg):
             #-----------------------------------------------------
             # Write and submit runscripts
             #-----------------------------------------------------
+            last_runscript = None
             for runscript in cfg.icontools_runjobs:
+                print(runscript)
                 with open(os.path.join(cfg.case_path,
                                        runscript)) as input_file:
                     to_write = input_file.read()
-                output_run = os.path.join(cfg.icon_work, "%s.job" % runscript)
-                with open(output_run, "w") as outf:
+                runscript_path = cfg.icon_work / f"{runscript}.job"
+                with open(runscript_path, "w") as outf:
                     outf.write(
                         to_write.format(cfg=cfg,
                                         meteo=cfg.meteo,
@@ -342,15 +344,11 @@ def main(cfg):
                                         datafile_list_rest=datafile_list_rest,
                                         datafile_list_chem=datafile_list_chem))
                 logging.info(f" Starting icontools runscript {runscript}.")
-                result = subprocess.run([
-                    "sbatch", "--wait",
-                    os.path.join(cfg.icon_work, "%s.job" % runscript)
-                ])
-                exitcode = result.returncode
-                if exitcode != 0:
-                    raise RuntimeError(
-                        "sbatch returned exitcode {}".format(exitcode))
-                logging.info(f"{runscript} successfully executed.")
+                if last_runscript:
+                    result, last_runscript = cfg.submit('prepare_data', runscript_path, add_dep=last_runscript) 
+                else:
+                    result, last_runscript = cfg.submit('prepare_data', runscript_path) 
+                cfg.check_submitted_job(runscript_path, result)
 
             #-----------------------------------------------------
             # Add GEOSP to all meteo files
