@@ -85,7 +85,7 @@ def parse_arguments():
 
 
 def run_chain(cfg, force, resume):
-    """Run the processing chain, managing job execution and logging.
+    """Run a chunk of the processing chain, managing job execution and logging.
 
     This function sets up and manages the execution of a processing chain, handling
     job execution, logging, and various configuration settings.
@@ -199,13 +199,14 @@ def run_chain(cfg, force, resume):
         cfg.convert_gas = True
 
     if cfg.is_async:
-        # Submit current chunck
+        # Submit current chunk
         # - [ ] This bypasses all the logfile moving/checking
         # - [ ] Still needs a mechanism for resume
         for job in cfg.jobs:
+            print(f'    └── Process "{job}" for chunk "{cfg.job_id}"')
             getattr(jobs, job).main(cfg)
 
-        # wait for previsouy chunk to be done
+        # wait for previous chunk to be done
         cfg.wait_for_previous()
         # cycle
         cfg.job_ids['previous'] = cfg.job_ids['current']
@@ -219,14 +220,14 @@ def run_chain(cfg, force, resume):
                 if not force:
                     while True:
                         if (log_finished_dir / job).exists():
-                            print(f"Skip {job} for chain {cfg.job_id}")
+                            print(f"Skip {job} for chunk {cfg.job_id}")
                             skip = True
                             break
                         elif resume:
                             resume = False
                             break
                         else:
-                            print(f"Wait for {job} of chain {cfg.job_id}")
+                            print(f"Wait for {job} of chunk {cfg.job_id}")
                             sys.stdout.flush()
                             for _ in range(3000):
                                 time.sleep(0.1)
@@ -235,7 +236,7 @@ def run_chain(cfg, force, resume):
                     (log_finished_dir / job).unlink(missing_ok=True)
 
             if not skip:
-                print('Process "%s" for chain "%s"' % (job, cfg.job_id))
+                print(f'    └── Process "{job}" for chunk "{cfg.job_id}"')
                 sys.stdout.flush()
 
                 try_count = 1 + (cfg.ntry - 1) * (job == 'cosmo')
@@ -310,7 +311,7 @@ def restart_runs(cfg, force, resume):
         # Set restart variable (only takes effect for ICON)
         cfg.lrestart = '.FALSE.' if startdate_sim == cfg.startdate else '.TRUE.'
 
-        print(f"Starting run with startdate {startdate_sim}")
+        print(f"└── Starting chunk with startdate {startdate_sim}")
 
         cfg.startdate_sim = startdate_sim
         cfg.enddate_sim = enddate_sim
