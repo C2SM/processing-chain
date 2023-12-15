@@ -343,9 +343,12 @@ def main(cfg):
                                         datafile_list_chem=datafile_list_chem))
                 logging.info(f" Starting icontools runscript {runscript}.")
                 if last_runscript:
-                    result, last_runscript = cfg.submit('prepare_data', runscript_path, add_dep=last_runscript) 
+                    result, last_runscript = cfg.submit('prepare_data',
+                                                        runscript_path,
+                                                        add_dep=last_runscript)
                 else:
-                    result, last_runscript = cfg.submit('prepare_data', runscript_path) 
+                    result, last_runscript = cfg.submit(
+                        'prepare_data', runscript_path)
                 cfg.check_submitted_job(runscript_path, result)
 
             #-----------------------------------------------------
