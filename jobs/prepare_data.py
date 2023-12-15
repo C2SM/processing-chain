@@ -123,7 +123,7 @@ def main(cfg):
             f'#SBATCH --account={cfg.compute_account}',
             f'#SBATCH --time=00:10:00',
             f'#SBATCH --partition={cfg.compute_queue}',
-            '#SBATCH --constraint=gpu', '#SBATCH --nodes=1',
+            f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
             f'#SBATCH --output={logfile}', '#SBATCH --open-mode=append',
             f'#SBATCH --chdir={cfg.icon_work}', ''
         ]
@@ -134,7 +134,7 @@ def main(cfg):
         with (script := cfg.icon_work / 'copy_input.job').open('w') as f:
             f.write('\n'.join(script_lines))
 
-        cfg.submit('prepare_data', script)
+        cfg.submit('prepare_data', script, wait=True)
 
         if cfg.workflow_name == 'icon-art-global':
             async_error(cfg, part='global ICON-ART')
@@ -298,7 +298,6 @@ def main(cfg):
                         process.communicate()
 
         else:  # non-global ICON-ART
-            async_error(cfg, part='non-global ICON-ART')
             #-----------------------------------------------------
             # Create LBC datafile lists (each at 00 UTC and others)
             #-----------------------------------------------------
@@ -326,7 +325,6 @@ def main(cfg):
             #-----------------------------------------------------
             # Write and submit runscripts
             #-----------------------------------------------------
-            last_runscript = None
             for runscript in cfg.icontools_runjobs:
                 with open(os.path.join(cfg.case_path,
                                        runscript)) as input_file:
@@ -341,15 +339,10 @@ def main(cfg):
                                         datafile_list=datafile_list,
                                         datafile_list_rest=datafile_list_rest,
                                         datafile_list_chem=datafile_list_chem))
+
+                # Submitting icontools runscripts sequentially
                 logging.info(f" Starting icontools runscript {runscript}.")
-                if last_runscript:
-                    result, last_runscript = cfg.submit('prepare_data',
-                                                        runscript_path,
-                                                        add_dep=last_runscript)
-                else:
-                    result, last_runscript = cfg.submit(
-                        'prepare_data', runscript_path)
-                cfg.check_submitted_job(runscript_path, result)
+                cfg.submit(runscript, runscript_path, wait=True)
 
             #-----------------------------------------------------
             # Add GEOSP to all meteo files
