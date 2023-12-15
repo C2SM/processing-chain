@@ -328,7 +328,6 @@ def main(cfg):
             #-----------------------------------------------------
             last_runscript = None
             for runscript in cfg.icontools_runjobs:
-                print(runscript)
                 with open(os.path.join(cfg.case_path,
                                        runscript)) as input_file:
                     to_write = input_file.read()
