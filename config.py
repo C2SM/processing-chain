@@ -406,15 +406,12 @@ class Config():
             job_file = 'submit.wait.slurm'
             dep_str = ':'.join(map(str, dep_ids))
             script_lines = [
-                '#!/usr/bin/env bash',
-                f'#SBATCH --job-name="wait"',
+                '#!/usr/bin/env bash', f'#SBATCH --job-name="wait"',
                 f'#SBATCH --nodes=1',
                 f'#SBATCH --account={self.compute_account}',
                 f'#SBATCH --partition={self.compute_queue}',
                 f'#SBATCH --constraint={self.constraint}',
-                f'#SBATCH --dependency=afterok:{dep_str}',
-                '',
-                '# Do nothing',
+                f'#SBATCH --dependency=afterok:{dep_str}', '', '# Do nothing',
                 'exit 0'
             ]
             with open(job_file, mode='w') as wait_job:
