@@ -125,11 +125,6 @@ class Config():
         This method determines the compute account to be used based on the user's
         name and system configuration.
 
-        Returns
-        -------
-        Config
-            The same `Config` instance with the `compute_account` attribute set.
-
         Notes
         -----
         - If the user name is 'jenkins', the compute account is set to 'g110' for
@@ -291,11 +286,6 @@ class Config():
 
         Recursively convert all strings starting with './' in the instance
         attributes to absolute paths.
-
-        Returns
-        -------
-        Config
-            The same `Config` instance with relative file paths converted to absolute paths.
         """
         if dct is None:
             self.convert_paths_to_absolute(dct=vars(self))
@@ -313,11 +303,6 @@ class Config():
         and checks for dictionary values. For each dictionary encountered, it creates
         new instance attributes by concatenating the original attribute name and the
         dictionary key, and assigns the corresponding values.
-
-        Returns
-        -------
-        Config
-            The same `Config` instance with new attributes created from dictionary entries.
         """
 
         if dct is None:
@@ -359,10 +344,13 @@ class Config():
                                 dep_id_list.extend(dep_id)
         return dep_id_list
 
-    def get_dep_cmd(self, job_name, add_dep=None):
+    def get_dep_cmd(self, job_name, add_dep=None, wait=False):
         """Generate the part of the sbatch command that sepcifies dependencies for job_name."""
 
-        if self.is_async:
+        if wait:
+            # forced wait
+            return '--wait'
+        elif self.is_async:
             # async case
             if dep_ids := self.get_dep_ids(job_name, add_dep=add_dep):
                 dep_str = ':'.join(map(str, dep_ids))
@@ -375,12 +363,12 @@ class Config():
             # sequential case
             return '--wait'
 
-    def submit(self, job_name, script, add_dep=None):
+    def submit(self, job_name, script, add_dep=None, wait=False):
         """Submit job with dependencies"""
 
         script_path = Path(script)
         sbatch_cmd = ['sbatch', '--parsable']
-        if dep_cmd := self.get_dep_cmd(job_name, add_dep=add_dep):
+        if dep_cmd := self.get_dep_cmd(job_name, add_dep=add_dep, wait=wait):
             sbatch_cmd.append(dep_cmd)
         sbatch_cmd.append(script_path.name)
 
@@ -407,7 +395,8 @@ class Config():
     def wait_for_previous(self):
         """wait for all jobs of the previous stage to be finished
 
-        Do this by submitting a fake job depending on all jobs from the 'previous' stage.
+        Do this by submitting a fake job depending on all jobs from the
+        'previous' stage.
         """
 
         dep_ids = []
@@ -415,11 +404,20 @@ class Config():
             dep_ids.extend(ids)
         if dep_ids:
             job_file = 'submit.wait.slurm'
+            dep_str = ':'.join(map(str, dep_ids))
+            script_lines = [
+                '#!/usr/bin/env bash',
+                f'#SBATCH --job-name="wait"',
+                f'#SBATCH --nodes=1',
+                f'#SBATCH --account={self.compute_account}',
+                f'#SBATCH --partition={self.compute_queue}',
+                f'#SBATCH --constraint={self.constraint}',
+                f'#SBATCH --dependency=afterok:{dep_str}',
+                '',
+                '# Do nothing',
+                'exit 0'
+            ]
             with open(job_file, mode='w') as wait_job:
-                wait_job.write("""#!/bin/bash\n#Do nothing\nexit 0""")
+                wait_job.write('\n'.join(script_lines))
 
-            subprocess.run([
-                'sbatch', '-W', '--nodes=1', '--job-name=wait',
-                f'--account={self.compute_account}', job_file
-            ],
-                           check=True)
+            subprocess.run(['sbatch', '--wait', job_file], check=True)
