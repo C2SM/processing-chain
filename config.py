@@ -1,6 +1,7 @@
 import subprocess
 import os
 import yaml
+import logging
 from jobs import tools
 from pathlib import Path
 
@@ -387,7 +388,6 @@ class Config():
                                 cwd=script_path.parent,
                                 capture_output=True)
         job_id = int(result.stdout)
-        print(f"Submitted batch job {job_id}")
 
         if not job_name in self.job_ids['current']:
             self.job_ids['current'][job_name] = [job_id]
@@ -397,6 +397,12 @@ class Config():
         # If needed internaly in a multi-job task like prepare_data
         # Can then be passed as add_dep keyword
         return result, job_id
+
+    def check_submitted_job(self, script, result):
+        exitcode = result.returncode
+        if exitcode != 0:
+            raise RuntimeError(f"sbatch returned exitcode {exitcode}")
+        logging.info(f"{script} successfully executed.")
 
     def wait_for_previous(self):
         """wait for all jobs of the previous stage to be finished
