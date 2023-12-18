@@ -403,11 +403,13 @@ class Config():
         for ids in self.job_ids['previous'].values():
             dep_ids.extend(ids)
         if dep_ids:
-            job_file = 'submit.wait.slurm'
+            job_file = self.chain_root / 'submit.wait.slurm'
+            log_file = self.chain_root / 'wait.log'
             dep_str = ':'.join(map(str, dep_ids))
             script_lines = [
                 '#!/usr/bin/env bash', f'#SBATCH --job-name="wait"',
                 f'#SBATCH --nodes=1',
+                f'#SBATCH --output={log_file}',
                 f'#SBATCH --account={self.compute_account}',
                 f'#SBATCH --partition={self.compute_queue}',
                 f'#SBATCH --constraint={self.constraint}',
@@ -418,3 +420,7 @@ class Config():
                 wait_job.write('\n'.join(script_lines))
 
             subprocess.run(['sbatch', '--wait', job_file], check=True)
+
+            # Remove sbatch script after execution
+            os.remove(job_file) 
+            os.remove(log_file) 
