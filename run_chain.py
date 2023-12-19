@@ -201,7 +201,7 @@ def run_chain(cfg, force, resume):
     if cfg.is_async:
         # Submit current chunk
         for job in cfg.jobs:
-            if (log_finished_dir / job).exists():
+            if (log_finished_dir / job).exists() and not force:
                 # Skip job if already finished
                 print(f'    └── Skip "{job}" for chunk "{cfg.job_id}"')
                 skip = True
