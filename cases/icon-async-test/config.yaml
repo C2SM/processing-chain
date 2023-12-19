@@ -1,6 +1,12 @@
 # Configuration file for the 'icon-async-test' case with ICON
 
-workflow: icon-async
+workflow:
+    jobs: ['prepare_data', 'icon']
+    features: ['restart']
+    dependencies:
+        icon:
+            current: ['prepare_data']
+            previous: ['icon']
 constraint: gpu
 run_on: cpu
 compute_queue: normal

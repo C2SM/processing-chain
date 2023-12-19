@@ -56,11 +56,11 @@ class Config():
         # User-defined attributes from config file
         self.load_config_file(casename)
 
-        # Specific settings based on the node type ('gpu' or 'mc')
-        self.set_node_info()
-
         # Set workflow and async attributes and initiate job ids dict
         self.set_workflow()
+
+        # Specific settings based on the node type ('gpu' or 'mc')
+        self.set_node_info()
 
     def load_config_file(self, casename):
         """Load configuration settings from a YAML file and set them as attributes.
@@ -187,10 +187,17 @@ class Config():
 
     def set_workflow(self):
         """set workflow and async attr, initiate job ids dict"""
+        # If a workflow name is specified, load from workflows.yaml
+        if isinstance(self.workflow, str):
+            with open('workflows.yaml') as file:
+                workflows = yaml.safe_load(file)
+            self.workflow = workflows[self.workflow_name]
+        # Otherwise, use custom workflow from config.yaml directly
+        elif isinstance(self.workflow, dict): 
+            self.workflow_name = self.casename
+        else:
+            raise InvalidWorkflowType("Invalid workflow type. Must be either a string or a dictionary.")
 
-        with open('workflows.yaml') as file:
-            workflows = yaml.safe_load(file)
-        self.workflow = workflows[self.workflow_name]
         self.is_async = 'dependencies' in self.workflow
 
         # Initiate empty job ids dictionnary so that it can be filled in later
@@ -424,3 +431,6 @@ class Config():
             # Remove sbatch script after execution
             os.remove(job_file)
             os.remove(log_file)
+
+class InvalidWorkflowType(Exception):
+    pass
