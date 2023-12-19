@@ -376,6 +376,7 @@ class Config():
                                 cwd=script_path.parent,
                                 capture_output=True)
         job_id = int(result.stdout)
+        print(f'        └── Submitted batch job {job_id}')
 
         if not job_name in self.job_ids['current']:
             self.job_ids['current'][job_name] = [job_id]
