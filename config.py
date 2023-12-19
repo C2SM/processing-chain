@@ -193,10 +193,12 @@ class Config():
                 workflows = yaml.safe_load(file)
             self.workflow = workflows[self.workflow_name]
         # Otherwise, use custom workflow from config.yaml directly
-        elif isinstance(self.workflow, dict): 
+        elif isinstance(self.workflow, dict):
             self.workflow_name = self.casename
         else:
-            raise InvalidWorkflowType("Invalid workflow type. Must be either a string or a dictionary.")
+            raise InvalidWorkflowType(
+                "Invalid workflow type. Must be either a string or a dictionary."
+            )
 
         self.is_async = 'dependencies' in self.workflow
 
@@ -431,6 +433,7 @@ class Config():
             # Remove sbatch script after execution
             os.remove(job_file)
             os.remove(log_file)
+
 
 class InvalidWorkflowType(Exception):
     pass
