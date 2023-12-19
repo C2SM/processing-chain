@@ -200,11 +200,19 @@ def run_chain(cfg, force, resume):
 
     if cfg.is_async:
         # Submit current chunk
-        # - [ ] This bypasses all the logfile moving/checking
-        # - [ ] Still needs a mechanism for resume
         for job in cfg.jobs:
-            print(f'    └── Process "{job}" for chunk "{cfg.job_id}"')
-            getattr(jobs, job).main(cfg)
+            if (log_finished_dir / job).exists():
+                # Skip job if already finished
+                print(f'    └── Skip "{job}" for chunk "{cfg.job_id}"')
+                skip = True
+            else:
+                # Submit job and process logfile
+                print(f'    └── Process "{job}" for chunk "{cfg.job_id}"')
+                getattr(jobs, job).main(cfg)
+                logfile = cfg.log_working_dir / job
+                logfile_finish = cfg.log_finished_dir / job
+                tools.change_logfile(logfile)
+                shutil.copy(logfile, logfile_finish)
 
         # wait for previous chunk to be done
         cfg.wait_for_previous()
