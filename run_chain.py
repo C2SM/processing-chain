@@ -214,7 +214,8 @@ def run_chunk(cfg, force, resume):
                 getattr(jobs, job).main(cfg)
                 job_end_time = datetime.now()
                 job_duration = job_end_time - job_launch_time
-                cfg.log_job_status('chain', 'FINISH', job_end_time, job_duration)
+                cfg.log_job_status('chain', 'FINISH', job_end_time,
+                                   job_duration)
                 shutil.copy(logfile, logfile_finish)
 
         # wait for previous chunk to be done
