@@ -316,7 +316,6 @@ class Config():
         new instance attributes by concatenating the original attribute name and the
         dictionary key, and assigns the corresponding values.
         """
-
         if dct is None:
             self.create_vars_from_dicts(dct=vars(self).copy())
         else:
@@ -328,11 +327,29 @@ class Config():
                     setattr(self, subkey, v)
 
     def log_job_status(self, job, status, launch_time, duration=None):
+        """
+        Log the status of a job in a chain to a file.
+
+        Parameters:
+        - job (str): The type of job, either 'chain' or a specific job name.
+        - status (str): The status of the job, e.g., 'FINISH', 'ERROR', etc.
+        - launch_time (datetime.datetime): The timestamp when the job was launched or finished.
+        - duration (datetime.timedelta, optional): The duration of the job. Default is None.
+
+        The function logs the job information to a file named 'chain_status.log' in the case root directory.
+        If the log file doesn't exist, it creates a header with the column names.
+        The logged entry includes the job type, job ID (if applicable), status, launch time,
+        and optionally, the duration if provided.
+
+        Example:
+        - log_job_status('chain', 'FINISH', datetime.datetime.now(), '00:15:30')
+        - log_job_status('task_1', 'ERROR', datetime.datetime(2023, 12, 20, 8, 30, 15))
+        """
         log_file = self.case_root / "chain_status.log"
 
         # Check if the header exists, if not, create it
         if not log_file.is_file():
-            header = "Name           ID                     Status Time                       Duration\n"
+            header = "Name            ID                    Status Time                     Duration\n"
             with open(log_file, 'w') as f:
                 f.write(header)
 
@@ -344,11 +361,11 @@ class Config():
         else: 
             job_id = self.job_id
 
-        launch_time = launch_time.strftime("%a %b %d %H:%M:%S %Z %Y")
-        if status == 'FINISH':
-            log_entry = f"{job:<15} {job_id:<21} {status:<6} {launch_time:<28} {duration}\n"
+        launch_time = launch_time.strftime("%a %b %d %Y %H:%M:%S")
+        if status == 'FINISH' and duration:
+            log_entry = f"{job:<15} {job_id:<21} {status:<6} {launch_time:<24} {duration}\n"
         else:
-            log_entry = f"{job:<15} {job_id:<21} {status:<6} {launch_time:<28}\n"
+            log_entry = f"{job:<15} {job_id:<21} {status:<6} {launch_time:<24}\n"
 
         with open(log_file, 'a') as f:
             f.write(log_entry)

@@ -206,10 +206,15 @@ def run_chunk(cfg, force, resume):
             else:
                 # Submit job and process logfile
                 print(f'    └── Process "{job}" for chunk "{cfg.job_id}"')
-                getattr(jobs, job).main(cfg)
                 logfile = cfg.log_working_dir / job
                 logfile_finish = cfg.log_finished_dir / job
                 tools.change_logfile(logfile)
+                job_launch_time = datetime.now()
+                cfg.log_job_status(job, 'START', job_launch_time)
+                getattr(jobs, job).main(cfg)
+                job_end_time = datetime.now()
+                job_duration = job_end_time - job_launch_time
+                cfg.log_job_status('chain', 'FINISH', job_end_time, job_duration)
                 shutil.copy(logfile, logfile_finish)
 
         # wait for previous chunk to be done
@@ -453,8 +458,8 @@ def main():
             run_chunk(cfg=cfg, force=args.force, resume=args.resume)
 
     end_time = datetime.now()
-    duration_seconds = (end_time - launch_time).total_seconds()
-    cfg.log_job_status('chain', 'START', launch_time, duration_seconds)
+    duration = end_time - launch_time
+    cfg.log_job_status('chain', 'FINISH', end_time, duration)
     print('>>> Finished the processing chain successfully <<<')
 
 
