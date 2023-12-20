@@ -84,7 +84,7 @@ def parse_arguments():
     return args
 
 
-def run_chain(cfg, force, resume):
+def run_chunk(cfg, force, resume):
     """Run a chunk of the processing chain, managing job execution and logging.
 
     This function sets up and manages the execution of a processing chain, handling
@@ -291,7 +291,7 @@ def restart_runs(cfg, force, resume):
     """Start subchains in specified intervals and manage restarts.
 
     This function slices the total runtime of the processing chain according to the
-    `cfg.restart_step_hours` configuration. It calls `run_chain()` for each
+    `cfg.restart_step_hours` configuration. It calls `run_chunk()` for each
     specified interval.
 
     Parameters
@@ -305,10 +305,9 @@ def restart_runs(cfg, force, resume):
 
     Notes
     -----
-    - The function iterates over specified intervals, calling `run_chain()` for each.
+    - The function iterates over specified intervals, calling `run_chunk()` for each.
     - It manages restart settings and logging for each subchain.
     """
-    # run restarts
     for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
                                           cfg.restart_step_hours):
         enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
@@ -324,20 +323,20 @@ def restart_runs(cfg, force, resume):
         cfg.startdate_sim = startdate_sim
         cfg.enddate_sim = enddate_sim
 
-        run_chain(cfg=cfg, force=force, resume=resume)
+        run_chunk(cfg=cfg, force=force, resume=resume)
 
 
 def restart_runs_spinup(cfg, force, resume):
     """Start subchains in specified intervals and manage restarts with spin-up.
 
     This function slices the total runtime of the processing chain according to the
-    `cfg.restart_step_hours` configuration. It calls `run_chain()` for each specified
-    interval, managing restarts with spin-up.
+    `cfg.restart_step_hours` configuration. It calls `run_chunk()` for each 
+    specified interval, managing restarts with spin-up.
 
     Parameters
     ----------
     cfg : Config
-        List of names of jobs to execute on every timeslice.
+        Object holding all user-configuration parameters as attributes.
     force : bool
         If True, it will force the execution of jobs regardless of their completion status.
     resume : bool
@@ -345,7 +344,7 @@ def restart_runs_spinup(cfg, force, resume):
 
     Notes
     -----
-    - The function iterates over specified intervals, calling `run_chain()` for each.
+    - The function iterates over specified intervals, calling `run_chunk()` for each.
     - It manages restart settings and logging for each subchain, including spin-up.
     """
     for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
@@ -380,7 +379,7 @@ def restart_runs_spinup(cfg, force, resume):
         cfg.startdate_sim = startdate_sim_spinup
         cfg.enddate_sim = enddate_sim
 
-        run_chain(cfg=cfg, force=force, resume=resume)
+        run_chunk(cfg=cfg, force=force, resume=resume)
 
 
 def main():
@@ -449,7 +448,7 @@ def main():
             print("No restarts are used.")
             cfg.startdate_sim = cfg.startdate
             cfg.enddate_sim = cfg.enddate
-            run_chain(cfg=cfg, force=args.force, resume=args.resume)
+            run_chunk(cfg=cfg, force=args.force, resume=args.resume)
 
     print('>>> Finished the processing chain successfully <<<')
 
