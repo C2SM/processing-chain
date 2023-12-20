@@ -432,6 +432,10 @@ def main():
             f"Starting chain for case {casename} and workflow {cfg.workflow_name}"
         )
 
+        launch_time = datetime.now()
+        tools.create_dir(cfg.case_root, "case_root")
+        cfg.log_job_status('chain', 'START', launch_time)
+
         # Check for restart compatibility and spinup
         if 'restart' in cfg.workflow['features']:
             if hasattr(cfg, 'spinup'):
@@ -448,6 +452,9 @@ def main():
             cfg.enddate_sim = cfg.enddate
             run_chunk(cfg=cfg, force=args.force, resume=args.resume)
 
+    end_time = datetime.now()
+    duration_seconds = (end_time - launch_time).total_seconds()
+    cfg.log_job_status('chain', 'START', launch_time, duration_seconds)
     print('>>> Finished the processing chain successfully <<<')
 
 

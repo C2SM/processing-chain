@@ -56,6 +56,9 @@ class Config():
         # User-defined attributes from config file
         self.load_config_file(casename)
 
+        # Set case root
+        self.case_root = self.work_root / self.casename
+
         # Set workflow and async attributes and initiate job ids dict
         self.set_workflow()
 
@@ -323,6 +326,50 @@ class Config():
                     self.create_vars_from_dicts(dct=v, key=subkey)
                 else:
                     setattr(self, subkey, v)
+
+    def log_job_status(self, job, status, launch_time, duration=None):
+        log_file = self.case_root / "chain_status.log"
+
+        # Check if the header exists, if not, create it
+        if not log_file.is_file():
+            header = "Name           ID                     Status Time                       Duration\n"
+            with open(log_file, 'w') as f:
+                f.write(header)
+
+        # Log the job information
+        if job == 'chain':
+            if duration is not None:
+                duration = self.format_duration(duration)
+            job_id = ''
+        else: 
+            job_id = self.job_id
+
+        launch_time = launch_time.strftime("%a %b %d %H:%M:%S %Z %Y")
+        if status == 'FINISH':
+            log_entry = f"{job:<15} {job_id:<21} {status:<6} {launch_time:<28} {duration}\n"
+        else:
+            log_entry = f"{job:<15} {job_id:<21} {status:<6} {launch_time:<28}\n"
+
+        with open(log_file, 'a') as f:
+            f.write(log_entry)
+
+    def format_duration(self, duration):
+        """
+        Format a duration represented by a datetime.timedelta object into a human-readable string.
+
+        Parameters:
+        - duration (datetime.timedelta): The duration to be formatted.
+
+        Returns:
+        - str: A string representing the formatted duration in the "0d 0h 0m 0s" format.
+        """
+        seconds = duration.total_seconds()
+        days, remainder = divmod(seconds, 86400)
+        hours, remainder = divmod(remainder, 3600)
+        minutes, seconds = divmod(remainder, 60)
+
+        formatted_duration = f"{int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
+        return formatted_duration
 
     def get_dep_ids(self, job_name, add_dep=None):
         """Get dependency job ids for `job_name`"""
