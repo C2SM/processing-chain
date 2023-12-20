@@ -430,7 +430,7 @@ class Config():
 
             subprocess.run(['sbatch', '--wait', job_file], check=True)
 
-            # Remove sbatch script after execution
+            # Remove sbatch script and log file after execution
             os.remove(job_file)
             os.remove(log_file)
 

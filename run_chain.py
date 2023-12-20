@@ -182,15 +182,13 @@ def run_chunk(cfg, force, resume):
         cfg.meteo.prefix = 'lffd'
 
     # Logging
-    log_working_dir = cfg.chain_root / 'checkpoints' / 'working'
-    log_finished_dir = cfg.chain_root / 'checkpoints' / 'finished'
-    cfg.log_working_dir = log_working_dir
-    cfg.log_finished_dir = log_finished_dir
+    cfg.log_working_dir = cfg.chain_root / 'checkpoints' / 'working'
+    cfg.log_finished_dir = cfg.chain_root / 'checkpoints' / 'finished'
 
     # Create working directories
     tools.create_dir(cfg.chain_root, "chain_root")
-    tools.create_dir(log_working_dir, "log_working")
-    tools.create_dir(log_finished_dir, "log_finished")
+    tools.create_dir(cfg.log_working_dir, "log_working")
+    tools.create_dir(cfg.log_finished_dir, "log_finished")
 
     # Number of levels and switch for unit conversion for 'reduce_output' job
     if not hasattr(cfg, 'output_levels'):
@@ -201,7 +199,7 @@ def run_chunk(cfg, force, resume):
     if cfg.is_async:
         # Submit current chunk
         for job in cfg.jobs:
-            if (log_finished_dir / job).exists() and not force:
+            if (cfg.log_finished_dir / job).exists() and not force:
                 # Skip job if already finished
                 print(f'    └── Skip "{job}" for chunk "{cfg.job_id}"')
                 skip = True
@@ -224,10 +222,10 @@ def run_chunk(cfg, force, resume):
             skip = False
 
             # if exists job is currently worked on or has been finished
-            if (log_working_dir / job).exists():
+            if (cfg.log_working_dir / job).exists():
                 if not force:
                     while True:
-                        if (log_finished_dir / job).exists():
+                        if (cfg.log_finished_dir / job).exists():
                             print(f"Skip {job} for chunk {cfg.job_id}")
                             skip = True
                             break
@@ -240,8 +238,8 @@ def run_chunk(cfg, force, resume):
                             for _ in range(3000):
                                 time.sleep(0.1)
                 else:
-                    (log_working_dir / job).unlink()
-                    (log_finished_dir / job).unlink(missing_ok=True)
+                    (cfg.log_working_dir / job).unlink()
+                    (cfg.log_finished_dir / job).unlink(missing_ok=True)
 
             if not skip:
                 print(f'    └── Process "{job}" for chunk "{cfg.job_id}"')
@@ -269,7 +267,7 @@ def run_chunk(cfg, force, resume):
                             job, cfg.job_id)
                         logging.exception(subject)
                         if cfg.user_mail:
-                            message = tools.prepare_message(log_working_dir /
+                            message = tools.prepare_message(cfg.log_working_dir /
                                                             job)
                             logging.info('Sending log file to %s' %
                                          cfg.user_mail)
@@ -277,11 +275,11 @@ def run_chunk(cfg, force, resume):
                         if try_count == 0:
                             raise RuntimeError(subject)
 
-                if exitcode != 0 or not (log_finished_dir / job).exists():
+                if exitcode != 0 or not (cfg.log_finished_dir / job).exists():
                     subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
                         job, cfg.job_id)
                     if cfg.user_mail:
-                        message = tools.prepare_message(log_working_dir / job)
+                        message = tools.prepare_message(cfg.log_working_dir / job)
                         logging.info('Sending log file to %s' % cfg.user_mail)
                         tools.send_mail(cfg.user_mail, subject, message)
                     raise RuntimeError(subject)
