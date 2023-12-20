@@ -341,7 +341,7 @@ class Config():
             if duration is not None:
                 duration = self.format_duration(duration)
             job_id = ''
-        else: 
+        else:
             job_id = self.job_id
 
         launch_time = launch_time.strftime("%a %b %d %H:%M:%S %Z %Y")

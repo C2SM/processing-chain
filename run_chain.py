@@ -267,8 +267,8 @@ def run_chunk(cfg, force, resume):
                             job, cfg.job_id)
                         logging.exception(subject)
                         if cfg.user_mail:
-                            message = tools.prepare_message(cfg.log_working_dir /
-                                                            job)
+                            message = tools.prepare_message(
+                                cfg.log_working_dir / job)
                             logging.info('Sending log file to %s' %
                                          cfg.user_mail)
                             tools.send_mail(cfg.user_mail, subject, message)
@@ -279,7 +279,8 @@ def run_chunk(cfg, force, resume):
                     subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
                         job, cfg.job_id)
                     if cfg.user_mail:
-                        message = tools.prepare_message(cfg.log_working_dir / job)
+                        message = tools.prepare_message(cfg.log_working_dir /
+                                                        job)
                         logging.info('Sending log file to %s' % cfg.user_mail)
                         tools.send_mail(cfg.user_mail, subject, message)
                     raise RuntimeError(subject)
