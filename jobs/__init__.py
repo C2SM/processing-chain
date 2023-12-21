@@ -5,6 +5,7 @@ from . import biofluxes
 from . import check_output
 from . import cosmo
 from . import emissions
+from . import geosp
 from . import icon
 from . import int2lm
 from . import obs_nudging

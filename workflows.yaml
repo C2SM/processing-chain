@@ -10,11 +10,13 @@ cosmo-art:
            'int2lm', 'cosmo', 'post_cosmo']
     features: ['nesting', 'spinup']
 icon-async:
-    jobs: ['prepare_data', 'icon']
+    jobs: ['prepare_data', 'geosp', 'icon']
     features: ['restart']
     dependencies:
+        geosp:
+            current: ['prepare_data'] 
         icon:
-            current: ['prepare_data']
+            current: ['prepare_data', 'geosp']
             previous: ['icon']
 icon:
     jobs: ['prepare_data', 'icon']
