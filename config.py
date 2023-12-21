@@ -353,14 +353,17 @@ class Config():
             with open(log_file, 'w') as f:
                 f.write(header)
 
-        # Log the job information
+        # Format duration and job_id
         if job == 'chain':
             if duration is not None:
                 duration = self.format_duration(duration)
             job_id = ''
         else:
+            if duration is not None:
+                duration = f"{str(int(duration.total_seconds()))} s"
             job_id = self.job_id
 
+        # Log the job information
         launch_time = launch_time.strftime("%a %b %d %Y %H:%M:%S")
         if status == 'FINISH' and duration:
             log_entry = f"{job:<15} {job_id:<21} {status:<6} {launch_time:<24} {duration}\n"
