@@ -420,13 +420,9 @@ class Config():
                                 dep_id_list.extend(dep_id)
         return dep_id_list
 
-    def get_dep_cmd(self, job_name, add_dep=None, wait=False):
+    def get_dep_cmd(self, job_name, add_dep=None):
         """Generate the part of the sbatch command that sepcifies dependencies for job_name."""
-
-        if wait:
-            # forced wait
-            return '--wait'
-        elif self.is_async:
+        if self.is_async:
             # async case
             if dep_ids := self.get_dep_ids(job_name, add_dep=add_dep):
                 dep_str = ':'.join(map(str, dep_ids))
@@ -439,12 +435,12 @@ class Config():
             # sequential case
             return '--wait'
 
-    def submit(self, job_name, script, add_dep=None, wait=False):
+    def submit(self, job_name, script, add_dep=None):
         """Submit job with dependencies"""
 
         script_path = Path(script)
         sbatch_cmd = ['sbatch', '--parsable']
-        if dep_cmd := self.get_dep_cmd(job_name, add_dep=add_dep, wait=wait):
+        if dep_cmd := self.get_dep_cmd(job_name, add_dep=add_dep):
             sbatch_cmd.append(dep_cmd)
         sbatch_cmd.append(script_path.name)
 
