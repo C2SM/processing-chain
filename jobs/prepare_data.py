@@ -347,7 +347,9 @@ def main(cfg):
                     dependencies = (copy_id, icontools_id)
                 else:
                     dependencies = copy_id
-                _, icontools_id = cfg.submit(runscript, runscript_path, add_dep=dependencies)
+                _, icontools_id = cfg.submit(runscript,
+                                             runscript_path,
+                                             add_dep=dependencies)
 
     # If COSMO (and not ICON):
     else:

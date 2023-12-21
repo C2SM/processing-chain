@@ -9,6 +9,7 @@ import xarray as xr
 import numpy as np
 from . import tools, prepare_data
 
+
 def main(cfg):
     """
     Add GEOSP
@@ -19,25 +20,23 @@ def main(cfg):
     # Add GEOSP to all meteo files
     #-----------------------------------------------------
     for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
-                                    cfg.meteo['inc']):
+                                 cfg.meteo['inc']):
         # Specify file names
         geosp_filename = time.replace(
             hour=0).strftime(cfg.meteo['prefix'] +
-                                cfg.meteo['nameformat']) + '_lbc.nc'
+                             cfg.meteo['nameformat']) + '_lbc.nc'
         geosp_file = os.path.join(cfg.icon_input_icbc, geosp_filename)
-        src_filename = time.strftime(
-            cfg.meteo['prefix'] + cfg.meteo['nameformat']) + '_lbc.nc'
+        src_filename = time.strftime(cfg.meteo['prefix'] +
+                                     cfg.meteo['nameformat']) + '_lbc.nc'
         src_file = os.path.join(cfg.icon_input_icbc, src_filename)
-        merged_filename = time.strftime(
-            cfg.meteo['prefix'] +
-            cfg.meteo['nameformat']) + '_merged.nc'
-        merged_file = os.path.join(cfg.icon_input_icbc,
-                                    merged_filename)
+        merged_filename = time.strftime(cfg.meteo['prefix'] +
+                                        cfg.meteo['nameformat']) + '_merged.nc'
+        merged_file = os.path.join(cfg.icon_input_icbc, merged_filename)
 
         # Copy GEOSP file from last run if not present
         if not os.path.exists(geosp_file):
             geosp_src_file = os.path.join(cfg.icon_input_icbc_prev,
-                                            geosp_filename)
+                                          geosp_filename)
             tools.copy_file(geosp_src_file,
                             cfg.icon_input_icbc,
                             output_log=True)
@@ -50,8 +49,7 @@ def main(cfg):
         # Merge GEOSP-dataset with other timesteps
         if (time.hour != 0):
             # Change values of time dimension to current time
-            da_geosp = da_geosp.assign_coords(
-                time=[np.datetime64(time)])
+            da_geosp = da_geosp.assign_coords(time=[np.datetime64(time)])
             # Merge GEOSP into temporary file
             ds_merged = xr.merge([ds, da_geosp])
             ds_merged.attrs = ds.attrs
