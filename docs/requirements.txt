@@ -8,7 +8,6 @@ matplotlib
 scipy
 pillow
 xarray
-dask
 cdsapi
 sphinx
 sphinx_rtd_theme
