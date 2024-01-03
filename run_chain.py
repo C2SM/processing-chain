@@ -53,10 +53,10 @@ def parse_arguments():
                         default=None)
 
     chunks_help = ("List of chunks to be executed. A chunk is time"
-                 "frame within the total simulation period."
-                 "It has the format `YYYYMMDDHH_YYYYMMDDHH`."
-                 "If no chunks are given, all chunks within the"
-                 "simulation period will be executed.")
+                   "frame within the total simulation period."
+                   "It has the format `YYYYMMDDHH_YYYYMMDDHH`."
+                   "If no chunks are given, all chunks within the"
+                   "simulation period will be executed.")
     parser.add_argument("-c",
                         "--chunks",
                         nargs='*',
@@ -326,8 +326,9 @@ def restart_runs(cfg, force, resume):
     """
     if not cfg.chunks:
         for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
-                                            cfg.restart_step_hours):
-            enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
+                                              cfg.restart_step_hours):
+            enddate_sim = startdate_sim + timedelta(
+                hours=cfg.restart_step_hours)
             startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
             enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
             job_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
@@ -339,8 +340,10 @@ def restart_runs(cfg, force, resume):
         cfg.job_id = job_id
         cfg.startdate_sim_yyyymmddhh = job_id[0:10]
         cfg.enddate_sim_yyyymmddhh = job_id[-10:]
-        cfg.startdate_sim = datetime.strptime(cfg.startdate_sim_yyyymmddhh, "%Y%m%d%H")
-        cfg.enddate_sim = datetime.strptime(cfg.enddate_sim_yyyymmddhh, "%Y%m%d%H")
+        cfg.startdate_sim = datetime.strptime(cfg.startdate_sim_yyyymmddhh,
+                                              "%Y%m%d%H")
+        cfg.enddate_sim = datetime.strptime(cfg.enddate_sim_yyyymmddhh,
+                                            "%Y%m%d%H")
 
         # Set restart variable (only takes effect for ICON)
         cfg.lrestart = ".FALSE." if cfg.startdate_sim == cfg.startdate else ".TRUE."
