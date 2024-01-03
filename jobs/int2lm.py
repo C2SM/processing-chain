@@ -110,7 +110,7 @@ def main(cfg):
                                           input_art_filename)
 
     # Change of soil model from TERRA to TERRA multi-layer on 2 Aug 2007
-    if cfg.startdate_sim < datetime(2007, 8, 2, tzinfo=pytz.UTC):
+    if cfg.startdate_sim < datetime(2007, 8, 2):
         multi_layer = ".FALSE."
     else:
         multi_layer = ".TRUE."
