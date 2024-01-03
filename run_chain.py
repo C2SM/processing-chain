@@ -52,6 +52,18 @@ def parse_arguments():
                         help=jobs_help,
                         default=None)
 
+    chunks_help = ("List of chunks to be executed. A chunk is time"
+                 "frame within the total simulation period."
+                 "It has the format `YYYYMMDDHH_YYYYMMDDHH`."
+                 "If no chunks are given, all chunks within the"
+                 "simulation period will be executed.")
+    parser.add_argument("-c",
+                        "--chunks",
+                        nargs='*',
+                        dest="chunk_list",
+                        help=chunks_help,
+                        default=None)
+
     force_help = ("Force the processing chain to redo all specified jobs,"
                   " even if they have been started already or were finished"
                   " previously. WARNING: Only logfiles get deleted,"
@@ -312,20 +324,28 @@ def restart_runs(cfg, force, resume):
     - The function iterates over specified intervals, calling `run_chunk()` for each.
     - It manages restart settings and logging for each subchain.
     """
-    for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
-                                          cfg.restart_step_hours):
-        enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
+    if not cfg.chunks:
+        for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
+                                            cfg.restart_step_hours):
+            enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
+            startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
+            enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
+            job_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
+            cfg.chunks.append(job_id)
+            if enddate_sim > cfg.enddate:
+                continue
 
-        if enddate_sim > cfg.enddate:
-            continue
+    for job_id in cfg.chunks:
+        cfg.job_id = job_id
+        cfg.startdate_sim_yyyymmddhh = job_id[0:10]
+        cfg.enddate_sim_yyyymmddhh = job_id[-10:]
+        cfg.startdate_sim = datetime.strptime(cfg.startdate_sim_yyyymmddhh, "%Y%m%d%H")
+        cfg.enddate_sim = datetime.strptime(cfg.enddate_sim_yyyymmddhh, "%Y%m%d%H")
 
         # Set restart variable (only takes effect for ICON)
-        cfg.lrestart = '.FALSE.' if startdate_sim == cfg.startdate else '.TRUE.'
+        cfg.lrestart = ".FALSE." if cfg.startdate_sim == cfg.startdate else ".TRUE."
 
-        print(f"└── Starting chunk with startdate {startdate_sim}")
-
-        cfg.startdate_sim = startdate_sim
-        cfg.enddate_sim = enddate_sim
+        print(f"└── Starting chunk with startdate {cfg.startdate_sim}")
 
         run_chunk(cfg=cfg, force=force, resume=resume)
 
@@ -433,6 +453,12 @@ def main():
             cfg.jobs = cfg.workflow['jobs']
         else:
             cfg.jobs = args.job_list
+
+        # Check if chunks are set or if all are used
+        if args.chunk_list is None:
+            cfg.chunks = []
+        else:
+            cfg.chunks = args.chunk_list
 
         print(
             f"Starting chain for case {casename} and workflow {cfg.workflow_name}"
