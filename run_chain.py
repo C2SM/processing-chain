@@ -352,10 +352,10 @@ def restart_runs(cfg, force, resume):
         cfg.job_id = job_id
         cfg.startdate_sim_yyyymmddhh = job_id[0:10]
         cfg.enddate_sim_yyyymmddhh = job_id[-10:]
-        cfg.startdate_sim = datetime.strptime(cfg.startdate_sim_yyyymmddhh,
-                                              "%Y%m%d%H").replace(tzinfo=pytz.UTC)
-        cfg.enddate_sim = datetime.strptime(cfg.enddate_sim_yyyymmddhh,
-                                            "%Y%m%d%H").replace(tzinfo=pytz.UTC)
+        cfg.startdate_sim = datetime.strptime(
+            cfg.startdate_sim_yyyymmddhh, "%Y%m%d%H").replace(tzinfo=pytz.UTC)
+        cfg.enddate_sim = datetime.strptime(
+            cfg.enddate_sim_yyyymmddhh, "%Y%m%d%H").replace(tzinfo=pytz.UTC)
 
         # Set restart variable (only takes effect for ICON)
         cfg.lrestart = ".FALSE." if cfg.startdate_sim == cfg.startdate else ".TRUE."
