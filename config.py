@@ -347,7 +347,7 @@ class Config():
         """
         log_file = self.case_root / "chain_status.log"
 
-        # Check if the header exists, if not, create it
+        # Check if the file exists, if not, create it and write header
         if not log_file.is_file():
             header = "Name            ID                    Status Time                     Duration\n"
             with open(log_file, 'w') as f:
@@ -357,7 +357,7 @@ class Config():
         if job == 'chain':
             if duration is not None:
                 duration = self.format_duration(duration)
-            job_id = ''
+            job_id = self.casename
         else:
             if duration is not None:
                 duration = f"{str(int(duration.total_seconds()))} s"
