@@ -66,17 +66,18 @@ def main(cfg):
     script.write_text(script_str)
 
     # Submit run script
-    result, job_id = cfg.submit('icon', script)
+    job_id = cfg.submit('icon', script)
 
+    # TODO: check
     # Anything hapenning after submission only makes sense in sequential mode
-    if not cfg.is_async:
-        exitcode = result.returncode
-
-        # In case of ICON-ART, ignore the "invalid pointer" error on successful run
-        if cfg.workflow_name.startswith('icon-art'):
-            if tools.grep("free(): invalid pointer", logfile)['success'] and \
-               tools.grep("clean-up finished", logfile)['success']:
-                exitcode = 0
-
-        if exitcode != 0:
-            raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+    #if not cfg.is_async:
+    #    exitcode = result.returncode
+    #
+    #    # In case of ICON-ART, ignore the "invalid pointer" error on successful run
+    #    if cfg.workflow_name.startswith('icon-art'):
+    #        if tools.grep("free(): invalid pointer", logfile)['success'] and \
+    #           tools.grep("clean-up finished", logfile)['success']:
+    #            exitcode = 0
+    #
+    #     if exitcode != 0:
+    #        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))

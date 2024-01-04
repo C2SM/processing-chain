@@ -134,7 +134,7 @@ def main(cfg):
         with (script := cfg.icon_work / 'copy_input.job').open('w') as f:
             f.write('\n'.join(script_lines))
 
-        _, copy_id = cfg.submit('prepare_data', script)
+        copy_id = cfg.submit('prepare_data', script)
 
         if cfg.workflow_name == 'icon-art-global':
             async_error(cfg, part='global ICON-ART')

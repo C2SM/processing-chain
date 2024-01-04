@@ -230,13 +230,15 @@ def run_chunk(cfg, force, resume):
 
                 # Submit the job
                 #getattr(jobs, job).main(cfg)
-                result, job_id = cfg.submit_job_as_sbatch(job, logfile)
+                script = cfg.create_sbatch_script(job, logfile)
+                job_id = cfg.submit(job, script)
 
                 # Logging
                 job_end_time = datetime.now()
                 job_duration = job_end_time - job_launch_time
                 cfg.log_job_status(job, 'FINISH', job_end_time, job_duration)
-                shutil.copy(logfile, logfile_finish)
+                # This needs to be done by the job
+                #shutil.copy(logfile, logfile_finish)
 
         # wait for previous chunk to be done
         cfg.wait_for_previous()

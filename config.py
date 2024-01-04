@@ -455,20 +455,13 @@ class Config():
         else:
             self.job_ids['current'][job_name].append(job_id)
 
-        # If needed internaly in a multi-job task like prepare_data
-        # Can then be passed as add_dep keyword
-        return result, job_id
-
-    def check_submitted_job(self, script, result):
         exitcode = result.returncode
         if exitcode != 0:
             raise RuntimeError(f"sbatch returned exitcode {exitcode}")
-        logging.info(f"{script} successfully executed.")
 
-    def submit_job_as_sbatch(self, job_name, log_file, add_dep=None):
-        sbatch_cmd = ['sbatch', '--parsable']
-        if dep_cmd := self.get_dep_cmd(job_name, add_dep=add_dep):
-            sbatch_cmd.append(dep_cmd)
+        return job_id
+
+    def create_sbatch_script(self, job_name, log_file):
         script_lines = [
             '#!/usr/bin/env bash', f'#SBATCH --job-name="{job_name}"',
             f'#SBATCH --nodes=1', f'#SBATCH --output={log_file}',
@@ -476,26 +469,18 @@ class Config():
             f'#SBATCH --account={self.compute_account}',
             f'#SBATCH --partition={self.compute_queue}',
             f'#SBATCH --constraint={self.constraint}', '', 
+            f'cd {self.chain_src_dir}',
             'eval "$(conda shell.bash hook)"',
             'conda activate proc-chain',
             f'./run_chain.py {self.casename} -j {job_name} -c {self.job_id} -f -s',
+            '',
         ]
 
         job_file = self.chain_root / f'{job_name}.sh'
         with open(job_file, mode='w') as job_script:
             job_script.write('\n'.join(script_lines))
 
-        sbatch_cmd.append(job_file)
-        result = subprocess.run(sbatch_cmd, capture_output=True)
-        job_id = int(result.stdout)
-        print(f'        └── Submitted batch job {job_id}')
-
-        if not job_name in self.job_ids['current']:
-            self.job_ids['current'][job_name] = [job_id]
-        else:
-            self.job_ids['current'][job_name].append(job_id)
-
-        return result, job_id
+        return job_file
 
     def wait_for_previous(self):
         """wait for all jobs of the previous stage to be finished
