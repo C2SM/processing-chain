@@ -64,6 +64,9 @@ def parse_arguments():
                         help=chunks_help,
                         default=None)
 
+    sync_help = ("Force synchronous execution.")
+    parser.add_argument("-s", "--force-sync", action='store_true', help=sync_help)
+
     force_help = ("Force the processing chain to redo all specified jobs,"
                   " even if they have been started already or were finished"
                   " previously. WARNING: Only logfiles get deleted,"
@@ -216,14 +219,20 @@ def run_chunk(cfg, force, resume):
                 print(f'    └── Skip "{job}" for chunk "{cfg.job_id}"')
                 skip = True
             else:
-                # Submit job and process logfile
                 print(f'    └── Process "{job}" for chunk "{cfg.job_id}"')
+
+                # Logfile settings
                 logfile = cfg.log_working_dir / job
                 logfile_finish = cfg.log_finished_dir / job
                 tools.change_logfile(logfile)
                 job_launch_time = datetime.now()
                 cfg.log_job_status(job, 'START', job_launch_time)
-                getattr(jobs, job).main(cfg)
+
+                # Submit the job
+                #getattr(jobs, job).main(cfg)
+                result, job_id = cfg.submit_job_as_sbatch(job, logfile)
+
+                # Logging
                 job_end_time = datetime.now()
                 job_duration = job_end_time - job_launch_time
                 cfg.log_job_status(job, 'FINISH', job_end_time, job_duration)
@@ -443,9 +452,6 @@ def main():
         # Set restart step in hours
         cfg.set_restart_step_hours()
 
-        # Print config before duplication of dict variables
-        cfg.print_config()
-
         # Duplicate variables in the form of <dict>_<value> for better
         # access within namelist template.
         # E.g.: cfg.meteo['dir'] -> cfg.meteo_dir
@@ -462,6 +468,13 @@ def main():
             cfg.chunks = []
         else:
             cfg.chunks = args.chunk_list
+
+        # Check sync is forced
+        if args.force_sync:
+            cfg.is_async = None
+
+        # Print config before chain starts
+        cfg.print_config()
 
         print(
             f"Starting chain for case {casename} and workflow {cfg.workflow_name}"
