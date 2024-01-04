@@ -65,7 +65,10 @@ def parse_arguments():
                         default=None)
 
     sync_help = ("Force synchronous execution.")
-    parser.add_argument("-s", "--force-sync", action='store_true', help=sync_help)
+    parser.add_argument("-s",
+                        "--force-sync",
+                        action='store_true',
+                        help=sync_help)
 
     force_help = ("Force the processing chain to redo all specified jobs,"
                   " even if they have been started already or were finished"

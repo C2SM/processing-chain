@@ -463,8 +463,10 @@ class Config():
 
     def create_sbatch_script(self, job_name, log_file):
         script_lines = [
-            '#!/usr/bin/env bash', f'#SBATCH --job-name="{job_name}"',
-            f'#SBATCH --nodes=1', f'#SBATCH --output={log_file}',
+            '#!/usr/bin/env bash',
+            f'#SBATCH --job-name="{job_name}"',
+            f'#SBATCH --nodes=1',
+            f'#SBATCH --output={log_file}',
             f'#SBATCH --open-mode=append',
             f'#SBATCH --account={self.compute_account}',
             f'#SBATCH --partition={self.compute_queue}',
