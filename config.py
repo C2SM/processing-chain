@@ -4,7 +4,7 @@ import yaml
 import logging
 
 from jobs import tools
-from pathlib import Path 
+from pathlib import Path
 from datetime import datetime
 
 
