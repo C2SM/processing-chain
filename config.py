@@ -464,7 +464,7 @@ class Config():
     def create_sbatch_script(self, job_name, log_file):
         script_lines = [
             '#!/usr/bin/env bash',
-            f'#SBATCH --job-name="{job_name}"',
+            f'#SBATCH --job-name="{job_name}_{self.job_id}"',
             f'#SBATCH --nodes=1',
             f'#SBATCH --output={log_file}',
             f'#SBATCH --open-mode=append',
@@ -475,7 +475,7 @@ class Config():
             f'cd {self.chain_src_dir}',
             'eval "$(conda shell.bash hook)"',
             'conda activate proc-chain',
-            f'./run_chain.py {self.casename} -j {job_name} -c {self.job_id} -f -s',
+            f'./run_chain.py {self.casename} -j {job_name} -c {self.job_id} -f -s --no-logging',
             '',
         ]
 
@@ -496,8 +496,8 @@ class Config():
         for ids in self.job_ids['previous'].values():
             dep_ids.extend(ids)
         if dep_ids:
-            job_file = self.chain_root / 'submit.wait.slurm'
-            log_file = self.chain_root / 'wait.log'
+            job_file = self.case_root / 'submit.wait.slurm'
+            log_file = self.case_root / 'wait.log'
             dep_str = ':'.join(map(str, dep_ids))
             script_lines = [
                 '#!/usr/bin/env bash', f'#SBATCH --job-name="wait"',
@@ -512,10 +512,6 @@ class Config():
                 wait_job.write('\n'.join(script_lines))
 
             subprocess.run(['sbatch', '--wait', job_file], check=True)
-
-            # Remove sbatch script and log file after execution
-            os.remove(job_file)
-            os.remove(log_file)
 
 
 class InvalidWorkflowType(Exception):

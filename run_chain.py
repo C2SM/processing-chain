@@ -70,6 +70,13 @@ def parse_arguments():
                         action='store_true',
                         help=sync_help)
 
+    no_logging_help = ("Disable logging for chain_status.log.")
+    parser.add_argument("--no-logging",
+                        action='store_false',
+                        dest="enable_logging",
+                        default=True,
+                        help=no_logging_help)
+
     force_help = ("Force the processing chain to redo all specified jobs,"
                   " even if they have been started already or were finished"
                   " previously. WARNING: Only logfiles get deleted,"
@@ -232,7 +239,6 @@ def run_chunk(cfg, force, resume):
                 cfg.log_job_status(job, 'START', job_launch_time)
 
                 # Submit the job
-                #getattr(jobs, job).main(cfg)
                 script = cfg.create_sbatch_script(job, logfile)
                 job_id = cfg.submit(job, script)
 
@@ -451,6 +457,9 @@ def main():
         # Make ntry a Config variable
         cfg.ntry = args.ntry
 
+        # Check logging settings
+        cfg.logging = args.enable_logging
+
         # Convert relative to absolute paths
         cfg.convert_paths_to_absolute()
 
@@ -481,13 +490,14 @@ def main():
         # Print config before chain starts
         cfg.print_config()
 
+        tools.create_dir(cfg.case_root, "case_root")
         print(
             f"Starting chain for case {casename} and workflow {cfg.workflow_name}"
         )
 
-        launch_time = datetime.now()
-        tools.create_dir(cfg.case_root, "case_root")
-        cfg.log_job_status('chain', 'START', launch_time)
+        if cfg.logging:
+            launch_time = datetime.now()
+            cfg.log_job_status('chain', 'START', launch_time)
 
         # Check for restart compatibility and spinup
         if 'restart' in cfg.workflow['features']:
@@ -505,9 +515,10 @@ def main():
             cfg.enddate_sim = cfg.enddate
             run_chunk(cfg=cfg, force=args.force, resume=args.resume)
 
-    end_time = datetime.now()
-    duration = end_time - launch_time
-    cfg.log_job_status('chain', 'FINISH', end_time, duration)
+    if cfg.logging:
+        end_time = datetime.now()
+        duration = end_time - launch_time
+        cfg.log_job_status('chain', 'FINISH', end_time, duration)
     print('>>> Finished the processing chain successfully <<<')
 
 
