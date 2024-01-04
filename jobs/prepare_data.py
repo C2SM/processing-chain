@@ -102,6 +102,7 @@ def main(cfg):
         If any subprocess returns a non-zero exit code during execution.
     """
     set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("prepare_data")
 
     if cfg.workflow_name.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
@@ -525,3 +526,5 @@ def main(cfg):
                                         output_log=True)
 
                         logging.info("OK")
+
+    cfg.finish_time_logging("prepare_data", launch_time)

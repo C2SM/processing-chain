@@ -15,6 +15,7 @@ def main(cfg):
     Add GEOSP
     """
     prepare_data.set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("geosp")
 
     #-----------------------------------------------------
     # Add GEOSP to all meteo files
@@ -58,3 +59,5 @@ def main(cfg):
             logging.info("Added GEOSP to file {}".format(merged_file))
             # Rename file to get original file name
             tools.rename_file(merged_file, src_file)
+
+    cfg.finish_time_logging("geosp", launch_time)

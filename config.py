@@ -2,8 +2,10 @@ import subprocess
 import os
 import yaml
 import logging
+
 from jobs import tools
-from pathlib import Path
+from pathlib import Path 
+from datetime import datetime
 
 
 class Config():
@@ -390,6 +392,17 @@ class Config():
 
         formatted_duration = f"{int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
         return formatted_duration
+
+    def init_time_logging(self, job):
+        launch_time = datetime.now()
+        self.log_job_status(job, 'START', launch_time)
+
+        return launch_time
+
+    def finish_time_logging(self, job, launch_time):
+        end_time = datetime.now()
+        duration = end_time - launch_time
+        self.log_job_status(job, 'FINISH', end_time, duration)
 
     def get_dep_ids(self, job_name, add_dep=None):
         """Get dependency job ids for `job_name`"""

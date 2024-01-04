@@ -235,19 +235,10 @@ def run_chunk(cfg, force, resume):
                 logfile = cfg.log_working_dir / job
                 logfile_finish = cfg.log_finished_dir / job
                 tools.change_logfile(logfile)
-                job_launch_time = datetime.now()
-                cfg.log_job_status(job, 'START', job_launch_time)
 
                 # Submit the job
                 script = cfg.create_sbatch_script(job, logfile)
                 job_id = cfg.submit(job, script)
-
-                # Logging
-                job_end_time = datetime.now()
-                job_duration = job_end_time - job_launch_time
-                cfg.log_job_status(job, 'FINISH', job_end_time, job_duration)
-                # This needs to be done by the job
-                #shutil.copy(logfile, logfile_finish)
 
         # wait for previous chunk to be done
         cfg.wait_for_previous()
@@ -496,8 +487,7 @@ def main():
         )
 
         if cfg.logging:
-            launch_time = datetime.now()
-            cfg.log_job_status('chain', 'START', launch_time)
+            launch_time = cfg.init_time_logging('chain')
 
         # Check for restart compatibility and spinup
         if 'restart' in cfg.workflow['features']:
@@ -516,9 +506,8 @@ def main():
             run_chunk(cfg=cfg, force=args.force, resume=args.resume)
 
     if cfg.logging:
-        end_time = datetime.now()
-        duration = end_time - launch_time
-        cfg.log_job_status('chain', 'FINISH', end_time, duration)
+        cfg.finish_time_logging('chain', launch_time)
+
     print('>>> Finished the processing chain successfully <<<')
 
 

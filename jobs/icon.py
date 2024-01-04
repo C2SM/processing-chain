@@ -33,6 +33,7 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     prepare_data.set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("icon")
 
     logfile = cfg.log_working_dir / "icon"
     logfile_finish = cfg.log_finished_dir / "icon"
@@ -81,3 +82,5 @@ def main(cfg):
     #
     #     if exitcode != 0:
     #        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+
+    cfg.finish_time_logging("icon", launch_time)
