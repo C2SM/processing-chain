@@ -470,12 +470,15 @@ class Config():
         if dep_cmd := self.get_dep_cmd(job_name, add_dep=add_dep):
             sbatch_cmd.append(dep_cmd)
         script_lines = [
-            '#!/usr/bin/env bash', f'#SBATCH --job-name="{job_name}"',
-            f'#SBATCH --nodes=1', f'#SBATCH --output={log_file}',
+            '#!/usr/bin/env bash',
+            f'#SBATCH --job-name="{job_name}"',
+            f'#SBATCH --nodes=1',
+            f'#SBATCH --output={log_file}',
             f'#SBATCH --open-mode=append',
             f'#SBATCH --account={self.compute_account}',
             f'#SBATCH --partition={self.compute_queue}',
-            f'#SBATCH --constraint={self.constraint}', '', 
+            f'#SBATCH --constraint={self.constraint}',
+            '',
             'eval "$(conda shell.bash hook)"',
             'conda activate proc-chain',
             f'./run_chain.py {self.casename} -j {job_name} -c {self.job_id} -f -s',
