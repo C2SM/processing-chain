@@ -67,6 +67,7 @@ def async_error(cfg, part="This part"):
 
 # ... (previous code remains unchanged)
 
+
 def main(cfg):
     """
     **ICON and COSMO Data Preparation**
@@ -145,7 +146,7 @@ def main(cfg):
         datafile_list_rest = []
         datafile_list_chem = []
         for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
-                                        cfg.meteo['inc']):
+                                     cfg.meteo['inc']):
             meteo_file = cfg.icon_input_icbc / (
                 cfg.meteo['prefix'] + time.strftime(cfg.meteo['nameformat']))
             if cfg.workflow_name == 'icon-art' or cfg.workflow_name == 'icon-art-oem':
@@ -228,7 +229,8 @@ def main(cfg):
                     if not src_file.exists() and cfg.meteo.get('dir_alt') \
                         is not None:
                         meteo_dir = cfg.meteo['dir_alt']
-                        subdir = meteo_dir / cfg.startdate_sim.strftime('%y%m%d%H')
+                        subdir = meteo_dir / cfg.startdate_sim.strftime(
+                            '%y%m%d%H')
                         src_file = subdir / ('eas' + time.strftime('%Y%m%d%H'))
                     dest_path = cfg.int2lm_input / 'meteo' / (
                         cfg.meteo['prefix'] + '00000000')
@@ -241,10 +243,11 @@ def main(cfg):
                     days_total = str(td_total.days).zfill(2)
                     hours_total = str(td_total.seconds // 3600).zfill(2)
 
-                    src_file = subdir / (
-                        cfg.meteo['prefix'] + days + hours + '0000')
+                    src_file = subdir / (cfg.meteo['prefix'] + days + hours +
+                                         '0000')
                     dest_path = cfg.int2lm_input / 'meteo' / (
-                        cfg.meteo['prefix'] + days_total + hours_total + '0000')
+                        cfg.meteo['prefix'] + days_total + hours_total +
+                        '0000')
 
                     # Next time, change directory
                     checkdir = meteo_dir / time.strftime('%y%m%d%H')
@@ -252,7 +255,8 @@ def main(cfg):
                         num_steps += 1
                         subdir = checkdir
                     elif cfg.meteo.get('dir_alt') is not None:
-                        checkdir = cfg.meteo['dir_alt'] / time.strftime('%y%m%d%H')
+                        checkdir = cfg.meteo['dir_alt'] / time.strftime(
+                            '%y%m%d%H')
                         if checkdir.is_dir():
                             num_steps += 1
                             subdir = checkdir
@@ -333,8 +337,9 @@ def main(cfg):
                                                  cfg.enddate_sim, inc):
                         logging.info(time)
 
-                        filename = inv["outdir"] / (
-                            p["suffix"] + "_" + time.strftime("%Y%m%d%H") + ".nc")
+                        filename = inv["outdir"] / (p["suffix"] + "_" +
+                                                    time.strftime("%Y%m%d%H") +
+                                                    ".nc")
                         if not filename.exists():
                             logging.info(filename)
                             try:
