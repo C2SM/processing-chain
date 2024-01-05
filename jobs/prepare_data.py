@@ -65,6 +65,8 @@ def async_error(cfg, part="This part"):
             f"{part} isn't ready for async execution yet")
 
 
+# ... (previous code remains unchanged)
+
 def main(cfg):
     """
     **ICON and COSMO Data Preparation**
@@ -145,13 +147,11 @@ def main(cfg):
         datafile_list_chem = []
         for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
                                         cfg.meteo['inc']):
-            meteo_file = os.path.join(
-                cfg.icon_input_icbc, cfg.meteo['prefix'] +
-                time.strftime(cfg.meteo['nameformat']))
+            meteo_file = cfg.icon_input_icbc / (
+                cfg.meteo['prefix'] + time.strftime(cfg.meteo['nameformat']))
             if cfg.workflow_name == 'icon-art' or cfg.workflow_name == 'icon-art-oem':
-                chem_file = os.path.join(
-                    cfg.icon_input_icbc, cfg.chem['prefix'] +
-                    time.strftime(cfg.chem_nameformat))
+                chem_file = cfg.icon_input_icbc / (
+                    cfg.chem['prefix'] + time.strftime(cfg.chem_nameformat))
                 datafile_list_chem.append(chem_file + cfg.chem['suffix'])
             if meteo_file.endswith('00'):
                 datafile_list.append(meteo_file + cfg.meteo['suffix'])
@@ -166,11 +166,10 @@ def main(cfg):
         #-----------------------------------------------------
         icontools_id = None
         for runscript in cfg.icontools_runjobs:
-            with open(os.path.join(cfg.case_path,
-                                    runscript)) as input_file:
+            with (cfg.case_path / runscript).open() as input_file:
                 to_write = input_file.read()
             runscript_path = cfg.icon_work / f"{runscript}.job"
-            with open(runscript_path, "w") as outf:
+            with runscript_path.open("w") as outf:
                 outf.write(
                     to_write.format(cfg=cfg,
                                     meteo=cfg.meteo,
@@ -195,16 +194,15 @@ def main(cfg):
         async_error(cfg, part='COSMO')
         logging.info('COSMO analysis data for IC/BC')
 
-        dest_path = os.path.join(cfg.int2lm_input, 'meteo')
+        dest_path = cfg.int2lm_input / 'meteo'
         tools.create_dir(dest_path, "meteo input")
 
         source_nameformat = cfg.meteo['nameformat']
         if cfg.meteo['prefix'] == 'lffd':
             # nested runs use cosmoart-output as meteo data
             # have to copy the *c.nc-file
-            src_file = os.path.join(
-                cfg.meteo['dir'],
-                cfg.startdate_sim.strftime(source_nameformat + 'c.nc'))
+            src_file = (cfg.meteo['dir'] /
+                        cfg.startdate_sim.strftime(source_nameformat + 'c.nc'))
 
             tools.copy_file(src_file, dest_path, output_log=True)
 
@@ -219,27 +217,22 @@ def main(cfg):
 
         num_steps = 0
         meteo_dir = cfg.meteo['dir']
-        subdir = os.path.join(meteo_dir,
-                              cfg.startdate_sim.strftime('%y%m%d%H'))
+        subdir = meteo_dir / cfg.startdate_sim.strftime('%y%m%d%H')
         for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
                                      cfg.meteo['inc']):
-            dest_path = os.path.join(cfg.int2lm_input, 'meteo')
-            src_file = os.path.join(meteo_dir,
-                                    time.strftime(source_nameformat))
+            dest_path = cfg.int2lm_input / 'meteo'
+            src_file = meteo_dir / time.strftime(source_nameformat)
 
             if cfg.meteo['prefix'] == 'efsf':
                 if time == cfg.startdate_sim:
-                    src_file = os.path.join(subdir,
-                                            'eas' + time.strftime('%Y%m%d%H'))
-                    if not os.path.isfile(src_file) and cfg.meteo.get('dir_alt') \
+                    src_file = subdir / ('eas' + time.strftime('%Y%m%d%H'))
+                    if not src_file.exists() and cfg.meteo.get('dir_alt') \
                         is not None:
                         meteo_dir = cfg.meteo['dir_alt']
-                        subdir = os.path.join(
-                            meteo_dir, cfg.startdate_sim.strftime('%y%m%d%H'))
-                        src_file = os.path.join(
-                            subdir, 'eas' + time.strftime('%Y%m%d%H'))
-                    dest_path = os.path.join(cfg.int2lm_input, 'meteo',
-                                             cfg.meteo['prefix'] + '00000000')
+                        subdir = meteo_dir / cfg.startdate_sim.strftime('%y%m%d%H')
+                        src_file = subdir / ('eas' + time.strftime('%Y%m%d%H'))
+                    dest_path = cfg.int2lm_input / 'meteo' / (
+                        cfg.meteo['prefix'] + '00000000')
                 else:
                     td = time - cfg.startdate_sim - timedelta(hours=6 *
                                                               num_steps)
@@ -249,22 +242,19 @@ def main(cfg):
                     days_total = str(td_total.days).zfill(2)
                     hours_total = str(td_total.seconds // 3600).zfill(2)
 
-                    src_file = os.path.join(
-                        subdir, cfg.meteo['prefix'] + days + hours + '0000')
-                    dest_path = os.path.join(
-                        cfg.int2lm_input, 'meteo', cfg.meteo['prefix'] +
-                        days_total + hours_total + '0000')
+                    src_file = subdir / (
+                        cfg.meteo['prefix'] + days + hours + '0000')
+                    dest_path = cfg.int2lm_input / 'meteo' / (
+                        cfg.meteo['prefix'] + days_total + hours_total + '0000')
 
                     # Next time, change directory
-                    checkdir = os.path.join(meteo_dir,
-                                            time.strftime('%y%m%d%H'))
-                    if os.path.isdir(checkdir):
+                    checkdir = meteo_dir / time.strftime('%y%m%d%H')
+                    if checkdir.is_dir():
                         num_steps += 1
                         subdir = checkdir
                     elif cfg.meteo.get('dir_alt') is not None:
-                        checkdir = os.path.join(cfg.meteo['dir_alt'],
-                                                time.strftime('%y%m%d%H'))
-                        if os.path.isdir(checkdir):
+                        checkdir = cfg.meteo['dir_alt'] / time.strftime('%y%m%d%H')
+                        if checkdir.is_dir():
                             num_steps += 1
                             subdir = checkdir
                             meteo_dir = cfg.meteo['dir_alt']
@@ -272,12 +262,12 @@ def main(cfg):
                                 "Switching to other input directory from {} to {}"
                                 .format(cfg.meteo['dir'],
                                         cfg.meteo['dir_alt']))
-            elif not os.path.exists(src_file):
+            elif not src_file.exists():
                 # special case for MeteoSwiss COSMO-7 data
-                archive = '/store/mch/msopr/owm/COSMO-7'
+                archive = Path('/store/mch/msopr/owm/COSMO-7')
                 yy = time.strftime("%y")
-                path = '/'.join([archive, 'ANA' + yy])
-                src_file = os.path.join(path, time.strftime(source_nameformat))
+                path = archive / 'ANA' + yy
+                src_file = path / time.strftime(source_nameformat)
 
             # copy meteo file from project folder to
             tools.copy_file(src_file, dest_path, output_log=True)
@@ -331,7 +321,7 @@ def main(cfg):
                          ", ".join([i["fullname"]
                                     for i in inv_to_process]) + " data")
 
-            scratch_path = os.path.join(cfg.int2lm_input, 'icbc')
+            scratch_path = cfg.int2lm_input / 'icbc'
             tools.create_dir(scratch_path, "icbc input")
 
             for inv in inv_to_process:
@@ -344,10 +334,9 @@ def main(cfg):
                                                  cfg.enddate_sim, inc):
                         logging.info(time)
 
-                        filename = os.path.join(
-                            inv["outdir"], p["suffix"] + "_" +
-                            time.strftime("%Y%m%d%H") + ".nc")
-                        if not os.path.exists(filename):
+                        filename = inv["outdir"] / (
+                            p["suffix"] + "_" + time.strftime("%Y%m%d%H") + ".nc")
+                        if not filename.exists():
                             logging.info(filename)
                             try:
                                 to_call = getattr(tools, inv["executable"])
