@@ -255,14 +255,18 @@ def run_chunk(cfg, force, resume):
                 if not force:
                     while True:
                         if (cfg.log_finished_dir / job).exists():
-                            print(f'    └── Skip "{job}" for chunk "{cfg.job_id}"')
+                            print(
+                                f'    └── Skip "{job}" for chunk "{cfg.job_id}"'
+                            )
                             skip = True
                             break
                         elif resume:
                             resume = False
                             break
                         else:
-                            print(f"    └── Wait for {job} of chunk {cfg.job_id}")
+                            print(
+                                f"    └── Wait for {job} of chunk {cfg.job_id}"
+                            )
                             sys.stdout.flush()
                             for _ in range(3000):
                                 time.sleep(0.1)

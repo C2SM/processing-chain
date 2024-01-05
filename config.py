@@ -479,10 +479,9 @@ class Config():
             tools.grep("free(): invalid pointer", logfile)['success'] and \
             tools.grep("clean-up finished", logfile)['success']:
             exitcode = 0
-    
+
         if exitcode != 0:
             raise RuntimeError(f"sbatch returned exitcode {exitcode}")
-
 
     def create_sbatch_script(self, job_name, log_file):
         script_lines = [
