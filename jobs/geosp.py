@@ -4,7 +4,6 @@
 import os
 from pathlib import Path
 import logging
-from datetime import timedelta
 import xarray as xr
 import numpy as np
 from . import tools, prepare_data

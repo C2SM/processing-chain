@@ -7,7 +7,6 @@ import xarray as xr
 from . import tools
 from .tools.interpolate_data import create_oh_for_restart, create_oh_for_inicond
 from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
-from calendar import monthrange
 
 
 def set_cfg_variables(cfg):
