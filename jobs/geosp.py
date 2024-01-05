@@ -12,14 +12,11 @@ from . import tools, prepare_data
 
 def main(cfg):
     """
-    Add GEOSP
+    Add GEOSP to all meteo files
     """
     prepare_data.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("geosp")
 
-    #-----------------------------------------------------
-    # Add GEOSP to all meteo files
-    #-----------------------------------------------------
     for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
                                  cfg.meteo['inc']):
         # Specify file names

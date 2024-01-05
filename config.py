@@ -448,7 +448,7 @@ class Config():
             # sequential case
             return '--wait'
 
-    def submit(self, job_name, script, add_dep=None):
+    def submit(self, job_name, script, add_dep=None, logfile=None):
         """Submit job with dependencies"""
 
         script_path = Path(script)
@@ -469,10 +469,20 @@ class Config():
             self.job_ids['current'][job_name].append(job_id)
 
         exitcode = result.returncode
+        self.check_job(exitcode, logfile)
+
+        return job_id
+
+    def check_job(self, exitcode, logfile=None):
+        # In case of ICON-ART, ignore the "invalid pointer" error on successful run
+        if logfile and tools.grep("ART: ", logfile)['success'] and \
+            tools.grep("free(): invalid pointer", logfile)['success'] and \
+            tools.grep("clean-up finished", logfile)['success']:
+            exitcode = 0
+    
         if exitcode != 0:
             raise RuntimeError(f"sbatch returned exitcode {exitcode}")
 
-        return job_id
 
     def create_sbatch_script(self, job_name, log_file):
         script_lines = [

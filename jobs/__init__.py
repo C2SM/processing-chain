@@ -15,6 +15,9 @@ from . import online_vprm
 from . import photo_rate
 from . import post_cosmo
 from . import post_int2lm
+from . import prepare_art
+from . import prepare_art_oem
+from . import prepare_art_global
 from . import prepare_data
 from . import reduce_output
 from . import verify_chain
