@@ -151,9 +151,9 @@ def main(cfg):
             if cfg.workflow_name == 'icon-art' or cfg.workflow_name == 'icon-art-oem':
                 chem_file = cfg.icon_input_icbc / (
                     cfg.chem['prefix'] + time.strftime(cfg.chem_nameformat))
-                datafile_list_chem.append(chem_file + cfg.chem['suffix'])
-            if meteo_file.endswith('00'):
-                datafile_list.append(meteo_file + cfg.meteo['suffix'])
+                datafile_list_chem.append(str(chem_file) + cfg.chem['suffix'])
+            if str(meteo_file).endswith('00'):
+                datafile_list.append(str(meteo_file) + cfg.meteo['suffix'])
             else:
                 datafile_list_rest.append(meteo_file + cfg.meteo['suffix'])
         datafile_list = ' '.join([str(v) for v in datafile_list])
