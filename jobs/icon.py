@@ -66,6 +66,6 @@ def main(cfg):
     script.write_text(script_str)
 
     # Submit run script
-    job_id = cfg.submit('icon', script)
+    job_id = cfg.submit('icon', script, logfile=logfile)
 
     cfg.finish_time_logging("icon", launch_time)

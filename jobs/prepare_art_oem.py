@@ -13,7 +13,7 @@ def main(cfg):
     initialization time, and merges chemical tracers with meteorological files if
     OEM (Online Emission Model) is enabled. The merging process involves
     combining initial and lateral boundary condition (IC and LBC) files for the
-    ICON model.
+    ICON-ART model.
 
     **IC Merging (Initial Conditions):**
     For the initial time step, it merges the IC files by:
@@ -37,6 +37,7 @@ def main(cfg):
     """
     prepare_data.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("prepare_art")
+    logging.info('Merging IC and LBC')
 
     if cfg.input_files['oem_gridded_emissions_nc']:
         for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,

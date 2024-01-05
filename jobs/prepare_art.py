@@ -14,6 +14,7 @@ def main(cfg):
     """
     prepare_data.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("prepare_art")
+    logging.info('Add Q (copy of QV) and/or PS to initial file')
 
     if cfg.art_input_folder:
         meteo_file = os.path.join(
@@ -49,4 +50,5 @@ def main(cfg):
                 ds.to_netcdf(merged_file)
                 tools.rename_file(merged_file, meteo_file)
 
+    logging.info('OK')
     cfg.finish_time_logging("prepare_art", launch_time)

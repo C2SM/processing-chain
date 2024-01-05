@@ -16,6 +16,7 @@ def main(cfg):
     """
     prepare_data.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("geosp")
+    logging.info("Add GEOSP to all meteo files")
 
     for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
                                  cfg.meteo['inc']):
