@@ -138,7 +138,6 @@ def main(cfg):
 
         copy_id = cfg.submit('prepare_data', script)
 
-      
         #-----------------------------------------------------
         # Create LBC datafile lists (each at 00 UTC and others)
         #-----------------------------------------------------
@@ -186,8 +185,8 @@ def main(cfg):
             else:
                 dependencies = copy_id
             icontools_id = cfg.submit(runscript,
-                                        runscript_path,
-                                        add_dep=dependencies)
+                                      runscript_path,
+                                      add_dep=dependencies)
 
     # If COSMO (and not ICON):
     else:
