@@ -136,7 +136,6 @@ def main(cfg):
 
         copy_id = cfg.submit('prepare_data', script)
 
-      
         #-----------------------------------------------------
         # Create LBC datafile lists (each at 00 UTC and others)
         #-----------------------------------------------------
@@ -144,14 +143,14 @@ def main(cfg):
         datafile_list_rest = []
         datafile_list_chem = []
         for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
-                                        cfg.meteo['inc']):
+                                     cfg.meteo['inc']):
             meteo_file = os.path.join(
-                cfg.icon_input_icbc, cfg.meteo['prefix'] +
-                time.strftime(cfg.meteo['nameformat']))
+                cfg.icon_input_icbc,
+                cfg.meteo['prefix'] + time.strftime(cfg.meteo['nameformat']))
             if cfg.workflow_name == 'icon-art' or cfg.workflow_name == 'icon-art-oem':
                 chem_file = os.path.join(
-                    cfg.icon_input_icbc, cfg.chem['prefix'] +
-                    time.strftime(cfg.chem_nameformat))
+                    cfg.icon_input_icbc,
+                    cfg.chem['prefix'] + time.strftime(cfg.chem_nameformat))
                 datafile_list_chem.append(chem_file + cfg.chem['suffix'])
             if meteo_file.endswith('00'):
                 datafile_list.append(meteo_file + cfg.meteo['suffix'])
@@ -166,8 +165,7 @@ def main(cfg):
         #-----------------------------------------------------
         icontools_id = None
         for runscript in cfg.icontools_runjobs:
-            with open(os.path.join(cfg.case_path,
-                                    runscript)) as input_file:
+            with open(os.path.join(cfg.case_path, runscript)) as input_file:
                 to_write = input_file.read()
             runscript_path = cfg.icon_work / f"{runscript}.job"
             with open(runscript_path, "w") as outf:
@@ -187,8 +185,8 @@ def main(cfg):
             else:
                 dependencies = copy_id
             icontools_id = cfg.submit(runscript,
-                                        runscript_path,
-                                        add_dep=dependencies)
+                                      runscript_path,
+                                      add_dep=dependencies)
 
     # If COSMO (and not ICON):
     else:
