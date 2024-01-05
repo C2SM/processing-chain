@@ -94,15 +94,13 @@ def main(cfg):
         # -- Copy ERA5 processing script (icon_era5_inicond.job) in workdir
         with open(cfg.icon_era5_inijob) as input_file:
             to_write = input_file.read()
-        output_file = os.path.join(cfg.icon_input_icbc,
-                                    'icon_era5_inicond.sh')
+        output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')
         with open(output_file, "w") as outf:
             outf.write(to_write.format(cfg=cfg))
 
         # -- Copy mypartab in workdir
         shutil.copy(
-            os.path.join(os.path.dirname(cfg.icon_era5_inijob),
-                            'mypartab'),
+            os.path.join(os.path.dirname(cfg.icon_era5_inijob), 'mypartab'),
             os.path.join(cfg.icon_input_icbc, 'mypartab'))
 
         # -- Run ERA5 processing script
@@ -110,7 +108,7 @@ def main(cfg):
             "bash",
             os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')
         ],
-                                    stdout=subprocess.PIPE)
+                                   stdout=subprocess.PIPE)
         process.communicate()
 
     # -----------------------------------------------------
@@ -126,13 +124,11 @@ def main(cfg):
             filename = cfg.input_files_scratch_inicond_filename
 
             # -- Copy the script for processing external tracer data in workdir
-            with open(
-                    os.path.join(
-                        cfg.case_path,
-                        cfg.icon_species_inijob)) as input_file:
+            with open(os.path.join(cfg.case_path,
+                                   cfg.icon_species_inijob)) as input_file:
                 to_write = input_file.read()
             output_file = os.path.join(cfg.icon_input_icbc,
-                                        cfg.icon_species_inijob)
+                                       cfg.icon_species_inijob)
             with open(output_file, "w") as outf:
                 outf.write(
                     to_write.format(cfg=cfg,
@@ -144,7 +140,7 @@ def main(cfg):
 
             # -- Run ERA5 processing script
             process = subprocess.Popen(["bash", output_file],
-                                        stdout=subprocess.PIPE)
+                                       stdout=subprocess.PIPE)
             process.communicate()
 
             # -- Create initial conditions for OH concentrations
@@ -178,8 +174,8 @@ def main(cfg):
     if cfg.era5_global_nudging:
 
         for time in tools.iter_hours(cfg.startdate_sim,
-                                        cfg.enddate_sim,
-                                        step=cfg.nudging_step):
+                                     cfg.enddate_sim,
+                                     step=cfg.nudging_step):
 
             # -- Give a name to the nudging file
             timestr = time.strftime('%Y%m%d%H')
@@ -188,9 +184,8 @@ def main(cfg):
 
             # -- If initial time, copy the initial conditions to be used as boundary conditions
             if time == cfg.startdate_sim and cfg.era5_inicond:
-                shutil.copy(
-                    cfg.input_files_scratch_inicond_filename,
-                    os.path.join(cfg.icon_input_icbc, filename))
+                shutil.copy(cfg.input_files_scratch_inicond_filename,
+                            os.path.join(cfg.icon_input_icbc, filename))
                 continue
 
             # -- Fetch ERA5 data
@@ -200,27 +195,25 @@ def main(cfg):
             with open(cfg.icon_era5_nudgingjob) as input_file:
                 to_write = input_file.read()
             output_file = os.path.join(
-                cfg.icon_input_icbc,
-                'icon_era5_nudging_{}.sh'.format(timestr))
+                cfg.icon_input_icbc, 'icon_era5_nudging_{}.sh'.format(timestr))
             with open(output_file, "w") as outf:
                 outf.write(to_write.format(cfg=cfg, filename=filename))
 
             # -- Copy mypartab in workdir
-            if not os.path.exists(
-                    os.path.join(cfg.icon_input_icbc, 'mypartab')):
+            if not os.path.exists(os.path.join(cfg.icon_input_icbc,
+                                               'mypartab')):
                 shutil.copy(
-                    os.path.join(
-                        os.path.dirname(cfg.icon_era5_nudgingjob),
-                        'mypartab'),
+                    os.path.join(os.path.dirname(cfg.icon_era5_nudgingjob),
+                                 'mypartab'),
                     os.path.join(cfg.icon_input_icbc, 'mypartab'))
 
             # -- Run ERA5 processing script
             process = subprocess.Popen([
                 "bash",
                 os.path.join(cfg.icon_input_icbc,
-                                'icon_era5_nudging_{}.sh'.format(timestr))
+                             'icon_era5_nudging_{}.sh'.format(timestr))
             ],
-                                        stdout=subprocess.PIPE)
+                                       stdout=subprocess.PIPE)
             process.communicate()
 
             if cfg.species_global_nudging:
@@ -232,17 +225,15 @@ def main(cfg):
                     cfg.icon_input_icbc,
                     'icon_cams_nudging_{}.sh'.format(timestr))
                 with open(output_file, "w") as outf:
-                    outf.write(
-                        to_write.format(cfg=cfg, filename=filename))
+                    outf.write(to_write.format(cfg=cfg, filename=filename))
 
                 # -- Run ERA5 processing script
                 process = subprocess.Popen([
                     "bash",
-                    os.path.join(
-                        cfg.icon_input_icbc,
-                        'icon_cams_nudging_{}.sh'.format(timestr))
+                    os.path.join(cfg.icon_input_icbc,
+                                 'icon_cams_nudging_{}.sh'.format(timestr))
                 ],
-                                            stdout=subprocess.PIPE)
+                                           stdout=subprocess.PIPE)
                 process.communicate()
 
     logging.info("OK")
