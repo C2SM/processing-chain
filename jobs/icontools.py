@@ -15,6 +15,13 @@ from calendar import monthrange
 
 
 def main(cfg):
+    """
+    - Submit the runscript for the DWD ICON tools to remap the meteorological files.
+    - All runscripts specified in ``cfg.icontools_runjobs`` are submitted.
+    - The meteorological files are read from the original input directory
+      (``cfg.input_root_meteo``), and the remapped meteorological files are saved
+      in the input folder on scratch (``cfg.icon_input/icbc``).
+    """
     launch_time = cfg.init_time_logging("icontools")
 
     #-----------------------------------------------------

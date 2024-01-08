@@ -11,7 +11,8 @@ from . import tools, prepare_data
 
 def main(cfg):
     """
-    Add GEOSP to all meteo files
+    The constant variable 'GEOSP' is added to the files not containing it
+    using python-cdo bindings.
     """
     prepare_data.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("geosp")

@@ -73,13 +73,7 @@ def main(cfg):
     copying meteorological files, and handling specific data processing for each model.
 
     **ICON:**
-
     - Create directories ``cfg.icon_input_icbc`` and ``cfg.icon_work``.
-    - Submit the runscript for the DWD ICON tools to remap the meteorological files.
-    - All runscripts specified in ``cfg.icontools_runjobs`` are submitted.
-    - The meteorological files are read from the original input directory (``cfg.input_root_meteo``),
-      and the remapped meteorological files are saved in the input folder on scratch (``cfg.icon_input/icbc``).
-    - The constant variable 'GEOSP' is added to the files not containing it using python-cdo bindings.
 
     **COSMO:**
 
