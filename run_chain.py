@@ -348,9 +348,9 @@ def restart_runs(cfg, force, resume):
             startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
             enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
             job_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
-            cfg.chunks.append(job_id)
             if enddate_sim > cfg.enddate:
                 continue
+            cfg.chunks.append(job_id)
 
     for job_id in cfg.chunks:
         cfg.job_id = job_id
