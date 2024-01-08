@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
+import pytz
 
 import logging
 import os
@@ -51,6 +52,31 @@ def parse_arguments():
                         dest="job_list",
                         help=jobs_help,
                         default=None)
+
+    chunks_help = ("List of chunks to be executed. A chunk is time"
+                   "frame within the total simulation period."
+                   "It has the format `YYYYMMDDHH_YYYYMMDDHH`."
+                   "If no chunks are given, all chunks within the"
+                   "simulation period will be executed.")
+    parser.add_argument("-c",
+                        "--chunks",
+                        nargs='*',
+                        dest="chunk_list",
+                        help=chunks_help,
+                        default=None)
+
+    sync_help = ("Force synchronous execution.")
+    parser.add_argument("-s",
+                        "--force-sync",
+                        action='store_true',
+                        help=sync_help)
+
+    no_logging_help = ("Disable logging for chain_status.log.")
+    parser.add_argument("--no-logging",
+                        action='store_false',
+                        dest="enable_logging",
+                        default=True,
+                        help=no_logging_help)
 
     force_help = ("Force the processing chain to redo all specified jobs,"
                   " even if they have been started already or were finished"
@@ -204,18 +230,16 @@ def run_chunk(cfg, force, resume):
                 print(f'    └── Skip "{job}" for chunk "{cfg.job_id}"')
                 skip = True
             else:
-                # Submit job and process logfile
                 print(f'    └── Process "{job}" for chunk "{cfg.job_id}"')
+
+                # Logfile settings
                 logfile = cfg.log_working_dir / job
                 logfile_finish = cfg.log_finished_dir / job
                 tools.change_logfile(logfile)
-                job_launch_time = datetime.now()
-                cfg.log_job_status(job, 'START', job_launch_time)
-                getattr(jobs, job).main(cfg)
-                job_end_time = datetime.now()
-                job_duration = job_end_time - job_launch_time
-                cfg.log_job_status(job, 'FINISH', job_end_time, job_duration)
-                shutil.copy(logfile, logfile_finish)
+
+                # Submit the job
+                script = cfg.create_sbatch_script(job, logfile)
+                job_id = cfg.submit(job, script)
 
         # wait for previous chunk to be done
         cfg.wait_for_previous()
@@ -231,14 +255,18 @@ def run_chunk(cfg, force, resume):
                 if not force:
                     while True:
                         if (cfg.log_finished_dir / job).exists():
-                            print(f"Skip {job} for chunk {cfg.job_id}")
+                            print(
+                                f'    └── Skip "{job}" for chunk "{cfg.job_id}"'
+                            )
                             skip = True
                             break
                         elif resume:
                             resume = False
                             break
                         else:
-                            print(f"Wait for {job} of chunk {cfg.job_id}")
+                            print(
+                                f"    └── Wait for {job} of chunk {cfg.job_id}"
+                            )
                             sys.stdout.flush()
                             for _ in range(3000):
                                 time.sleep(0.1)
@@ -312,20 +340,31 @@ def restart_runs(cfg, force, resume):
     - The function iterates over specified intervals, calling `run_chunk()` for each.
     - It manages restart settings and logging for each subchain.
     """
-    for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
-                                          cfg.restart_step_hours):
-        enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
+    if not cfg.chunks:
+        for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
+                                              cfg.restart_step_hours):
+            enddate_sim = startdate_sim + timedelta(
+                hours=cfg.restart_step_hours)
+            startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
+            enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
+            job_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
+            cfg.chunks.append(job_id)
+            if enddate_sim > cfg.enddate:
+                continue
 
-        if enddate_sim > cfg.enddate:
-            continue
+    for job_id in cfg.chunks:
+        cfg.job_id = job_id
+        cfg.startdate_sim_yyyymmddhh = job_id[0:10]
+        cfg.enddate_sim_yyyymmddhh = job_id[-10:]
+        cfg.startdate_sim = datetime.strptime(
+            cfg.startdate_sim_yyyymmddhh, "%Y%m%d%H").replace(tzinfo=pytz.UTC)
+        cfg.enddate_sim = datetime.strptime(
+            cfg.enddate_sim_yyyymmddhh, "%Y%m%d%H").replace(tzinfo=pytz.UTC)
 
         # Set restart variable (only takes effect for ICON)
-        cfg.lrestart = '.FALSE.' if startdate_sim == cfg.startdate else '.TRUE.'
+        cfg.lrestart = ".FALSE." if cfg.startdate_sim == cfg.startdate else ".TRUE."
 
-        print(f"└── Starting chunk with startdate {startdate_sim}")
-
-        cfg.startdate_sim = startdate_sim
-        cfg.enddate_sim = enddate_sim
+        print(f"└── Starting chunk with startdate {cfg.startdate_sim}")
 
         run_chunk(cfg=cfg, force=force, resume=resume)
 
@@ -414,14 +453,14 @@ def main():
         # Make ntry a Config variable
         cfg.ntry = args.ntry
 
+        # Check logging settings
+        cfg.logging = args.enable_logging
+
         # Convert relative to absolute paths
         cfg.convert_paths_to_absolute()
 
         # Set restart step in hours
         cfg.set_restart_step_hours()
-
-        # Print config before duplication of dict variables
-        cfg.print_config()
 
         # Duplicate variables in the form of <dict>_<value> for better
         # access within namelist template.
@@ -434,13 +473,26 @@ def main():
         else:
             cfg.jobs = args.job_list
 
+        # Check if chunks are set or if all are used
+        if args.chunk_list is None:
+            cfg.chunks = []
+        else:
+            cfg.chunks = args.chunk_list
+
+        # Check sync is forced
+        if args.force_sync:
+            cfg.is_async = None
+
+        # Print config before chain starts
+        cfg.print_config()
+
+        tools.create_dir(cfg.case_root, "case_root")
         print(
             f"Starting chain for case {casename} and workflow {cfg.workflow_name}"
         )
 
-        launch_time = datetime.now()
-        tools.create_dir(cfg.case_root, "case_root")
-        cfg.log_job_status('chain', 'START', launch_time)
+        if cfg.logging:
+            launch_time = cfg.init_time_logging('chain')
 
         # Check for restart compatibility and spinup
         if 'restart' in cfg.workflow['features']:
@@ -458,9 +510,9 @@ def main():
             cfg.enddate_sim = cfg.enddate
             run_chunk(cfg=cfg, force=args.force, resume=args.resume)
 
-    end_time = datetime.now()
-    duration = end_time - launch_time
-    cfg.log_job_status('chain', 'FINISH', end_time, duration)
+    if cfg.logging:
+        cfg.finish_time_logging('chain', launch_time)
+
     print('>>> Finished the processing chain successfully <<<')
 
 

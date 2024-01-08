@@ -2,8 +2,10 @@ import subprocess
 import os
 import yaml
 import logging
+
 from jobs import tools
 from pathlib import Path
+from datetime import datetime
 
 
 class Config():
@@ -347,7 +349,7 @@ class Config():
         """
         log_file = self.case_root / "chain_status.log"
 
-        # Check if the header exists, if not, create it
+        # Check if the file exists, if not, create it and write header
         if not log_file.is_file():
             header = "Name            ID                    Status Time                     Duration\n"
             with open(log_file, 'w') as f:
@@ -357,7 +359,7 @@ class Config():
         if job == 'chain':
             if duration is not None:
                 duration = self.format_duration(duration)
-            job_id = ''
+            job_id = self.casename
         else:
             if duration is not None:
                 duration = f"{str(int(duration.total_seconds()))} s"
@@ -390,6 +392,17 @@ class Config():
 
         formatted_duration = f"{int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
         return formatted_duration
+
+    def init_time_logging(self, job):
+        launch_time = datetime.now()
+        self.log_job_status(job, 'START', launch_time)
+
+        return launch_time
+
+    def finish_time_logging(self, job, launch_time):
+        end_time = datetime.now()
+        duration = end_time - launch_time
+        self.log_job_status(job, 'FINISH', end_time, duration)
 
     def get_dep_ids(self, job_name, add_dep=None):
         """Get dependency job ids for `job_name`"""
@@ -435,7 +448,7 @@ class Config():
             # sequential case
             return '--wait'
 
-    def submit(self, job_name, script, add_dep=None):
+    def submit(self, job_name, script, add_dep=None, logfile=None):
         """Submit job with dependencies"""
 
         script_path = Path(script)
@@ -455,15 +468,44 @@ class Config():
         else:
             self.job_ids['current'][job_name].append(job_id)
 
-        # If needed internaly in a multi-job task like prepare_data
-        # Can then be passed as add_dep keyword
-        return result, job_id
-
-    def check_submitted_job(self, script, result):
         exitcode = result.returncode
+        self.check_job(exitcode, logfile)
+
+        return job_id
+
+    def check_job(self, exitcode, logfile=None):
+        # In case of ICON-ART, ignore the "invalid pointer" error on successful run
+        if logfile and tools.grep("ART: ", logfile)['success'] and \
+            tools.grep("free(): invalid pointer", logfile)['success'] and \
+            tools.grep("clean-up finished", logfile)['success']:
+            exitcode = 0
+
         if exitcode != 0:
             raise RuntimeError(f"sbatch returned exitcode {exitcode}")
-        logging.info(f"{script} successfully executed.")
+
+    def create_sbatch_script(self, job_name, log_file):
+        script_lines = [
+            '#!/usr/bin/env bash',
+            f'#SBATCH --job-name="{job_name}_{self.job_id}"',
+            f'#SBATCH --nodes=1',
+            f'#SBATCH --output={log_file}',
+            f'#SBATCH --open-mode=append',
+            f'#SBATCH --account={self.compute_account}',
+            f'#SBATCH --partition={self.compute_queue}',
+            f'#SBATCH --constraint={self.constraint}',
+            '',
+            f'cd {self.chain_src_dir}',
+            'eval "$(conda shell.bash hook)"',
+            'conda activate proc-chain',
+            f'./run_chain.py {self.casename} -j {job_name} -c {self.job_id} -f -s --no-logging',
+            '',
+        ]
+
+        job_file = self.chain_root / f'{job_name}.sh'
+        with open(job_file, mode='w') as job_script:
+            job_script.write('\n'.join(script_lines))
+
+        return job_file
 
     def wait_for_previous(self):
         """wait for all jobs of the previous stage to be finished
@@ -476,8 +518,8 @@ class Config():
         for ids in self.job_ids['previous'].values():
             dep_ids.extend(ids)
         if dep_ids:
-            job_file = self.chain_root / 'submit.wait.slurm'
-            log_file = self.chain_root / 'wait.log'
+            job_file = self.case_root / 'submit.wait.slurm'
+            log_file = self.case_root / 'wait.log'
             dep_str = ':'.join(map(str, dep_ids))
             script_lines = [
                 '#!/usr/bin/env bash', f'#SBATCH --job-name="wait"',
@@ -492,10 +534,6 @@ class Config():
                 wait_job.write('\n'.join(script_lines))
 
             subprocess.run(['sbatch', '--wait', job_file], check=True)
-
-            # Remove sbatch script and log file after execution
-            os.remove(job_file)
-            os.remove(log_file)
 
     def get_job_info(jobid, slurm_keys=['Elapsed']):
         """Return information from slurm job as given by sacct

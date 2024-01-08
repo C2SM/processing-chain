@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import subprocess
 from . import tools, prepare_data
 
 
@@ -33,6 +32,7 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     prepare_data.set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("icon")
 
     logfile = cfg.log_working_dir / "icon"
     logfile_finish = cfg.log_finished_dir / "icon"
@@ -66,17 +66,6 @@ def main(cfg):
     script.write_text(script_str)
 
     # Submit run script
-    result, job_id = cfg.submit('icon', script)
+    job_id = cfg.submit('icon', script, logfile=logfile)
 
-    # Anything hapenning after submission only makes sense in sequential mode
-    if not cfg.is_async:
-        exitcode = result.returncode
-
-        # In case of ICON-ART, ignore the "invalid pointer" error on successful run
-        if cfg.workflow_name.startswith('icon-art'):
-            if tools.grep("free(): invalid pointer", logfile)['success'] and \
-               tools.grep("clean-up finished", logfile)['success']:
-                exitcode = 0
-
-        if exitcode != 0:
-            raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+    cfg.finish_time_logging("icon", launch_time)

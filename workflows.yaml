@@ -1,32 +1,91 @@
 cosmo:
-    jobs: ['prepare_data', 'int2lm', 'cosmo', 'post_cosmo']
-    features: ['restart', 'spinup']
+  jobs:
+    - prepare_data
+    - int2lm
+    - cosmo
+    - post_cosmo
+  features:
+    - restart
+    - spinup
+
 cosmo-ghg:
-    jobs: ['prepare_data', 'emissions', 'biofluxes', 'oem', 'online_vprm',
-           'int2lm', 'post_int2lm', 'cosmo', 'post_cosmo']
-    features: ['restart', 'tracers', 'spinup']
+  jobs:
+    - prepare_data
+    - emissions
+    - biofluxes
+    - oem
+    - online_vprm
+    - int2lm
+    - post_int2lm
+    - cosmo
+    - post_cosmo
+  features:
+    - restart
+    - tracers
+    - spinup
+
 cosmo-art:
-    jobs: ['prepare_data', 'emissions', 'obs_nudging', 'photo_rate',
-           'int2lm', 'cosmo', 'post_cosmo']
-    features: ['nesting', 'spinup']
-icon-async:
-    jobs: ['prepare_data', 'geosp', 'icon']
-    features: ['restart']
-    dependencies:
-        geosp:
-            current: ['prepare_data'] 
-        icon:
-            current: ['prepare_data', 'geosp']
-            previous: ['icon']
+  jobs:
+    - prepare_data
+    - emissions
+    - obs_nudging
+    - photo_rate
+    - int2lm
+    - cosmo
+    - post_cosmo
+  features:
+    - nesting
+    - spinup
+
 icon:
-    jobs: ['prepare_data', 'icon']
-    features: ['restart']
+  jobs:
+    - prepare_data
+    - geosp
+    - icon
+  features:
+    - restart
+  dependencies:
+    geosp:
+      current:
+        - prepare_data
+    icon:
+      current:
+        - prepare_data
+        - geosp
+      previous:
+        - icon
+
+icon-seq:
+  jobs:
+    - prepare_data
+    - geosp
+    - icon
+  features:
+    - restart
+
 icon-art:
-    jobs: ['prepare_data', 'icon']
-    features: ['restart']
+  jobs:
+    - prepare_data
+    - geosp
+    - prepare_art
+    - icon
+  features:
+    - restart
+
 icon-art-global:
-    jobs: ['prepare_data', 'icon']
-    features: ['restart']
+  jobs:
+    - prepare_data
+    - prepare_art_global
+    - icon
+  features:
+    - restart
+
 icon-art-oem:
-    jobs: ['prepare_data', 'icon']
-    features: ['restart']
+  jobs:
+    - prepare_data
+    - geosp
+    - prepare_art
+    - prepare_art_oem
+    - icon
+  features:
+    - restart

@@ -8,7 +8,6 @@ import shutil
 import subprocess
 from datetime import timedelta
 import xarray as xr
-import numpy as np
 from . import tools
 from .tools.interpolate_data import create_oh_for_restart, create_oh_for_inicond
 from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
@@ -66,6 +65,9 @@ def async_error(cfg, part="This part"):
             f"{part} isn't ready for async execution yet")
 
 
+# ... (previous code remains unchanged)
+
+
 def main(cfg):
     """
     **ICON and COSMO Data Preparation**
@@ -102,6 +104,7 @@ def main(cfg):
         If any subprocess returns a non-zero exit code during execution.
     """
     set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("prepare_data")
 
     if cfg.workflow_name.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
@@ -134,238 +137,72 @@ def main(cfg):
         with (script := cfg.icon_work / 'copy_input.job').open('w') as f:
             f.write('\n'.join(script_lines))
 
-        _, copy_id = cfg.submit('prepare_data', script)
+        copy_id = cfg.submit('prepare_data', script)
 
-        if cfg.workflow_name == 'icon-art-global':
-            async_error(cfg, part='global ICON-ART')
-            # -- Download ERA5 data and create the inicond file
-            if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
-                # -- Fetch ERA5 data
-                fetch_era5(cfg.startdate_sim, cfg.icon_input_icbc)
+        #-----------------------------------------------------
+        # Create LBC datafile lists (each at 00 UTC and others)
+        #-----------------------------------------------------
+        datafile_list = []
+        datafile_list_rest = []
+        datafile_list_chem = []
+        for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
+                                     cfg.meteo['inc']):
+            meteo_file = cfg.icon_input_icbc / (
+                cfg.meteo['prefix'] + time.strftime(cfg.meteo['nameformat']))
+            if cfg.workflow_name == 'icon-art' or cfg.workflow_name == 'icon-art-oem':
+                chem_file = cfg.icon_input_icbc / (
+                    cfg.chem['prefix'] + time.strftime(cfg.chem_nameformat))
+                datafile_list_chem.append(str(chem_file) + cfg.chem['suffix'])
+            if str(meteo_file).endswith('00'):
+                datafile_list.append(str(meteo_file) + cfg.meteo['suffix'])
+            else:
+                datafile_list_rest.append(meteo_file + cfg.meteo['suffix'])
+        datafile_list = ' '.join([str(v) for v in datafile_list])
+        datafile_list_rest = ' '.join([str(v) for v in datafile_list_rest])
+        datafile_list_chem = ' '.join([str(v) for v in datafile_list_chem])
 
-                # -- Copy ERA5 processing script (icon_era5_inicond.job) in workdir
-                with open(cfg.icon_era5_inijob) as input_file:
-                    to_write = input_file.read()
-                output_file = os.path.join(cfg.icon_input_icbc,
-                                           'icon_era5_inicond.sh')
-                with open(output_file, "w") as outf:
-                    outf.write(to_write.format(cfg=cfg))
+        #-----------------------------------------------------
+        # Write and submit runscripts
+        #-----------------------------------------------------
+        icontools_id = None
+        for runscript in cfg.icontools_runjobs:
+            with (cfg.case_path / runscript).open() as input_file:
+                to_write = input_file.read()
+            runscript_path = cfg.icon_work / f"{runscript}.job"
+            with runscript_path.open("w") as outf:
+                outf.write(
+                    to_write.format(cfg=cfg,
+                                    meteo=cfg.meteo,
+                                    logfile=logfile,
+                                    logfile_finish=logfile_finish,
+                                    datafile_list=datafile_list,
+                                    datafile_list_rest=datafile_list_rest,
+                                    datafile_list_chem=datafile_list_chem))
 
-                # -- Copy mypartab in workdir
-                shutil.copy(
-                    os.path.join(os.path.dirname(cfg.icon_era5_inijob),
-                                 'mypartab'),
-                    os.path.join(cfg.icon_input_icbc, 'mypartab'))
-
-                # -- Run ERA5 processing script
-                process = subprocess.Popen([
-                    "bash",
-                    os.path.join(cfg.icon_input_icbc, 'icon_era5_inicond.sh')
-                ],
-                                           stdout=subprocess.PIPE)
-                process.communicate()
-
-            # -----------------------------------------------------
-            # Create tracer initial conditions
-            # -----------------------------------------------------
-
-            # -- Download and add CAMS data to the inicond file if needed
-            if cfg.species_inicond:
-
-                if cfg.lrestart == '.FALSE.':
-
-                    ext_restart = ''
-                    filename = cfg.input_files_scratch_inicond_filename
-
-                    # -- Copy the script for processing external tracer data in workdir
-                    with open(
-                            os.path.join(
-                                cfg.case_path,
-                                cfg.icon_species_inijob)) as input_file:
-                        to_write = input_file.read()
-                    output_file = os.path.join(cfg.icon_input_icbc,
-                                               cfg.icon_species_inijob)
-                    with open(output_file, "w") as outf:
-                        outf.write(
-                            to_write.format(cfg=cfg,
-                                            filename=filename,
-                                            ext_restart=ext_restart,
-                                            year=cfg.startdate_sim.year,
-                                            month=cfg.startdate_sim.month,
-                                            day=cfg.startdate_sim.day))
-
-                    # -- Run ERA5 processing script
-                    process = subprocess.Popen(["bash", output_file],
-                                               stdout=subprocess.PIPE)
-                    process.communicate()
-
-                    # -- Create initial conditions for OH concentrations
-                    if 'TROH' in cfg.species2restart:
-                        create_oh_for_inicond(cfg, cfg.startdate_sim.month)
-
-                else:
-
-                    # -- Check the extension of tracer variables in the restart file
-                    ds_restart = xr.open_dataset(cfg.restart_file)
-                    tracer_name = cfg.species2restart[0]
-                    # FIXME:
-                    # var_restart = [
-                    # IndexError: list index out of range
-                    # var_restart = [
-                    #     var for var in ds_restart.data_vars.keys()
-                    #     if var.startswith(tracer_name)
-                    # ][0]
-                    # ext_restart = var_restart.replace(tracer_name, '')
-
-                    # -- Change OH concentrations in the restart file
-                    # if 'TROH' in cfg.species2restart:
-                    #     create_oh_for_restart(cfg, cfg.startdate_sim.month,
-                    #                           ext_restart)
-
-            # -----------------------------------------------------
-            # Create meteorological and tracer nudging conditions
-            # -----------------------------------------------------
-
-            # -- If global nudging, download and process ERA5 and CAMS data
-            if cfg.era5_global_nudging:
-
-                for time in tools.iter_hours(cfg.startdate_sim,
-                                             cfg.enddate_sim,
-                                             step=cfg.nudging_step):
-
-                    # -- Give a name to the nudging file
-                    timestr = time.strftime('%Y%m%d%H')
-                    filename = 'era2icon_R2B03_{timestr}_nudging.nc'.format(
-                        timestr=timestr)
-
-                    # -- If initial time, copy the initial conditions to be used as boundary conditions
-                    if time == cfg.startdate_sim and cfg.era5_inicond:
-                        shutil.copy(
-                            cfg.input_files_scratch_inicond_filename,
-                            os.path.join(cfg.icon_input_icbc, filename))
-                        continue
-
-                    # -- Fetch ERA5 data
-                    fetch_era5_nudging(time, cfg.icon_input_icbc)
-
-                    # -- Copy ERA5 processing script (icon_era5_nudging.job) in workdir
-                    with open(cfg.icon_era5_nudgingjob) as input_file:
-                        to_write = input_file.read()
-                    output_file = os.path.join(
-                        cfg.icon_input_icbc,
-                        'icon_era5_nudging_{}.sh'.format(timestr))
-                    with open(output_file, "w") as outf:
-                        outf.write(to_write.format(cfg=cfg, filename=filename))
-
-                    # -- Copy mypartab in workdir
-                    if not os.path.exists(
-                            os.path.join(cfg.icon_input_icbc, 'mypartab')):
-                        shutil.copy(
-                            os.path.join(
-                                os.path.dirname(cfg.icon_era5_nudgingjob),
-                                'mypartab'),
-                            os.path.join(cfg.icon_input_icbc, 'mypartab'))
-
-                    # -- Run ERA5 processing script
-                    process = subprocess.Popen([
-                        "bash",
-                        os.path.join(cfg.icon_input_icbc,
-                                     'icon_era5_nudging_{}.sh'.format(timestr))
-                    ],
-                                               stdout=subprocess.PIPE)
-                    process.communicate()
-
-                    if cfg.species_global_nudging:
-
-                        # -- Copy CAMS processing script (icon_cams_nudging.job) in workdir
-                        with open(cfg.icon_species_nudgingjob) as input_file:
-                            to_write = input_file.read()
-                        output_file = os.path.join(
-                            cfg.icon_input_icbc,
-                            'icon_cams_nudging_{}.sh'.format(timestr))
-                        with open(output_file, "w") as outf:
-                            outf.write(
-                                to_write.format(cfg=cfg, filename=filename))
-
-                        # -- Run ERA5 processing script
-                        process = subprocess.Popen([
-                            "bash",
-                            os.path.join(
-                                cfg.icon_input_icbc,
-                                'icon_cams_nudging_{}.sh'.format(timestr))
-                        ],
-                                                   stdout=subprocess.PIPE)
-                        process.communicate()
-
-        else:  # non-global ICON-ART
-            #-----------------------------------------------------
-            # Create LBC datafile lists (each at 00 UTC and others)
-            #-----------------------------------------------------
-            datafile_list = []
-            datafile_list_rest = []
-            datafile_list_chem = []
-            for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
-                                         cfg.meteo['inc']):
-                meteo_file = os.path.join(
-                    cfg.icon_input_icbc, cfg.meteo['prefix'] +
-                    time.strftime(cfg.meteo['nameformat']))
-                if cfg.workflow_name == 'icon-art' or cfg.workflow_name == 'icon-art-oem':
-                    chem_file = os.path.join(
-                        cfg.icon_input_icbc, cfg.chem['prefix'] +
-                        time.strftime(cfg.chem_nameformat))
-                    datafile_list_chem.append(chem_file + cfg.chem['suffix'])
-                if meteo_file.endswith('00'):
-                    datafile_list.append(meteo_file + cfg.meteo['suffix'])
-                else:
-                    datafile_list_rest.append(meteo_file + cfg.meteo['suffix'])
-            datafile_list = ' '.join([str(v) for v in datafile_list])
-            datafile_list_rest = ' '.join([str(v) for v in datafile_list_rest])
-            datafile_list_chem = ' '.join([str(v) for v in datafile_list_chem])
-
-            #-----------------------------------------------------
-            # Write and submit runscripts
-            #-----------------------------------------------------
-            icontools_id = None
-            for runscript in cfg.icontools_runjobs:
-                with open(os.path.join(cfg.case_path,
-                                       runscript)) as input_file:
-                    to_write = input_file.read()
-                runscript_path = cfg.icon_work / f"{runscript}.job"
-                with open(runscript_path, "w") as outf:
-                    outf.write(
-                        to_write.format(cfg=cfg,
-                                        meteo=cfg.meteo,
-                                        logfile=logfile,
-                                        logfile_finish=logfile_finish,
-                                        datafile_list=datafile_list,
-                                        datafile_list_rest=datafile_list_rest,
-                                        datafile_list_chem=datafile_list_chem))
-
-                # Submitting icontools runscripts sequentially
-                logging.info(f" Starting icontools runscript {runscript}.")
-                if icontools_id:
-                    dependencies = (copy_id, icontools_id)
-                else:
-                    dependencies = copy_id
-                _, icontools_id = cfg.submit(runscript,
-                                             runscript_path,
-                                             add_dep=dependencies)
+            # Submitting icontools runscripts sequentially
+            logging.info(f" Starting icontools runscript {runscript}.")
+            if icontools_id:
+                dependencies = (copy_id, icontools_id)
+            else:
+                dependencies = copy_id
+            icontools_id = cfg.submit(runscript,
+                                      runscript_path,
+                                      add_dep=dependencies)
 
     # If COSMO (and not ICON):
     else:
         async_error(cfg, part='COSMO')
         logging.info('COSMO analysis data for IC/BC')
 
-        dest_path = os.path.join(cfg.int2lm_input, 'meteo')
+        dest_path = cfg.int2lm_input / 'meteo'
         tools.create_dir(dest_path, "meteo input")
 
         source_nameformat = cfg.meteo['nameformat']
         if cfg.meteo['prefix'] == 'lffd':
             # nested runs use cosmoart-output as meteo data
             # have to copy the *c.nc-file
-            src_file = os.path.join(
-                cfg.meteo['dir'],
-                cfg.startdate_sim.strftime(source_nameformat + 'c.nc'))
+            src_file = (cfg.meteo['dir'] /
+                        cfg.startdate_sim.strftime(source_nameformat + 'c.nc'))
 
             tools.copy_file(src_file, dest_path, output_log=True)
 
@@ -380,27 +217,23 @@ def main(cfg):
 
         num_steps = 0
         meteo_dir = cfg.meteo['dir']
-        subdir = os.path.join(meteo_dir,
-                              cfg.startdate_sim.strftime('%y%m%d%H'))
+        subdir = meteo_dir / cfg.startdate_sim.strftime('%y%m%d%H')
         for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
                                      cfg.meteo['inc']):
-            dest_path = os.path.join(cfg.int2lm_input, 'meteo')
-            src_file = os.path.join(meteo_dir,
-                                    time.strftime(source_nameformat))
+            dest_path = cfg.int2lm_input / 'meteo'
+            src_file = meteo_dir / time.strftime(source_nameformat)
 
             if cfg.meteo['prefix'] == 'efsf':
                 if time == cfg.startdate_sim:
-                    src_file = os.path.join(subdir,
-                                            'eas' + time.strftime('%Y%m%d%H'))
-                    if not os.path.isfile(src_file) and cfg.meteo.get('dir_alt') \
+                    src_file = subdir / ('eas' + time.strftime('%Y%m%d%H'))
+                    if not src_file.exists() and cfg.meteo.get('dir_alt') \
                         is not None:
                         meteo_dir = cfg.meteo['dir_alt']
-                        subdir = os.path.join(
-                            meteo_dir, cfg.startdate_sim.strftime('%y%m%d%H'))
-                        src_file = os.path.join(
-                            subdir, 'eas' + time.strftime('%Y%m%d%H'))
-                    dest_path = os.path.join(cfg.int2lm_input, 'meteo',
-                                             cfg.meteo['prefix'] + '00000000')
+                        subdir = meteo_dir / cfg.startdate_sim.strftime(
+                            '%y%m%d%H')
+                        src_file = subdir / ('eas' + time.strftime('%Y%m%d%H'))
+                    dest_path = cfg.int2lm_input / 'meteo' / (
+                        cfg.meteo['prefix'] + '00000000')
                 else:
                     td = time - cfg.startdate_sim - timedelta(hours=6 *
                                                               num_steps)
@@ -410,22 +243,21 @@ def main(cfg):
                     days_total = str(td_total.days).zfill(2)
                     hours_total = str(td_total.seconds // 3600).zfill(2)
 
-                    src_file = os.path.join(
-                        subdir, cfg.meteo['prefix'] + days + hours + '0000')
-                    dest_path = os.path.join(
-                        cfg.int2lm_input, 'meteo', cfg.meteo['prefix'] +
-                        days_total + hours_total + '0000')
+                    src_file = subdir / (cfg.meteo['prefix'] + days + hours +
+                                         '0000')
+                    dest_path = cfg.int2lm_input / 'meteo' / (
+                        cfg.meteo['prefix'] + days_total + hours_total +
+                        '0000')
 
                     # Next time, change directory
-                    checkdir = os.path.join(meteo_dir,
-                                            time.strftime('%y%m%d%H'))
-                    if os.path.isdir(checkdir):
+                    checkdir = meteo_dir / time.strftime('%y%m%d%H')
+                    if checkdir.is_dir():
                         num_steps += 1
                         subdir = checkdir
                     elif cfg.meteo.get('dir_alt') is not None:
-                        checkdir = os.path.join(cfg.meteo['dir_alt'],
-                                                time.strftime('%y%m%d%H'))
-                        if os.path.isdir(checkdir):
+                        checkdir = cfg.meteo['dir_alt'] / time.strftime(
+                            '%y%m%d%H')
+                        if checkdir.is_dir():
                             num_steps += 1
                             subdir = checkdir
                             meteo_dir = cfg.meteo['dir_alt']
@@ -433,12 +265,12 @@ def main(cfg):
                                 "Switching to other input directory from {} to {}"
                                 .format(cfg.meteo['dir'],
                                         cfg.meteo['dir_alt']))
-            elif not os.path.exists(src_file):
+            elif not src_file.exists():
                 # special case for MeteoSwiss COSMO-7 data
-                archive = '/store/mch/msopr/owm/COSMO-7'
+                archive = Path('/store/mch/msopr/owm/COSMO-7')
                 yy = time.strftime("%y")
-                path = '/'.join([archive, 'ANA' + yy])
-                src_file = os.path.join(path, time.strftime(source_nameformat))
+                path = archive / 'ANA' + yy
+                src_file = path / time.strftime(source_nameformat)
 
             # copy meteo file from project folder to
             tools.copy_file(src_file, dest_path, output_log=True)
@@ -492,7 +324,7 @@ def main(cfg):
                          ", ".join([i["fullname"]
                                     for i in inv_to_process]) + " data")
 
-            scratch_path = os.path.join(cfg.int2lm_input, 'icbc')
+            scratch_path = cfg.int2lm_input / 'icbc'
             tools.create_dir(scratch_path, "icbc input")
 
             for inv in inv_to_process:
@@ -505,10 +337,10 @@ def main(cfg):
                                                  cfg.enddate_sim, inc):
                         logging.info(time)
 
-                        filename = os.path.join(
-                            inv["outdir"], p["suffix"] + "_" +
-                            time.strftime("%Y%m%d%H") + ".nc")
-                        if not os.path.exists(filename):
+                        filename = inv["outdir"] / (p["suffix"] + "_" +
+                                                    time.strftime("%Y%m%d%H") +
+                                                    ".nc")
+                        if not filename.exists():
                             logging.info(filename)
                             try:
                                 to_call = getattr(tools, inv["executable"])
@@ -525,3 +357,5 @@ def main(cfg):
                                         output_log=True)
 
                         logging.info("OK")
+
+    cfg.finish_time_logging("prepare_data", launch_time)

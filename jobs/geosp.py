@@ -4,7 +4,6 @@
 import os
 from pathlib import Path
 import logging
-from datetime import timedelta
 import xarray as xr
 import numpy as np
 from . import tools, prepare_data
@@ -12,13 +11,12 @@ from . import tools, prepare_data
 
 def main(cfg):
     """
-    Add GEOSP
+    Add GEOSP to all meteo files
     """
     prepare_data.set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("geosp")
+    logging.info("Add GEOSP to all meteo files")
 
-    #-----------------------------------------------------
-    # Add GEOSP to all meteo files
-    #-----------------------------------------------------
     for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
                                  cfg.meteo['inc']):
         # Specify file names
@@ -58,3 +56,5 @@ def main(cfg):
             logging.info("Added GEOSP to file {}".format(merged_file))
             # Rename file to get original file name
             tools.rename_file(merged_file, src_file)
+
+    cfg.finish_time_logging("geosp", launch_time)
