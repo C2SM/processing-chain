@@ -7,6 +7,7 @@ from . import cosmo
 from . import emissions
 from . import geosp
 from . import icon
+from . import icontools
 from . import int2lm
 from . import obs_nudging
 from . import octe
