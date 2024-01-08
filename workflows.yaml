@@ -1,14 +1,18 @@
 cosmo:
+  features:
+    - restart
+    - spinup
   jobs:
     - prepare_data
     - int2lm
     - cosmo
     - post_cosmo
-  features:
-    - restart
-    - spinup
 
 cosmo-ghg:
+  features:
+    - restart
+    - tracers
+    - spinup
   jobs:
     - prepare_data
     - emissions
@@ -19,12 +23,11 @@ cosmo-ghg:
     - post_int2lm
     - cosmo
     - post_cosmo
-  features:
-    - restart
-    - tracers
-    - spinup
 
 cosmo-art:
+  features:
+    - nesting
+    - spinup
   jobs:
     - prepare_data
     - emissions
@@ -33,17 +36,14 @@ cosmo-art:
     - int2lm
     - cosmo
     - post_cosmo
-  features:
-    - nesting
-    - spinup
 
 icon:
+  features:
+    - restart
   jobs:
     - prepare_data
     - geosp
     - icon
-  features:
-    - restart
   dependencies:
     geosp:
       current:
@@ -56,36 +56,78 @@ icon:
         - icon
 
 icon-seq:
+  features:
+    - restart
   jobs:
     - prepare_data
     - geosp
     - icon
-  features:
-    - restart
 
 icon-art:
+  features:
+    - restart
   jobs:
     - prepare_data
     - geosp
     - prepare_art
     - icon
-  features:
-    - restart
+  dependencies:
+    geosp:
+      current:
+        - prepare_data
+    prepare_art:
+      current:
+        - geosp
+    icon:
+      current:
+        - prepare_data
+        - geosp
+        - prepare_art
+      previous:
+        - icon
 
 icon-art-global:
+  features:
+    - restart
   jobs:
     - prepare_data
     - prepare_art_global
     - icon
-  features:
-    - restart
+  dependencies:
+    prepare_art_global:
+      current:
+        - prepare_data
+    icon:
+      current:
+        - prepare_data
+        - prepare_art_global
+      previous:
+        - icon
 
 icon-art-oem:
+  features:
+    - restart
   jobs:
     - prepare_data
     - geosp
     - prepare_art
     - prepare_art_oem
     - icon
-  features:
-    - restart
+  dependencies:
+    geosp:
+      current:
+        - prepare_data
+    prepare_art:
+      current:
+        - geosp
+    prepare_art_oem:
+      current:
+        - prepare_art
+    icon:
+      current:
+        - prepare_data
+        - geosp
+        - prepare_art
+        - prepare_art_oem
+      previous:
+        - icon
