@@ -156,7 +156,8 @@ def main(cfg):
             if str(meteo_file).endswith('00'):
                 datafile_list.append(str(meteo_file) + cfg.meteo['suffix'])
             else:
-                datafile_list_rest.append(str(meteo_file) + cfg.meteo['suffix'])
+                datafile_list_rest.append(
+                    str(meteo_file) + cfg.meteo['suffix'])
         datafile_list = ' '.join([str(v) for v in datafile_list])
         datafile_list_rest = ' '.join([str(v) for v in datafile_list_rest])
         datafile_list_chem = ' '.join([str(v) for v in datafile_list_chem])
