@@ -406,7 +406,6 @@ class Config():
 
     def get_dep_ids(self, job_name, add_dep=None):
         """Get dependency job ids for `job_name`"""
-
         # Initial list of dependencies
         if add_dep is not None:
             if type(add_dep) is int:
@@ -450,7 +449,6 @@ class Config():
 
     def submit(self, job_name, script, add_dep=None, logfile=None):
         """Submit job with dependencies"""
-
         script_path = Path(script)
         sbatch_cmd = ['sbatch', '--parsable']
         if dep_cmd := self.get_dep_cmd(job_name, add_dep=add_dep):
@@ -474,7 +472,9 @@ class Config():
         return job_id
 
     def check_job(self, exitcode, logfile=None):
-        # In case of ICON-ART, ignore the "invalid pointer" error on successful run
+        """Check the exitcode returned by a job. 
+        In case of ICON-ART, ignore the "invalid pointer" error on a successful run.
+        """
         if logfile and tools.grep("ART: ", logfile)['success'] and \
             tools.grep("free(): invalid pointer", logfile)['success'] and \
             tools.grep("clean-up finished", logfile)['success']:
@@ -484,6 +484,9 @@ class Config():
             raise RuntimeError(f"sbatch returned exitcode {exitcode}")
 
     def create_sbatch_script(self, job_name, log_file):
+        """Create an sbatch script to launch jobs individually.
+        Use run_chain.py arguments to submit those jobs.
+        """
         script_lines = [
             '#!/usr/bin/env bash',
             f'#SBATCH --job-name="{job_name}_{self.job_id}"',
@@ -508,12 +511,11 @@ class Config():
         return job_file
 
     def wait_for_previous(self):
-        """wait for all jobs of the previous stage to be finished
+        """Wait for all jobs of the previous stage to be finished.
 
         Do this by submitting a fake job depending on all jobs from the
         'previous' stage.
         """
-
         dep_ids = []
         for ids in self.job_ids['previous'].values():
             dep_ids.extend(ids)
@@ -539,7 +541,6 @@ class Config():
         """Return information from slurm job as given by sacct
 
         All possible keys are given by `sacct --helpformat`"""
-
         # Get info from sacct
         cmd = [
             'sacct', f'--format={', '.join(slurm_keys)}', '--parsable', '-j',
