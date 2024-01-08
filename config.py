@@ -543,7 +543,7 @@ class Config():
         All possible keys are given by `sacct --helpformat`"""
         # Get info from sacct
         cmd = [
-            'sacct', f'--format={', '.join(slurm_keys)}', '--parsable', '-j',
+            "sacct", f"--format={', '.join(slurm_keys)}", "--parsable", "-j",
             str(jobid)
         ]
         r = subprocess.run(cmd, capture_output=True)
