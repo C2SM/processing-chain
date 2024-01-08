@@ -459,20 +459,6 @@ class Config():
         # Can then be passed as add_dep keyword
         return result, job_id
 
-    def get_job_info(jobid, slurm_keys=['Elapsed']):
-        """Return information from slurm job as given by sacct
-
-        All possible keys are given by `sacct --helpformat`"""
-
-        # Get info from sacct
-        cmd = ['sacct', f'--format={','.join(slurm_keys)}', '--parsable', '-j', str(jobid)]
-        r = subprocess.run(cmd, capture_output=True)
-
-        # Parse in a dictionnary before returning
-        # The inner most process should be the relevant one, hence the 1 index
-        slurm_info = r.stdout.split()[1].split(b'|')
-        return({k:v.decode() for k,v in zip(slurm_keys, slurm_info)})
-
     def check_submitted_job(self, script, result):
         exitcode = result.returncode
         if exitcode != 0:
@@ -510,6 +496,20 @@ class Config():
             # Remove sbatch script and log file after execution
             os.remove(job_file)
             os.remove(log_file)
+
+    def get_job_info(jobid, slurm_keys=['Elapsed']):
+        """Return information from slurm job as given by sacct
+
+        All possible keys are given by `sacct --helpformat`"""
+
+        # Get info from sacct
+        cmd = ['sacct', f'--format={','.join(slurm_keys)}', '--parsable', '-j', str(jobid)]
+        r = subprocess.run(cmd, capture_output=True)
+
+        # Parse in a dictionnary before returning
+        # The inner most process should be the relevant one, hence the 1 index
+        slurm_info = r.stdout.split()[1].split(b'|')
+        return({k:v.decode() for k,v in zip(slurm_keys, slurm_info)})
 
 
 class InvalidWorkflowType(Exception):
