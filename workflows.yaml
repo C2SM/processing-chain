@@ -42,15 +42,20 @@ icon:
     - restart
   jobs:
     - prepare_data
+    - icontools
     - geosp
     - icon
   dependencies:
-    geosp:
+    icontools:
       current:
         - prepare_data
+    geosp:
+      current:
+        - icontools
     icon:
       current:
         - prepare_data
+        - icontools
         - geosp
       previous:
         - icon
@@ -60,6 +65,7 @@ icon-seq:
     - restart
   jobs:
     - prepare_data
+    - icontools
     - geosp
     - icon
 
@@ -68,19 +74,24 @@ icon-art:
     - restart
   jobs:
     - prepare_data
+    - icontools
     - geosp
     - prepare_art
     - icon
   dependencies:
-    geosp:
+    icontools:
       current:
         - prepare_data
+    geosp:
+      current:
+        - icontools
     prepare_art:
       current:
         - geosp
     icon:
       current:
         - prepare_data
+        - icontools
         - geosp
         - prepare_art
       previous:
@@ -109,14 +120,18 @@ icon-art-oem:
     - restart
   jobs:
     - prepare_data
+    - icontools
     - geosp
     - prepare_art
     - prepare_art_oem
     - icon
   dependencies:
-    geosp:
+    icontools:
       current:
         - prepare_data
+    geosp:
+      current:
+        - icontools
     prepare_art:
       current:
         - geosp
@@ -126,6 +141,7 @@ icon-art-oem:
     icon:
       current:
         - prepare_data
+        - icontools
         - geosp
         - prepare_art
         - prepare_art_oem
