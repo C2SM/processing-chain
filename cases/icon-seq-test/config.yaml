@@ -6,7 +6,6 @@ workflow:
   jobs:
     - prepare_icon
     - icontools
-    - geosp
     - icon
 constraint: gpu
 run_on: cpu
