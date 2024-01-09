@@ -536,8 +536,8 @@ class Config():
 
             subprocess.run(['sbatch', '--wait', job_file], check=True)
 
-    def get_job_info(jobid, slurm_keys=['Elapsed']):
-        """Return information from slurm job as given by sacct
+    def get_job_info(jobid, slurm_keys=['JobName', 'Elapsed', 'ExitCode']):
+        """Return info dict from slurm job as given by sacct
 
         All possible keys are given by `sacct --helpformat`"""
         # Get info from sacct
