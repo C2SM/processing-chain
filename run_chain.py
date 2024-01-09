@@ -225,7 +225,7 @@ def run_chunk(cfg, force, resume):
     if cfg.is_async:
         # Empty curent job ids
         cfg.job_ids['current'] = {}
-        
+
         # Submit current chunk
         for job in cfg.jobs:
             if (cfg.log_finished_dir / job).exists() and not force:
@@ -246,7 +246,7 @@ def run_chunk(cfg, force, resume):
 
         # wait for previous chunk to be done
         cfg.wait_for_previous()
-        
+
         # cycle
         cfg.job_ids['previous'] = cfg.job_ids['current']
     else:
