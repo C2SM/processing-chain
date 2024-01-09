@@ -60,15 +60,6 @@ icon:
       previous:
         - icon
 
-icon-seq:
-  features:
-    - restart
-  jobs:
-    - prepare_data
-    - icontools
-    - geosp
-    - icon
-
 icon-art:
   features:
     - restart
