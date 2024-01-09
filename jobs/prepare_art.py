@@ -64,13 +64,12 @@ def main(cfg):
     meteo_file = os.path.join(
         cfg.icon_input_icbc,
         cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
-                                    cfg.meteo['nameformat']) + '.nc')
+                                   cfg.meteo['nameformat']) + '.nc')
     if os.path.isfile(meteo_file):
         merged_file = os.path.join(
             cfg.icon_input_icbc,
             cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
-                                        cfg.meteo['nameformat']) +
-            '_merged.nc')
+                                       cfg.meteo['nameformat']) + '_merged.nc')
         ds = xr.open_dataset(meteo_file)
         merging = False
         if 'PS' not in ds:

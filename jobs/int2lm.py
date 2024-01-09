@@ -13,6 +13,7 @@ def set_cfg_variables(cfg):
     cfg.int2lm_run = cfg.chain_root / 'int2lm' / 'run'
     cfg.int2lm_output = cfg.chain_root / 'int2lm' / 'output'
 
+
 def main(cfg):
     """Setup the namelist for int2lm and submit the job to the queue.
 
