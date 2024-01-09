@@ -23,6 +23,34 @@ cosmo-ghg:
     - post_int2lm
     - cosmo
     - post_cosmo
+  dependencies:
+    emissions:
+      current:
+        - prepare_data
+    biofluxes:
+      current:
+        - prepare_data
+    oem:
+      current:
+        - prepare_data
+    online_vprm:
+      current:
+        - prepare_data
+    int2lm:
+      current:
+        - prepare_data
+        - emissions
+        - biofluxes
+        - oem
+        - online_vprm
+    post_int2lm:
+      current:
+        - int2lm
+    cosmo:
+      current:
+        - post_int2lm
+      previous:
+        - cosmo
 
 cosmo-art:
   features:
