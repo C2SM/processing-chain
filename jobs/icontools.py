@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from . import tools
+from . import tools, prepare_data
 
 
 def main(cfg):
@@ -13,6 +13,7 @@ def main(cfg):
       (``cfg.input_root_meteo``), and the remapped meteorological files are saved
       in the input folder on scratch (``cfg.icon_input/icbc``).
     """
+    prepare_data.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("icontools")
     logfile = cfg.log_working_dir / "icontools"
     logfile_finish = cfg.log_finished_dir / "icontools"
