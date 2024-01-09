@@ -14,6 +14,8 @@ def main(cfg):
       in the input folder on scratch (``cfg.icon_input/icbc``).
     """
     launch_time = cfg.init_time_logging("icontools")
+    logfile = cfg.log_working_dir / "icontools"
+    logfile_finish = cfg.log_finished_dir / "icontools"
 
     #-----------------------------------------------------
     # Create LBC datafile lists (each at 00 UTC and others)
