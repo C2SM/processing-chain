@@ -31,17 +31,21 @@ def set_cfg_variables(cfg):
         cfg.restart_filename = 'restart_atm_DOM01.nc'
         cfg.restart_file = cfg.icon_restart_in / cfg.restart_filename
         cfg.restart_file_scratch = cfg.icon_work / cfg.restart_filename
-    
-    # Nudge type (global or nothing)                                                    
-    cfg.nudge_type = 2 if hasattr(cfg, 'era5') and cfg.era5_global_nudging else 0       
-    # Time step for global nudging in seconds                                           
-    cfg.nudging_step_seconds = cfg.nudging_step * 3600 if hasattr(cfg, 'nudging_step') else None                                                                                
-    # Prescribed initial conditions for CH4, CO and/or OH                               
-    cfg.iart_init_gas = 4 if hasattr(cfg, 'species_inicond') and cfg.species_inicond else 0 
+
+    # Nudge type (global or nothing)
+    cfg.nudge_type = 2 if hasattr(cfg,
+                                  'era5') and cfg.era5_global_nudging else 0
+    # Time step for global nudging in seconds
+    cfg.nudging_step_seconds = cfg.nudging_step * 3600 if hasattr(
+        cfg, 'nudging_step') else None
+    # Prescribed initial conditions for CH4, CO and/or OH
+    cfg.iart_init_gas = 4 if hasattr(
+        cfg, 'species_inicond') and cfg.species_inicond else 0
 
     cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime('%Y%m%d_%H')
 
     cfg.job_ids['current']['prepare_icon'] = []
+
 
 def main(cfg):
     """
