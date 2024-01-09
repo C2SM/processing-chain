@@ -239,7 +239,7 @@ def run_chunk(cfg, force, resume):
 
                 # Submit the job
                 script = cfg.create_sbatch_script(job, logfile)
-                job_id = cfg.submit(job, script)
+                cfg.submit(job, script)
 
         # wait for previous chunk to be done
         cfg.wait_for_previous()
@@ -295,7 +295,7 @@ def run_chunk(cfg, force, resume):
 
                         exitcode = 0
                         try_count = 0
-                    except:
+                    except Exception:
                         subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
                             job, cfg.job_id)
                         logging.exception(subject)

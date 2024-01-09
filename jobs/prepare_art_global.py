@@ -8,7 +8,7 @@ import shutil
 import subprocess
 from . import tools
 from pathlib import Path
-from .tools.interpolate_data import create_oh_for_restart, create_oh_for_inicond
+from .tools.interpolate_data import create_oh_for_restart, create_oh_for_inicond  # noqa: F401
 from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 
 
@@ -153,8 +153,8 @@ def main(cfg):
         else:
 
             # -- Check the extension of tracer variables in the restart file
-            ds_restart = xr.open_dataset(cfg.restart_file)
-            tracer_name = cfg.species2restart[0]
+            ds_restart = xr.open_dataset(cfg.restart_file)  # noqa: F841
+            tracer_name = cfg.species2restart[0]  # noqa: F841
             # FIXME:
             # var_restart = [
             # IndexError: list index out of range
