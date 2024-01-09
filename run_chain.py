@@ -491,6 +491,11 @@ def main():
             f"Starting chain for case {casename} and workflow {cfg.workflow_name}"
         )
 
+        if cfg.is_async:
+            print("Running the Processing Chain in asynchronous mode.")
+        else:
+            print("Running the Processing Chain in sequential mode.")
+
         if cfg.logging:
             launch_time = cfg.init_time_logging('chain')
 
