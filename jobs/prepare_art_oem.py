@@ -8,8 +8,8 @@ from . import tools, prepare_icon
 
 
 def set_cfg_variables(cfg):
-    cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime(
-        '%Y%m%d_%H')
+    cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime('%Y%m%d_%H')
+
 
 def main(cfg):
     """
