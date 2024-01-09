@@ -47,6 +47,7 @@ def main(cfg):
     """
     prepare_cosmo.set_cfg_variables(cfg)
     set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("int2lm")
 
     # Total number of processes
     np_tot = cfg.int2lm['np_x'] * cfg.int2lm['np_y']
@@ -164,3 +165,5 @@ def main(cfg):
     exitcode = result.returncode
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+
+    cfg.finish_time_logging("int2lm", launch_time)

@@ -71,20 +71,15 @@ icon:
   jobs:
     - prepare_icon
     - icontools
-    - geosp
     - icon
   dependencies:
     icontools:
       current:
         - prepare_icon
-    geosp:
-      current:
-        - icontools
     icon:
       current:
         - prepare_icon
         - icontools
-        - geosp
       previous:
         - icon
 
@@ -94,24 +89,19 @@ icon-art:
   jobs:
     - prepare_icon
     - icontools
-    - geosp
     - prepare_art
     - icon
   dependencies:
     icontools:
       current:
         - prepare_icon
-    geosp:
-      current:
-        - icontools
     prepare_art:
       current:
-        - geosp
+        - icontools
     icon:
       current:
         - prepare_icon
         - icontools
-        - geosp
         - prepare_art
       previous:
         - icon
@@ -141,8 +131,8 @@ icon-art-oem:
     - restart
   jobs:
     - prepare_icon
+    - oem
     - icontools
-    - geosp
     - prepare_art
     - prepare_art_oem
     - icon
@@ -150,20 +140,18 @@ icon-art-oem:
     icontools:
       current:
         - prepare_icon
-    geosp:
-      current:
-        - icontools
     prepare_art:
       current:
-        - geosp
+        - icontools
     prepare_art_oem:
       current:
+        - oem
         - prepare_art
     icon:
       current:
         - prepare_icon
+        - oem
         - icontools
-        - geosp
         - prepare_art
         - prepare_art_oem
       previous:

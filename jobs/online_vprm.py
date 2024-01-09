@@ -16,6 +16,7 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
+    launch_time = cfg.init_time_logging("online_vprm")
     dest_modis = 'modis.nc'
     dest_vegetation = 'vegetation.nc'
 
@@ -33,3 +34,4 @@ def main(cfg):
         src_dir, dest_dir))
     tools.copy_file(vegetation_data_nc, os.path.join(dest_dir,
                                                      dest_vegetation))
+    cfg.finish_time_logging("online_vprm", launch_time)

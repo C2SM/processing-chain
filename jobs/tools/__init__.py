@@ -195,6 +195,7 @@ def create_dir(path, readable_name):
     """
     try:
         os.makedirs(path, exist_ok=True)
+        logging.info(f"Created {readable_name} directory at path {path}")
     except (OSError, Exception) as e:
         logging.error("Creating {} directory at path {} failed with {}".format(
             readable_name, path,

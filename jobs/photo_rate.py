@@ -21,6 +21,7 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     tools.check_model(cfg, 'cosmo-art')
+    launch_time = cfg.init_time_logging("photo_rate")
 
     logging.info("Copying photolysis-rate file from {} to {}".format(
         cfg.photo_rate_file,
@@ -35,3 +36,5 @@ def main(cfg):
     tools.copy_file(src_file, dest_path)
 
     logging.info("Finished")
+
+    cfg.finish_time_logging("photo_rate", launch_time)

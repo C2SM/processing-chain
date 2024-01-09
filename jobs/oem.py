@@ -22,6 +22,7 @@ def main(cfg):
         If an error occurs during the process.
     """
     cosmo.set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("oem")
 
     oem_dir = cfg.oem['dir']
     oem_gridded_emissions_nc = os.path.join(oem_dir,
@@ -82,3 +83,5 @@ def main(cfg):
     if cfg.oem.get('oem_ens_lambda_nc') is not None:
         tools.copy_file(os.path.join(oem_dir, cfg.oem['ens_lambda_nc']),
                         os.path.join(dest_dir, cfg.oem['ens_lambda_nc']))
+
+    cfg.finish_time_logging("oem", launch_time)

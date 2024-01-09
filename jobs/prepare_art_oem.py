@@ -7,16 +7,11 @@ import xarray as xr
 from . import tools, prepare_icon
 
 
-def set_cfg_variables(cfg):
-    cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime('%Y%m%d_%H')
-
-
 def main(cfg):
     """
     ICON-ART-OEM preparations
     """
     prepare_icon.set_cfg_variables(cfg)
-    set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("prepare_art")
     logging.info('Merging IC and LBC')
 
