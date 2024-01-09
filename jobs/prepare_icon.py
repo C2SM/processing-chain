@@ -83,15 +83,14 @@ def main(cfg):
     script_lines = [
         '#!/usr/bin/env bash',
         f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
-        f'#SBATCH --account={cfg.compute_account}',
-        '#SBATCH --time=00:10:00',
+        f'#SBATCH --account={cfg.compute_account}', '#SBATCH --time=00:10:00',
         f'#SBATCH --partition={cfg.compute_queue}',
         f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
         f'#SBATCH --output={logfile}', '#SBATCH --open-mode=append',
         f'#SBATCH --chdir={cfg.icon_work}', ''
     ]
     for target, destination in zip(cfg.input_files.values(),
-                                    cfg.input_files_scratch.values()):
+                                   cfg.input_files_scratch.values()):
         script_lines.append(f'rsync -av {target} {destination}')
 
     with (script := cfg.icon_work / 'copy_input.job').open('w') as f:
