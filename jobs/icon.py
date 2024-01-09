@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from . import tools, prepare_data
+from . import tools, prepare_icon, prepare_art_global, prepare_art_oem
 
 
 def main(cfg):
@@ -31,7 +31,9 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    prepare_data.set_cfg_variables(cfg)
+    prepare_icon.set_cfg_variables(cfg)
+    prepare_art_global.set_cfg_variables(cfg)
+    prepare_art_oem.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("icon")
 
     logfile = cfg.log_working_dir / "icon"

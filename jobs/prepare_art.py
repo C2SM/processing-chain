@@ -5,14 +5,14 @@ import os
 import logging
 import xarray as xr
 import numpy as np
-from . import tools, prepare_data
+from . import tools, prepare_icon
 
 
 def main(cfg):
     """
     Add Q (copy of QV) and/or PS to initial file
     """
-    prepare_data.set_cfg_variables(cfg)
+    prepare_icon.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("prepare_art")
     logging.info('Add Q (copy of QV) and/or PS to initial file')
 

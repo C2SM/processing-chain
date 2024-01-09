@@ -6,7 +6,7 @@ from pathlib import Path
 import logging
 import xarray as xr
 import numpy as np
-from . import tools, prepare_data
+from . import tools, prepare_icon
 
 
 def main(cfg):
@@ -14,7 +14,7 @@ def main(cfg):
     The constant variable 'GEOSP' is added to the files not containing it
     using python-cdo bindings.
     """
-    prepare_data.set_cfg_variables(cfg)
+    prepare_icon.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("geosp")
     logging.info("Add GEOSP to all meteo files")
 

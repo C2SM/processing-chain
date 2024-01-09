@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import pytz
 from datetime import datetime, timedelta
-from . import tools, prepare_data
+from . import tools, prepare_cosmo
 
 
 def set_cfg_variables(cfg):
@@ -46,7 +46,7 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    prepare_data.set_cfg_variables(cfg)
+    prepare_cosmo.set_cfg_variables(cfg)
     set_cfg_variables(cfg)
 
     # Total number of processes

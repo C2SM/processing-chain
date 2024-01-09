@@ -4,38 +4,19 @@
 import os
 import logging
 import xarray as xr
-from . import tools, prepare_data
+from . import tools, prepare_icon
 
+
+def set_cfg_variables(cfg):
+    cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime(
+        '%Y%m%d_%H')
 
 def main(cfg):
     """
-    This function sets up the necessary configuration variables, logs the
-    initialization time, and merges chemical tracers with meteorological files if
-    OEM (Online Emission Model) is enabled. The merging process involves
-    combining initial and lateral boundary condition (IC and LBC) files for the
-    ICON-ART model.
-
-    **IC Merging (Initial Conditions):**
-    For the initial time step, it merges the IC files by:
-    - Combining meteorological and chemical files.
-    - Adjusting variables such as converting LNPS to PS for surface pressure.
-    - Saving the merged dataset to a new NetCDF file.
-    - Renaming and cleaning up the files.
-
-    **LBC Merging (Lateral Boundary Conditions):**
-    For subsequent time steps, it merges the LBC files by:
-    - Combining meteorological and chemical files.
-    - Adjusting variables such as converting LNPS to PS for surface pressure
-      and renaming specific variables.
-    - Saving the merged dataset to a new NetCDF file.
-    - Renaming and cleaning up the files.
-
-    This function utilizes the :func:`prepare_data.set_cfg_variables`
-    function to set configuration variables, :mod:`xarray` (xr) for handling
-    NetCDF files, and various utility functions from the :mod:`tools` module for
-    file operations.
+    ICON-ART-OEM preparations
     """
-    prepare_data.set_cfg_variables(cfg)
+    prepare_icon.set_cfg_variables(cfg)
+    set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("prepare_art")
     logging.info('Merging IC and LBC')
 

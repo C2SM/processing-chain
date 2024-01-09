@@ -3,7 +3,7 @@
 
 import os
 import logging
-from . import tools, prepare_data
+from . import tools, prepare_icon
 
 
 def main(cfg):
@@ -18,7 +18,7 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     tools.check_model(cfg, 'cosmo-ghg')
-    prepare_data.set_cfg_variables(cfg)
+    prepare_icon.set_cfg_variables(cfg)
 
     scratch_path = os.path.join(cfg.int2lm_input, 'vprm')
 

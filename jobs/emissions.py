@@ -4,7 +4,7 @@
 import os
 import logging
 
-from . import tools, prepare_data
+from . import tools, prepare_icon
 
 
 def main(cfg):
@@ -30,7 +30,7 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    prepare_data.set_cfg_variables(cfg)
+    prepare_icon.set_cfg_variables(cfg)
     dest_prefix = "emis_"
 
     if not isinstance(cfg.emissions['dir'], list):
