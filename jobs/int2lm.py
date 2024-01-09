@@ -5,8 +5,7 @@ import os
 import logging
 import shutil
 import subprocess
-import pytz
-from datetime import datetime, timedelta
+from datetime import datetime
 from . import tools, prepare_cosmo
 
 
