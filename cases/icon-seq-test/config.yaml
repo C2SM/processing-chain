@@ -4,7 +4,7 @@ workflow:
   features:
     - restart
   jobs:
-    - prepare_data
+    - prepare_icon
     - icontools
     - geosp
     - icon
