@@ -12,15 +12,6 @@ from .tools.interpolate_data import create_oh_for_restart, create_oh_for_inicond
 from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
 
 
-def set_cfg_variables(cfg):
-    # Nudge type (global or nothing)
-    cfg.nudge_type = 2 if cfg.era5_global_nudging else 0
-    # Time step for global nudging in seconds
-    cfg.nudging_step_seconds = cfg.nudging_step * 3600
-    # Prescribed initial conditions for CH4, CO and/or OH
-    cfg.iart_init_gas = 4 if cfg.species_inicond else 0
-
-
 def main(cfg):
     """
     Prepare global ICON-ART simulations.
@@ -31,7 +22,6 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     prepare_icon.set_cfg_variables(cfg)
-    set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("prepare_art_global")
     logging.info("Prepare ICON-ART for global simulations")
 
