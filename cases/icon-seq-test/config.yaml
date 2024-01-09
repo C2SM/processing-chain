@@ -1,7 +1,6 @@
 # Configuration file for the 'icon-test' case with ICON
 
-workflow: icon
-is_async: False
+workflow: icon-seq
 constraint: gpu
 run_on: cpu
 compute_queue: normal

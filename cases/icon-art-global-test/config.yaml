@@ -1,7 +1,6 @@
 # Configuration file for the 'icon-art-global-test' case with ICON
 
 workflow: icon-art-global
-is_async: True
 constraint: gpu
 run_on: cpu
 compute_queue: normal
