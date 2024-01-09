@@ -1,17 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-from pathlib import Path
 import logging
-import shutil
-import subprocess
-from datetime import timedelta
-import xarray as xr
 from . import tools
-from .tools.interpolate_data import create_oh_for_restart, create_oh_for_inicond
-from .tools.fetch_external_data import fetch_era5, fetch_era5_nudging
-from calendar import monthrange
 
 
 def main(cfg):
@@ -49,7 +40,7 @@ def main(cfg):
     #-----------------------------------------------------
     # Write and submit runscripts
     #-----------------------------------------------------
-    icontools_id = None
+    dep_id = None
     for runscript in cfg.icontools_runjobs:
         with (cfg.case_path / runscript).open() as input_file:
             to_write = input_file.read()
@@ -66,12 +57,6 @@ def main(cfg):
 
         # Submitting icontools runscripts sequentially
         logging.info(f" Starting icontools runscript {runscript}.")
-        if icontools_id:
-            dependencies = (copy_id, icontools_id)
-        else:
-            dependencies = copy_id
-        icontools_id = cfg.submit(runscript,
-                                  runscript_path,
-                                  add_dep=dependencies)
+        dep_id = cfg.submit('icontools', runscript_path, add_dep=dep_id)
 
     cfg.finish_time_logging("icontools", launch_time)
