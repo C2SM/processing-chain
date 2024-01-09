@@ -1,7 +1,6 @@
 import subprocess
 import os
 import yaml
-import logging
 
 from jobs import tools
 from pathlib import Path
@@ -408,13 +407,13 @@ class Config():
         """Get dependency job ids for `job_name`"""
         # Initial list of dependencies
         if add_dep is not None:
-            if type(add_dep) is int:
+            if isinstance(add_dep, int):
                 dep_id_list = [add_dep]
             else:
                 try:
                     dep_id_list = list(add_dep)
                 except TypeError:
-                    print(f'add_dep must be an iterable')
+                    print("add_dep must be an iterable")
         else:
             dep_id_list = []
 
@@ -461,7 +460,7 @@ class Config():
         job_id = int(result.stdout)
         print(f'        └── Submitted batch job {job_id}')
 
-        if not job_name in self.job_ids['current']:
+        if job_name not in self.job_ids['current']:
             self.job_ids['current'][job_name] = [job_id]
         else:
             self.job_ids['current'][job_name].append(job_id)
@@ -490,9 +489,9 @@ class Config():
         script_lines = [
             '#!/usr/bin/env bash',
             f'#SBATCH --job-name="{job_name}_{self.job_id}"',
-            f'#SBATCH --nodes=1',
+            '#SBATCH --nodes=1',
             f'#SBATCH --output={log_file}',
-            f'#SBATCH --open-mode=append',
+            '#SBATCH --open-mode=append',
             f'#SBATCH --account={self.compute_account}',
             f'#SBATCH --partition={self.compute_queue}',
             f'#SBATCH --constraint={self.constraint}',
@@ -524,8 +523,8 @@ class Config():
             log_file = self.case_root / 'wait.log'
             dep_str = ':'.join(map(str, dep_ids))
             script_lines = [
-                '#!/usr/bin/env bash', f'#SBATCH --job-name="wait"',
-                f'#SBATCH --nodes=1', f'#SBATCH --output={log_file}',
+                '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
+                '#SBATCH --nodes=1', f'#SBATCH --output={log_file}',
                 f'#SBATCH --account={self.compute_account}',
                 f'#SBATCH --partition={self.compute_queue}',
                 f'#SBATCH --constraint={self.constraint}',
