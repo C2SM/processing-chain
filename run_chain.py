@@ -247,6 +247,17 @@ def run_chunk(cfg, force, resume):
         # wait for previous chunk to be done
         cfg.wait_for_previous()
 
+        # - [ ] Matthieu : Monitor current chunk
+        #       For each job check and print:
+        #       - job id
+        #       - dependencies
+        #       - status (State)
+        #       - elapsed time (Elapsed)
+        #       - start time (Start)
+        #       - end time (End)
+        #       - partition (Partition)
+        #       - number of nodes (NNodes)
+
         # cycle
         cfg.job_ids['previous'] = cfg.job_ids['current']
     else:
