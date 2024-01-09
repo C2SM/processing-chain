@@ -190,7 +190,7 @@ class Config():
                 "It should be either 'gpu' or 'mc'.")
 
     def set_workflow(self):
-        """set workflow and async attr, initiate job ids dict"""
+        """set workflow and initiate job ids dict"""
         # If a workflow name is specified, load from workflows.yaml
         if isinstance(self.workflow, str):
             with open('workflows.yaml') as file:
@@ -203,8 +203,6 @@ class Config():
             raise InvalidWorkflowType(
                 "Invalid workflow type. Must be either a string or a dictionary."
             )
-
-        self.is_async = 'dependencies' in self.workflow
 
         # Initiate empty job ids dictionnary so that it can be filled in later
         self.job_ids = {'current': {}, 'previous': {}}
