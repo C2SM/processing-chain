@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from pathlib import Path
+from pathlib import Path  # noqa: F401
 import logging
 import xarray as xr
 import numpy as np

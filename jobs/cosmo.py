@@ -77,6 +77,7 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("cosmo")
     logfile = os.path.join(cfg.log_working_dir, "cosmo")
     logfile_finish = os.path.join(cfg.log_finished_dir, "cosmo")
 
@@ -240,3 +241,5 @@ def main(cfg):
     exitcode = result.returncode
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+
+    cfg.finish_time_logging("cosmo", launch_time)

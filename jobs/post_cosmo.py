@@ -65,6 +65,7 @@ def main(cfg):
     """
     int2lm.set_cfg_variables(cfg)
     cosmo.set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("post_cosmo")
 
     logfile = os.path.join(cfg.log_working_dir, "post_cosmo")
     runscript_path = os.path.join(cfg.cosmo_run, "post_cosmo.job")
@@ -138,3 +139,5 @@ def main(cfg):
 
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+
+    cfg.finish_time_logging("post_cosmo", launch_time)

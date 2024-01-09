@@ -13,7 +13,6 @@ def set_cfg_variables(cfg):
     cfg.int2lm_run = cfg.chain_root / 'int2lm' / 'run'
     cfg.int2lm_output = cfg.chain_root / 'int2lm' / 'output'
 
-
 def main(cfg):
     """Setup the namelist for int2lm and submit the job to the queue.
 
@@ -47,6 +46,7 @@ def main(cfg):
     """
     prepare_cosmo.set_cfg_variables(cfg)
     set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("int2lm")
 
     # Total number of processes
     np_tot = cfg.int2lm['np_x'] * cfg.int2lm['np_y']
@@ -164,3 +164,5 @@ def main(cfg):
     exitcode = result.returncode
     if exitcode != 0:
         raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+
+    cfg.finish_time_logging("int2lm", launch_time)

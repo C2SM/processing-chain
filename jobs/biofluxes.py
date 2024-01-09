@@ -19,6 +19,7 @@ def main(cfg):
     """
     tools.check_model(cfg, 'cosmo-ghg')
     prepare_icon.set_cfg_variables(cfg)
+    launch_time = cfg.init_time_logging("biofluxes")
 
     scratch_path = os.path.join(cfg.int2lm_input, 'vprm')
 
@@ -44,3 +45,4 @@ def main(cfg):
                 logging.error(
                     "Splitting or copying of GPP or/and RA files to scratch failed."
                 )
+    cfg.finish_time_logging("biofluxes", launch_time)
