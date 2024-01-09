@@ -8,8 +8,8 @@ from . import tools
 
 
 def set_cfg_variables(cfg):
-        cfg.int2lm_root = cfg.chain_root / 'int2lm'
-        cfg.int2lm_input = cfg.int2lm_root / 'input'
+    cfg.int2lm_root = cfg.chain_root / 'int2lm'
+    cfg.int2lm_input = cfg.int2lm_root / 'input'
 
 
 def main(cfg):
@@ -66,7 +66,7 @@ def main(cfg):
     meteo_dir = cfg.meteo['dir']
     subdir = meteo_dir / cfg.startdate_sim.strftime('%y%m%d%H')
     for time in tools.iter_hours(cfg.startdate_sim, cfg.enddate_sim,
-                                    cfg.meteo['inc']):
+                                 cfg.meteo['inc']):
         dest_path = cfg.int2lm_input / 'meteo'
         src_file = meteo_dir / time.strftime(source_nameformat)
 
@@ -76,14 +76,12 @@ def main(cfg):
                 if not src_file.exists() and cfg.meteo.get('dir_alt') \
                     is not None:
                     meteo_dir = cfg.meteo['dir_alt']
-                    subdir = meteo_dir / cfg.startdate_sim.strftime(
-                        '%y%m%d%H')
+                    subdir = meteo_dir / cfg.startdate_sim.strftime('%y%m%d%H')
                     src_file = subdir / ('eas' + time.strftime('%Y%m%d%H'))
-                dest_path = cfg.int2lm_input / 'meteo' / (
-                    cfg.meteo['prefix'] + '00000000')
+                dest_path = cfg.int2lm_input / 'meteo' / (cfg.meteo['prefix'] +
+                                                          '00000000')
             else:
-                td = time - cfg.startdate_sim - timedelta(hours=6 *
-                                                            num_steps)
+                td = time - cfg.startdate_sim - timedelta(hours=6 * num_steps)
                 days = str(td.days).zfill(2)
                 hours = str(td.seconds // 3600).zfill(2)
                 td_total = time - cfg.startdate_sim
@@ -91,10 +89,9 @@ def main(cfg):
                 hours_total = str(td_total.seconds // 3600).zfill(2)
 
                 src_file = subdir / (cfg.meteo['prefix'] + days + hours +
-                                        '0000')
+                                     '0000')
                 dest_path = cfg.int2lm_input / 'meteo' / (
-                    cfg.meteo['prefix'] + days_total + hours_total +
-                    '0000')
+                    cfg.meteo['prefix'] + days_total + hours_total + '0000')
 
                 # Next time, change directory
                 checkdir = meteo_dir / time.strftime('%y%m%d%H')
@@ -102,16 +99,14 @@ def main(cfg):
                     num_steps += 1
                     subdir = checkdir
                 elif cfg.meteo.get('dir_alt') is not None:
-                    checkdir = cfg.meteo['dir_alt'] / time.strftime(
-                        '%y%m%d%H')
+                    checkdir = cfg.meteo['dir_alt'] / time.strftime('%y%m%d%H')
                     if checkdir.is_dir():
                         num_steps += 1
                         subdir = checkdir
                         meteo_dir = cfg.meteo['dir_alt']
                         logging.info(
-                            "Switching to other input directory from {} to {}"
-                            .format(cfg.meteo['dir'],
-                                    cfg.meteo['dir_alt']))
+                            "Switching to other input directory from {} to {}".
+                            format(cfg.meteo['dir'], cfg.meteo['dir_alt']))
         elif not src_file.exists():
             # special case for MeteoSwiss COSMO-7 data
             archive = Path('/store/mch/msopr/owm/COSMO-7')
@@ -122,8 +117,7 @@ def main(cfg):
         # copy meteo file from project folder to
         tools.copy_file(src_file, dest_path, output_log=True)
 
-        logging.info("Copied file from {} to {}".format(
-            src_file, dest_path))
+        logging.info("Copied file from {} to {}".format(src_file, dest_path))
 
     # Other IC/BC data
     inv_to_process = []
@@ -143,32 +137,32 @@ def main(cfg):
             pass
         try:
             CT = dict(fullname="CarbonTracker",
-                        nickname="ct",
-                        executable="ctnoaa4int2cosmo",
-                        indir=cfg.ct_dir_orig,
-                        outdir=cfg.ct_dir_proc,
-                        param=cfg.ct_parameters)
+                      nickname="ct",
+                      executable="ctnoaa4int2cosmo",
+                      indir=cfg.ct_dir_orig,
+                      outdir=cfg.ct_dir_proc,
+                      param=cfg.ct_parameters)
             inv_to_process.append(CT)
         except AttributeError:
             pass
     elif cfg.workflow_name == 'cosmo-art':
         try:
             MOZART = dict(fullname='MOZART',
-                            nickname='mozart',
-                            executable='mozart2int2lm',
-                            indir=cfg.mozart_file_orig,
-                            outdir=cfg.mozart_dir_proc,
-                            param=[{
-                                'inc': cfg.mozart_inc,
-                                'suffix': cfg.mozart_prefix
-                            }])
+                          nickname='mozart',
+                          executable='mozart2int2lm',
+                          indir=cfg.mozart_file_orig,
+                          outdir=cfg.mozart_dir_proc,
+                          param=[{
+                              'inc': cfg.mozart_inc,
+                              'suffix': cfg.mozart_prefix
+                          }])
             inv_to_process.append(MOZART)
         except AttributeError:
             pass
 
     if cfg.workflow_name == 'cosmo-ghg' or cfg.workflow_name == 'cosmo-art':
         logging.info("Processing " +
-                        ", ".join([i["fullname"]
+                     ", ".join([i["fullname"]
                                 for i in inv_to_process]) + " data")
 
         scratch_path = cfg.int2lm_input / 'icbc'
@@ -181,27 +175,23 @@ def main(cfg):
             for p in inv["param"]:
                 inc = p["inc"]
                 for time in tools.iter_hours(cfg.startdate_sim,
-                                                cfg.enddate_sim, inc):
+                                             cfg.enddate_sim, inc):
                     logging.info(time)
 
-                    filename = inv["outdir"] / (p["suffix"] + "_" +
-                                                time.strftime("%Y%m%d%H") +
-                                                ".nc")
+                    filename = inv["outdir"] / (
+                        p["suffix"] + "_" + time.strftime("%Y%m%d%H") + ".nc")
                     if not filename.exists():
                         logging.info(filename)
                         try:
                             to_call = getattr(tools, inv["executable"])
-                            to_call.main(time, inv["indir"], inv["outdir"],
-                                            p)
+                            to_call.main(time, inv["indir"], inv["outdir"], p)
                         except:
-                            logging.error("Preprocessing " +
-                                            inv["fullname"] + " data failed")
+                            logging.error("Preprocessing " + inv["fullname"] +
+                                          " data failed")
                             raise
 
                     # copy to (temporary) run input directory
-                    tools.copy_file(filename,
-                                    scratch_path,
-                                    output_log=True)
+                    tools.copy_file(filename, scratch_path, output_log=True)
 
                     logging.info("OK")
 
