@@ -528,7 +528,7 @@ class Config():
                 f'#SBATCH --account={self.compute_account}',
                 f'#SBATCH --partition={self.compute_queue}',
                 f'#SBATCH --constraint={self.constraint}',
-                f'#SBATCH --dependency=afterok:{dep_str}', '', '# Do nothing',
+                f'#SBATCH --dependency=afterany:{dep_str}', '', '# Do nothing',
                 'exit 0'
             ]
             with open(job_file, mode='w') as wait_job:
@@ -536,8 +536,8 @@ class Config():
 
             subprocess.run(['sbatch', '--wait', job_file], check=True)
 
-    def get_job_info(jobid, slurm_keys=['Elapsed']):
-        """Return information from slurm job as given by sacct
+    def get_job_info(jobid, slurm_keys=['JobName', 'Elapsed', 'ExitCode']):
+        """Return info dict from slurm job as given by sacct
 
         All possible keys are given by `sacct --helpformat`"""
         # Get info from sacct
