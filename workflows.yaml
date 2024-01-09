@@ -108,6 +108,8 @@ icon-art-global:
     prepare_art_global:
       current:
         - prepare_data
+      previous:
+        - icon
     icon:
       current:
         - prepare_data
