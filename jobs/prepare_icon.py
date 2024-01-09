@@ -69,36 +69,35 @@ def main(cfg):
     set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("prepare_icon")
 
-    if cfg.workflow_name.startswith('icon'):
-        logging.info('ICON input data (IC/BC)')
+    # Create directories
+    tools.create_dir(cfg.icon_work, "icon_work")
+    tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
+    tools.create_dir(cfg.icon_output, "icon_output")
+    tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
 
-        # Create directories
-        tools.create_dir(cfg.icon_work, "icon_work")
-        tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
-        tools.create_dir(cfg.icon_output, "icon_output")
-        tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
+    # Set logfile
+    logfile = cfg.log_working_dir / 'prepare_icon'
 
-        # Set logfile
-        logfile = cfg.log_working_dir / 'prepare_icon'
+    logging.info('Copy ICON input data (IC/BC) to working directory')
+    # Copy input files to scratch
+    script_lines = [
+        '#!/usr/bin/env bash',
+        f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
+        f'#SBATCH --account={cfg.compute_account}',
+        '#SBATCH --time=00:10:00',
+        f'#SBATCH --partition={cfg.compute_queue}',
+        f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
+        f'#SBATCH --output={logfile}', '#SBATCH --open-mode=append',
+        f'#SBATCH --chdir={cfg.icon_work}', ''
+    ]
+    for target, destination in zip(cfg.input_files.values(),
+                                    cfg.input_files_scratch.values()):
+        script_lines.append(f'rsync -av {target} {destination}')
 
-        # Copy input files to scratch
-        script_lines = [
-            '#!/usr/bin/env bash',
-            f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
-            f'#SBATCH --account={cfg.compute_account}',
-            '#SBATCH --time=00:10:00',
-            f'#SBATCH --partition={cfg.compute_queue}',
-            f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
-            f'#SBATCH --output={logfile}', '#SBATCH --open-mode=append',
-            f'#SBATCH --chdir={cfg.icon_work}', ''
-        ]
-        for target, destination in zip(cfg.input_files.values(),
-                                       cfg.input_files_scratch.values()):
-            script_lines.append(f'rsync -av {target} {destination}')
+    with (script := cfg.icon_work / 'copy_input.job').open('w') as f:
+        f.write('\n'.join(script_lines))
 
-        with (script := cfg.icon_work / 'copy_input.job').open('w') as f:
-            f.write('\n'.join(script_lines))
-
-        cfg.submit('prepare_icon', script)
+    cfg.submit('prepare_icon', script)
+    logging.info("OK")
 
     cfg.finish_time_logging("prepare_icon", launch_time)
