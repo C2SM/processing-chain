@@ -9,6 +9,7 @@ BASIC_PYTHON_JOB = True
 #        always failing because of the "invalid pointer" error. This is caught
 #        if this module itself is submitted as an sbatch job.
 
+
 def main(cfg):
     """Setup the namelists for an ICON tracer run and submit the job to
     the queue.
