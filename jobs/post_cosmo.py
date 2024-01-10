@@ -65,9 +65,9 @@ def main(cfg):
     """
     int2lm.set_cfg_variables(cfg)
     cosmo.set_cfg_variables(cfg)
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("post_cosmo")
 
-    logfile = os.path.join(cfg.log_working_dir, "post_cosmo")
     runscript_path = os.path.join(cfg.cosmo_run, "post_cosmo.job")
     copy_path = os.path.join(
         cfg.post_cosmo['output_root'],
@@ -80,7 +80,7 @@ def main(cfg):
     runscript_content = "#!/bin/bash\n"
     runscript_content += runscript_header_template().format(
         compute_account=cfg.compute_account,
-        logfile=logfile,
+        logfile=cfg.logfile,
         constraint=cfg.constraint,
         cosmo_run=cfg.cosmo_run)
 
@@ -132,7 +132,7 @@ def main(cfg):
             "ENDS", str(datetime.datetime.today())))
 
         # copy own logfile aswell
-        tools.copy_file(logfile, os.path.join(copy_path, "logs/"))
+        tools.copy_file(cfg.logfile, os.path.join(copy_path, "logs/"))
 
     else:
         exitcode = call(["sbatch", runscript_path])

@@ -18,9 +18,8 @@ def main(cfg):
       in the input folder on scratch (``cfg.icon_input/icbc``).
     """
     prepare_icon.set_cfg_variables(cfg)
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("icontools")
-    logfile = cfg.log_working_dir / "icontools"
-    logfile_finish = cfg.log_finished_dir / "icontools"
 
     #-----------------------------------------------------
     # Create LBC datafile lists (each at 00 UTC and others)
@@ -56,8 +55,8 @@ def main(cfg):
             outf.write(
                 to_write.format(cfg=cfg,
                                 meteo=cfg.meteo,
-                                logfile=logfile,
-                                logfile_finish=logfile_finish,
+                                logfile=cfg.logfile,
+                                logfile_finish=cfg.logfile_finish,
                                 datafile_list=datafile_list,
                                 datafile_list_rest=datafile_list_rest,
                                 datafile_list_chem=datafile_list_chem))

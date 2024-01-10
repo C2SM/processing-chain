@@ -29,6 +29,7 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     int2lm.set_cfg_variables(cfg)
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("post_int2lm")
 
     # Int2lm processing always starts at hstart=0, thus modifying inidate

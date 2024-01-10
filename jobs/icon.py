@@ -32,10 +32,8 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     prepare_icon.set_cfg_variables(cfg)
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("icon")
-
-    logfile = cfg.log_working_dir / "icon"
-    logfile_finish = cfg.log_finished_dir / "icon"
 
     logging.info("Setup the namelist for an ICON run and "
                  "submit the job to the queue")
@@ -60,12 +58,12 @@ def main(cfg):
     template = (cfg.case_path / cfg.icon_runjob_filename).read_text()
     script_str = template.format(cfg=cfg,
                                  inidata_filename=inidata_filename,
-                                 logfile=logfile,
-                                 logfile_finish=logfile_finish)
+                                 logfile=cfg.logfile,
+                                 logfile_finish=cfg.logfile_finish)
     script = (cfg.icon_work / 'run_icon.job')
     script.write_text(script_str)
 
     # Submit run script
-    cfg.submit('icon', script, logfile=logfile)
+    cfg.submit('icon', script, logfile=cfg.logfile)
 
     cfg.finish_time_logging("icon", launch_time)

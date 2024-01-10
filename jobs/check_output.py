@@ -713,6 +713,7 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("check_output")
     date = dt.datetime.today()
 
@@ -723,8 +724,6 @@ def main(cfg):
 ============== StartTime: %s 
 =====================================================""" % date.strftime("%s")
 
-    logfile = os.path.join(cfg.log_working_dir, "check_output")
-    logging.basicConfig(filename=logfile, level=logging.INFO)
     logging.info(to_print)
 
     # if cfg.compute_host!="daint":
@@ -749,7 +748,7 @@ def main(cfg):
 #SBATCH --time=00:30:00
 #SBATCH --constraint=mc
 #SBATCH --ntasks=1
-#SBATCH --output={logfile}
+#SBATCH --output={cfg.logfile}
 
 
 export EASYBUILD_PREFIX=/store/empa/em05/easybuild
@@ -779,7 +778,7 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
                                    cosmo_output=cfg.cosmo_output,
                                    output_root=cfg.output_root,
                                    work_log=cfg.log_working_dir,
-                                   logfile=logfile,
+                                   logfile=cfg.logfile,
                                    chain=cfg.chain_src_dir,
                                    chain_root=cfg.chain_root,
                                    action='get_data')
@@ -820,7 +819,7 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
                                    casename=cfg.casename,
                                    cosmo_output=cfg.cosmo_output,
                                    output_root=cfg.output_root,
-                                   logfile=logfile,
+                                   logfile=cfg.logfile,
                                    chain=cfg.chain_src_dir,
                                    chain_root=cfg.chain_root,
                                    action='plot_maps')
@@ -860,9 +859,9 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
     logging.info(to_print)
 
     # Check for errors
-    with open(logfile) as f:
+    with open(cfg.logfile) as f:
         if 'ERROR' in f.read():
-            raise RuntimeError('Logfile containing errors! See %s' % logfile)
+            raise RuntimeError('Logfile containing errors! See %s' % cfg.logfile)
 
     cfg.finish_time_logging("check_output", launch_time)
 
