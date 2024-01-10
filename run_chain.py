@@ -239,9 +239,23 @@ def run_chunk(cfg, force, resume):
                 cfg.logfile = cfg.log_working_dir / job
                 cfg.logfile_finish = cfg.log_finished_dir / job
 
-                # Submit the job
-                script = cfg.create_sbatch_script(job)
-                cfg.submit(job, script)
+                # Check for the global module variable 'BASIC_PYTHON_JOB'.
+                # If it doesn't exist, assume that the job has to be
+                # submitted via sbatch. Otherwise take the actual value.
+                if not hasattr(getattr(jobs, job), 'BASIC_PYTHON_JOB') or \
+                    getattr(jobs, job).BASIC_PYTHON_JOB:
+                    # Submit the job via sbatch
+                    script = cfg.create_sbatch_script(job)
+                    cfg.submit(job, script)
+                else:
+                    # Execute the job directly
+                    # FIXME: The time logging doesn't represent the timings from
+                    #        the submitted job. Thus it is disabled there, e.g.
+                    #        in `icon.py`. One solution could be to use the new
+                    #        get_job_info() function to read the start/end/elapsed
+                    #        time from those jobs and write them into the
+                    #        `chain_status.log` file once that job has finished.
+                    getattr(jobs, job).main(cfg)
 
         # wait for previous chunk to be done
         cfg.wait_for_previous()
