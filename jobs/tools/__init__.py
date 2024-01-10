@@ -166,7 +166,7 @@ def change_logfile(filename):
     """
 
     fileh = logging.FileHandler(filename, 'a', delay=True)
-    log_format = logging.Formatter('%(levelname)s:%(message)s')
+    log_format = logging.Formatter('%(levelname)s: %(message)s')
     fileh.setFormatter(log_format)
 
     log = logging.getLogger()  # root logger
