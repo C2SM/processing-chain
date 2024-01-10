@@ -131,7 +131,6 @@ icon-art-oem:
     - restart
   jobs:
     - prepare_icon
-    - oem
     - icontools
     - prepare_art
     - prepare_art_oem
@@ -145,12 +144,10 @@ icon-art-oem:
         - icontools
     prepare_art_oem:
       current:
-        - oem
         - prepare_art
     icon:
       current:
         - prepare_icon
-        - oem
         - icontools
         - prepare_art
         - prepare_art_oem
