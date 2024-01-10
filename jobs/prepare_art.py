@@ -16,6 +16,7 @@ def main(cfg):
     - Add Q (copy of QV) and/or PS to initial file
     """
     prepare_icon.set_cfg_variables(cfg)
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("prepare_art")
 
     logging.info('Add Q (copy of QV) and/or PS to initial file')
