@@ -166,14 +166,14 @@ def change_logfile(filename):
     """
 
     fileh = logging.FileHandler(filename, 'a', delay=True)
-    # log_format = logging.Formatter('%(levelname)s:%(message)s')
-    # fileh.setFormatter(log_format)
 
-    log = logging.getLogger()  # root logger
     if len(log.handlers) > 0:
-        log.handlers = [fileh]  # set the new handler
+        # If there are existing handlers, replace them with the new handler
+        log.handlers = [fileh]
     else:
-        logging.basicConfig(filename=filename, level=logging.INFO)
+        # If no existing handlers, add the new handler
+        log.addHandler(fileh)
+        log.setLevel(logging.INFO)  # Set the desired logging level
 
 
 def create_dir(path, readable_name):
