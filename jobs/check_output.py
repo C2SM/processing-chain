@@ -861,7 +861,8 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
     # Check for errors
     with open(cfg.logfile) as f:
         if 'ERROR' in f.read():
-            raise RuntimeError('Logfile containing errors! See %s' % cfg.logfile)
+            raise RuntimeError('Logfile containing errors! See %s' %
+                               cfg.logfile)
 
     cfg.finish_time_logging("check_output", launch_time)
 
