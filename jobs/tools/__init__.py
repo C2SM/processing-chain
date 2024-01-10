@@ -167,6 +167,7 @@ def change_logfile(filename):
 
     fileh = logging.FileHandler(filename, 'a', delay=True)
 
+    log = logging.getLogger()  # root logger
     if len(log.handlers) > 0:
         # If there are existing handlers, replace them with the new handler
         log.handlers = [fileh]
