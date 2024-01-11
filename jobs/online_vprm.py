@@ -19,6 +19,7 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("online_vprm")
     dest_modis = 'modis.nc'
     dest_vegetation = 'vegetation.nc'

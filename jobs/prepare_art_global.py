@@ -25,6 +25,7 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     prepare_icon.set_cfg_variables(cfg)
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("prepare_art_global")
     logging.info("Prepare ICON-ART for global simulations")
 

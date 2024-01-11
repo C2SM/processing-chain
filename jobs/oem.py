@@ -24,6 +24,7 @@ def main(cfg):
     RuntimeError
         If an error occurs during the process.
     """
+    tools.change_logfile(cfg.logfile)
     cosmo.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("oem")
 

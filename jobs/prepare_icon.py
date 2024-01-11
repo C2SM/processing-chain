@@ -67,6 +67,7 @@ def main(cfg):
         If any subprocess returns a non-zero exit code during execution.
     """
     set_cfg_variables(cfg)
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("prepare_icon")
 
     # Create directories
@@ -74,9 +75,6 @@ def main(cfg):
     tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
     tools.create_dir(cfg.icon_output, "icon_output")
     tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
-
-    # Set logfile
-    logfile = cfg.log_working_dir / 'prepare_icon'
 
     logging.info('Copy ICON input data (IC/BC) to working directory')
     # Copy input files to scratch
@@ -86,7 +84,7 @@ def main(cfg):
         f'#SBATCH --account={cfg.compute_account}', '#SBATCH --time=00:10:00',
         f'#SBATCH --partition={cfg.compute_queue}',
         f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
-        f'#SBATCH --output={logfile}', '#SBATCH --open-mode=append',
+        f'#SBATCH --output={cfg.logfile}', '#SBATCH --open-mode=append',
         f'#SBATCH --chdir={cfg.icon_work}', ''
     ]
     for target, destination in zip(cfg.input_files.values(),

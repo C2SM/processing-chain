@@ -45,6 +45,7 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes
     """
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("reduce_output")
     cosmo_output = cfg.cosmo_output
     output_path = cfg.cosmo_output_reduced
@@ -115,11 +116,10 @@ def main(cfg):
     py_file = os.path.join(tool_path, 'reduce_output_start_end.py')
     alternate_csv_file = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                       'variables.csv')
-    logfile = os.path.join(cfg.log_working_dir, 'reduce_output')
     logging.info('Submitting job to the queue...')
 
     result = subprocess.run([
-        "sbatch", '--output=' + logfile, '--open-mode=append', '--wait',
+        "sbatch", '--output=' + cfg.logfile, '--open-mode=append', '--wait',
         bash_file, py_file, cosmo_output, output_path, str_startdate,
         str_enddate,
         str(cfg.reduce_output['output_levels']),

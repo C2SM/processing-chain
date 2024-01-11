@@ -77,9 +77,8 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     set_cfg_variables(cfg)
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("cosmo")
-    logfile = os.path.join(cfg.log_working_dir, "cosmo")
-    logfile_finish = os.path.join(cfg.log_finished_dir, "cosmo")
 
     logging.info("Setup the namelist for a COSMO tracer run and "
                  "submit the job to the queue")
@@ -142,7 +141,7 @@ def main(cfg):
                                 laf_output_refdate=laf_output_refdate,
                             ))
                     # Execute fieldextra
-                    with open(logfile, "a+") as log:
+                    with open(cfg.logfile, "a+") as log:
                         result = subprocess.run(
                             [cfg.fieldextra_bin, output_file_merge],
                             stdout=log)
@@ -232,8 +231,8 @@ def main(cfg):
             cosmo_runscript.format(cfg=cfg,
                                    **cfg.cosmo,
                                    np_tot=np_tot,
-                                   logfile=logfile,
-                                   logfile_finish=logfile_finish))
+                                   logfile=cfg.logfile,
+                                   logfile_finish=cfg.logfile_finish))
 
     result = subprocess.run(
         ["sbatch", "--wait",

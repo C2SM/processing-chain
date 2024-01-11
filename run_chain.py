@@ -236,9 +236,8 @@ def run_chunk(cfg, force, resume):
                 print(f'    └── Process "{job}" for chunk "{cfg.job_id}"')
 
                 # Logfile settings
-                logfile = cfg.log_working_dir / job
-                logfile_finish = cfg.log_finished_dir / job
-                tools.change_logfile(logfile)
+                cfg.logfile = cfg.log_working_dir / job
+                cfg.logfile_finish = cfg.log_finished_dir / job
 
                 # Submit the job
                 if hasattr(job, 'BASIC_PYTHON_JOB') and job.BASIC_PYTHON_JOB:
@@ -301,15 +300,14 @@ def run_chunk(cfg, force, resume):
                     try_count -= 1
                     try:
                         # Change the log file
-                        logfile = cfg.log_working_dir / job
-                        logfile_finish = cfg.log_finished_dir / job
-                        tools.change_logfile(logfile)
+                        cfg.logfile = cfg.log_working_dir / job
+                        cfg.logfile_finish = cfg.log_finished_dir / job
 
                         # Launch the job
                         to_call = getattr(jobs, job)
                         to_call.main(cfg)
 
-                        shutil.copy(logfile, logfile_finish)
+                        shutil.copy(cfg.logfile, cfg.logfile_finish)
 
                         exitcode = 0
                         try_count = 0

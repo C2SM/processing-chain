@@ -466,7 +466,7 @@ class Config():
             self.job_ids['current'][job_name].append(job_id)
 
         exitcode = result.returncode
-        self.check_job(exitcode, logfile)
+        self.check_job(exitcode, logfile=logfile)
 
         return job_id
 
@@ -482,7 +482,7 @@ class Config():
         if exitcode != 0:
             raise RuntimeError(f"sbatch returned exitcode {exitcode}")
 
-    def create_sbatch_script(self, job_name, log_file):
+    def create_sbatch_script(self, job_name):
         """Create an sbatch script to launch jobs individually.
         Use run_chain.py arguments to submit those jobs.
         """
@@ -490,7 +490,7 @@ class Config():
             '#!/usr/bin/env bash',
             f'#SBATCH --job-name="{job_name}_{self.job_id}"',
             '#SBATCH --nodes=1',
-            f'#SBATCH --output={log_file}',
+            f'#SBATCH --output={self.logfile}',
             '#SBATCH --open-mode=append',
             f'#SBATCH --account={self.compute_account}',
             f'#SBATCH --partition={self.compute_queue}',

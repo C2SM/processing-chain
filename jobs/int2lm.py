@@ -47,6 +47,7 @@ def main(cfg):
     """
     prepare_cosmo.set_cfg_variables(cfg)
     set_cfg_variables(cfg)
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("int2lm")
 
     # Total number of processes
@@ -141,10 +142,6 @@ def main(cfg):
                            cfg.int2lm['runjob_filename'])) as input_file:
         int2lm_runscript = input_file.read()
 
-    # Logfile variables
-    logfile = os.path.join(cfg.log_working_dir, "int2lm")
-    logfile_finish = os.path.join(cfg.log_finished_dir, "int2lm")
-
     output_file = os.path.join(int2lm_run, "run.job")
     with open(output_file, "w") as outf:
         outf.write(
@@ -155,8 +152,8 @@ def main(cfg):
                                     ini_hour=cfg.startdate_sim_yyyymmddhh[8:],
                                     np_tot=np_tot,
                                     hstop_int2lm=hstop_int2lm,
-                                    logfile=logfile,
-                                    logfile_finish=logfile_finish))
+                                    logfile=cfg.logfile,
+                                    logfile_finish=cfg.logfile_finish))
 
     # Submit job
     result = subprocess.run(

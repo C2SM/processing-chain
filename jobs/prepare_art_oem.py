@@ -15,6 +15,7 @@ def main(cfg):
     ICON-ART-OEM preparations
     """
     prepare_icon.set_cfg_variables(cfg)
+    tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("prepare_art")
     logging.info('Merging IC and LBC')
 
