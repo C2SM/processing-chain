@@ -16,6 +16,9 @@ import math
 from . import tools
 
 
+BASIC_PYTHON_JOB = True
+
+
 def main(cfg):
     """
     Calculates 2D column data and writes them into a new netCDF file.

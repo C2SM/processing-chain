@@ -9,6 +9,9 @@ from subprocess import call
 from . import tools, int2lm, cosmo
 
 
+BASIC_PYTHON_JOB = True
+
+
 def logfile_header_template():
     """Returns a template for the logfile-header"""
     return ("\n=====================================================\n"

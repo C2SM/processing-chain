@@ -9,6 +9,9 @@ from datetime import timedelta
 from . import tools
 
 
+BASIC_PYTHON_JOB = True
+
+
 def main(cfg):
     """Copy and rename the obs_nudging files to the **COSMO** input directory.
 

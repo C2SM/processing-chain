@@ -7,6 +7,9 @@ import logging
 from . import tools, cosmo
 
 
+BASIC_PYTHON_JOB = True
+
+
 def main(cfg):
     """Copy emission and profile files to the **cosmo** or **icon** input
     directory.

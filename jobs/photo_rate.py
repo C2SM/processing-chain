@@ -7,6 +7,9 @@ import logging
 from . import tools
 
 
+BASIC_PYTHON_JOB = True
+
+
 def main(cfg):
     """Copy photolysis-rate file to the **COSMOART** input directory.
 

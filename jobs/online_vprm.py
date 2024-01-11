@@ -7,6 +7,9 @@ import logging
 from . import tools
 
 
+BASIC_PYTHON_JOB = True
+
+
 def main(cfg):
     """Copy MODIS surface reflectance data and vegetation class fraction file
     to the **cosmo** input directory.

@@ -29,6 +29,9 @@ except ImportError:
     import tools
 
 
+BASIC_PYTHON_JOB = True
+
+
 def pkl_path(folder, pid=None):
     """ Returns the path (and creates it, if necessary) to the stored
     pandas data file.

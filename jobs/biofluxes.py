@@ -6,6 +6,9 @@ import logging
 from . import tools, prepare_icon
 
 
+BASIC_PYTHON_JOB = True
+
+
 def main(cfg):
     """Prepare biofluxes files for COSMO simulations.
 

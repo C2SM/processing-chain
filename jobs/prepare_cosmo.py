@@ -7,6 +7,9 @@ from datetime import timedelta
 from . import tools
 
 
+BASIC_PYTHON_JOB = True
+
+
 def set_cfg_variables(cfg):
     cfg.int2lm_root = cfg.chain_root / 'int2lm'
     cfg.int2lm_input = cfg.int2lm_root / 'input'

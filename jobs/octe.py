@@ -12,6 +12,9 @@ from netCDF4 import Dataset
 from . import tools
 
 
+BASIC_PYTHON_JOB = True
+
+
 def create_dir_and_copy_input(dest_dir, lambdas_src, maps_src):
     """Create a directory at dest_dir (**COSMO** input) and copy src there.
 

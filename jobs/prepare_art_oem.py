@@ -7,6 +7,9 @@ import xarray as xr
 from . import tools, prepare_icon
 
 
+BASIC_PYTHON_JOB = True
+
+
 def main(cfg):
     """
     ICON-ART-OEM preparations

@@ -241,8 +241,11 @@ def run_chunk(cfg, force, resume):
                 tools.change_logfile(logfile)
 
                 # Submit the job
-                script = cfg.create_sbatch_script(job, logfile)
-                cfg.submit(job, script)
+                if hasattr(job, 'BASIC_PYTHON_JOB') and job.BASIC_PYTHON_JOB:
+                    script = cfg.create_sbatch_script(job, logfile)
+                    cfg.submit(job, script)
+                else:
+                    job.main()
 
         # wait for previous chunk to be done
         cfg.wait_for_previous()

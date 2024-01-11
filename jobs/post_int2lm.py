@@ -9,6 +9,9 @@ from datetime import datetime, timedelta
 from . import tools, int2lm
 
 
+BASIC_PYTHON_JOB = True
+
+
 def main(cfg):
     """Combine multiple **int2lm** tracer-output files into a single one for
     **COSMO**.

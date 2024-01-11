@@ -8,6 +8,9 @@ import netCDF4 as nc
 from . import tools
 
 
+BASIC_PYTHON_JOB = True
+
+
 def comp_data(dataset1, dataset2, variables):
     """Use tools.helper.datasets_equal to compare the datasets.
     """

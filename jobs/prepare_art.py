@@ -8,6 +8,9 @@ import numpy as np
 from . import tools, prepare_icon
 
 
+BASIC_PYTHON_JOB = True
+
+
 def main(cfg):
     """
     Prepare ICON-ART simulations.

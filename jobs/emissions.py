@@ -7,6 +7,9 @@ import logging
 from . import tools, prepare_icon
 
 
+BASIC_PYTHON_JOB = True
+
+
 def main(cfg):
     """Copy emission files to the int2lm input directory.
 
