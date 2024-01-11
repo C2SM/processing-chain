@@ -5,7 +5,6 @@ import os
 import logging
 from . import tools, prepare_icon
 
-
 BASIC_PYTHON_JOB = True
 
 

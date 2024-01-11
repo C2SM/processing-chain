@@ -6,7 +6,6 @@ import logging
 from datetime import timedelta
 from . import tools
 
-
 BASIC_PYTHON_JOB = True
 
 
