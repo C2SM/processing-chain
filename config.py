@@ -583,7 +583,7 @@ class Config():
                 self.slurm_info[job_name] = []
                 self.slurm_info[job_name].append(
                     self.get_job_info(job_id,
-                                      slurm_keys=info_requests.keys(),
+                                      slurm_keys=self.info_requests.keys(),
                                       parse=True))
 
     def print_slurm_summary(self):
@@ -600,13 +600,13 @@ class Config():
         table_header = '\n'.join((' '.join(headers), ' '.join(hlines)))
         line_format = " ".join(formats)
 
-        print("    └── Slurm info of submitted jobs\n")
+        print("    └── Slurm info of submitted jobs")
 
         for job_name in self.jobs:
             print(f"        └── {job_name}")
             print(table_header)
             for info in self.slurm_info[job_name]:
-                print(line_format.format(**info))
+                print(line_format.format(**info)) # KeyError: 'JobID'
 
     def check_chunk_success(self):
         status = 0
