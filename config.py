@@ -606,7 +606,7 @@ class Config():
             print(f"        └── {job_name}")
             print(table_header)
             for info in self.slurm_info[job_name]:
-                print(line_format.format(**info)) # KeyError: 'JobID'
+                print(line_format.format(**info))  # KeyError: 'JobID'
 
     def check_chunk_success(self):
         status = 0
