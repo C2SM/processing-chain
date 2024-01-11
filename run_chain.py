@@ -233,7 +233,8 @@ def run_chunk(cfg, force, resume):
                 print(f'    └── Skip "{job_name}" for chunk "{cfg.chunk_id}"')
                 skip = True
             else:
-                print(f'    └── Process "{job_name}" for chunk "{cfg.chunk_id}"')
+                print(
+                    f'    └── Process "{job_name}" for chunk "{cfg.chunk_id}"')
 
                 # Logfile settings
                 cfg.logfile = cfg.log_working_dir / job_name
