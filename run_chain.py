@@ -145,8 +145,8 @@ def run_chunk(cfg, force, resume):
     cfg.enddate_sim_yyyymmddhh = cfg.enddate_sim.strftime('%Y%m%d%H')
 
     # Folder naming and structure
-    cfg.job_id = f'{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}'
-    cfg.chain_root = cfg.work_root / cfg.casename / cfg.job_id
+    cfg.chunk_id = f'{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}'
+    cfg.chain_root = cfg.work_root / cfg.casename / cfg.chunk_id
 
     # Config variables for spinup runs (datetimes, job-id, etc.)
     if hasattr(cfg, 'spinup'):
@@ -162,14 +162,14 @@ def run_chunk(cfg, force, resume):
             if cfg.second_one:
                 startdate_sim_yyyymmddhh_prev = (cfg.enddate_sim - timedelta(
                     hours=2 * cfg.restart_step_hours)).strftime('%Y%m%d%H')
-            else:  # all other runs (i.e., get job_id from previous run)
+            else:  # all other runs (i.e., get chunk_id from previous run)
                 startdate_sim_yyyymmddhh_prev = (
                     cfg.enddate_sim -
                     timedelta(hours=2 * cfg.restart_step_hours +
                               cfg.spinup)).strftime('%Y%m%d%H')
 
-            cfg.job_id_prev = f'{startdate_sim_yyyymmddhh_prev}_{enddate_sim_yyyymmddhh_prev}'
-            cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.job_id_prev
+            cfg.chunk_id_prev = f'{startdate_sim_yyyymmddhh_prev}_{enddate_sim_yyyymmddhh_prev}'
+            cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.chunk_id_prev
             cfg.last_cosmo_output = cfg.chain_root_prev / 'cosmo' / 'output'
 
         # No restart for spinup simulations (= default values for no restart)
@@ -185,8 +185,8 @@ def run_chunk(cfg, force, resume):
         cfg.enddate_sim_prev_yyyymmddhh = cfg.enddate_sim_prev.strftime(
             '%Y%m%d%H')
 
-        cfg.job_id_prev = f'{cfg.startdate_sim_prev_yyyymmddhh}_{cfg.enddate_sim_prev_yyyymmddhh}'
-        cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.job_id_prev
+        cfg.chunk_id_prev = f'{cfg.startdate_sim_prev_yyyymmddhh}_{cfg.enddate_sim_prev_yyyymmddhh}'
+        cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.chunk_id_prev
 
         # Set restart directories
         cfg.cosmo_restart_out = cfg.chain_root / 'cosmo' / 'restart'
@@ -203,7 +203,7 @@ def run_chunk(cfg, force, resume):
         # if ifs_hres_dir doesn't point to a directory,
         # it is the name of the mother run
         mother_name = cfg.meteo.dir
-        cfg.meteo.dir = cfg.work_root / mother_name / cfg.job_id / 'cosmo' / 'output'
+        cfg.meteo.dir = cfg.work_root / mother_name / cfg.chunk_id / 'cosmo' / 'output'
         cfg.meteo.inc = 1
         cfg.meteo.prefix = 'lffd'
 
@@ -230,10 +230,10 @@ def run_chunk(cfg, force, resume):
         for job_name in cfg.jobs:
             if (cfg.log_finished_dir / job_name).exists() and not force:
                 # Skip job if already finished
-                print(f'    └── Skip "{job_name}" for chunk "{cfg.job_id}"')
+                print(f'    └── Skip "{job_name}" for chunk "{cfg.chunk_id}"')
                 skip = True
             else:
-                print(f'    └── Process "{job_name}" for chunk "{cfg.job_id}"')
+                print(f'    └── Process "{job_name}" for chunk "{cfg.chunk_id}"')
 
                 # Logfile settings
                 cfg.logfile = cfg.log_working_dir / job_name
@@ -274,7 +274,7 @@ def run_chunk(cfg, force, resume):
                     while True:
                         if (cfg.log_finished_dir / job).exists():
                             print(
-                                f'    └── Skip "{job}" for chunk "{cfg.job_id}"'
+                                f'    └── Skip "{job}" for chunk "{cfg.chunk_id}"'
                             )
                             skip = True
                             break
@@ -283,7 +283,7 @@ def run_chunk(cfg, force, resume):
                             break
                         else:
                             print(
-                                f"    └── Wait for {job} of chunk {cfg.job_id}"
+                                f"    └── Wait for {job} of chunk {cfg.chunk_id}"
                             )
                             sys.stdout.flush()
                             for _ in range(3000):
@@ -314,7 +314,7 @@ def run_chunk(cfg, force, resume):
                         try_count = 0
                     except Exception:
                         subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
-                            job, cfg.job_id)
+                            job, cfg.chunk_id)
                         logging.exception(subject)
                         if cfg.user_mail:
                             message = tools.prepare_message(
@@ -327,7 +327,7 @@ def run_chunk(cfg, force, resume):
 
                 if exitcode != 0 or not (cfg.log_finished_dir / job).exists():
                     subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
-                        job, cfg.job_id)
+                        job, cfg.chunk_id)
                     if cfg.user_mail:
                         message = tools.prepare_message(cfg.log_working_dir /
                                                         job)
@@ -369,8 +369,8 @@ def restart_runs(cfg, force, resume):
                 continue
             cfg.chunks.append(job_id)
 
-    for job_id in cfg.chunks:
-        cfg.job_id = job_id
+    for chunk_id in cfg.chunks:
+        cfg.chunk_id = chunk_id
         cfg.startdate_sim_yyyymmddhh = job_id[0:10]
         cfg.enddate_sim_yyyymmddhh = job_id[-10:]
         cfg.startdate_sim = datetime.strptime(

@@ -354,22 +354,22 @@ class Config():
             with open(log_file, 'w') as f:
                 f.write(header)
 
-        # Format duration and job_id
+        # Format duration and chunk_id
         if job == 'chain':
             if duration is not None:
                 duration = self.format_duration(duration)
-            job_id = self.casename
+            chunk_id = self.casename
         else:
             if duration is not None:
                 duration = f"{str(int(duration.total_seconds()))} s"
-            job_id = self.job_id
+            chunk_id = self.chunk_id
 
         # Log the job information
         launch_time = launch_time.strftime("%a %b %d %Y %H:%M:%S")
         if status == 'FINISH' and duration:
-            log_entry = f"{job:<15} {job_id:<21} {status:<6} {launch_time:<24} {duration}\n"
+            log_entry = f"{job:<15} {chunk_id:<21} {status:<6} {launch_time:<24} {duration}\n"
         else:
-            log_entry = f"{job:<15} {job_id:<21} {status:<6} {launch_time:<24}\n"
+            log_entry = f"{job:<15} {chunk_id:<21} {status:<6} {launch_time:<24}\n"
 
         with open(log_file, 'a') as f:
             f.write(log_entry)
@@ -488,7 +488,7 @@ class Config():
         """
         script_lines = [
             '#!/usr/bin/env bash',
-            f'#SBATCH --job-name="{job_name}_{self.job_id}"',
+            f'#SBATCH --job-name="{job_name}_{self.chunk_id}"',
             '#SBATCH --nodes=1',
             f'#SBATCH --output={self.logfile}',
             '#SBATCH --open-mode=append',
@@ -499,7 +499,7 @@ class Config():
             f'cd {self.chain_src_dir}',
             'eval "$(conda shell.bash hook)"',
             'conda activate proc-chain',
-            f'./run_chain.py {self.casename} -j {job_name} -c {self.job_id} -f -s --no-logging',
+            f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
             '',
         ]
 
