@@ -103,7 +103,7 @@ def main(cfg):
                 hours=cfg.restart_step)
             work_root = os.path.dirname(os.path.dirname(cfg.chain_root))
             last_output_path = os.path.join(work_root, cfg.casename,
-                                            cfg.job_id_prev, 'cosmo', 'output')
+                                            cfg.chunk_id_prev, 'cosmo', 'output')
             laf_output_refdate = cfg.startdate_sim.strftime("%Y%m%d%H")
             last_laf_filename = "laf" + laf_output_refdate
             # At the beginning, use original laf_startfile

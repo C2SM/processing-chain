@@ -293,7 +293,7 @@ def run_chunk(cfg, force, resume):
                     (cfg.log_finished_dir / job).unlink(missing_ok=True)
 
             if not skip:
-                print(f'    └── Process "{job}" for chunk "{cfg.job_id}"')
+                print(f'    └── Process "{job}" for chunk "{cfg.chunk_id}"')
                 sys.stdout.flush()
 
                 try_count = 1 + (cfg.ntry - 1) * (job == 'cosmo')
@@ -364,15 +364,15 @@ def restart_runs(cfg, force, resume):
                 hours=cfg.restart_step_hours)
             startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
             enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
-            job_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
+            chunk_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
             if enddate_sim > cfg.enddate:
                 continue
-            cfg.chunks.append(job_id)
+            cfg.chunks.append(chunk_id)
 
     for chunk_id in cfg.chunks:
         cfg.chunk_id = chunk_id
-        cfg.startdate_sim_yyyymmddhh = job_id[0:10]
-        cfg.enddate_sim_yyyymmddhh = job_id[-10:]
+        cfg.startdate_sim_yyyymmddhh = chunk_id[0:10]
+        cfg.enddate_sim_yyyymmddhh = chunk_id[-10:]
         cfg.startdate_sim = datetime.strptime(
             cfg.startdate_sim_yyyymmddhh, "%Y%m%d%H").replace(tzinfo=pytz.UTC)
         cfg.enddate_sim = datetime.strptime(
