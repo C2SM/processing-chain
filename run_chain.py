@@ -10,6 +10,7 @@ import sys
 import time
 import shutil
 import argparse
+import inspect
 
 import jobs
 from jobs import tools
@@ -234,7 +235,7 @@ def run_chunk(cfg, force, resume):
                 skip = True
             else:
                 print(
-                    f'    └── Process "{job_name}" for chunk "{cfg.chunk_id}"')
+                    f'    └── Submit "{job_name}" for chunk "{cfg.chunk_id}"')
 
                 # Logfile settings
                 cfg.logfile = cfg.log_working_dir / job_name
@@ -251,16 +252,12 @@ def run_chunk(cfg, force, resume):
         # wait for previous chunk to be done
         cfg.wait_for_previous()
 
-        # - [ ] Matthieu : Monitor current chunk
-        #       For each job check and print:
-        #       - job id
-        #       - dependencies
-        #       - status (State)
-        #       - elapsed time (Elapsed)
-        #       - start time (Start)
-        #       - end time (End)
-        #       - partition (Partition)
-        #       - number of nodes (NNodes)
+        # Current chunk Slurm summary
+        cfg.get_slurm_summary()
+        cfg.print_slurm_summary()
+
+        # Check for success
+        cfg.check_chunk_success()
 
         # cycle
         cfg.job_ids['previous'] = cfg.job_ids['current']
