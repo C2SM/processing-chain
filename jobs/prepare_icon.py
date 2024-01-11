@@ -5,6 +5,8 @@ from pathlib import Path
 import logging
 from . import tools
 
+BASIC_PYTHON_JOB = True
+
 
 def set_cfg_variables(cfg):
     cfg.icon_base = cfg.chain_root / 'icon'

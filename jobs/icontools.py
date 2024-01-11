@@ -7,6 +7,8 @@ import xarray as xr
 import numpy as np
 from . import tools, prepare_icon
 
+BASIC_PYTHON_JOB = True
+
 
 def main(cfg):
     """

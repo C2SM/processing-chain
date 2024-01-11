@@ -9,6 +9,8 @@ from .tools import write_cosmo_input_ghg
 from . import tools
 from datetime import datetime, timedelta
 
+BASIC_PYTHON_JOB = True
+
 
 def set_cfg_variables(cfg):
     cfg.cosmo_base = cfg.chain_root / 'cosmo'
