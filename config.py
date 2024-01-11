@@ -9,6 +9,10 @@ from datetime import datetime
 
 class Config():
 
+    # Requested slurm info keys and corresponding printed width
+    info_requests = {'JobName': 10, 'JobID': 8, 'Partition': 9, 'NNodes': 6,
+                     'State': 14, 'Start': 13, 'End': 13, 'Elapsed': 9}
+
     def __init__(self, casename):
         """Initialize an instance of the Config class.
 
@@ -536,22 +540,74 @@ class Config():
 
             subprocess.run(['sbatch', '--wait', job_file], check=True)
 
-    def get_job_info(jobid, slurm_keys=['JobName', 'Elapsed', 'ExitCode']):
-        """Return info dict from slurm job as given by sacct
+    @staticmethod
+    def get_job_info(job_id, slurm_keys=['JobName', 'Elapsed', 'ExitCode'], parse=True):
+        """Retrieve slurm job info as given by sacct
 
+        if parse is True, return the raw string from sacct else parse info into a dict.
         All possible keys are given by `sacct --helpformat`"""
+        
         # Get info from sacct
-        cmd = [
-            "sacct", f"--format={', '.join(slurm_keys)}", "--parsable", "-j",
-            str(jobid)
-        ]
-        r = subprocess.run(cmd, capture_output=True)
+        cmd = ["sacct", f"--format={', '.join(slurm_keys)}", "-j", str(job_id)]
 
-        # Parse in a dictionnary before returning
-        # The inner most process should be the relevant one, hence the 1 index
-        slurm_info = r.stdout.split()[1].split(b'|')
-        return ({k: v.decode() for k, v in zip(slurm_keys, slurm_info)})
+        if parse:
+            cmd.append("--parsable")
+        
+        info_str = subprocess.run(cmd, capture_output=True, check=True).stdout
 
+        if parse:
+            # Parse in a dictionnary before returning
+            # The inner most process should be the relevant one, hence the 1 index
+            slurm_info = info_str.split(b'\n')[1].split(b'|')
+            return {k: v.decode() for k, v in zip(slurm_keys, slurm_info)}
+        else:
+            return info_str.decode()
+
+    def get_slurm_summary(self):
+        """get slurm info summary or all jobs of current chunk"""
+
+        # Get job info for all jobs
+        self.slurm_info = {}
+        for job_name in self.jobs:
+            for job_id in self.job_ids['current'][job_name]:
+                self.slurm_info[job_name] = []
+                self.slurm_info[job_name].append(
+                    self.get_job_info(job_id, slurm_keys=info_requests.keys(),
+                                      parse=True)
+                )
+
+    def print_slurm_summary(self):
+        # Build table header and line format
+        # (could be done class-wide, not for each call)
+        headers = []
+        hlines = []
+        formats = []
+        for k, l in self.info_requests.items():
+            formats.append(f"{{{k}:>{l}.{l}}}")
+            headers.append(f"{k:>{l}.{l}}")
+            hlines.append("-"*l)
+            
+        table_header = '\n'.join((' '.join(headers), ' '.join(hlines)))
+        line_format = " ".join(formats)
+
+        print("    └── Slurm info of submitted jobs\n")
+        
+        for job_name in self.jobs:
+            print(f"        └── {job_name}")
+            print(table_header)
+            for info in self.slurm_info[job_name]:
+                print(line_format.format(**info))
+
+    def check_chunk_success(self):
+        status = 0
+        for job_name, info_list in self.slurm_info.items():
+            for info in info_list:
+                if info['State'] != 'COMPLETED':
+                    status += 1
+
+        if status > 0:
+            raise RuntimeError("One or more job failed")
+        
 
 class InvalidWorkflowType(Exception):
     pass
