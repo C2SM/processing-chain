@@ -227,24 +227,25 @@ def run_chunk(cfg, force, resume):
         cfg.job_ids['current'] = {}
 
         # Submit current chunk
-        for job in cfg.jobs:
-            if (cfg.log_finished_dir / job).exists() and not force:
+        for job_name in cfg.jobs:
+            if (cfg.log_finished_dir / job_name).exists() and not force:
                 # Skip job if already finished
-                print(f'    └── Skip "{job}" for chunk "{cfg.job_id}"')
+                print(f'    └── Skip "{job_name}" for chunk "{cfg.job_id}"')
                 skip = True
             else:
-                print(f'    └── Process "{job}" for chunk "{cfg.job_id}"')
+                print(f'    └── Process "{job_name}" for chunk "{cfg.job_id}"')
 
                 # Logfile settings
-                cfg.logfile = cfg.log_working_dir / job
-                cfg.logfile_finish = cfg.log_finished_dir / job
+                cfg.logfile = cfg.log_working_dir / job_name
+                cfg.logfile_finish = cfg.log_finished_dir / job_name
 
                 # Submit the job
+                job = getattr(jobs, job_name)
                 if hasattr(job, 'BASIC_PYTHON_JOB') and job.BASIC_PYTHON_JOB:
-                    script = cfg.create_sbatch_script(job, logfile)
-                    cfg.submit(job, script)
+                    script = cfg.create_sbatch_script(job_name, logfile)
+                    cfg.submit(job_name, script)
                 else:
-                    job.main()
+                    job.main(cfg)
 
         # wait for previous chunk to be done
         cfg.wait_for_previous()
