@@ -6,7 +6,6 @@ import logging
 
 from . import tools
 
-
 BASIC_PYTHON_JOB = True
 
 

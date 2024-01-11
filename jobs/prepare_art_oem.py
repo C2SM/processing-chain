@@ -6,7 +6,6 @@ import logging
 import xarray as xr
 from . import tools, prepare_icon
 
-
 BASIC_PYTHON_JOB = True
 
 
