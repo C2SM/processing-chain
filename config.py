@@ -540,7 +540,7 @@ class Config():
                 f'#SBATCH --account={self.compute_account}',
                 f'#SBATCH --partition={self.compute_queue}',
                 f'#SBATCH --constraint={self.constraint}',
-                f'#SBATCH --dependency=afterany:{dep_str}', '', '# Do nothing',
+                f'#SBATCH --dependency=afterok:{dep_str}', '', '# Do nothing',
                 'exit 0'
             ]
             with open(job_file, mode='w') as wait_job:
