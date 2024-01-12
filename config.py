@@ -573,28 +573,39 @@ class Config():
         else:
             return info_str.decode()
 
-    def get_slurm_summary(self, info_keys=['JobName', 'JobID', 'Partition', 'NNodes',
-                                           'State', 'Start', 'End', 'Elapsed']):
+    def get_slurm_summary(self,
+                          info_keys=[
+                              'JobName', 'JobID', 'Partition', 'NNodes',
+                              'State', 'Start', 'End', 'Elapsed'
+                          ]):
         """get slurm info summary or all jobs of current chunk"""
 
         # Store requested keys in object
         self.info_keys = info_keys
-        
+
         # Get job info for all jobs
         self.slurm_info = {}
         for job_name in self.jobs:
             for job_id in self.job_ids['current'][job_name]:
                 self.slurm_info[job_name] = []
                 self.slurm_info[job_name].append(
-                    self.get_job_info(job_id, slurm_keys=info_keys, parse=True)
-                )
+                    self.get_job_info(job_id, slurm_keys=info_keys,
+                                      parse=True))
 
     def print_slurm_summary(self):
 
         # Width of printed slurm piece of information
-        info_width = {'JobName': 10, 'JobID': 8, 'Partition': 9, 'NNodes': 6,
-                      'State': 14, 'Start': 13, 'End': 13, 'Elapsed': 9}
-        
+        info_width = {
+            'JobName': 10,
+            'JobID': 8,
+            'Partition': 9,
+            'NNodes': 6,
+            'State': 14,
+            'Start': 13,
+            'End': 13,
+            'Elapsed': 9
+        }
+
         # Build table header and line format
         headers = []
         hlines = []
