@@ -225,7 +225,7 @@ def run_chunk(cfg, force, resume):
 
     if cfg.is_async:
         # Empty curent job ids
-        cfg.job_ids['current'] = {}
+        # cfg.job_ids['current'] = {}
 
         # Submit current chunk
         for job_name in cfg.jobs:
@@ -249,17 +249,17 @@ def run_chunk(cfg, force, resume):
                 else:
                     job.main(cfg)
 
-        # wait for previous chunk to be done
+        # Wait for previous chunk to be done
         cfg.wait_for_previous()
 
         # Current chunk Slurm summary
         cfg.get_slurm_summary()
-        cfg.print_slurm_summary()
+        # cfg.print_slurm_summary()
 
         # Check for success
-        cfg.check_chunk_success()
+        # cfg.check_chunk_success()
 
-        # cycle
+        # Cycle
         cfg.job_ids['previous'] = cfg.job_ids['current']
     else:
         # run jobs (if required)
