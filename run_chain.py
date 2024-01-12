@@ -244,7 +244,7 @@ def run_chunk(cfg, force, resume):
                 # Submit the job
                 job = getattr(jobs, job_name)
                 if hasattr(job, 'BASIC_PYTHON_JOB') and job.BASIC_PYTHON_JOB:
-                    script = cfg.create_sbatch_script(job_name, logfile)
+                    script = cfg.create_sbatch_script(job_name)
                     cfg.submit(job_name, script)
                 else:
                     job.main(cfg)

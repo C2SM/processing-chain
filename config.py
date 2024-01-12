@@ -10,8 +10,16 @@ from datetime import datetime
 class Config():
 
     # Requested slurm info keys and corresponding printed width
-    info_requests = {'JobName': 10, 'JobID': 8, 'Partition': 9, 'NNodes': 6,
-                     'State': 14, 'Start': 13, 'End': 13, 'Elapsed': 9}
+    info_requests = {
+        'JobName': 10,
+        'JobID': 8,
+        'Partition': 9,
+        'NNodes': 6,
+        'State': 14,
+        'Start': 13,
+        'End': 13,
+        'Elapsed': 9
+    }
 
     def __init__(self, casename):
         """Initialize an instance of the Config class.
@@ -541,18 +549,20 @@ class Config():
             subprocess.run(['sbatch', '--wait', job_file], check=True)
 
     @staticmethod
-    def get_job_info(job_id, slurm_keys=['JobName', 'Elapsed', 'ExitCode'], parse=True):
+    def get_job_info(job_id,
+                     slurm_keys=['JobName', 'Elapsed', 'ExitCode'],
+                     parse=True):
         """Retrieve slurm job info as given by sacct
 
         if parse is True, return the raw string from sacct else parse info into a dict.
         All possible keys are given by `sacct --helpformat`"""
-        
+
         # Get info from sacct
         cmd = ["sacct", f"--format={', '.join(slurm_keys)}", "-j", str(job_id)]
 
         if parse:
             cmd.append("--parsable")
-        
+
         info_str = subprocess.run(cmd, capture_output=True, check=True).stdout
 
         if parse:
@@ -593,18 +603,18 @@ class Config():
             l = info_width[k]
             formats.append(f"{{{k}:>{l}.{l}}}")
             headers.append(f"{k:>{l}.{l}}")
-            hlines.append("-"*l)
-            
+            hlines.append("-" * l)
+
         table_header = '\n'.join((' '.join(headers), ' '.join(hlines)))
         line_format = " ".join(formats)
 
-        print("    └── Slurm info of submitted jobs\n")
-        
+        print("    └── Slurm info of submitted jobs")
+
         for job_name in self.jobs:
             print(f"        └── {job_name}")
             print(table_header)
             for info in self.slurm_info[job_name]:
-                print(line_format.format(**info))
+                print(line_format.format(**info))  # KeyError: 'JobID'
 
     def check_chunk_success(self):
         status = 0
@@ -615,7 +625,7 @@ class Config():
 
         if status > 0:
             raise RuntimeError("One or more job failed")
-        
+
 
 class InvalidWorkflowType(Exception):
     pass
