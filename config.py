@@ -471,13 +471,7 @@ class Config():
         return job_id
 
     def check_job(self, exitcode, logfile=None):
-        """Check the exitcode returned by a job. 
-        In case of ICON-ART, ignore the "invalid pointer" error on a successful run.
-        """
-        if logfile and tools.grep("ART: ", logfile)['success'] and \
-            tools.grep("free(): invalid pointer", logfile)['success'] and \
-            tools.grep("clean-up finished", logfile)['success']:
-            exitcode = 0
+        """Check the exitcode returned by a job."""
 
         if exitcode != 0:
             raise RuntimeError(f"sbatch returned exitcode {exitcode}")
@@ -613,7 +607,7 @@ class Config():
             print(f"        └── {job_name}")
             print(table_header)
             for info in self.slurm_info[job_name]:
-                print(line_format.format(**info))  # KeyError: 'JobID'
+                print(line_format.format(**info))
 
     def check_chunk_success(self):
         status = 0
