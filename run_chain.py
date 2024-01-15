@@ -225,7 +225,7 @@ def run_chunk(cfg, force, resume):
 
     if cfg.is_async:
         # Empty curent job ids
-        # cfg.job_ids['current'] = {}
+        cfg.job_ids['current'] = {}
 
         # Submit current chunk
         for job_name in cfg.jobs:
