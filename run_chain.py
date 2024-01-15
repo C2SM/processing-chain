@@ -249,8 +249,6 @@ def run_chunk(cfg, force, resume):
                 else:
                     job.main(cfg)
 
-        
-
         # Return if very first chunk
         if cfg.job_ids['previous']:
             # Wait for previous chunk to be done
