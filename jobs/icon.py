@@ -4,10 +4,7 @@
 import logging
 from . import tools, prepare_icon
 
-BASIC_PYTHON_JOB = True
-# FIXME: BASIC_PYTHON_JOB should be False, but with ICON-ART the sbatch job is
-#        always failing because of the "invalid pointer" error. This is caught
-#        if this module itself is submitted as an sbatch job.
+BASIC_PYTHON_JOB = False
 
 
 def main(cfg):
