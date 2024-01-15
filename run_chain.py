@@ -254,10 +254,10 @@ def run_chunk(cfg, force, resume):
 
         # Current chunk Slurm summary
         cfg.get_slurm_summary()
-        # cfg.print_slurm_summary()
+        cfg.print_slurm_summary()
 
         # Check for success
-        # cfg.check_chunk_success()
+        cfg.check_chunk_success()
 
         # Cycle
         cfg.job_ids['previous'] = cfg.job_ids['current']

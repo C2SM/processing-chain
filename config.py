@@ -528,7 +528,7 @@ class Config():
                 f'#SBATCH --account={self.compute_account}',
                 f'#SBATCH --partition={self.compute_queue}',
                 f'#SBATCH --constraint={self.constraint}',
-                f'#SBATCH --dependency=afterok:{dep_str}', '', '# Do nothing',
+                f'#SBATCH --dependency=afterany:{dep_str}', '', '# Do nothing',
                 'exit 0'
             ]
             with open(job_file, mode='w') as wait_job:
@@ -566,7 +566,7 @@ class Config():
                               'JobName', 'JobID', 'Partition', 'NNodes',
                               'State', 'Start', 'End', 'Elapsed'
                           ]):
-        """get slurm info summary or all jobs of current chunk"""
+        """get slurm info summary or all jobs of previous chunk"""
 
         # Store requested keys in object
         self.info_keys = info_keys
@@ -574,7 +574,7 @@ class Config():
         # Get job info for all jobs
         self.slurm_info = {}
         for job_name in self.jobs:
-            for job_id in self.job_ids['current'][job_name]:
+            for job_id in self.job_ids['previous'][job_name]:
                 self.slurm_info[job_name] = []
                 self.slurm_info[job_name].append(
                     self.get_job_info(job_id, slurm_keys=info_keys,
@@ -607,7 +607,7 @@ class Config():
         table_header = '\n'.join((' '.join(headers), ' '.join(hlines)))
         line_format = " ".join(formats)
 
-        print("    └── Slurm info of submitted jobs")
+        print("    └── Slurm info of previous submitted jobs")
 
         for job_name in self.jobs:
             print(f"        └── {job_name}")
