@@ -9,18 +9,6 @@ from datetime import datetime
 
 class Config():
 
-    # Requested slurm info keys and corresponding printed width
-    info_requests = {
-        'JobName': 10,
-        'JobID': 8,
-        'Partition': 9,
-        'NNodes': 6,
-        'State': 14,
-        'Start': 13,
-        'End': 13,
-        'Elapsed': 9
-    }
-
     def __init__(self, casename):
         """Initialize an instance of the Config class.
 
@@ -618,13 +606,15 @@ class Config():
 
     def check_chunk_success(self):
         status = 0
+        failed_jobs = []
         for job_name, info_list in self.slurm_info.items():
             for info in info_list:
                 if info['State'] != 'COMPLETED':
+                    failed_jobs.append(job_name)
                     status += 1
 
         if status > 0:
-            raise RuntimeError("One or more job failed")
+            raise RuntimeError(f"The following job(s) failed: {failed_jobs}")
 
 
 class InvalidWorkflowType(Exception):
