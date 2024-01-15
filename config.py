@@ -480,7 +480,7 @@ class Config():
         """Create an sbatch script to launch jobs individually.
         Use run_chain.py arguments to submit those jobs.
         """
-        walltime = self.walltime[job_name] if self.walltime[job_name] else "00:30:00" 
+        walltime = getattr(self, 'walltime', {}).get(job_name, "00:30:00")
         script_lines = [
             '#!/usr/bin/env bash',
             f'#SBATCH --job-name="{job_name}_{self.chunk_id}"',
