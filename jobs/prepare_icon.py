@@ -46,8 +46,6 @@ def set_cfg_variables(cfg):
 
     cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime('%Y%m%d_%H')
 
-    cfg.job_ids['current']['prepare_icon'] = []
-
 
 def main(cfg):
     """
