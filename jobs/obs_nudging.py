@@ -3,7 +3,6 @@
 
 import os
 import logging
-import shutil
 
 from datetime import timedelta
 from . import tools

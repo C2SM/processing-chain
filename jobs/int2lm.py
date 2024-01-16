@@ -143,7 +143,7 @@ def main(cfg):
                            cfg.int2lm['runjob_filename'])) as input_file:
         int2lm_runscript = input_file.read()
 
-    script = (cfg.int2lm_work / 'run_int2lm.job')
+    script = (cfg.int2lm_run / 'run_int2lm.job')
     with open(script, "w") as outf:
         outf.write(
             int2lm_runscript.format(cfg=cfg,

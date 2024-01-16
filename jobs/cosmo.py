@@ -188,7 +188,7 @@ def main(cfg):
     with open(runscript_file) as input_file:
         cosmo_runscript = input_file.read()
 
-    script = (cfg.int2lm_work / 'run_cosmo.job')
+    script = (cfg.cosmo_run / 'run_cosmo.job')
     with open(script, "w") as outf:
         outf.write(
             cosmo_runscript.format(cfg=cfg,
