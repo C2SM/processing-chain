@@ -19,7 +19,6 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    tools.check_model(cfg, 'cosmo-ghg')
     prepare_icon.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("biofluxes")
