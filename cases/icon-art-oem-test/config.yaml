@@ -21,6 +21,13 @@ filename_format: <output_filename>_DOM<physdom>_<ddhhmmss>
 lateral_boundary_grid_order: lateral_boundary
 art_input_folder: ./input/icon-art-oem/ART
 
+walltime:
+    prepare_icon: '00:10:00'
+    icontools: '00:30:00'
+    prepare_art: '00:10:00'
+    prepare_art_oem: '00:10:00'
+    icon: '00:30:00'
+
 meteo:
     dir: ./input/meteo
     prefix: ifs_

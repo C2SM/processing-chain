@@ -28,6 +28,11 @@ species_global_nudging: False
 species2nudge: []
 nudging_step: 6
 
+walltime:
+    prepare_icon: '00:15:00'
+    prepare_art_global: '00:10:00'
+    icon: '00:05:00'
+
 era5:
     inicond: False
     global_nudging: False
@@ -67,7 +72,6 @@ icon:
     species_nudgingjob: icon_species_nudging.sh
     output_writing_step: 6
     compute_queue: normal
-    walltime: '00:10:00'
     np_tot: 4
     np_io: 1
     np_restart: 1

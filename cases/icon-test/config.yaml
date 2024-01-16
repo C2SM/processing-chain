@@ -18,6 +18,11 @@ output_filename: NWP_LAM
 filename_format: <output_filename>_DOM<physdom>_<ddhhmmss>
 lateral_boundary_grid_order: lateral_boundary
 
+walltime:
+    prepare_icon: '00:10:00'
+    icontools: '00:30:00'
+    icon: '00:30:00'
+
 meteo:
     dir: ./input/meteo
     prefix: ifs_
@@ -44,7 +49,6 @@ icon:
     binary_file: ./ext/icon/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
-    walltime: '00:10:00'
     np_tot: 8
     np_io: 1
     np_restart: 1
