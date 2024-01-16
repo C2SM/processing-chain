@@ -61,14 +61,12 @@ def main(cfg):
     # Write run script (run_icon.job)
     template = (cfg.case_path / cfg.icon_runjob_filename).read_text()
     script_str = template.format(cfg=cfg,
-                                 inidata_filename=inidata_filename,
-                                 logfile=cfg.logfile,
-                                 logfile_finish=cfg.logfile_finish)
+                                 inidata_filename=inidata_filename)
     script = (cfg.icon_work / 'run_icon.job')
     script.write_text(script_str)
 
     # Submit run script
-    cfg.submit('icon', script, logfile=cfg.logfile)
+    cfg.submit('icon', script)
 
     if BASIC_PYTHON_JOB:
         cfg.finish_time_logging("icon", launch_time)
