@@ -518,7 +518,8 @@ class Config():
             dep_str = ':'.join(map(str, dep_ids))
             script_lines = [
                 '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
-                '#SBATCH --nodes=1', f'#SBATCH --output={log_file}',
+                '#SBATCH --nodes=1', '#SBATCH --time=00:01:00',
+                f'#SBATCH --output={log_file}',
                 f'#SBATCH --account={self.compute_account}',
                 f'#SBATCH --partition={self.compute_queue}',
                 f'#SBATCH --constraint={self.constraint}',
