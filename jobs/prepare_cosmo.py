@@ -3,6 +3,7 @@
 
 from pathlib import Path
 import logging
+import csv
 from datetime import timedelta
 from . import tools
 
@@ -12,6 +13,40 @@ BASIC_PYTHON_JOB = True
 def set_cfg_variables(cfg):
     cfg.int2lm_root = cfg.chain_root / 'int2lm'
     cfg.int2lm_input = cfg.int2lm_root / 'input'
+    cfg.cosmo_base = cfg.chain_root / 'cosmo'
+    cfg.cosmo_input = cfg.chain_root / 'cosmo' / 'input'
+    cfg.cosmo_run = cfg.chain_root / 'cosmo' / 'run'
+    cfg.cosmo_output = cfg.chain_root / 'cosmo' / 'output'
+    cfg.cosmo_output_reduced = cfg.chain_root / 'cosmo' / 'output_reduced'
+
+    # Number of tracers
+    if 'tracers' in cfg.workflow['features']:
+        tracer_csvfile = cfg.chain_src_dir / 'cases' / cfg.casename / 'cosmo_tracers.csv'
+        if tracer_csvfile.is_file():
+            with open(tracer_csvfile, 'r') as csv_file:
+                reader = csv.DictReader(csv_file, delimiter=',')
+                reader = [r for r in reader if r[''] != '#']
+                cfg.in_tracers = len(reader)
+        else:
+            raise FileNotFoundError(f"File not found: {tracer_csvfile}")
+
+        # tracer_start namelist parameter for spinup simulation
+        if hasattr(cfg, 'spinup'):
+            if cfg.first_one:
+                cfg.tracer_start = 0
+            else:
+                cfg.tracer_start = cfg.spinup
+        else:
+            cfg.tracer_start = 0
+
+    # asynchronous I/O
+    if hasattr(cfg, 'cfg.cosmo_np_io'):
+        if cfg.cosmo_np_io == 0:
+            cfg.lasync_io = '.FALSE.'
+            cfg.num_iope_percomm = 0
+        else:
+            cfg.lasync_io = '.TRUE.'
+            cfg.num_iope_percomm = 1
 
 
 def main(cfg):

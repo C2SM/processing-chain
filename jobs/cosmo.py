@@ -4,49 +4,11 @@
 import logging
 import os
 import subprocess
-import csv
 from .tools import write_cosmo_input_ghg
-from . import tools
+from . import tools, prepare_cosmo
 from datetime import datetime, timedelta
 
 BASIC_PYTHON_JOB = True
-
-
-def set_cfg_variables(cfg):
-    cfg.cosmo_base = cfg.chain_root / 'cosmo'
-    cfg.cosmo_input = cfg.chain_root / 'cosmo' / 'input'
-    cfg.cosmo_run = cfg.chain_root / 'cosmo' / 'run'
-    cfg.cosmo_output = cfg.chain_root / 'cosmo' / 'output'
-    cfg.cosmo_output_reduced = cfg.chain_root / 'cosmo' / 'output_reduced'
-
-    # Number of tracers
-    if 'tracers' in cfg.workflow['features']:
-        tracer_csvfile = cfg.chain_src_dir / 'cases' / cfg.casename / 'cosmo_tracers.csv'
-        if tracer_csvfile.is_file():
-            with open(tracer_csvfile, 'r') as csv_file:
-                reader = csv.DictReader(csv_file, delimiter=',')
-                reader = [r for r in reader if r[''] != '#']
-                cfg.in_tracers = len(reader)
-        else:
-            raise FileNotFoundError(f"File not found: {tracer_csvfile}")
-
-        # tracer_start namelist parameter for spinup simulation
-        if hasattr(cfg, 'spinup'):
-            if cfg.first_one:
-                cfg.tracer_start = 0
-            else:
-                cfg.tracer_start = cfg.spinup
-        else:
-            cfg.tracer_start = 0
-
-    # asynchronous I/O
-    if hasattr(cfg, 'cfg.cosmo_np_io'):
-        if cfg.cosmo_np_io == 0:
-            cfg.lasync_io = '.FALSE.'
-            cfg.num_iope_percomm = 0
-        else:
-            cfg.lasync_io = '.TRUE.'
-            cfg.num_iope_percomm = 1
 
 
 def main(cfg):
@@ -78,7 +40,7 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    set_cfg_variables(cfg)
+    prepare_cosmo.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("cosmo")
 
@@ -101,8 +63,6 @@ def main(cfg):
         tools.create_dir(ini_dir, "cosmo_input_initial")
         startfiletime = datetime.strptime(cfg.laf_startfile[-10:], "%Y%m%d%H")
         if cfg.startdate_sim >= startfiletime:
-            starttime_last = cfg.startdate_sim - timedelta(
-                hours=cfg.restart_step)
             work_root = os.path.dirname(os.path.dirname(cfg.chain_root))
             last_output_path = os.path.join(work_root, cfg.casename,
                                             cfg.chunk_id_prev, 'cosmo',

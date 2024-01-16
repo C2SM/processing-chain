@@ -4,7 +4,7 @@
 import os
 import logging
 
-from . import tools
+from . import tools, prepare_cosmo
 
 BASIC_PYTHON_JOB = True
 
@@ -18,6 +18,7 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
+    prepare_cosmo.set_cfg_variables()
     tools.change_logfile(cfg.logfile)
     launch_time = cfg.init_time_logging("online_vprm")
     dest_modis = 'modis.nc'
