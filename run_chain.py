@@ -226,7 +226,6 @@ def run_chunk(cfg, force, resume):
     if cfg.is_async:
         # Empty curent job ids
         cfg.job_ids['current'] = {}
-        print(cfg.job_ids)
 
         # Submit current chunk
         for job_name in cfg.jobs:
@@ -249,7 +248,6 @@ def run_chunk(cfg, force, resume):
                     cfg.submit(job_name, script)
                 else:
                     job.main(cfg)
-            print(cfg.job_ids)
 
         # Return if very first chunk
         if cfg.job_ids['previous']:
@@ -258,8 +256,6 @@ def run_chunk(cfg, force, resume):
 
             # Current chunk Slurm summary
             cfg.get_slurm_summary()
-            print(cfg.job_ids)
-            print(cfg.slurm_info)
             cfg.print_slurm_summary()
 
             # Check for success
