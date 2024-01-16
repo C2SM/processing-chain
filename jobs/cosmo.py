@@ -198,6 +198,6 @@ def main(cfg):
                                    logfile_finish=cfg.logfile_finish))
 
     # Submit job
-    cfg.submit('cosmo', script)    
+    cfg.submit('cosmo', script)
 
     cfg.finish_time_logging("cosmo", launch_time)
