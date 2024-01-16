@@ -51,11 +51,11 @@ class Config():
         self.set_account()
 
         self.chain_src_dir = Path.cwd()
-        self.case_path = self.chain_src_dir / 'cases' / casename
+        self.case_path = self.chain_src_dir / 'cases' / self.casename
         self.work_root = self.chain_src_dir / 'work'
 
         # User-defined attributes from config file
-        self.load_config_file(casename)
+        self.load_config_file()
 
         # Set case root
         self.case_root = self.work_root / self.casename
@@ -66,16 +66,11 @@ class Config():
         # Specific settings based on the node type ('gpu' or 'mc')
         self.set_node_info()
 
-    def load_config_file(self, casename):
+    def load_config_file(self):
         """Load configuration settings from a YAML file and set them as attributes.
 
         This method reads the configuration settings from a YAML file located in
         the 'cases/casename' directory and sets them as attributes of the instance.
-
-        Parameters
-        ----------
-        casename : str
-            Name of the folder in 'cases/' where the configuration files are stored.
 
         Returns
         -------
@@ -94,17 +89,17 @@ class Config():
         existing case directories. The method directly assigns values from the
         configuration file to instance attributes for easy access.
         """
-        cfg_file = Path('cases', casename, 'config.yaml').resolve()
+        cfg_file = Path('cases', self.casename, 'config.yaml').resolve()
 
         if not cfg_file.is_file():
             all_cases = [
                 path.name for path in os.scandir('cases') if path.is_dir()
             ]
-            closest_name = min([(tools.levenshtein(casename, name), name)
+            closest_name = min([(tools.levenshtein(self.casename, name), name)
                                 for name in all_cases],
                                key=lambda x: x[0])[1]
             raise FileNotFoundError(
-                f"Case-directory '{casename}' not found, did you mean '{closest_name}'?"
+                f"Case-directory '{self.casename}' not found, did you mean '{closest_name}'?"
             )
 
         try:
@@ -117,11 +112,6 @@ class Config():
         # Directly assign values to instance attributes
         for key, value in cfg_data.items():
             setattr(self, key, value)
-
-        # rename the workflow attribute to avoid name clash
-        self.workflow_name = self.workflow
-
-        return self
 
     def set_account(self):
         """Set the compute account based on user information.
@@ -193,6 +183,7 @@ class Config():
         """set workflow and async attr, initiate job ids dict"""
         # If a workflow name is specified, load from workflows.yaml
         if isinstance(self.workflow, str):
+            self.workflow_name = self.workflow
             with open('workflows.yaml') as file:
                 workflows = yaml.safe_load(file)
             self.workflow = workflows[self.workflow_name]
