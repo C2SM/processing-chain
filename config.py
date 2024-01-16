@@ -471,10 +471,12 @@ class Config():
         """Create an sbatch script to launch jobs individually.
         Use run_chain.py arguments to submit those jobs.
         """
+        walltime = getattr(self, 'walltime', {}).get(job_name, "00:30:00")
         script_lines = [
             '#!/usr/bin/env bash',
             f'#SBATCH --job-name="{job_name}_{self.chunk_id}"',
             '#SBATCH --nodes=1',
+            f'#SBATCH --time={walltime}',
             f'#SBATCH --output={self.logfile}',
             '#SBATCH --open-mode=append',
             f'#SBATCH --account={self.compute_account}',
@@ -482,8 +484,6 @@ class Config():
             f'#SBATCH --constraint={self.constraint}',
             '',
             f'cd {self.chain_src_dir}',
-            'eval "$(conda shell.bash hook)"',
-            'conda activate proc-chain',
             f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
             '',
         ]

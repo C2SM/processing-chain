@@ -24,6 +24,9 @@ output_filename: NWP_LAM
 filename_format: <output_filename>_DOM<physdom>_<ddhhmmss>
 lateral_boundary_grid_order: lateral_boundary
 
+walltime:
+    icon: '00:30:00'
+
 meteo:
     dir: ./input/meteo
     prefix: ifs_
