@@ -143,8 +143,8 @@ def main(cfg):
                            cfg.int2lm['runjob_filename'])) as input_file:
         int2lm_runscript = input_file.read()
 
-    output_file = os.path.join(int2lm_run, "run.job")
-    with open(output_file, "w") as outf:
+    script = (cfg.int2lm_work / 'run_int2lm.job')
+    with open(script, "w") as outf:
         outf.write(
             int2lm_runscript.format(cfg=cfg,
                                     **cfg.int2lm,
@@ -157,11 +157,6 @@ def main(cfg):
                                     logfile_finish=cfg.logfile_finish))
 
     # Submit job
-    result = subprocess.run(
-        ["sbatch", "--wait",
-         os.path.join(int2lm_run, "run.job")])
-    exitcode = result.returncode
-    if exitcode != 0:
-        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+    cfg.submit('int2lm', script)
 
     cfg.finish_time_logging("int2lm", launch_time)

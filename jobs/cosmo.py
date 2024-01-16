@@ -188,8 +188,8 @@ def main(cfg):
     with open(runscript_file) as input_file:
         cosmo_runscript = input_file.read()
 
-    output_file = os.path.join(cfg.cosmo_run, "run.job")
-    with open(output_file, "w") as outf:
+    script = (cfg.int2lm_work / 'run_cosmo.job')
+    with open(script, "w") as outf:
         outf.write(
             cosmo_runscript.format(cfg=cfg,
                                    **cfg.cosmo,
@@ -197,11 +197,7 @@ def main(cfg):
                                    logfile=cfg.logfile,
                                    logfile_finish=cfg.logfile_finish))
 
-    result = subprocess.run(
-        ["sbatch", "--wait",
-         os.path.join(cfg.cosmo_run, 'run.job')])
-    exitcode = result.returncode
-    if exitcode != 0:
-        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+    # Submit job
+    cfg.submit('cosmo', script)    
 
     cfg.finish_time_logging("cosmo", launch_time)
