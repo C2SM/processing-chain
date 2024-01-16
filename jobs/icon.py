@@ -60,8 +60,7 @@ def main(cfg):
 
     # Write run script (run_icon.job)
     template = (cfg.case_path / cfg.icon_runjob_filename).read_text()
-    script_str = template.format(cfg=cfg,
-                                 inidata_filename=inidata_filename)
+    script_str = template.format(cfg=cfg, inidata_filename=inidata_filename)
     script = (cfg.icon_work / 'run_icon.job')
     script.write_text(script_str)
 
