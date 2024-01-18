@@ -9,6 +9,8 @@ import pytz
 from datetime import datetime
 from . import tools, prepare_cosmo
 
+BASIC_PYTHON_JOB = True
+
 
 def set_cfg_variables(cfg):
     cfg.int2lm_run = cfg.chain_root / 'int2lm' / 'run'
