@@ -4,6 +4,7 @@
 import logging
 import os
 import subprocess
+import pathlib
 
 from datetime import datetime
 from .tools import write_cosmo_input_ghg
@@ -189,6 +190,7 @@ def main(cfg):
     with open(runscript_file) as input_file:
         cosmo_runscript = input_file.read()
 
+    Path(cfg.cosmo_run).mkdir(parents=True, exist_ok=True)
     script = (cfg.cosmo_run / 'run_cosmo.job')
     with open(script, "w") as outf:
         outf.write(
