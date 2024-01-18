@@ -488,7 +488,7 @@ class Config():
             '',
         ]
 
-        job_path = self.chain_root / 'job_scripts' 
+        job_path = self.chain_root / 'job_scripts'
         job_path.mkdir(parents=True, exist_ok=True)
         job_file = job_path / f'{job_name}.sh'
         with open(job_file, mode='w') as job_script:
