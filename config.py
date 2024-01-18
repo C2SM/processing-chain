@@ -488,7 +488,9 @@ class Config():
             '',
         ]
 
-        job_file = self.chain_root / f'{job_name}.sh'
+        job_path = self.chain_root / 'job_scripts' 
+        job_path.mkdir(parents=True, exist_ok=True)
+        job_file = job_path / f'{job_name}.sh'
         with open(job_file, mode='w') as job_script:
             job_script.write('\n'.join(script_lines))
 
