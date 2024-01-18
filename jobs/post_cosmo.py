@@ -6,7 +6,7 @@ import os
 import datetime
 from subprocess import call
 
-from . import tools, int2lm, cosmo
+from . import tools, prepare_cosmo
 
 BASIC_PYTHON_JOB = True
 
@@ -65,9 +65,8 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    int2lm.set_cfg_variables(cfg)
-    cosmo.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
+    prepare_cosmo.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("post_cosmo")
 
     runscript_path = os.path.join(cfg.cosmo_run, "post_cosmo.job")

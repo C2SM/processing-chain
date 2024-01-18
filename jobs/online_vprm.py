@@ -18,8 +18,8 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    prepare_cosmo.set_cfg_variables()
     tools.change_logfile(cfg.logfile)
+    prepare_cosmo.set_cfg_variables()
     launch_time = cfg.init_time_logging("online_vprm")
     dest_modis = 'modis.nc'
     dest_vegetation = 'vegetation.nc'

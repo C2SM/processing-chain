@@ -4,9 +4,10 @@
 import logging
 import os
 import subprocess
+
+from datetime import datetime
 from .tools import write_cosmo_input_ghg
 from . import tools, prepare_cosmo
-from datetime import datetime, timedelta
 
 BASIC_PYTHON_JOB = True
 
@@ -40,8 +41,8 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    prepare_cosmo.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
+    prepare_cosmo.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("cosmo")
 
     logging.info("Setup the namelist for a COSMO tracer run and "

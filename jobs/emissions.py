@@ -4,7 +4,7 @@
 import os
 import logging
 
-from . import tools, prepare_icon
+from . import tools, prepare_cosmo
 
 BASIC_PYTHON_JOB = True
 
@@ -32,8 +32,8 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    prepare_icon.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
+    prepare_cosmo.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("emissions")
     dest_prefix = "emis_"
 
