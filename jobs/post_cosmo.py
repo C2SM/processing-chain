@@ -119,7 +119,7 @@ def main(cfg):
         # Wait for Cosmo to finish first
         tools.check_job_completion(cfg.log_finished_dir, "cosmo")
 
-    os.makedirs(cfg.cosmo_run)
+    os.makedirs(cfg.cosmo_run, exist_ok=True)
     script = (cfg.cosmo_run / 'run_post_cosmo.job')
     with open(script, "w") as outf:
         outf.write(runscript_content)
