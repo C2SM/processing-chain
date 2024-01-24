@@ -60,7 +60,7 @@ def set_cfg_variables(cfg, model_cfg):
         setattr(cfg, 'icon_input_icbc_prev',
                 os.path.join(cfg.chain_root_prev, 'icon', 'input', 'icbc'))
 
-        if 'input_files' in dir(cfg):
+        if hasattr(cfg, 'input_files'):
             cfg.input_files_scratch = {}
             for varname in cfg.input_files:
                 cfg.input_files_scratch[varname] = os.path.join(
@@ -149,7 +149,7 @@ def main(cfg, model_cfg):
         #-----------------------------------------------------
         # Copy input files
         #-----------------------------------------------------
-        if 'input_files' in dir(cfg):
+        if hasattr(cfg, 'input_files'):
             for varname in cfg.input_files:
                 varname_scratch = f'{varname}_scratch'
                 tools.copy_file(cfg.input_files[varname],
