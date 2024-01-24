@@ -60,10 +60,12 @@ def set_cfg_variables(cfg, model_cfg):
         setattr(cfg, 'icon_input_icbc_prev',
                 os.path.join(cfg.chain_root_prev, 'icon', 'input', 'icbc'))
 
-        cfg.input_files_scratch = {}
-        for varname in cfg.input_files:
-            cfg.input_files_scratch[varname] = os.path.join(
-                cfg.icon_input, os.path.basename(cfg.input_files[varname]))
+        if 'input_files' in dir(cfg):
+            cfg.input_files_scratch = {}
+            for varname in cfg.input_files:
+                cfg.input_files_scratch[varname] = os.path.join(
+                    cfg.icon_input, os.path.basename(cfg.input_files[varname]))
+
         cfg.create_vars_from_dicts()
 
         cfg.ini_datetime_string = cfg.startdate.strftime('%Y-%m-%dT%H:00:00Z')
@@ -132,7 +134,6 @@ def main(cfg, model_cfg):
     """
 
     cfg = set_cfg_variables(cfg, model_cfg)
-    #import pdb; pdb.set_trace()
 
     if cfg.model.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
@@ -148,12 +149,17 @@ def main(cfg, model_cfg):
         #-----------------------------------------------------
         # Copy input files
         #-----------------------------------------------------
-        for varname in cfg.input_files:
-            varname_scratch = f'{varname}_scratch'
-            tools.copy_file(cfg.input_files[varname],
-                            cfg.input_files_scratch[varname],
-                            output_log=True)
+        if 'input_files' in dir(cfg):
+            for varname in cfg.input_files:
+                varname_scratch = f'{varname}_scratch'
+                tools.copy_file(cfg.input_files[varname],
+                                cfg.input_files_scratch[varname],
+                                output_log=True)
 
+
+        #-----------------------------------------------------
+        # what follows (until COSMO) is only ICON-ART related
+        #-----------------------------------------------------
         if cfg.model == 'icon-art-global':
             # -- Download ERA5 data and create the inicond file
             if cfg.era5_inicond and cfg.lrestart == '.FALSE.':
@@ -314,7 +320,7 @@ def main(cfg, model_cfg):
                                                    stdout=subprocess.PIPE)
                         process.communicate()
 
-        else:  # non-global ICON-ART
+        elif cfg.model in ['icon-art', 'icon-art-oem']:
             #-----------------------------------------------------
             # Create LBC datafile lists (each at 00 UTC and others)
             #-----------------------------------------------------
