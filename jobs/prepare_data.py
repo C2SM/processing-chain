@@ -93,7 +93,7 @@ def set_cfg_variables(cfg, model_cfg):
 
 def main(cfg, model_cfg):
     """
-    **ICON** 
+    **ICON**
 
      Create necessary directories ``cfg.icon_input_icbc``
      and ''cfg.icon_work''
@@ -102,7 +102,7 @@ def main(cfg, model_cfg):
 
      All runscripts specified in ``cfg.icontools_runjobs`` are submitted.
 
-     The meteo files are read-in from the original input directory 
+     The meteo files are read-in from the original input directory
      (``cfg.input_root_meteo``) and the remapped meteo files are
      saved in the input folder on scratch (``cfg.icon_input/icbc``).
 
@@ -117,10 +117,10 @@ def main(cfg, model_cfg):
      from project directory (``cfg.meteo['dir']/cfg.meteo['prefix']YYYYMMDDHH``) to
      int2lm input folder on scratch (``cfg.int2lm_input/meteo``).
 
-     For nested runs (meteo files are cosmo-output: ``cfg.meteo['prefix'] == 
+     For nested runs (meteo files are cosmo-output: ``cfg.meteo['prefix'] ==
      'lffd'``), also the ``*c.nc``-file with constant parameters is copied.
 
-    
+
     Parameters
     ----------
     startdate : datetime-object
@@ -132,6 +132,7 @@ def main(cfg, model_cfg):
     """
 
     cfg = set_cfg_variables(cfg, model_cfg)
+    #import pdb; pdb.set_trace()
 
     if cfg.model.startswith('icon'):
         logging.info('ICON input data (IC/BC)')
