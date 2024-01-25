@@ -782,8 +782,9 @@ if __name__ == '__main__':
         # Convert relative to absolute paths
         cfg.convert_paths_to_absolute()
 
-        # Set restart step in hours
-        cfg.set_restart_step_hours()
+        if hasattr(cfg, 'restart_step'):
+            # Set restart step in hours
+            cfg.set_restart_step_hours()
 
         # Print config before duplication of dict variables
         cfg.print_config()
@@ -800,7 +801,7 @@ if __name__ == '__main__':
         print(f"Starting chain for case {casename} and model {cfg.model}")
 
         # Check for restart compatibility and spinup
-        if 'restart' in model_cfg['models'][cfg.model]['features']:
+        if ('restart' in model_cfg['models'][cfg.model]['features']) and hasattr(cfg, 'restart_step'):
             if hasattr(cfg, 'spinup'):
                 print("Using spin-up restarts.")
                 restart_runs_spinup(work_root=cfg.work_root,
