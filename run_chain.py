@@ -821,6 +821,7 @@ if __name__ == '__main__':
         else:
             print("No restarts are used.")
             run_chain(work_root=cfg.work_root,
+                      model_cfg=model_cfg,
                       cfg=cfg,
                       startdate_sim=cfg.startdate,
                       enddate_sim=cfg.enddate,
