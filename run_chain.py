@@ -455,7 +455,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
 
     # Set forecast time
     cfg.forecasttime = (cfg.enddate_sim -
-                        cfg.startdate_sim).total_seconds() / 3600
+                        cfg.startdate_sim).total_seconds() // 3600
 
     # String variables for startdate_sim
     cfg.startdate_sim_yyyymmddhh = startdate_sim.strftime('%Y%m%d%H')
