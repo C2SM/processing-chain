@@ -495,7 +495,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         # No restart for spinup simulations (= default values for no restart)
         cfg.cosmo_restart_out = ''
         cfg.cosmo_restart_in = ''
-    elif 'restart' in model_cfg['models'][cfg.model]['features']:
+    elif ('restart' in model_cfg['models'][cfg.model]['features']) and hasattr(cfg, 'restart_step'):
         cfg.startdate_sim_prev = cfg.startdate_sim - timedelta(
             hours=cfg.restart_step_hours)
         cfg.enddate_sim_prev = cfg.enddate_sim - timedelta(
@@ -514,6 +514,10 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
                                              'restart')
         cfg.cosmo_restart_in = os.path.join(cfg.chain_root_prev, 'cosmo',
                                             'restart')
+    else:
+        # No restart required (= default values for no restart)
+        cfg.cosmo_restart_out = ''
+        cfg.cosmo_restart_in = ''
 
     # Check constraint
     if hasattr(cfg, 'constraint'):
