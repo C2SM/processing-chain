@@ -251,7 +251,7 @@ def run_chunk(cfg, force, resume):
 
         # Wait for previous chunk jobs, monitor them and cycle info
         cfg.cycle()
-            
+
     else:
         # run jobs (if required)
         for job in cfg.jobs:

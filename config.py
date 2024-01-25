@@ -559,7 +559,6 @@ class Config():
             self.get_previous_slurm_summary()
             self.print_previous_slurm_summary()
             self.check_previous_chunk_success()
-        
 
     @staticmethod
     def get_job_info(job_id,
@@ -587,10 +586,11 @@ class Config():
             return info_str.decode()
 
     def get_previous_slurm_summary(self,
-                          info_keys=[
-                              'JobName', 'JobID', 'Partition', 'NNodes',
-                              'State', 'Start', 'End', 'Elapsed'
-                          ]):
+                                   info_keys=[
+                                       'JobName', 'JobID', 'Partition',
+                                       'NNodes', 'State', 'Start', 'End',
+                                       'Elapsed'
+                                   ]):
         """get slurm info summary or all jobs of previous chunk"""
 
         # Store requested keys in object
