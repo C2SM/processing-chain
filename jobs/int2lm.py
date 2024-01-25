@@ -140,7 +140,7 @@ def main(cfg, model_cfg):
 
     # Int2lm processing always starts at hstart=0, thus modifying inidate
     hstart_int2lm = 0
-    hstop_int2lm = cfg.forecasttime
+    hstop_int2lm = cfg.forecasthours
 
     output_file = os.path.join(int2lm_run, "INPUT")
     with open(output_file, "w") as outf:
