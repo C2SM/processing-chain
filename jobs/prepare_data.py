@@ -156,7 +156,6 @@ def main(cfg, model_cfg):
                                 cfg.input_files_scratch[varname],
                                 output_log=True)
 
-
         #-----------------------------------------------------
         # what follows (until COSMO) is only ICON-ART related
         #-----------------------------------------------------

@@ -454,8 +454,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
     cfg.enddate_sim = enddate_sim
 
     # Set forecast time
-    cfg.forecasttime = (cfg.enddate_sim -
-                        cfg.startdate_sim).total_seconds()
+    cfg.forecasttime = (cfg.enddate_sim - cfg.startdate_sim).total_seconds()
     cfg.forecasthours = int(cfg.forecasttime / 3600)
 
     # String variables for startdate_sim
@@ -495,7 +494,8 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
         # No restart for spinup simulations (= default values for no restart)
         cfg.cosmo_restart_out = ''
         cfg.cosmo_restart_in = ''
-    elif ('restart' in model_cfg['models'][cfg.model]['features']) and hasattr(cfg, 'restart_step'):
+    elif ('restart' in model_cfg['models'][cfg.model]['features']) and hasattr(
+            cfg, 'restart_step'):
         cfg.startdate_sim_prev = cfg.startdate_sim - timedelta(
             hours=cfg.restart_step_hours)
         cfg.enddate_sim_prev = cfg.enddate_sim - timedelta(
@@ -806,7 +806,9 @@ if __name__ == '__main__':
         print(f"Starting chain for case {casename} and model {cfg.model}")
 
         # Check for restart compatibility and spinup
-        if ('restart' in model_cfg['models'][cfg.model]['features']) and hasattr(cfg, 'restart_step'):
+        if ('restart'
+                in model_cfg['models'][cfg.model]['features']) and hasattr(
+                    cfg, 'restart_step'):
             if hasattr(cfg, 'spinup'):
                 print("Using spin-up restarts.")
                 restart_runs_spinup(work_root=cfg.work_root,
