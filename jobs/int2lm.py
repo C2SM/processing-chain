@@ -4,15 +4,12 @@
 import os
 import logging
 import shutil
-import subprocess
 import pytz
+
 from datetime import datetime
 from . import tools, prepare_cosmo
 
-
-def set_cfg_variables(cfg):
-    cfg.int2lm_run = cfg.chain_root / 'int2lm' / 'run'
-    cfg.int2lm_output = cfg.chain_root / 'int2lm' / 'output'
+BASIC_PYTHON_JOB = True
 
 
 def main(cfg):
@@ -46,9 +43,8 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    prepare_cosmo.set_cfg_variables(cfg)
-    set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
+    prepare_cosmo.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("int2lm")
 
     # Total number of processes

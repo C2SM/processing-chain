@@ -51,6 +51,9 @@ cosmo-ghg:
         - post_int2lm
       previous:
         - cosmo
+    post_cosmo:
+      current:
+        - cosmo
 
 cosmo-art:
   features:

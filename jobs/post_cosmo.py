@@ -6,9 +6,9 @@ import os
 import datetime
 from subprocess import call
 
-from . import tools, int2lm, cosmo
+from . import tools, prepare_cosmo
 
-BASIC_PYTHON_JOB = True
+BASIC_PYTHON_JOB = False
 
 
 def logfile_header_template():
@@ -65,12 +65,10 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    int2lm.set_cfg_variables(cfg)
-    cosmo.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
+    prepare_cosmo.set_cfg_variables(cfg)
     launch_time = cfg.init_time_logging("post_cosmo")
 
-    runscript_path = os.path.join(cfg.cosmo_run, "post_cosmo.job")
     copy_path = os.path.join(
         cfg.post_cosmo['output_root'],
         cfg.startdate_sim_yyyymmddhh + "_" + cfg.enddate_sim_yyyymmddhh)
@@ -117,29 +115,19 @@ def main(cfg):
         logs_src=str(cfg.log_finished_dir).rstrip('/'),
         logs_dest=logs_path.rstrip('/'))
 
-    # Wait for Cosmo to finish first
-    tools.check_job_completion(cfg.log_finished_dir, "cosmo")
+    if not cfg.is_async:
+        # Wait for Cosmo to finish first
+        tools.check_job_completion(cfg.log_finished_dir, "cosmo")
 
-    with open(runscript_path, "w") as script:
-        script.write(runscript_content)
+    os.makedirs(cfg.cosmo_run, exist_ok=True)
+    script = (cfg.cosmo_run / 'run_post_cosmo.job')
+    with open(script, "w") as outf:
+        outf.write(runscript_content)
 
     logging.info("Submitting the copy job to the xfer queue")
     logging.info("Make sure you have the module 'xalt' unloaded!")
 
-    sbatch_wait = getattr(cfg, "wait", "True")
-
-    if sbatch_wait:
-        exitcode = call(["sbatch", "--wait", runscript_path])
-        logging.info(logfile_header_template().format(
-            "ENDS", str(datetime.datetime.today())))
-
-        # copy own logfile aswell
-        tools.copy_file(cfg.logfile, os.path.join(copy_path, "logs/"))
-
-    else:
-        exitcode = call(["sbatch", runscript_path])
-
-    if exitcode != 0:
-        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+    # Submit job
+    cfg.submit('post_cosmo', script)
 
     cfg.finish_time_logging("post_cosmo", launch_time)
