@@ -606,7 +606,6 @@ class Config():
                                       parse=True))
 
     def print_previous_slurm_summary(self):
-
         # Width of printed slurm piece of information
         info_width = {
             'JobName': 10,
@@ -633,13 +632,12 @@ class Config():
         line_format = " ".join(formats)
 
         with self.log_file.open('a') as f:
-            f.write(f"Job summary for chunk {self.previous_chunk_id}")
-            f.write('')
+            f.write(f"Job summary for chunk {self.previous_chunk_id}\n")
             f.write(table_header)
             for job_name in self.jobs:
                 for info in self.slurm_info[job_name]:
                     f.write(line_format.format(**info))
-            f.write('')
+                    f.write('\n')
 
     def check_previous_chunk_success(self):
         status = 0
