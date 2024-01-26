@@ -180,7 +180,6 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("octe")
     dest_dir = join(cfg.cosmo_input, 'octe')
     create_dir_and_copy_input(dest_dir=dest_dir,
                               lambdas_src=cfg.octe_lambdas,
@@ -191,4 +190,3 @@ def main(cfg):
     logging.info("Starting to create BG-ensembles in " + cfg.int2lm_output)
     perturb_bgs_in_dir(cfg.octe_lambdas, cfg.int2lm_output)
     logging.info("Finished creating BG-ensembles")
-    cfg.finish_time_logging("octe", launch_time)

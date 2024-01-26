@@ -67,7 +67,6 @@ def main(cfg):
     """
     tools.change_logfile(cfg.logfile)
     prepare_cosmo.set_cfg_variables(cfg)
-    launch_time = cfg.init_time_logging("post_cosmo")
 
     copy_path = os.path.join(
         cfg.post_cosmo['output_root'],
@@ -130,4 +129,3 @@ def main(cfg):
     # Submit job
     cfg.submit('post_cosmo', script)
 
-    cfg.finish_time_logging("post_cosmo", launch_time)

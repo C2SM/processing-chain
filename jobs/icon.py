@@ -36,7 +36,6 @@ def main(cfg):
     prepare_icon.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
     if BASIC_PYTHON_JOB:
-        launch_time = cfg.init_time_logging("icon")
 
     logging.info("Setup the namelist for an ICON run and "
                  "submit the job to the queue")
@@ -68,4 +67,3 @@ def main(cfg):
     cfg.submit('icon', script)
 
     if BASIC_PYTHON_JOB:
-        cfg.finish_time_logging("icon", launch_time)

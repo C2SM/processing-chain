@@ -29,7 +29,6 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("obs_nudging")
     dest_dir = os.path.join(cfg.cosmo_input, "obs_nudging")
     tools.create_dir(dest_dir, "obs nudging input")
 
@@ -60,4 +59,3 @@ def main(cfg):
 
     logging.info("Copied blacklist-file to {}".format(dest_dir))
 
-    cfg.finish_time_logging("obs_nudging", launch_time)

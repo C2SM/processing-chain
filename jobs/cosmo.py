@@ -44,7 +44,6 @@ def main(cfg):
     """
     tools.change_logfile(cfg.logfile)
     prepare_cosmo.set_cfg_variables(cfg)
-    launch_time = cfg.init_time_logging("cosmo")
 
     logging.info("Setup the namelist for a COSMO tracer run and "
                  "submit the job to the queue")
@@ -203,4 +202,3 @@ def main(cfg):
     # Submit job
     cfg.submit('cosmo', script)
 
-    cfg.finish_time_logging("cosmo", launch_time)

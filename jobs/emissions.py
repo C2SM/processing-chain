@@ -34,7 +34,6 @@ def main(cfg):
     """
     tools.change_logfile(cfg.logfile)
     prepare_cosmo.set_cfg_variables(cfg)
-    launch_time = cfg.init_time_logging("emissions")
     dest_prefix = "emis_"
 
     if not isinstance(cfg.emissions['dir'], list):
@@ -72,4 +71,3 @@ def main(cfg):
             if cfg.workflow_name.startswith('cosmo'):
                 tools.string2char.main(dest_path)
 
-    cfg.finish_time_logging("emissions", launch_time)

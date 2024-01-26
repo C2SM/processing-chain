@@ -45,7 +45,6 @@ def main(cfg):
     """
     tools.change_logfile(cfg.logfile)
     prepare_cosmo.set_cfg_variables(cfg)
-    launch_time = cfg.init_time_logging("int2lm")
 
     # Total number of processes
     np_tot = cfg.int2lm['np_x'] * cfg.int2lm['np_y']
@@ -155,4 +154,3 @@ def main(cfg):
     # Submit job
     cfg.submit('int2lm', script)
 
-    cfg.finish_time_logging("int2lm", launch_time)

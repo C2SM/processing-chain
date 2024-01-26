@@ -19,7 +19,6 @@ def main(cfg):
     """
     prepare_icon.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("prepare_art")
 
     logging.info('Add Q (copy of QV) and/or PS to initial file')
     meteo_file = os.path.join(
@@ -55,4 +54,3 @@ def main(cfg):
             tools.rename_file(merged_file, meteo_file)
     logging.info('OK')
 
-    cfg.finish_time_logging("prepare_art", launch_time)

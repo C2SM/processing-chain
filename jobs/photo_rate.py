@@ -23,7 +23,6 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("photo_rate")
 
     logging.info("Copying photolysis-rate file from {} to {}".format(
         cfg.photo_rate_file,
@@ -39,4 +38,3 @@ def main(cfg):
 
     logging.info("Finished")
 
-    cfg.finish_time_logging("photo_rate", launch_time)

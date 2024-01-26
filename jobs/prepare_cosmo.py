@@ -78,7 +78,6 @@ def main(cfg):
     """
     set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("prepare_cosmo")
 
     logging.info('COSMO analysis data for IC/BC')
 
@@ -236,4 +235,3 @@ def main(cfg):
 
                     logging.info("OK")
 
-    cfg.finish_time_logging("prepare_cosmo", launch_time)

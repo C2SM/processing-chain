@@ -68,7 +68,6 @@ def main(cfg):
     """
     set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("prepare_icon")
 
     # Create directories
     tools.create_dir(cfg.icon_work, "icon_work")
@@ -97,4 +96,3 @@ def main(cfg):
     cfg.submit('prepare_icon', script)
     logging.info("OK")
 
-    cfg.finish_time_logging("prepare_icon", launch_time)

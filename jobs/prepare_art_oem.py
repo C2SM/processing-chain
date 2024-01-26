@@ -15,7 +15,6 @@ def main(cfg):
     """
     prepare_icon.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("prepare_art")
     logging.info('Merging IC and LBC')
 
     if cfg.input_files['oem_gridded_emissions_nc']:
@@ -86,4 +85,3 @@ def main(cfg):
             logging.info(
                 "Added chemical tracer to file {}".format(merged_file))
 
-    cfg.finish_time_logging("prepare_art_oem", launch_time)

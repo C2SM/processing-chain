@@ -716,7 +716,6 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes.
     """
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("check_output")
     date = dt.datetime.today()
 
     to_print = """check_output
@@ -866,7 +865,6 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
             raise RuntimeError('Logfile containing errors! See %s' %
                                cfg.logfile)
 
-    cfg.finish_time_logging("check_output", launch_time)
 
 
 if __name__ == '__main__':
