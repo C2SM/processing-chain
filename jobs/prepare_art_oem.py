@@ -84,4 +84,3 @@ def main(cfg):
             tools.remove_file(chem_file)
             logging.info(
                 "Added chemical tracer to file {}".format(merged_file))
-
