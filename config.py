@@ -538,7 +538,7 @@ class Config():
         #   of recomputing stuff like previous chunk dates
 
         # Skip if very first chunk
-        if cfg.job_ids['previous']:
+        if self.job_ids['previous']:
             # Wait for previous chunk to be done
             self.wait_for_previous()
 
@@ -554,7 +554,7 @@ class Config():
         self.previous_chunk_id = self.chunk_id
 
         # Monitor last chunk
-        if cfg.enddate_sim >= cfg.enddate:
+        if self.enddate_sim >= self.enddate:
             self.wait_for_previous()
             self.get_previous_slurm_summary()
             self.print_previous_slurm_summary()
