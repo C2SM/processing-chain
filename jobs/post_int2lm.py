@@ -155,4 +155,3 @@ def main(cfg):
 =====================================================""" % date.strftime('%s')
 
     logging.info(to_print)
-
