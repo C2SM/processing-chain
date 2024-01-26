@@ -634,10 +634,12 @@ class Config():
         with self.log_file.open('a') as f:
             f.write(f"Job summary for chunk {self.previous_chunk_id}\n")
             f.write(table_header)
+            f.write('\n')
             for job_name in self.jobs:
                 for info in self.slurm_info[job_name]:
                     f.write(line_format.format(**info))
                     f.write('\n')
+            f.write('\n')
 
     def check_previous_chunk_success(self):
         status = 0
