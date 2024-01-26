@@ -70,4 +70,3 @@ def main(cfg):
             # (NF90_CHAR) (needed for int2lm to work)
             if cfg.workflow_name.startswith('cosmo'):
                 tools.string2char.main(dest_path)
-

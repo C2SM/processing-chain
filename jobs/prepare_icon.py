@@ -95,4 +95,3 @@ def main(cfg):
 
     cfg.submit('prepare_icon', script)
     logging.info("OK")
-

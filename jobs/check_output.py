@@ -866,7 +866,6 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
                                cfg.logfile)
 
 
-
 if __name__ == '__main__':
     args = sys.argv
 

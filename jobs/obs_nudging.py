@@ -58,4 +58,3 @@ def main(cfg):
     tools.copy_file(os.path.join(cfg.obs_nudging_dir, 'blklsttmp'), dest_dir)
 
     logging.info("Copied blacklist-file to {}".format(dest_dir))
-

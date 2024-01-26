@@ -70,4 +70,3 @@ def main(cfg):
             comp_data(ref_data, run_data, variables)
 
     logging.info("Finished verification")
-

@@ -37,4 +37,3 @@ def main(cfg):
     tools.copy_file(src_file, dest_path)
 
     logging.info("Finished")
-

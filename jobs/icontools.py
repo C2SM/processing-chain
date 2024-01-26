@@ -107,4 +107,3 @@ def main(cfg):
             # Rename file to get original file name
             tools.rename_file(merged_file, src_file)
     logging.info('OK')
-

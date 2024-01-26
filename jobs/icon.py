@@ -64,4 +64,3 @@ def main(cfg):
 
     # Submit run script
     cfg.submit('icon', script)
-

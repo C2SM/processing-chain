@@ -128,4 +128,3 @@ def main(cfg):
 
     # Submit job
     cfg.submit('post_cosmo', script)
-

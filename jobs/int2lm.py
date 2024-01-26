@@ -153,4 +153,3 @@ def main(cfg):
 
     # Submit job
     cfg.submit('int2lm', script)
-

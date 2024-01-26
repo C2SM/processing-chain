@@ -85,4 +85,3 @@ def main(cfg):
     if cfg.oem.get('oem_ens_lambda_nc') is not None:
         tools.copy_file(os.path.join(oem_dir, cfg.oem['ens_lambda_nc']),
                         os.path.join(dest_dir, cfg.oem['ens_lambda_nc']))
-

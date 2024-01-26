@@ -53,4 +53,3 @@ def main(cfg):
             ds.to_netcdf(merged_file)
             tools.rename_file(merged_file, meteo_file)
     logging.info('OK')
-

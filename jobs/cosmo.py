@@ -201,4 +201,3 @@ def main(cfg):
 
     # Submit job
     cfg.submit('cosmo', script)
-

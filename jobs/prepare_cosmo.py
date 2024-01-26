@@ -234,4 +234,3 @@ def main(cfg):
                     tools.copy_file(filename, scratch_path, output_log=True)
 
                     logging.info("OK")
-
