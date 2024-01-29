@@ -566,9 +566,9 @@ class Config():
         formats = []
         for k in self.info_keys:
             j = info_width[k]
-            k = '#N' if k == 'NNodes' else k
+            kh = '#N' if k == 'NNodes' else k
             formats.append(f"{{{k}:>{j}.{j}}}")
-            headers.append(f"{k:>{j}.{j}}")
+            headers.append(f"{kh:>{j}.{j}}")
             hlines.append("-" * j)
 
         table_header = '\n'.join((' '.join(headers), ' '.join(hlines)))
