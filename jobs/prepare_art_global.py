@@ -25,7 +25,6 @@ def main(cfg):
     """
     prepare_icon.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("prepare_art_global")
     logging.info("Prepare ICON-ART for global simulations")
 
     # -- Download ERA5 data and create the inicond file
@@ -179,4 +178,3 @@ def main(cfg):
                 process.communicate()
 
     logging.info("OK")
-    cfg.finish_time_logging("prepare_art_global", launch_time)

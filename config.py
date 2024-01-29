@@ -59,6 +59,7 @@ class Config():
 
         # Set case root
         self.case_root = self.work_root / self.casename
+        self.log_file = self.case_root / "chain_status.log"
 
         # Set workflow and async attributes and initiate job ids dict
         self.set_workflow()
@@ -430,7 +431,9 @@ class Config():
             '',
         ]
 
-        job_file = self.chain_root / f'{job_name}.sh'
+        job_path = self.chain_root / 'job_scripts'
+        job_path.mkdir(parents=True, exist_ok=True)
+        job_file = job_path / f'{job_name}.sh'
         with open(job_file, mode='w') as job_script:
             job_script.write('\n'.join(script_lines))
 
@@ -464,6 +467,42 @@ class Config():
 
             subprocess.run(['sbatch', '--wait', job_file], check=True)
 
+    def cycle(self):
+        """Cycle to next chunk
+
+        - Wait for previous chunk to finish
+        - print summary of previous chunk jobs
+        - Check for success of all previous jobs
+        - cycle job ids and chunk id"""
+
+        # - ML -
+        # - This method could do more of the cycling, like dates
+        # - The config object could host more info and cycle it instead
+        #   of recomputing stuff like previous chunk dates
+
+        # Skip if very first chunk
+        if self.job_ids['previous']:
+            # Wait for previous chunk to be done
+            self.wait_for_previous()
+
+            # Get and print previous chunk Slurm summary
+            self.get_previous_slurm_summary()
+            self.print_previous_slurm_summary()
+
+            # Check for success of all previous jobs
+            self.check_previous_chunk_success()
+
+        # Cycle info
+        self.job_ids['previous'] = self.job_ids['current']
+        self.previous_chunk_id = self.chunk_id
+
+        # Monitor last chunk
+        if self.enddate_sim >= self.enddate:
+            self.wait_for_previous()
+            self.get_previous_slurm_summary()
+            self.print_previous_slurm_summary()
+            self.check_previous_chunk_success()
+
     @staticmethod
     def get_job_info(job_id,
                      slurm_keys=['JobName', 'Elapsed', 'ExitCode'],
@@ -489,11 +528,12 @@ class Config():
         else:
             return info_str.decode()
 
-    def get_slurm_summary(self,
-                          info_keys=[
-                              'JobName', 'JobID', 'Partition', 'NNodes',
-                              'State', 'Start', 'End', 'Elapsed'
-                          ]):
+    def get_previous_slurm_summary(self,
+                                   info_keys=[
+                                       'JobName', 'JobID', 'Partition',
+                                       'NNodes', 'State', 'Start', 'End',
+                                       'Elapsed'
+                                   ]):
         """get slurm info summary or all jobs of previous chunk"""
 
         # Store requested keys in object
@@ -508,8 +548,7 @@ class Config():
                     self.get_job_info(job_id, slurm_keys=info_keys,
                                       parse=True))
 
-    def print_slurm_summary(self):
-
+    def print_previous_slurm_summary(self):
         # Width of printed slurm piece of information
         info_width = {
             'JobName': 13,
@@ -535,15 +574,17 @@ class Config():
         table_header = '\n'.join((' '.join(headers), ' '.join(hlines)))
         line_format = " ".join(formats)
 
-        print("    └── Slurm info of previous submitted jobs")
+        with self.log_file.open('a') as f:
+            f.write(f"Job summary for chunk {self.previous_chunk_id}\n")
+            f.write(table_header)
+            f.write('\n')
+            for job_name in self.jobs:
+                for info in self.slurm_info[job_name]:
+                    f.write(line_format.format(**info))
+                    f.write('\n')
+            f.write('\n')
 
-        for job_name in self.jobs:
-            print(f"        └── {job_name}")
-            print(table_header)
-            for info in self.slurm_info[job_name]:
-                print(line_format.format(**info))
-
-    def check_chunk_success(self):
+    def check_previous_chunk_success(self):
         status = 0
         failed_jobs = []
         for job_name, info_list in self.slurm_info.items():

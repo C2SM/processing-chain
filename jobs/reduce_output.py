@@ -45,7 +45,6 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes
     """
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("reduce_output")
     cosmo_output = cfg.cosmo_output
     output_path = cfg.cosmo_output_reduced
 
@@ -162,5 +161,3 @@ def main(cfg):
 =====================================================""" % date.strftime("%s")
 
     logging.info(to_print)
-
-    cfg.finish_time_logging("reduce_output", launch_time)

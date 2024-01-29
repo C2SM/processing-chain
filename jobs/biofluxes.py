@@ -3,7 +3,8 @@
 
 import os
 import logging
-from . import tools, prepare_icon
+
+from . import tools, prepare_cosmo
 
 BASIC_PYTHON_JOB = True
 
@@ -19,9 +20,8 @@ def main(cfg):
     cfg : Config
         Object holding all user-configuration parameters as attributes.
     """
-    prepare_icon.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("biofluxes")
+    prepare_cosmo.set_cfg_variables(cfg)
 
     scratch_path = os.path.join(cfg.int2lm_input, 'vprm')
 
@@ -47,4 +47,3 @@ def main(cfg):
                 logging.error(
                     "Splitting or copying of GPP or/and RA files to scratch failed."
                 )
-    cfg.finish_time_logging("biofluxes", launch_time)

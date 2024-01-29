@@ -13,6 +13,9 @@ BASIC_PYTHON_JOB = True
 def set_cfg_variables(cfg):
     cfg.int2lm_root = cfg.chain_root / 'int2lm'
     cfg.int2lm_input = cfg.int2lm_root / 'input'
+    cfg.int2lm_run = cfg.chain_root / 'int2lm' / 'run'
+    cfg.int2lm_output = cfg.chain_root / 'int2lm' / 'output'
+
     cfg.cosmo_base = cfg.chain_root / 'cosmo'
     cfg.cosmo_input = cfg.chain_root / 'cosmo' / 'input'
     cfg.cosmo_run = cfg.chain_root / 'cosmo' / 'run'
@@ -75,7 +78,6 @@ def main(cfg):
     """
     set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("prepare_cosmo")
 
     logging.info('COSMO analysis data for IC/BC')
 
@@ -232,5 +234,3 @@ def main(cfg):
                     tools.copy_file(filename, scratch_path, output_log=True)
 
                     logging.info("OK")
-
-    cfg.finish_time_logging("prepare_cosmo", launch_time)

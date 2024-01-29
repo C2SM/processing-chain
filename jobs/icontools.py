@@ -21,7 +21,6 @@ def main(cfg):
     """
     prepare_icon.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("icontools")
 
     #-----------------------------------------------------
     # Create LBC datafile lists (each at 00 UTC and others)
@@ -108,5 +107,3 @@ def main(cfg):
             # Rename file to get original file name
             tools.rename_file(merged_file, src_file)
     logging.info('OK')
-
-    cfg.finish_time_logging("icontools", launch_time)

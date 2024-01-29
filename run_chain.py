@@ -249,20 +249,9 @@ def run_chunk(cfg, force, resume):
                 else:
                     job.main(cfg)
 
-        # Return if very first chunk
-        if cfg.job_ids['previous']:
-            # Wait for previous chunk to be done
-            cfg.wait_for_previous()
+        # Wait for previous chunk jobs, monitor them and cycle info
+        cfg.cycle()
 
-            # Current chunk Slurm summary
-            cfg.get_slurm_summary()
-            cfg.print_slurm_summary()
-
-            # Check for success
-            cfg.check_chunk_success()
-
-        # Cycle
-        cfg.job_ids['previous'] = cfg.job_ids['current']
     else:
         # run jobs (if required)
         for job in cfg.jobs:

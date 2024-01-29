@@ -41,7 +41,6 @@ def main(cfg):
         Object holding all user-configuration parameters as attributes
     """
     tools.change_logfile(cfg.logfile)
-    launch_time = cfg.init_time_logging("verify_chain")
     logging.info("Started verification")
     for (ref_file,
          run_file), variables in cfg.verify_chain['values_to_check'].items():
@@ -71,5 +70,3 @@ def main(cfg):
             comp_data(ref_data, run_data, variables)
 
     logging.info("Finished verification")
-
-    cfg.finish_time_logging("verify_chain", launch_time)
