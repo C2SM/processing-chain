@@ -529,7 +529,7 @@ class Config():
 
     def get_previous_slurm_summary(self,
                                    info_keys=[
-                                       'JobName', 'JobID', 'Partition', 'N',
+                                       'JobName', 'JobID', 'Partition', 'NNodes',
                                        'State', 'Start', 'End', 'Elapsed'
                                    ]):
         """get slurm info summary or all jobs of previous chunk"""
@@ -552,7 +552,7 @@ class Config():
             'JobName': 13,
             'JobID': 8,
             'Partition': 9,
-            'N': 3,
+            'NNodes': 3,
             'State': 14,
             'Start': 13,
             'End': 13,
@@ -565,6 +565,7 @@ class Config():
         formats = []
         for k in self.info_keys:
             j = info_width[k]
+            k = '#N' if k == 'NNodes' else k
             formats.append(f"{{{k}:>{j}.{j}}}")
             headers.append(f"{k:>{j}.{j}}")
             hlines.append("-" * j)
