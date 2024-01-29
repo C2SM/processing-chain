@@ -4,7 +4,6 @@ import yaml
 
 from jobs import tools
 from pathlib import Path
-from datetime import datetime
 
 
 class Config():
@@ -566,10 +565,10 @@ class Config():
         hlines = []
         formats = []
         for k in self.info_keys:
-            l = info_width[k]
-            formats.append(f"{{{k}:>{l}.{l}}}")
-            headers.append(f"{k:>{l}.{l}}")
-            hlines.append("-" * l)
+            j = info_width[k]
+            formats.append(f"{{{k}:>{j}.{j}}}")
+            headers.append(f"{k:>{j}.{j}}")
+            hlines.append("-" * j)
 
         table_header = '\n'.join((' '.join(headers), ' '.join(hlines)))
         line_format = " ".join(formats)
