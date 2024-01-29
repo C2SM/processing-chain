@@ -529,9 +529,8 @@ class Config():
 
     def get_previous_slurm_summary(self,
                                    info_keys=[
-                                       'JobName', 'JobID', 'Partition',
-                                       'N', 'State', 'Start', 'End',
-                                       'Elapsed'
+                                       'JobName', 'JobID', 'Partition', 'N',
+                                       'State', 'Start', 'End', 'Elapsed'
                                    ]):
         """get slurm info summary or all jobs of previous chunk"""
 
