@@ -1,4 +1,4 @@
-import subprocess
+from subprocess import run, CalledProcessError
 import os
 import yaml
 
@@ -445,9 +445,14 @@ class Config():
             sbatch_cmd.append(dep_cmd)
         sbatch_cmd.append(script_path.name)
 
-        result = subprocess.run(sbatch_cmd,
-                                cwd=script_path.parent,
-                                capture_output=True)
+        try:
+            result = run(sbatch_cmd, cwd=script_path.parent,
+                         capture_output=True, check=True)
+        except CalledProcessError as e:
+            with open self.logfile('a') as f:
+                f.write(e)
+                raise(e)
+
         job_id = int(result.stdout)
         print(f'        └── Submitted batch job {job_id}')
 
@@ -456,16 +461,7 @@ class Config():
         else:
             self.job_ids['current'][job_name].append(job_id)
 
-        exitcode = result.returncode
-        self.check_job(exitcode, logfile=logfile)
-
         return job_id
-
-    def check_job(self, exitcode, logfile=None):
-        """Check the exitcode returned by a job."""
-
-        if exitcode != 0:
-            raise RuntimeError(f"sbatch returned exitcode {exitcode}")
 
     def create_sbatch_script(self, job_name):
         """Create an sbatch script to launch jobs individually.
@@ -522,7 +518,7 @@ class Config():
             with open(job_file, mode='w') as wait_job:
                 wait_job.write('\n'.join(script_lines))
 
-            subprocess.run(['sbatch', '--wait', job_file], check=True)
+            run(['sbatch', '--wait', job_file], check=True)
 
     def cycle(self):
         """Cycle to next chunk
@@ -575,7 +571,7 @@ class Config():
         if parse:
             cmd.append("--parsable")
 
-        info_str = subprocess.run(cmd, capture_output=True, check=True).stdout
+        info_str = run(cmd, capture_output=True, check=True).stdout
 
         if parse:
             # Parse in a dictionnary before returning

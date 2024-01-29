@@ -4,7 +4,6 @@
 import logging
 import os
 import datetime
-from subprocess import call
 
 from . import tools, prepare_cosmo
 
