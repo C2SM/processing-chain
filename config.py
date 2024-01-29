@@ -570,10 +570,10 @@ class Config():
 
         # Width of printed slurm piece of information
         info_width = {
-            'JobName': 10,
+            'JobName': 13,
             'JobID': 8,
             'Partition': 9,
-            'NNodes': 6,
+            'N': 3,
             'State': 14,
             'Start': 13,
             'End': 13,
