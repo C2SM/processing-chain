@@ -470,9 +470,6 @@ def main():
         # Make ntry a Config variable
         cfg.ntry = args.ntry
 
-        # Check logging settings
-        cfg.logging = args.enable_logging
-
         # Convert relative to absolute paths
         cfg.convert_paths_to_absolute()
 
@@ -513,9 +510,6 @@ def main():
         else:
             print("Running the Processing Chain in sequential mode.")
 
-        if cfg.logging:
-            launch_time = cfg.init_time_logging('chain')
-
         # Check for restart compatibility and spinup
         if 'restart' in cfg.workflow['features']:
             if hasattr(cfg, 'spinup'):
@@ -531,9 +525,6 @@ def main():
             cfg.startdate_sim = cfg.startdate
             cfg.enddate_sim = cfg.enddate
             run_chunk(cfg=cfg, force=args.force, resume=args.resume)
-
-    if cfg.logging:
-        cfg.finish_time_logging('chain', launch_time)
 
     print('>>> Finished the processing chain successfully <<<')
 
