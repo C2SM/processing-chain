@@ -4,7 +4,6 @@ import yaml
 
 from jobs import tools
 from pathlib import Path
-from datetime import datetime
 
 
 class Config():
@@ -319,52 +318,6 @@ class Config():
                 else:
                     setattr(self, subkey, v)
 
-    def log_job_status(self, job, status, launch_time, duration=None):
-        """
-        Log the status of a job in a chain to a file.
-
-        Parameters:
-        - job (str): The type of job, either 'chain' or a specific job name.
-        - status (str): The status of the job, e.g., 'FINISH', 'ERROR', etc.
-        - launch_time (datetime.datetime): The timestamp when the job was launched or finished.
-        - duration (datetime.timedelta, optional): The duration of the job. Default is None.
-
-        The function logs the job information to a file named 'chain_status.log' in the case root directory.
-        If the log file doesn't exist, it creates a header with the column names.
-        The logged entry includes the job type, job ID (if applicable), status, launch time,
-        and optionally, the duration if provided.
-
-        Example:
-        - log_job_status('chain', 'FINISH', datetime.datetime.now(), '00:15:30')
-        - log_job_status('task_1', 'ERROR', datetime.datetime(2023, 12, 20, 8, 30, 15))
-        """
-
-        # Check if the file exists, if not, create it and write header
-        if not self.log_file.is_file():
-            header = "Name            ID                    Status Time                     Duration\n"
-            with self.log_file.open('w') as f:
-                f.write(header)
-
-        # Format duration and chunk_id
-        if job == 'chain':
-            if duration is not None:
-                duration = self.format_duration(duration)
-            chunk_id = self.casename
-        else:
-            if duration is not None:
-                duration = f"{str(int(duration.total_seconds()))} s"
-            chunk_id = self.chunk_id
-
-        # Log the job information
-        launch_time = launch_time.strftime("%a %b %d %Y %H:%M:%S")
-        if status == 'FINISH' and duration:
-            log_entry = f"{job:<15} {chunk_id:<21} {status:<6} {launch_time:<24} {duration}\n"
-        else:
-            log_entry = f"{job:<15} {chunk_id:<21} {status:<6} {launch_time:<24}\n"
-
-        with self.log_file.open('a') as f:
-            f.write(log_entry)
-
     def format_duration(self, duration):
         """
         Format a duration represented by a datetime.timedelta object into a human-readable string.
@@ -382,17 +335,6 @@ class Config():
 
         formatted_duration = f"{int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
         return formatted_duration
-
-    def init_time_logging(self, job):
-        launch_time = datetime.now()
-        self.log_job_status(job, 'START', launch_time)
-
-        return launch_time
-
-    def finish_time_logging(self, job, launch_time):
-        end_time = datetime.now()
-        duration = end_time - launch_time
-        self.log_job_status(job, 'FINISH', end_time, duration)
 
     def get_dep_ids(self, job_name, add_dep=None):
         """Get dependency job ids for `job_name`"""
@@ -604,10 +546,10 @@ class Config():
     def print_previous_slurm_summary(self):
         # Width of printed slurm piece of information
         info_width = {
-            'JobName': 10,
+            'JobName': 13,
             'JobID': 8,
             'Partition': 9,
-            'NNodes': 6,
+            'NNodes': 3,
             'State': 14,
             'Start': 13,
             'End': 13,
@@ -619,10 +561,11 @@ class Config():
         hlines = []
         formats = []
         for k in self.info_keys:
-            l = info_width[k]
-            formats.append(f"{{{k}:>{l}.{l}}}")
-            headers.append(f"{k:>{l}.{l}}")
-            hlines.append("-" * l)
+            j = info_width[k]
+            kh = '#N' if k == 'NNodes' else k
+            formats.append(f"{{{k}:>{j}.{j}}}")
+            headers.append(f"{kh:>{j}.{j}}")
+            hlines.append("-" * j)
 
         table_header = '\n'.join((' '.join(headers), ' '.join(hlines)))
         line_format = " ".join(formats)

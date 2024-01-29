@@ -4,7 +4,7 @@
 import logging
 import os
 import subprocess
-import pathlib
+from pathlib import Path
 
 from datetime import datetime
 from .tools import write_cosmo_input_ghg
