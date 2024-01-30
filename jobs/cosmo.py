@@ -178,7 +178,7 @@ def main(cfg):
 
     # Append INPUT_GHG namelist with tracer definitions from csv file
     if os.path.isfile(tracer_csvfile):
-        if hasattr(cfg, 'cams') or hasattr(cfg, 'mozart'):    
+        if hasattr(cfg, 'cams') or hasattr(cfg, 'mozart'):
             input_ghg_filename = os.path.join(cfg.cosmo_run, 'INPUT_GHG')
 
             write_cosmo_input_ghg.main(tracer_csvfile, input_ghg_filename, cfg)
