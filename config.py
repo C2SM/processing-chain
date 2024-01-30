@@ -357,6 +357,16 @@ class Config():
 
             self.chunks.append(chunk_id)
 
+    def previous_chunk_id(self, current_chunk_id):
+        """Get the previous chunk ID based on the current chunk ID."""
+        try:
+            index = self.chunks.index(current_chunk_id)
+            if index > 0:
+                return self.chunks[index - 1]
+        except ValueError:
+            # If the current_chunk_id is not in the list or it's the first chunk
+            return None
+
     def get_dep_ids(self, job_name, add_dep=None):
         """Get dependency job ids for `job_name`"""
         # Initial list of dependencies

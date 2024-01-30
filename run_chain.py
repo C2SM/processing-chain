@@ -347,6 +347,7 @@ def restart_runs(cfg, force, resume):
 
     for chunk_id in cfg.chunks:
         cfg.chunk_id = chunk_id
+        cfg.chunk_id_prev = cfg.previous_chunk_id(cfg.chunk_id)
         cfg.startdate_sim_yyyymmddhh = chunk_id[0:10]
         cfg.enddate_sim_yyyymmddhh = chunk_id[-10:]
         cfg.startdate_sim = datetime.strptime(
