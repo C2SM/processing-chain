@@ -347,13 +347,33 @@ def restart_runs(cfg, force, resume):
     if not cfg.chunks:
         for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
                                               cfg.restart_step_hours):
-            enddate_sim = startdate_sim + timedelta(
-                hours=cfg.restart_step_hours)
+            if 'spinup' in cfg.workflow['features'] and hasattr(cfg, 'spinup'):
+                if startdate_sim == cfg.startdate:
+                    cfg.first_one = True
+                    cfg.second_one = False
+                    cfg.lrestart = '.FALSE.'
+                elif startdate_sim == cfg.startdate + timedelta(
+                        hours=cfg.restart_step_hours):
+                    cfg.first_one = False
+                    cfg.second_one = True
+                    cfg.lrestart = '.TRUE.'
+                    startdate_sim = startdate_sim - timedelta(hours=cfg.spinup)
+                else:
+                    cfg.first_one = False
+                    cfg.second_one = False
+                    cfg.lrestart = '.TRUE.'
+                    startdate_sim = startdate_sim - timedelta(hours=cfg.spinup)
+            else:
+                enddate_sim = startdate_sim + timedelta(
+                    hours=cfg.restart_step_hours)
+
             startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
             enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
             chunk_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
+
             if enddate_sim > cfg.enddate:
                 continue
+
             cfg.chunks.append(chunk_id)
 
     for chunk_id in cfg.chunks:
@@ -365,66 +385,12 @@ def restart_runs(cfg, force, resume):
         cfg.enddate_sim = datetime.strptime(
             cfg.enddate_sim_yyyymmddhh, "%Y%m%d%H").replace(tzinfo=pytz.UTC)
 
-        # Set restart variable (only takes effect for ICON)
-        cfg.lrestart = ".FALSE." if cfg.startdate_sim == cfg.startdate else ".TRUE."
+        if 'spinup' not in cfg.workflow['features'] and not hasattr(
+                cfg, 'spinup'):
+            # Set restart variable (only takes effect for ICON)
+            cfg.lrestart = ".FALSE." if cfg.startdate_sim == cfg.startdate else ".TRUE."
 
         print(f'└── Starting chunk "{cfg.chunk_id}"')
-
-        run_chunk(cfg=cfg, force=force, resume=resume)
-
-
-def restart_runs_spinup(cfg, force, resume):
-    """Start subchains in specified intervals and manage restarts with spin-up.
-
-    This function slices the total runtime of the processing chain according to the
-    `cfg.restart_step_hours` configuration. It calls `run_chunk()` for each 
-    specified interval, managing restarts with spin-up.
-
-    Parameters
-    ----------
-    cfg : Config
-        Object holding all user-configuration parameters as attributes.
-    force : bool
-        If True, it will force the execution of jobs regardless of their completion status.
-    resume : bool
-        If True, it will resume the last unfinished job.
-
-    Notes
-    -----
-    - The function iterates over specified intervals, calling `run_chunk()` for each.
-    - It manages restart settings and logging for each subchain, including spin-up.
-    """
-    for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
-                                          cfg.restart_step_hours):
-        if startdate_sim == cfg.startdate:
-            cfg.first_one = True
-            cfg.second_one = False
-            cfg.lrestart = '.FALSE.'
-            run_time = cfg.restart_step_hours
-            startdate_sim_spinup = startdate_sim
-        elif startdate_sim == cfg.startdate + timedelta(
-                hours=cfg.restart_step_hours):
-            cfg.first_one = False
-            cfg.second_one = True
-            cfg.lrestart = '.TRUE.'
-            run_time = cfg.restart_step_hours + cfg.spinup
-            startdate_sim_spinup = startdate_sim - timedelta(hours=cfg.spinup)
-        else:
-            cfg.first_one = False
-            cfg.second_one = False
-            cfg.lrestart = '.TRUE.'
-            run_time = cfg.restart_step_hours + cfg.spinup
-            startdate_sim_spinup = startdate_sim - timedelta(hours=cfg.spinup)
-
-        # If current enddate is later than global enddate, skip
-        enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
-        if enddate_sim > cfg.enddate:
-            continue
-
-        print(f'Runtime of sub-simulation: {run_time} h')
-
-        cfg.startdate_sim = startdate_sim_spinup
-        cfg.enddate_sim = enddate_sim
 
         run_chunk(cfg=cfg, force=force, resume=resume)
 
@@ -499,14 +465,8 @@ def main():
 
         # Check for restart compatibility and spinup
         if 'restart' in cfg.workflow['features']:
-            if hasattr(cfg, 'spinup'):
-                print("Using spin-up restarts.")
-                restart_runs_spinup(cfg=cfg,
-                                    force=args.force,
-                                    resume=args.resume)
-            else:
-                print("Using built-in model restarts.")
-                restart_runs(cfg=cfg, force=args.force, resume=args.resume)
+            print("Using built-in model restarts.")
+            restart_runs(cfg=cfg, force=args.force, resume=args.resume)
         else:
             print("No restarts are used.")
             cfg.startdate_sim = cfg.startdate
