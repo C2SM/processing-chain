@@ -137,7 +137,7 @@ def main(cfg):
                                   'cosmo_tracers.csv')
     if hasattr(cfg, 'cams') or hasattr(cfg, 'mozart'):
         namelist_names = ['AF', 'ORG', 'IO', 'DYN', 'GHG', 'PHY', 'DIA', 'ASS']
-    if hasattr(cfg, 'photo_rate'):
+    elif hasattr(cfg, 'photo_rate'):
         namelist_names = [
             'ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO', 'ORG', 'PHY'
         ]
