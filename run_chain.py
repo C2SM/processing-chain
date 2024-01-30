@@ -140,74 +140,8 @@ def run_chunk(cfg, force, resume):
     cfg.forecasttime = (cfg.enddate_sim -
                         cfg.startdate_sim).total_seconds() / 3600
 
-    # String variables for startdate_sim
-    cfg.startdate_sim_yyyymmddhh = cfg.startdate_sim.strftime('%Y%m%d%H')
-    cfg.enddate_sim_yyyymmddhh = cfg.enddate_sim.strftime('%Y%m%d%H')
-
-    # Folder naming and structure
-    cfg.chunk_id = f'{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}'
-    cfg.chain_root = cfg.work_root / cfg.casename / cfg.chunk_id
-
-    # Config variables for spinup runs (datetimes, job-id, etc.)
-    if hasattr(cfg, 'spinup'):
-        if cfg.first_one:  # first run in spinup
-            cfg.chain_root_prev = None
-        else:  # consecutive runs in spinup
-            cfg.startdate_sim_yyyymmddhh = cfg.startdate_sim.strftime(
-                '%Y%m%d%H')
-            enddate_sim_yyyymmddhh_prev = (
-                cfg.enddate_sim -
-                timedelta(hours=cfg.restart_step_hours)).strftime('%Y%m%d%H')
-
-            if cfg.second_one:
-                startdate_sim_yyyymmddhh_prev = (cfg.enddate_sim - timedelta(
-                    hours=2 * cfg.restart_step_hours)).strftime('%Y%m%d%H')
-            else:  # all other runs (i.e., get chunk_id from previous run)
-                startdate_sim_yyyymmddhh_prev = (
-                    cfg.enddate_sim -
-                    timedelta(hours=2 * cfg.restart_step_hours +
-                              cfg.spinup)).strftime('%Y%m%d%H')
-
-            cfg.chunk_id_prev = f'{startdate_sim_yyyymmddhh_prev}_{enddate_sim_yyyymmddhh_prev}'
-            cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.chunk_id_prev
-            cfg.last_cosmo_output = cfg.chain_root_prev / 'cosmo' / 'output'
-
-        # No restart for spinup simulations (= default values for no restart)
-        cfg.cosmo_restart_out = ''
-        cfg.cosmo_restart_in = ''
-    elif 'restart' in cfg.workflow['features']:
-        cfg.startdate_sim_prev = cfg.startdate_sim - timedelta(
-            hours=cfg.restart_step_hours)
-        cfg.enddate_sim_prev = cfg.enddate_sim - timedelta(
-            hours=cfg.restart_step_hours)
-        cfg.startdate_sim_prev_yyyymmddhh = cfg.startdate_sim_prev.strftime(
-            '%Y%m%d%H')
-        cfg.enddate_sim_prev_yyyymmddhh = cfg.enddate_sim_prev.strftime(
-            '%Y%m%d%H')
-
-        cfg.chunk_id_prev = f'{cfg.startdate_sim_prev_yyyymmddhh}_{cfg.enddate_sim_prev_yyyymmddhh}'
-        cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.chunk_id_prev
-
-        # Set restart directories
-        cfg.cosmo_restart_out = cfg.chain_root / 'cosmo' / 'restart'
-        cfg.cosmo_restart_in = cfg.chain_root_prev / 'cosmo' / 'restart'
-
-    # Check constraint
-    if hasattr(cfg, 'constraint'):
-        assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
-                                                 "gpu or mc")
-
-    # If nested run: use output of mother-simulation
-    if 'nesting' in cfg.workflow['features'] and not os.path.isdir(
-            cfg.meteo.dir):
-        # if ifs_hres_dir doesn't point to a directory,
-        # it is the name of the mother run
-        mother_name = cfg.meteo.dir
-        cfg.meteo.dir = cfg.work_root / mother_name / cfg.chunk_id / 'cosmo' / 'output'
-        cfg.meteo.inc = 1
-        cfg.meteo.prefix = 'lffd'
-
     # Logging
+    cfg.chain_root = cfg.work_root / cfg.casename / cfg.chunk_id
     cfg.log_working_dir = cfg.chain_root / 'checkpoints' / 'working'
     cfg.log_finished_dir = cfg.chain_root / 'checkpoints' / 'finished'
 
@@ -216,11 +150,17 @@ def run_chunk(cfg, force, resume):
     tools.create_dir(cfg.log_working_dir, "log_working")
     tools.create_dir(cfg.log_finished_dir, "log_finished")
 
-    # Number of levels and switch for unit conversion for 'reduce_output' job
-    if not hasattr(cfg, 'output_levels'):
-        cfg.output_levels = -1
-    if not hasattr(cfg, 'convert_gas'):
-        cfg.convert_gas = True
+    # Config variables for spinup and restart runs
+    if hasattr(cfg, 'spinup'):
+        cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.chunk_id_prev
+        cfg.last_cosmo_output = cfg.chain_root_prev / 'cosmo' / 'output'
+        cfg.cosmo_restart_out = ''
+        cfg.cosmo_restart_in = ''
+    elif 'restart' in cfg.workflow['features']:
+        cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.chunk_id_prev
+        cfg.cosmo_restart_out = cfg.chain_root / 'cosmo' / 'restart'
+        cfg.cosmo_restart_in = cfg.chain_root_prev / 'cosmo' / 'restart'
+
 
     if cfg.is_async:
         # Empty curent job ids
@@ -432,6 +372,11 @@ def main():
         # Check sync is forced
         if args.force_sync:
             cfg.is_async = None
+
+        # Check constraint
+        if cfg.constraint:
+            assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
+                                                    "gpu or mc")
 
         # Print config before chain starts
         cfg.print_config()

@@ -4,6 +4,7 @@
 from pathlib import Path
 import logging
 import csv
+import os
 from datetime import timedelta
 from . import tools
 
@@ -51,6 +52,15 @@ def set_cfg_variables(cfg):
             cfg.lasync_io = '.TRUE.'
             cfg.num_iope_percomm = 1
 
+    # If nested run: use output of mother-simulation
+    if 'nesting' in cfg.workflow['features'] and not os.path.isdir(
+            cfg.meteo.dir):
+        # if ifs_hres_dir doesn't point to a directory,
+        # it is the name of the mother run
+        mother_name = cfg.meteo.dir
+        cfg.meteo.dir = cfg.work_root / mother_name / cfg.chunk_id / 'cosmo' / 'output'
+        cfg.meteo.inc = 1
+        cfg.meteo.prefix = 'lffd'
 
 def main(cfg):
     """

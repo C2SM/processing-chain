@@ -69,6 +69,13 @@ def main(cfg):
 
     # Wait for Cosmo to finish first
     tools.check_job_completion(cfg.log_finished_dir, "cosmo")
+
+    # Number of levels and switch for unit conversion for 'reduce_output' job
+    if not hasattr(cfg, 'output_levels'):
+        cfg.output_levels = -1
+    if not hasattr(cfg, 'convert_gas'):
+        cfg.convert_gas = True
+
     """Get list of constant files"""
     cfiles = []
     read_cfile = False
