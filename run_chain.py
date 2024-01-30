@@ -372,7 +372,6 @@ def restart_runs(cfg, force, resume):
             cfg.enddate_sim_yyyymmddhh, "%Y%m%d%H").replace(tzinfo=pytz.UTC)
 
         if 'spinup' in cfg.workflow['features'] and hasattr(cfg, 'spinup'):
-            print("Using spin-up restarts.")
             if cfg.startdate_sim == cfg.startdate:
                 cfg.first_one = True
                 cfg.second_one = False
@@ -387,7 +386,6 @@ def restart_runs(cfg, force, resume):
                 cfg.second_one = False
                 cfg.lrestart = '.TRUE.'
         else:
-            print("Using built-in model restarts.")
             # Set restart variable (only takes effect for ICON)
             cfg.lrestart = ".FALSE." if cfg.startdate_sim == cfg.startdate else ".TRUE."
 
