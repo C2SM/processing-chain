@@ -62,6 +62,7 @@ def set_cfg_variables(cfg):
         cfg.meteo.inc = 1
         cfg.meteo.prefix = 'lffd'
 
+
 def main(cfg):
     """
     **COSMO Data Preparation**
