@@ -348,20 +348,7 @@ def restart_runs(cfg, force, resume):
         for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
                                               cfg.restart_step_hours):
             if 'spinup' in cfg.workflow['features'] and hasattr(cfg, 'spinup'):
-                if startdate_sim == cfg.startdate:
-                    cfg.first_one = True
-                    cfg.second_one = False
-                    cfg.lrestart = '.FALSE.'
-                elif startdate_sim == cfg.startdate + timedelta(
-                        hours=cfg.restart_step_hours):
-                    cfg.first_one = False
-                    cfg.second_one = True
-                    cfg.lrestart = '.TRUE.'
-                    startdate_sim = startdate_sim - timedelta(hours=cfg.spinup)
-                else:
-                    cfg.first_one = False
-                    cfg.second_one = False
-                    cfg.lrestart = '.TRUE.'
+                if startdate_sim > cfg.startdate:
                     startdate_sim = startdate_sim - timedelta(hours=cfg.spinup)
 
             enddate_sim = startdate_sim + timedelta(
@@ -384,8 +371,23 @@ def restart_runs(cfg, force, resume):
         cfg.enddate_sim = datetime.strptime(
             cfg.enddate_sim_yyyymmddhh, "%Y%m%d%H").replace(tzinfo=pytz.UTC)
 
-        if 'spinup' not in cfg.workflow['features'] and not hasattr(
-                cfg, 'spinup'):
+        if 'spinup' in cfg.workflow['features'] and hasattr(cfg, 'spinup'):
+            print("Using spin-up restarts.")
+            if cfg.startdate_sim == cfg.startdate:
+                cfg.first_one = True
+                cfg.second_one = False
+                cfg.lrestart = '.FALSE.'
+            elif cfg.startdate_sim == cfg.startdate + timedelta(
+                    hours=cfg.restart_step_hours):
+                cfg.first_one = False
+                cfg.second_one = True
+                cfg.lrestart = '.TRUE.'
+            else:
+                cfg.first_one = False
+                cfg.second_one = False
+                cfg.lrestart = '.TRUE.'
+        else:
+            print("Using built-in model restarts.")
             # Set restart variable (only takes effect for ICON)
             cfg.lrestart = ".FALSE." if cfg.startdate_sim == cfg.startdate else ".TRUE."
 
@@ -464,7 +466,6 @@ def main():
 
         # Check for restart compatibility and spinup
         if 'restart' in cfg.workflow['features']:
-            print("Using built-in model restarts.")
             restart_runs(cfg=cfg, force=args.force, resume=args.resume)
         else:
             print("No restarts are used.")
