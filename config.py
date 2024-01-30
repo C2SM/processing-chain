@@ -1,6 +1,8 @@
 from subprocess import run, CalledProcessError
 import os
 import yaml
+from datetime import timedelta
+
 
 from jobs import tools
 from pathlib import Path
@@ -335,6 +337,25 @@ class Config():
 
         formatted_duration = f"{int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
         return formatted_duration
+
+    def get_chunks(self):
+        self.chunks = []
+        for startdate_sim in tools.iter_hours(self.startdate, self.enddate,
+                                              self.restart_step_hours):
+            if 'spinup' in self.workflow['features'] and hasattr(self, 'spinup'):
+                if startdate_sim > self.startdate:
+                    startdate_sim = startdate_sim - timedelta(hours=self.spinup)
+
+            enddate_sim = startdate_sim + timedelta(
+                hours=self.restart_step_hours)
+            startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
+            enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
+            chunk_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
+
+            if enddate_sim > self.enddate:
+                continue
+
+            self.chunks.append(chunk_id)
 
     def get_dep_ids(self, job_name, add_dep=None):
         """Get dependency job ids for `job_name`"""

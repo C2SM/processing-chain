@@ -344,23 +344,6 @@ def restart_runs(cfg, force, resume):
     - The function iterates over specified intervals, calling `run_chunk()` for each.
     - It manages restart settings and logging for each subchain.
     """
-    if not cfg.chunks:
-        for startdate_sim in tools.iter_hours(cfg.startdate, cfg.enddate,
-                                              cfg.restart_step_hours):
-            if 'spinup' in cfg.workflow['features'] and hasattr(cfg, 'spinup'):
-                if startdate_sim > cfg.startdate:
-                    startdate_sim = startdate_sim - timedelta(hours=cfg.spinup)
-
-            enddate_sim = startdate_sim + timedelta(
-                hours=cfg.restart_step_hours)
-            startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
-            enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
-            chunk_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
-
-            if enddate_sim > cfg.enddate:
-                continue
-
-            cfg.chunks.append(chunk_id)
 
     for chunk_id in cfg.chunks:
         cfg.chunk_id = chunk_id
@@ -439,9 +422,9 @@ def main():
         else:
             cfg.jobs = args.job_list
 
-        # Check if chunks are set or if all are used
+        # Check if chunks are set or if all are used and compute them
         if args.chunk_list is None:
-            cfg.chunks = []
+            cfg.get_chunks()
         else:
             cfg.chunks = args.chunk_list
 
