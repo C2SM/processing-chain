@@ -3,7 +3,6 @@ import os
 import yaml
 from datetime import timedelta
 
-
 from jobs import tools
 from pathlib import Path
 
@@ -342,9 +341,11 @@ class Config():
         self.chunks = []
         for startdate_sim in tools.iter_hours(self.startdate, self.enddate,
                                               self.restart_step_hours):
-            if 'spinup' in self.workflow['features'] and hasattr(self, 'spinup'):
+            if 'spinup' in self.workflow['features'] and hasattr(
+                    self, 'spinup'):
                 if startdate_sim > self.startdate:
-                    startdate_sim = startdate_sim - timedelta(hours=self.spinup)
+                    startdate_sim = startdate_sim - timedelta(
+                        hours=self.spinup)
 
             enddate_sim = startdate_sim + timedelta(
                 hours=self.restart_step_hours)
