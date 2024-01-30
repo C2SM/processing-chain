@@ -364,7 +364,8 @@ def restart_runs(cfg, force, resume):
                     cfg.lrestart = '.TRUE.'
                     startdate_sim = startdate_sim - timedelta(hours=cfg.spinup)
             else:
-                enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
+                enddate_sim = startdate_sim + timedelta(
+                    hours=cfg.restart_step_hours)
 
             startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
             enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
@@ -384,7 +385,8 @@ def restart_runs(cfg, force, resume):
         cfg.enddate_sim = datetime.strptime(
             cfg.enddate_sim_yyyymmddhh, "%Y%m%d%H").replace(tzinfo=pytz.UTC)
 
-        if 'spinup' not in cfg.workflow['features'] and not hasattr(cfg, 'spinup'):
+        if 'spinup' not in cfg.workflow['features'] and not hasattr(
+                cfg, 'spinup'):
             # Set restart variable (only takes effect for ICON)
             cfg.lrestart = ".FALSE." if cfg.startdate_sim == cfg.startdate else ".TRUE."
 
