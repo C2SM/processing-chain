@@ -414,7 +414,7 @@ class Config():
         walltime = getattr(self, 'walltime', {}).get(job_name, "00:30:00")
         script_lines = [
             '#!/usr/bin/env bash',
-            f'#SBATCH --job-name="{job_name}_{self.chunk_id}"',
+            f'#SBATCH --job-name={job_name}',
             '#SBATCH --nodes=1',
             f'#SBATCH --time={walltime}',
             f'#SBATCH --output={self.logfile}',
