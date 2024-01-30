@@ -388,12 +388,14 @@ class Config():
         sbatch_cmd.append(script_path.name)
 
         try:
-            result = run(sbatch_cmd, cwd=script_path.parent,
-                         capture_output=True, check=True)
+            result = run(sbatch_cmd,
+                         cwd=script_path.parent,
+                         capture_output=True,
+                         check=True)
         except CalledProcessError as e:
             with open(self.logfile('a')) as f:
                 f.write(e)
-                raise(e)
+                raise (e)
 
         job_id = int(result.stdout)
         print(f'        └── Submitted batch job {job_id}')
