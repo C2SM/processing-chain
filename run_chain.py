@@ -459,8 +459,8 @@ def main():
         print("╔════════════════════════════════════════╗")
         print("║       Starting Processing Chain        ║")
         print("║════════════════════════════════════════║")
-        print(f"║  Case: {casename: <34} ║")
-        print(f"║  Workflow: {cfg.workflow_name: <28} ║")
+        print(f"║  Case: {casename: <31} ║")
+        print(f"║  Workflow: {cfg.workflow_name: <27} ║")
         print("╚════════════════════════════════════════╝")
 
         # Check for restart compatibility and spinup
