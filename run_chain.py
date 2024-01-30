@@ -363,10 +363,8 @@ def restart_runs(cfg, force, resume):
                     cfg.second_one = False
                     cfg.lrestart = '.TRUE.'
                     startdate_sim = startdate_sim - timedelta(hours=cfg.spinup)
-            else:
-                enddate_sim = startdate_sim + timedelta(
-                    hours=cfg.restart_step_hours)
 
+            enddate_sim = startdate_sim + timedelta(hours=cfg.restart_step_hours)
             startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
             enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
             chunk_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
