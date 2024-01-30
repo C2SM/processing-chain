@@ -10,7 +10,6 @@ import sys
 import time
 import shutil
 import argparse
-import inspect
 
 import jobs
 from jobs import tools
@@ -231,11 +230,11 @@ def run_chunk(cfg, force, resume):
         for job_name in cfg.jobs:
             if (cfg.log_finished_dir / job_name).exists() and not force:
                 # Skip job if already finished
-                print(f'    └── Skip "{job_name}" for chunk "{cfg.chunk_id}"')
+                print(f'    └── Skipping "{job_name}" job')
                 skip = True
             else:
                 print(
-                    f'    └── Submit "{job_name}" for chunk "{cfg.chunk_id}"')
+                    f'    └── Starting "{job_name}" job')
 
                 # Logfile settings
                 cfg.logfile = cfg.log_working_dir / job_name
@@ -370,7 +369,7 @@ def restart_runs(cfg, force, resume):
         # Set restart variable (only takes effect for ICON)
         cfg.lrestart = ".FALSE." if cfg.startdate_sim == cfg.startdate else ".TRUE."
 
-        print(f"└── Starting chunk with startdate {cfg.startdate_sim}")
+        print(f'└── Starting chunk "{cfg.chunk_id}"')
 
         run_chunk(cfg=cfg, force=force, resume=resume)
 
