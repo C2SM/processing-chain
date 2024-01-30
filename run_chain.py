@@ -455,14 +455,13 @@ def main():
         cfg.print_config()
 
         tools.create_dir(cfg.case_root, "case_root")
-        print(
-            f"Starting chain for case {casename} and workflow {cfg.workflow_name}"
-        )
 
-        if cfg.is_async:
-            print("Running the Processing Chain in asynchronous mode.")
-        else:
-            print("Running the Processing Chain in sequential mode.")
+        print("╔════════════════════════════════════════╗")
+        print("║       Starting Processing Chain        ║")
+        print("║════════════════════════════════════════║")
+        print(f"║  Case: {casename: <34} ║")
+        print(f"║  Workflow: {cfg.workflow_name: <28} ║")
+        print("╚════════════════════════════════════════╝")
 
         # Check for restart compatibility and spinup
         if 'restart' in cfg.workflow['features']:
@@ -473,7 +472,9 @@ def main():
             cfg.enddate_sim = cfg.enddate
             run_chunk(cfg=cfg, force=args.force, resume=args.resume)
 
-    print('>>> Finished the processing chain successfully <<<')
+    print("╔════════════════════════════════════════╗")
+    print("║       Processing Chain Completed       ║")
+    print("╚════════════════════════════════════════╝")
 
 
 if __name__ == '__main__':
