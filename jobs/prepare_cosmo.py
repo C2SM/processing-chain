@@ -161,7 +161,7 @@ def main(cfg):
 
     # Other IC/BC data
     inv_to_process = []
-    if cfg.workflow_name == 'cosmo-ghg':
+    if hasattr(cfg, 'cams'):
         try:
             CAMS = dict(fullname="CAMS",
                         nickname="cams",
@@ -185,7 +185,7 @@ def main(cfg):
             inv_to_process.append(CT)
         except AttributeError:
             pass
-    elif cfg.workflow_name == 'cosmo-art':
+    elif hasattr(cfg, 'mozart'):
         try:
             MOZART = dict(fullname='MOZART',
                           nickname='mozart',
@@ -200,7 +200,7 @@ def main(cfg):
         except AttributeError:
             pass
 
-    if cfg.workflow_name == 'cosmo-ghg' or cfg.workflow_name == 'cosmo-art':
+    if inv_to_process:
         logging.info("Processing " +
                      ", ".join([i["fullname"]
                                 for i in inv_to_process]) + " data")

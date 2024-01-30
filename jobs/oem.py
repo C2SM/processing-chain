@@ -52,9 +52,9 @@ def main(cfg):
         raise RuntimeError("At least one of (hod/dow/moy) or (hoy) netcdfs "
                            " have to be given for online emissions")
 
-    if cfg.workflow_name.startswith('icon'):
+    if hasattr(cfg, 'icon'):
         input_dir = cfg.icon_input
-    else:
+    elif hasattr(cfg, 'cosmo'):
         input_dir = cfg.cosmo_input
     dest_dir = os.path.join(input_dir, "oem")
     tools.create_dir(dest_dir, "online emissions input")

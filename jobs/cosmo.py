@@ -128,18 +128,16 @@ def main(cfg):
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
     # Copy cosmo executable
-    cfg.cosmo['execname'] = cfg.workflow_name.lower()
+    cfg.cosmo['execname'] = 'cosmo.exe'
     tools.copy_file(cfg.cosmo['binary_file'],
                     os.path.join(cfg.cosmo_run, cfg.cosmo['execname']))
 
     # Prepare namelist and submit job
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                   'cosmo_tracers.csv')
-    if cfg.workflow_name == 'cosmo':
-        namelist_names = ['ORG', 'IO', 'DYN', 'PHY', 'DIA', 'ASS', 'SAT']
-    elif cfg.workflow_name == 'cosmo-ghg':
+    if hasattr(cfg, 'cams') or hasattr(cfg, 'mozart'):
         namelist_names = ['AF', 'ORG', 'IO', 'DYN', 'GHG', 'PHY', 'DIA', 'ASS']
-    elif cfg.workflow_name == 'cosmo-art':
+    if hasattr(cfg, 'photo_rate'):
         namelist_names = [
             'ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO', 'ORG', 'PHY'
         ]
@@ -147,6 +145,8 @@ def main(cfg):
             # When doing online emissions in COSMO-ART, an additional
             # namelist is required
             namelist_names += ['OAE']
+    elif hasattr(cfg, 'cosmo'):
+        namelist_names = ['ORG', 'IO', 'DYN', 'PHY', 'DIA', 'ASS', 'SAT']
 
     for section in namelist_names:
         namelist_file = os.path.join(
@@ -178,7 +178,7 @@ def main(cfg):
 
     # Append INPUT_GHG namelist with tracer definitions from csv file
     if os.path.isfile(tracer_csvfile):
-        if cfg.workflow_name == 'cosmo-ghg':
+        if hasattr(cfg, 'cams') or hasattr(cfg, 'mozart'):    
             input_ghg_filename = os.path.join(cfg.cosmo_run, 'INPUT_GHG')
 
             write_cosmo_input_ghg.main(tracer_csvfile, input_ghg_filename, cfg)

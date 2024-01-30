@@ -68,7 +68,7 @@ def main(cfg):
         extpar_dir)
 
     # Copy landuse and plant-functional-type files
-    if cfg.workflow_name == 'cosmo-art':
+    if hasattr(cfg, 'photo_rate'):
         lu_file_src = cfg.int2lm['lu_file']
         lu_file_dst = os.path.join(extpar_dir, 'landuse.nc')
         tools.copy_file(lu_file_src, lu_file_dst)

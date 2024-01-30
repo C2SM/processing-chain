@@ -68,5 +68,5 @@ def main(cfg):
 
             # convert grid_mapping_name from string (NF90_STRING) to char
             # (NF90_CHAR) (needed for int2lm to work)
-            if cfg.workflow_name.startswith('cosmo'):
+            if hasattr(cfg, 'cosmo'):
                 tools.string2char.main(dest_path)

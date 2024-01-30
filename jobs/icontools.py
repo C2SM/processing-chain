@@ -32,7 +32,7 @@ def main(cfg):
                                  cfg.meteo['inc']):
         meteo_file = cfg.icon_input_icbc / (
             cfg.meteo['prefix'] + time.strftime(cfg.meteo['nameformat']))
-        if cfg.workflow_name == 'icon-art' or cfg.workflow_name == 'icon-art-oem':
+        if hasattr(cfg, 'art_input_folder'):
             chem_file = cfg.icon_input_icbc / (
                 cfg.chem['prefix'] + time.strftime(cfg.chem_nameformat))
             datafile_list_chem.append(str(chem_file) + cfg.chem['suffix'])
