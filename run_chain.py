@@ -459,7 +459,7 @@ def main():
         print("╔════════════════════════════════════════╗")
         print("║       Starting Processing Chain        ║")
         print("║════════════════════════════════════════║")
-        print(f"║  Case: {casename: <31} ║")
+        print(f"║      Case: {casename: <27} ║")
         print(f"║  Workflow: {cfg.workflow_name: <27} ║")
         print("╚════════════════════════════════════════╝")
 
