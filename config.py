@@ -157,7 +157,7 @@ class Config():
             If the 'constraint' or 'run_on' configuration values are invalid.
         """
         if self.constraint == 'gpu':
-            if self.workflow_name.startswith('icon'):
+            if hasattr(self, 'icon'):
                 if self.run_on == 'gpu':
                     self.ntasks_per_node = 1
                 elif self.run_on == 'cpu':
@@ -189,7 +189,7 @@ class Config():
             self.workflow = workflows[self.workflow_name]
         # Otherwise, use custom workflow from config.yaml directly
         elif isinstance(self.workflow, dict):
-            self.workflow_name = self.casename
+            self.workflow_name = 'custom'
         else:
             raise InvalidWorkflowType(
                 "Invalid workflow type. Must be either a string or a dictionary."
