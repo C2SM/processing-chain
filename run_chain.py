@@ -233,8 +233,7 @@ def run_chunk(cfg, force, resume):
                 print(f'    └── Skipping "{job_name}" job')
                 skip = True
             else:
-                print(
-                    f'    └── Starting "{job_name}" job')
+                print(f'    └── Starting "{job_name}" job')
 
                 # Logfile settings
                 cfg.logfile = cfg.log_working_dir / job_name
