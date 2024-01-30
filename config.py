@@ -379,7 +379,7 @@ class Config():
             # sequential case
             return '--wait'
 
-    def submit(self, job_name, script, add_dep=None, logfile=None):
+    def submit(self, job_name, script, add_dep=None):
         """Submit job with dependencies"""
         script_path = Path(script)
         sbatch_cmd = ['sbatch', '--parsable']
@@ -391,7 +391,7 @@ class Config():
             result = run(sbatch_cmd, cwd=script_path.parent,
                          capture_output=True, check=True)
         except CalledProcessError as e:
-            with open self.logfile('a') as f:
+            with open(self.logfile('a')) as f:
                 f.write(e)
                 raise(e)
 
