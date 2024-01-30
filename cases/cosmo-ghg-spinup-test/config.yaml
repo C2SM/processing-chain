@@ -1,6 +1,6 @@
 # Configuration file for the 'cosmo-ghg-spinup-test' case with COSMO-GHG
 
-workflow: cosmo-ghg
+workflow: cosmo-ghg-spinup
 constraint: gpu
 run_on: gpu
 compute_queue: normal

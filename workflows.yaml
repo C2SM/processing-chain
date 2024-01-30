@@ -55,6 +55,55 @@ cosmo-ghg:
       current:
         - cosmo
 
+cosmo-ghg-spinup:
+  features:
+    - restart
+    - tracers
+    - spinup
+  jobs:
+    - prepare_cosmo
+    - emissions
+    - biofluxes
+    - oem
+    - online_vprm
+    - int2lm
+    - post_int2lm
+    - cosmo
+    - post_cosmo
+  dependencies:
+    emissions:
+      current:
+        - prepare_cosmo
+    biofluxes:
+      current:
+        - prepare_cosmo
+    oem:
+      current:
+        - prepare_cosmo
+    online_vprm:
+      current:
+        - prepare_cosmo
+    int2lm:
+      current:
+        - prepare_cosmo
+        - emissions
+        - biofluxes
+        - oem
+        - online_vprm
+    post_int2lm:
+      current:
+        - int2lm
+      previous:
+        - cosmo
+    cosmo:
+      current:
+        - post_int2lm
+      previous:
+        - cosmo
+    post_cosmo:
+      current:
+        - cosmo
+
 cosmo-art:
   features:
     - nesting
