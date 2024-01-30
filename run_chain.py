@@ -163,7 +163,6 @@ def run_chunk(cfg, force, resume):
         cfg.cosmo_restart_out = cfg.chain_root / 'cosmo' / 'restart'
         cfg.cosmo_restart_in = cfg.chain_root_prev / 'cosmo' / 'restart'
 
-
     if cfg.is_async:
         # Empty curent job ids
         cfg.job_ids['current'] = {}
@@ -378,7 +377,7 @@ def main():
         # Check constraint
         if cfg.constraint:
             assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
-                                                    "gpu or mc")
+                                                     "gpu or mc")
 
         # Print config before chain starts
         cfg.print_config()

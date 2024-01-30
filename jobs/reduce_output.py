@@ -75,7 +75,6 @@ def main(cfg):
         cfg.output_levels = -1
     if not hasattr(cfg, 'convert_gas'):
         cfg.convert_gas = True
-
     """Get list of constant files"""
     cfiles = []
     read_cfile = False
