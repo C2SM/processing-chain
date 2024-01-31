@@ -151,17 +151,17 @@ def run_chunk(cfg, force, resume):
     tools.create_dir(cfg.log_finished_dir, "log_finished")
 
     # Config variables for spinup and restart runs
+    cfg.cosmo_restart_in = ''
+    cfg.cosmo_restart_out = ''
     if hasattr(cfg, 'spinup'):
-        if hasattr(cfg, 'chunk_id_prev'):
+        if cfg.chunk_id_prev:
             cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.chunk_id_prev
             cfg.last_cosmo_output = cfg.chain_root_prev / 'cosmo' / 'output'
-        cfg.cosmo_restart_out = ''
-        cfg.cosmo_restart_in = ''
     elif 'restart' in cfg.workflow['features']:
-        if hasattr(cfg, 'chunk_id_prev'):
+        if cfg.chunk_id_prev:
             cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.chunk_id_prev
-        cfg.cosmo_restart_out = cfg.chain_root / 'cosmo' / 'restart'
-        cfg.cosmo_restart_in = cfg.chain_root_prev / 'cosmo' / 'restart'
+            cfg.cosmo_restart_in = cfg.chain_root_prev / 'cosmo' / 'restart'
+            cfg.cosmo_restart_out = cfg.chain_root / 'cosmo' / 'restart'
 
     if cfg.is_async:
         # Empty curent job ids

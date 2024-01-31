@@ -360,12 +360,10 @@ class Config():
 
     def get_previous_chunk_id(self, current_chunk_id):
         """Get the previous chunk ID based on the current chunk ID."""
-        try:
-            index = self.chunk_list.index(current_chunk_id)
-            if index > 0:
-                self.chunk_id_prev = self.chunk_list[index - 1]
-        except ValueError:
-            # If the current_chunk_id is not in the list or it's the first chunk
+        index = self.chunk_list.index(current_chunk_id)
+        if index > 0:
+            self.chunk_id_prev = self.chunk_list[index - 1]
+        else:
             self.chunk_id_prev = None
 
     def get_dep_ids(self, job_name, add_dep=None):

@@ -16,8 +16,9 @@ def set_cfg_variables(cfg):
     cfg.icon_output = cfg.icon_base / 'output'
     cfg.icon_output_reduced = cfg.icon_base / 'output_reduced'
     cfg.icon_restart_out = cfg.icon_base / 'restart'
-    cfg.icon_restart_in = cfg.chain_root_prev / 'icon' / 'run'
-    cfg.icon_input_icbc_prev = cfg.chain_root_prev / 'icon' / 'input' / 'icbc'
+    if cfg.chunk_id_prev:
+        cfg.icon_restart_in = cfg.chain_root_prev / 'icon' / 'run'
+        cfg.icon_input_icbc_prev = cfg.chain_root_prev / 'icon' / 'input' / 'icbc'
 
     cfg.input_files_scratch = {}
     for dsc, file in cfg.input_files.items():
