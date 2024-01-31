@@ -163,7 +163,7 @@ def run_chunk(cfg, force, resume):
             cfg.cosmo_restart_in = cfg.chain_root_prev / 'cosmo' / 'restart'
         cfg.cosmo_restart_out = cfg.chain_root / 'cosmo' / 'restart'
 
-    if cfg.is_async:
+    if not cfg.force_sync:
         # Empty curent job ids
         cfg.job_ids['current'] = {}
 
@@ -191,77 +191,41 @@ def run_chunk(cfg, force, resume):
         # Wait for previous chunk jobs, monitor them and cycle info
         cfg.cycle()
 
-    else:
-        # run jobs (if required)
-        for job in cfg.jobs:
-            skip = False
+    else: # For nested run_chain.py
+        for job_name in cfg.jobs:
+            print(f'    └── Process "{job_name}" for chunk "{cfg.chunk_id}"')
+            try:
+                # Change the log file
+                cfg.logfile = cfg.log_working_dir / job_name
+                cfg.logfile_finish = cfg.log_finished_dir / job_name
 
-            # if exists job is currently worked on or has been finished
-            if (cfg.log_working_dir / job).exists():
-                if not force:
-                    while True:
-                        if (cfg.log_finished_dir / job).exists():
-                            print(
-                                f'    └── Skip "{job}" for chunk "{cfg.chunk_id}"'
-                            )
-                            skip = True
-                            break
-                        elif resume:
-                            resume = False
-                            break
-                        else:
-                            print(
-                                f"    └── Wait for {job} of chunk {cfg.chunk_id}"
-                            )
-                            sys.stdout.flush()
-                            for _ in range(3000):
-                                time.sleep(0.1)
-                else:
-                    (cfg.log_working_dir / job).unlink()
-                    (cfg.log_finished_dir / job).unlink(missing_ok=True)
+                # Launch the job
+                to_call = getattr(jobs, job_name)
+                to_call.main(cfg)
 
-            if not skip:
-                print(f'    └── Process "{job}" for chunk "{cfg.chunk_id}"')
-                sys.stdout.flush()
+                shutil.copy(cfg.logfile, cfg.logfile_finish)
 
-                try_count = 1 + (cfg.ntry - 1) * (job == 'cosmo')
-                while try_count > 0:
-                    try_count -= 1
-                    try:
-                        # Change the log file
-                        cfg.logfile = cfg.log_working_dir / job
-                        cfg.logfile_finish = cfg.log_finished_dir / job
+                exitcode = 0
+            except Exception:
+                subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
+                    job_name, cfg.chunk_id)
+                logging.exception(subject)
+                if cfg.user_mail:
+                    message = tools.prepare_message(
+                        cfg.log_working_dir / job_name)
+                    logging.info('Sending log file to %s' %
+                                    cfg.user_mail)
+                    tools.send_mail(cfg.user_mail, subject, message)
 
-                        # Launch the job
-                        to_call = getattr(jobs, job)
-                        to_call.main(cfg)
-
-                        shutil.copy(cfg.logfile, cfg.logfile_finish)
-
-                        exitcode = 0
-                        try_count = 0
-                    except Exception:
-                        subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
-                            job, cfg.chunk_id)
-                        logging.exception(subject)
-                        if cfg.user_mail:
-                            message = tools.prepare_message(
-                                cfg.log_working_dir / job)
-                            logging.info('Sending log file to %s' %
-                                         cfg.user_mail)
-                            tools.send_mail(cfg.user_mail, subject, message)
-                        if try_count == 0:
-                            raise RuntimeError(subject)
-
-                if exitcode != 0 or not (cfg.log_finished_dir / job).exists():
-                    subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
-                        job, cfg.chunk_id)
-                    if cfg.user_mail:
-                        message = tools.prepare_message(cfg.log_working_dir /
-                                                        job)
-                        logging.info('Sending log file to %s' % cfg.user_mail)
-                        tools.send_mail(cfg.user_mail, subject, message)
-                    raise RuntimeError(subject)
+            if exitcode != 0 or not (cfg.log_finished_dir / job_name).exists():
+                subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
+                    job_name, cfg.chunk_id)
+                if cfg.user_mail:
+                    message = tools.prepare_message(cfg.log_working_dir /
+                                                    job_name)
+                    logging.info('Sending log file to %s' % cfg.user_mail)
+                    tools.send_mail(cfg.user_mail, subject, message)
+                raise RuntimeError(subject)
 
 
 def restart_runs(cfg, force, resume):
@@ -367,6 +331,9 @@ def main():
         # Check sync is forced
         if args.force_sync:
             cfg.is_async = None
+            cfg.force_sync = True
+        else:
+            cfg.force_sync = False
 
         # Check constraint
         if cfg.constraint:
