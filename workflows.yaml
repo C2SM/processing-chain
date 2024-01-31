@@ -1,18 +1,26 @@
 cosmo:
   features:
     - restart
-    - spinup
   jobs:
     - prepare_cosmo
     - int2lm
     - cosmo
     - post_cosmo
+  dependencies:
+    int2lm:
+      current:
+        - prepare_cosmo
+    cosmo:
+      previous:
+        - cosmo
+    post_cosmo:
+      current:
+        - cosmo
 
 cosmo-ghg:
   features:
     - restart
     - tracers
-    - spinup
   jobs:
     - prepare_cosmo
     - emissions
@@ -116,6 +124,28 @@ cosmo-art:
     - int2lm
     - cosmo
     - post_cosmo
+  dependencies:
+    emissions:
+      current:
+        - prepare_cosmo
+    obs_nudging:
+      current:
+        - prepare_cosmo
+    photo_rate:
+      current:
+        - prepare_cosmo
+    int2lm:
+      current:
+        - prepare_cosmo
+        - emissions
+        - obs_nudging
+        - photo_rate
+    cosmo:
+      previous:
+        - cosmo
+    post_cosmo:
+      current:
+        - cosmo
 
 icon:
   features:
