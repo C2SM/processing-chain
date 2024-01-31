@@ -289,8 +289,8 @@ def restart_runs(cfg, force, resume):
     for chunk_id in cfg.chunks:
         cfg.chunk_id = chunk_id
         cfg.get_previous_chunk_id(cfg.chunk_id)
-        cfg.startdate_sim_yyyymmddhh = chunk_id[0:10]
-        cfg.enddate_sim_yyyymmddhh = chunk_id[-10:]
+        cfg.startdate_sim_yyyymmddhh = cfg.chunk_id[0:10]
+        cfg.enddate_sim_yyyymmddhh = cfg.chunk_id[-10:]
         cfg.startdate_sim = datetime.strptime(
             cfg.startdate_sim_yyyymmddhh, "%Y%m%d%H").replace(tzinfo=pytz.UTC)
         cfg.enddate_sim = datetime.strptime(
@@ -364,11 +364,9 @@ def main():
         else:
             cfg.jobs = args.job_list
 
-        # Check if chunks are set or if all are used and compute them
-        if args.chunk_list is None:
-            cfg.get_chunks()
-        else:
-            cfg.chunks = args.chunk_list
+        # Get chunks and custom chunks if present
+        cfg.get_chunk_list()
+        cfg.chunks = args.chunk_list if args.chunk_list else cfg.chunk_list
 
         # Check sync is forced
         if args.force_sync:

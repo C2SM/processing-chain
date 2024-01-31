@@ -337,8 +337,8 @@ class Config():
         formatted_duration = f"{int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
         return formatted_duration
 
-    def get_chunks(self):
-        self.chunks = []
+    def get_chunk_list(self):
+        self.chunk_list = []
         for startdate_sim in tools.iter_hours(self.startdate, self.enddate,
                                               self.restart_step_hours):
             if 'spinup' in self.workflow['features'] and hasattr(
@@ -356,14 +356,14 @@ class Config():
             if enddate_sim > self.enddate:
                 continue
 
-            self.chunks.append(chunk_id)
+            self.chunk_list.append(chunk_id)
 
     def get_previous_chunk_id(self, current_chunk_id):
         """Get the previous chunk ID based on the current chunk ID."""
         try:
-            index = self.chunks.index(current_chunk_id)
+            index = self.chunk_list.index(current_chunk_id)
             if index > 0:
-                self.chunk_id_prev = self.chunks[index - 1]
+                self.chunk_id_prev = self.chunk_list[index - 1]
         except ValueError:
             # If the current_chunk_id is not in the list or it's the first chunk
             self.chunk_id_prev = None
