@@ -191,7 +191,7 @@ def run_chunk(cfg, force, resume):
         # Wait for previous chunk jobs, monitor them and cycle info
         cfg.cycle()
 
-    else: # For nested run_chain.py
+    else:  # For nested run_chain.py
         for job_name in cfg.jobs:
             print(f'    └── Process "{job_name}" for chunk "{cfg.chunk_id}"')
             try:
@@ -211,10 +211,9 @@ def run_chunk(cfg, force, resume):
                     job_name, cfg.chunk_id)
                 logging.exception(subject)
                 if cfg.user_mail:
-                    message = tools.prepare_message(
-                        cfg.log_working_dir / job_name)
-                    logging.info('Sending log file to %s' %
-                                    cfg.user_mail)
+                    message = tools.prepare_message(cfg.log_working_dir /
+                                                    job_name)
+                    logging.info('Sending log file to %s' % cfg.user_mail)
                     tools.send_mail(cfg.user_mail, subject, message)
 
             if exitcode != 0 or not (cfg.log_finished_dir / job_name).exists():
