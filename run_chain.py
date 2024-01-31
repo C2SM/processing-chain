@@ -364,10 +364,6 @@ def main():
         else:
             cfg.jobs = args.job_list
 
-        # Get chunks and custom chunks if present
-        cfg.get_chunk_list()
-        cfg.chunks = args.chunk_list if args.chunk_list else cfg.chunk_list
-
         # Check sync is forced
         if args.force_sync:
             cfg.is_async = None
@@ -377,8 +373,14 @@ def main():
             assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
                                                      "gpu or mc")
 
+        # Get complete chunk list
+        cfg.get_chunk_list()
+
         # Print config before chain starts
         cfg.print_config()
+
+        # Get custom chunks if specified
+        cfg.chunks = args.chunk_list if args.chunk_list else cfg.chunk_list
 
         tools.create_dir(cfg.case_root, "case_root")
 
