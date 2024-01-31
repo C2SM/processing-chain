@@ -113,10 +113,6 @@ def main(cfg):
         logs_src=str(cfg.log_finished_dir).rstrip('/'),
         logs_dest=logs_path.rstrip('/'))
 
-    if not cfg.is_async:
-        # Wait for Cosmo to finish first
-        tools.check_job_completion(cfg.log_finished_dir, "cosmo")
-
     os.makedirs(cfg.cosmo_run, exist_ok=True)
     script = (cfg.cosmo_run / 'run_post_cosmo.job')
     with open(script, "w") as outf:

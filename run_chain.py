@@ -329,7 +329,6 @@ def main():
 
         # Check sync is forced
         if args.force_sync:
-            cfg.is_async = None
             cfg.force_sync = True
         else:
             cfg.force_sync = False

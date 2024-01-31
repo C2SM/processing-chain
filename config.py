@@ -196,7 +196,7 @@ class Config():
                 "Invalid workflow type. Must be either a string or a dictionary."
             )
 
-        self.is_async = 'dependencies' in self.workflow
+        assert 'dependencies' in self.workflow, "Missing 'dependencies' in workflow. Exiting."
 
         # Initiate empty job ids dictionnary so that it can be filled in later
         self.job_ids = {'current': {}, 'previous': {}}
@@ -381,7 +381,7 @@ class Config():
             dep_id_list = []
 
         # Add job dependencies
-        if self.is_async:
+        if not self.force_sync:
             # Could be that job has no dependency, even in an async config,
             # e.g., prepare_data
             if deps := self.workflow['dependencies'].get(job_name):
@@ -396,8 +396,8 @@ class Config():
 
     def get_dep_cmd(self, job_name, add_dep=None):
         """Generate the part of the sbatch command that sepcifies dependencies for job_name."""
-        if self.is_async:
-            # async case
+        if not self.force_sync:
+            # Default: async case
             if dep_ids := self.get_dep_ids(job_name, add_dep=add_dep):
                 dep_str = ':'.join(map(str, dep_ids))
                 return f'--dependency=afterok:{dep_str}'
@@ -406,7 +406,7 @@ class Config():
                 # so don't use --wait
                 return None
         else:
-            # sequential case
+            # Needed for nested run_chain.py
             return '--wait'
 
     def submit(self, job_name, script, add_dep=None):
