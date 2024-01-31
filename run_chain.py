@@ -161,7 +161,7 @@ def run_chunk(cfg, force, resume):
         if cfg.chunk_id_prev:
             cfg.chain_root_prev = cfg.work_root / cfg.casename / cfg.chunk_id_prev
             cfg.cosmo_restart_in = cfg.chain_root_prev / 'cosmo' / 'restart'
-            cfg.cosmo_restart_out = cfg.chain_root / 'cosmo' / 'restart'
+        cfg.cosmo_restart_out = cfg.chain_root / 'cosmo' / 'restart'
 
     if cfg.is_async:
         # Empty curent job ids
