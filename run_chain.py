@@ -16,18 +16,18 @@ from jobs import tools
 
 
 def parse_arguments():
-    """Parse command line arguments for the processing chain script.
+    """Parse command line arguments for the Processing Chain script.
 
     Parses and retrieves command line arguments, allowing users to specify
     run identifiers, jobs to execute, and various options to control the
-    execution of the processing chain.
+    execution of the Processing Chain.
 
     Returns
     -------
     argparse.Namespace
         A namespace object containing parsed command line arguments.
     """
-    parser = argparse.ArgumentParser(description="Run the processing chain.")
+    parser = argparse.ArgumentParser(description="Run the Processing Chain.")
 
     parser.add_argument("casenames",
                         nargs='+',
@@ -36,9 +36,9 @@ def parse_arguments():
                         "to be in cases/<casename>/. The runs are executed "
                         "sequentially in the order they're given here.")
 
-    jobs_help = ("List of job-names to be executed. A job is a .py-"
+    jobs_help = ("List of job names to be executed. A job is a .py "
                  "file in jobs/ with a main()-function which "
-                 "handles one aspect of the processing chain, for "
+                 "handles one aspect of the Processing Chain, for "
                  "example copying meteo-input data or launching a "
                  "job for int2lm. "
                  "Jobs are executed in the order in which they are "
@@ -52,27 +52,20 @@ def parse_arguments():
                         help=jobs_help,
                         default=None)
 
-    force_help = ("Force the processing chain to redo all specified jobs,"
+    force_help = ("Force the Processing Chain to redo all specified jobs,"
                   " even if they have been started already or were finished"
                   " previously. WARNING: Only logfiles get deleted,"
                   " other effects of a given job (copied files etc.)"
-                  " are simply overwritten. This may cause errors.")
+                  " are simply overwritten. This may cause errors"
+                  " or unexpected behavior.")
     parser.add_argument("-f", "--force", action='store_true', help=force_help)
 
-    tries_help = ("Amount of time the cosmo job is re-tried before crashing."
-                  " Default is 1.")
-    parser.add_argument("-t",
-                        "--try",
-                        help=tries_help,
-                        dest="ntry",
-                        type=int,
-                        default=1)
-
     resume_help = (
-        "Resume the processing chain by restarting the last unfinished job."
+        "Resume the Processing Chain by restarting the last unfinished job."
         " WARNING: Only the logfile gets deleted,"
         " other effects of a given job (copied files etc.)"
-        " are simply overwritten. This may cause errors.")
+        " are simply overwritten. This may cause errors."
+        " or unexpected behavior.")
     parser.add_argument("-r",
                         "--resume",
                         help=resume_help,
@@ -90,7 +83,7 @@ class Config():
         """Initialize an instance of the Config class.
 
         Initializes an instance of the Config class with user-specific
-        and default attributes. The class represents a processing chain for a
+        and default attributes. The class represents a Processing Chain for a
         particular case, and its attributes are populated based on the provided
         `casename`.
 
@@ -98,7 +91,7 @@ class Config():
         ----------
         casename : str
             The identifier for the case, typically specifying the configuration
-            and settings to be used in the processing chain.
+            and settings to be used in the Processing Chain.
 
         Attributes
         ----------
@@ -107,13 +100,13 @@ class Config():
         email : str
             The user's email address, initially set to None and updated using the `set_email` method.
         casename : str
-            The specified case name for the processing chain.
+            The specified case name for the Processing Chain.
         chain_src_dir : str
-            The source directory for the processing chain, typically the current working directory.
+            The source directory for the Processing Chain, typically the current working directory.
         case_path : str
             The path to the case directory under 'cases/' for the specified `casename`.
         work_root : str
-            The root directory for processing chain execution, typically located under the source directory.
+            The root directory for Processing Chain execution, typically located under the source directory.
 
         Notes
         -----
@@ -414,15 +407,15 @@ class Config():
 
 def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
               force, resume):
-    """Run the processing chain, managing job execution and logging.
+    """Run the Processing Chain, managing job execution and logging.
 
-    This function sets up and manages the execution of a processing chain, handling
+    This function sets up and manages the execution of a Processing Chain, handling
     job execution, logging, and various configuration settings.
 
     Parameters
     ----------
     work_root : str
-        The path to the directory where the processing chain writes files during execution.
+        The path to the directory where the Processing Chain writes files during execution.
     model_cfg : dict
         Configuration settings for the modeling framework.
     cfg : Config
@@ -623,7 +616,7 @@ def run_chain(work_root, model_cfg, cfg, startdate_sim, enddate_sim, job_names,
 def restart_runs(work_root, model_cfg, cfg, job_names, force, resume):
     """Start subchains in specified intervals and manage restarts.
 
-    This function slices the total runtime of the processing chain according to the
+    This function slices the total runtime of the Processing Chain according to the
     `cfg.restart_step_hours` configuration. It calls `run_chain()` for each
     specified interval.
 
@@ -676,7 +669,7 @@ def restart_runs(work_root, model_cfg, cfg, job_names, force, resume):
 def restart_runs_spinup(work_root, model_cfg, cfg, job_names, force, resume):
     """Start subchains in specified intervals and manage restarts with spin-up.
 
-    This function slices the total runtime of the processing chain according to the
+    This function slices the total runtime of the Processing Chain according to the
     `cfg.restart_step_hours` configuration. It calls `run_chain()` for each specified
     interval, managing restarts with spin-up.
 
@@ -758,9 +751,9 @@ def load_model_config_yaml(yamlfile):
 
 
 if __name__ == '__main__':
-    """Main script for running a processing chain.
+    """Main script for running a Processing Chain.
 
-    This script handles the execution of a processing chain for one or more specified cases. It loads model configurations, prepares the environment, and starts the chain based on the provided settings.
+    This script handles the execution of a Processing Chain for one or more specified cases. It loads model configurations, prepares the environment, and starts the chain based on the provided settings.
 
     Parameters
     ----------
@@ -827,4 +820,4 @@ if __name__ == '__main__':
                       force=args.force,
                       resume=args.resume)
 
-    print('>>> Finished the processing chain successfully <<<')
+    print('>>> Finished the Processing Chain successfully <<<')
