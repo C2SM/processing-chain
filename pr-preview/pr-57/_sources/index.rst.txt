@@ -7,12 +7,15 @@ Processing Chain
 ================
 
 The Processing Chain is a collection of Python scripts to prepare the
-necessary input data, submit the compute jobs to the queue on Piz Daint
+necessary input data, submit the compute jobs to the queue on CSCS systems
 and to apply post-processing steps. In addition to the standard versions
-of the COSMO and ICON models, it can als handle several variants of these
-models, namely COSMO-GHG, COSMO-ART and ICON-ART. The chain can be flexibly
-adapted according to your needs, e.g., by creating your own case,
-adding new jobs or custom scripts.
+of the COSMO and ICON models, it can also handle several variants of these
+models, most notably COSMO-GHG (greenhouse gas extension) and
+ICON-ART (Aerosols and Reactive Trace gases).
+
+The Processing Chain can be flexibly adapted according to your needs, e.g.,
+by defining your own workflows, by creating your own simulation cases, 
+or by adding new jobs and scripts.
 
 .. toctree::
     :maxdepth: 2
@@ -39,7 +42,7 @@ adding new jobs or custom scripts.
 
 .. toctree::
     :maxdepth: 2
-    :caption: Function Reference
+    :caption: API
 
     functions
 

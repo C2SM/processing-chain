@@ -10,4 +10,4 @@ Feature Overview
 - Using model built-in restarts or custom spinup
 - Nested runs possible
 - Easy creation of own cases and workflows
-- Various examples for COSMO and ICON workflows available
+- Various examples for COSMO and ICON workflows available 
