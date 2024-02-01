@@ -166,6 +166,13 @@ Then it will start the Processing Chain.</p>
 there is a <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>-file specifying the configuration, as well as templates
 for the necessary namelist files for <strong>int2lm</strong>, <strong>COSMO</strong> or <strong>ICON</strong>. It may also
 contain additional runscripts to be submitted via <code class="docutils literal notranslate"><span class="pre">sbatch</span></code>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Technically, you can run several cases (instead of a single case) in one command,
+which is useful for nested run, for example. This can be achieved by running
+<code class="docutils literal notranslate"><span class="pre">./run_chain.py</span> <span class="pre">&lt;case1&gt;</span> <span class="pre">&lt;case2&gt;</span></code>. With that, the full chain is executed for
+<code class="docutils literal notranslate"><span class="pre">case1</span></code> first, and afterwards for <code class="docutils literal notranslate"><span class="pre">case2</span></code>.</p>
+</div>
 <p>Without specifiying a job list, the default joblist defined in
 <code class="docutils literal notranslate"><span class="pre">config/models.yaml</span></code> will be executed.</p>
 <p>There are several optional arguments available to change the behavior of the chain:</p>

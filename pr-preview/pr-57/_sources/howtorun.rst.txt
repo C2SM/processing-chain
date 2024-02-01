@@ -21,6 +21,12 @@ there is a ``config.yaml``-file specifying the configuration, as well as templat
 for the necessary namelist files for **int2lm**, **COSMO** or **ICON**. It may also
 contain additional runscripts to be submitted via ``sbatch``.
 
+.. hint::
+	Technically, you can run several cases (instead of a single case) in one command,
+	which is useful for nested run, for example. This can be achieved by running
+	``./run_chain.py <case1> <case2>``. With that, the full chain is executed for 
+	``case1`` first, and afterwards for ``case2``.
+
 Without specifiying a job list, the default joblist defined in
 ``config/models.yaml`` will be executed.
 
