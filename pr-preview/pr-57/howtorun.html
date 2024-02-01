@@ -169,52 +169,48 @@ contain additional runscripts to be submitted via <code class="docutils literal 
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>Technically, you can run several cases (instead of a single case) in one command,
-which is useful for nested run, for example. This can be achieved by running
+which is useful for nested runs, for example. This can be achieved by running
 <code class="docutils literal notranslate"><span class="pre">./run_chain.py</span> <span class="pre">&lt;case1&gt;</span> <span class="pre">&lt;case2&gt;</span></code>. With that, the full chain is executed for
 <code class="docutils literal notranslate"><span class="pre">case1</span></code> first, and afterwards for <code class="docutils literal notranslate"><span class="pre">case2</span></code>.</p>
 </div>
-<p>Without specifiying a job list, the default joblist defined in
-<code class="docutils literal notranslate"><span class="pre">config/models.yaml</span></code> will be executed.</p>
 <p>There are several optional arguments available to change the behavior of the chain:</p>
+<blockquote>
+<div><p>$ ./run_chain.py -h</p>
+</div></blockquote>
 <ul class="simple">
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code></dt><dd><p>Show a help message and exit.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code></dt><dd><p>Show this help message and exit.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">-j</span> <span class="pre">[JOB_LIST</span> <span class="pre">...]</span></code>, <code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">[JOB_LIST</span> <span class="pre">...]</span></code></dt><dd><p>List of job names to be executed.
-A job is a .py-file in jobs/ with a <code class="docutils literal notranslate"><span class="pre">main()</span></code> function, which
+A job is a <code class="docutils literal notranslate"><span class="pre">.py</span></code> file in i``jobs/`` with a <code class="docutils literal notranslate"><span class="pre">main()</span></code> function, which
 handles one aspect of the Processing Chain, for
 example copying <code class="docutils literal notranslate"><span class="pre">meteo</span></code> input data or launching a
 job for <code class="docutils literal notranslate"><span class="pre">int2lm</span></code>. Jobs are executed in the order
 in which they are given here. If no jobs are
-given, default jobs will be executedas defined
-in config/models.yaml.</p>
+given, default jobs will be executed as defined
+in <code class="docutils literal notranslate"><span class="pre">config/models.yaml</span></code>.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">-f</span></code>, <code class="docutils literal notranslate"><span class="pre">--force</span></code></dt><dd><p>Force the processing chain to redo all specified
+<dt><code class="docutils literal notranslate"><span class="pre">-f</span></code>, <code class="docutils literal notranslate"><span class="pre">--force</span></code></dt><dd><p>Force the Processing Chain to redo all specified
 jobs, even if they have been started already or
 were finished previously. WARNING: Only logfiles
 get deleted, other effects of a given job
 (copied files etc.) are simply overwritten. This
-may cause errors.</p>
+may cause errors or unexpected behavior.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">NTRY</span></code>, <code class="docutils literal notranslate"><span class="pre">--try</span> <span class="pre">NTRY</span></code></dt><dd><p>Amount of time the cosmo job is re-tried before crashing. Default is 1.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">-r</span></code>, <code class="docutils literal notranslate"><span class="pre">--resume</span></code></dt><dd><p>Resume the processing chain by restarting the
+<dt><code class="docutils literal notranslate"><span class="pre">-r</span></code>, <code class="docutils literal notranslate"><span class="pre">--resume</span></code></dt><dd><p>Resume the Processing Chain by restarting the
 last unfinished job. WARNING: Only the logfile
 gets deleted, other effects of a given job
 (copied files etc.) are simply overwritten. This
-may cause errors.</p>
+may cause errors or unexpected behavior.</p>
 </dd>
 </dl>
 </li>
@@ -222,12 +218,14 @@ may cause errors.</p>
 </section>
 <section id="what-it-does">
 <h2>What it Does<a class="headerlink" href="#what-it-does" title="Permalink to this heading"></a></h2>
-<p>The script <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code> reads the command line arguments and the config file.
+<p>The script <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code> reads the command line arguments and the config file
+from the specified case.
 It then calls the function <code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.restart_runs()</span></code>, which divides the
 simulation time according to the specified restart steps. Then it calls
-<code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.run_chain()</span></code> for each sub-run. This function sets up the directory
-structure of the chain and then starts the specified <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">jobs</span></a>
-sequentially.</p>
+<code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.run_chunk()</span></code> for each part (chunk) of the simulation workflow.
+This function sets up the directory structure of the chain and then submits the
+specified <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">jobs</span></a> via <code class="docutils literal notranslate"><span class="pre">sbatch</span></code> to the Slurm workload manager,
+taking job dependencies into account.</p>
 </section>
 <section id="test-cases">
 <h2>Test Cases<a class="headerlink" href="#test-cases" title="Permalink to this heading"></a></h2>
@@ -247,6 +245,9 @@ the script:</p>
 </div>
 <p>This will run all the individual scripts in <code class="docutils literal notranslate"><span class="pre">jenkins/scripts/</span></code>, which
 can also be launched separately if desired.</p>
+<p>These cases undergo regulary testing to ensure that the Processing Chain runs
+correctly. A corresponding Jenkins plan is launched on a weekly basis and
+when triggered within a GitHub pull request.</p>
 </section>
 <section id="directory-structure">
 <h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Permalink to this heading"></a></h2>
@@ -267,6 +268,10 @@ run looks like this:</p>
         └── cfg.int2lm_output/
 </pre></div>
 </div>
+<p>As one can see, it creates working directories for both the <code class="docutils literal notranslate"><span class="pre">int2lm</span></code> preprocessor
+and <code class="docutils literal notranslate"><span class="pre">cosmo</span></code>. Additionally, and this is always the case, the <code class="docutils literal notranslate"><span class="pre">checkpoints</span></code>
+directory holds all the job logfiles. Whenever a job has successfully finished,
+the logfile is copied from the <code class="docutils literal notranslate"><span class="pre">working</span></code> to the <code class="docutils literal notranslate"><span class="pre">finished</span></code> sub-directory.</p>
 <p>Running the <code class="docutils literal notranslate"><span class="pre">cosmo-ghg-test</span></code> case therefore produces the following
 directories and files (showing four levels of directories deep):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>work/cosmo-ghg-test
@@ -281,7 +286,7 @@ directories and files (showing four levels of directories deep):</p>
 │   │   │   ├── online_vprm
 │   │   │   ├── post_cosmo
 │   │   │   ├── post_int2lm
-│   │   │   └── prepare_data
+│   │   │   └── prepare_cosmo
 │   │   └── working/
 │   │       ├── biofluxes
 │   │       ├── cosmo
@@ -291,7 +296,7 @@ directories and files (showing four levels of directories deep):</p>
 │   │       ├── online_vprm
 │   │       ├── post_cosmo
 │   │       ├── post_int2lm
-│   │       └── prepare_data
+│   │       └── prepare_cosmo
 │   ├── cosmo/
 │   │   ├── input/
 │   │   │   ├── oem/
@@ -334,7 +339,7 @@ directories and files (showing four levels of directories deep):</p>
         │   │   ├── online_vprm
         │   │   ├── post_cosmo
         │   │   ├── post_int2lm
-        │   │   └── prepare_data
+        │   │   └── prepare_cosmo
         │   └── working/
         │       ├── biofluxes
         │       ├── cosmo
@@ -344,7 +349,7 @@ directories and files (showing four levels of directories deep):</p>
         │       ├── online_vprm
         │       ├── post_cosmo
         │       ├── post_int2lm
-        │       └── prepare_data
+        │       └── prepare_cosmo
         ├── cosmo/
         │   ├── input/
         │   │   ├── oem

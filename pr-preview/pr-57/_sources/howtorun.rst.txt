@@ -23,51 +23,50 @@ contain additional runscripts to be submitted via ``sbatch``.
 
 .. hint::
 	Technically, you can run several cases (instead of a single case) in one command,
-	which is useful for nested run, for example. This can be achieved by running
+	which is useful for nested runs, for example. This can be achieved by running
 	``./run_chain.py <case1> <case2>``. With that, the full chain is executed for 
 	``case1`` first, and afterwards for ``case2``.
 
-Without specifiying a job list, the default joblist defined in
-``config/models.yaml`` will be executed.
-
 There are several optional arguments available to change the behavior of the chain:
 
+	$ ./run_chain.py -h
+
 * ``-h``, ``--help``
-  	Show a help message and exit.
+  	Show this help message and exit.
 * ``-j [JOB_LIST ...]``, ``--jobs [JOB_LIST ...]``
     List of job names to be executed.
-    A job is a .py-file in jobs/ with a ``main()`` function, which
+    A job is a ``.py`` file in i``jobs/`` with a ``main()`` function, which
     handles one aspect of the Processing Chain, for
     example copying ``meteo`` input data or launching a
     job for ``int2lm``. Jobs are executed in the order
     in which they are given here. If no jobs are
-    given, default jobs will be executedas defined
-    in config/models.yaml.
+    given, default jobs will be executed as defined
+    in ``config/models.yaml``.
 * ``-f``, ``--force``
-    Force the processing chain to redo all specified
+    Force the Processing Chain to redo all specified
     jobs, even if they have been started already or
     were finished previously. WARNING: Only logfiles
     get deleted, other effects of a given job
     (copied files etc.) are simply overwritten. This
-    may cause errors.
-* ``-t NTRY``, ``--try NTRY``
-	Amount of time the cosmo job is re-tried before crashing. Default is 1.
+    may cause errors or unexpected behavior.
 * ``-r``, ``--resume`` 
-    Resume the processing chain by restarting the
+    Resume the Processing Chain by restarting the
     last unfinished job. WARNING: Only the logfile
     gets deleted, other effects of a given job
     (copied files etc.) are simply overwritten. This
-    may cause errors.
+    may cause errors or unexpected behavior.
 
 What it Does
 ------------
 
-The script ``run_chain.py`` reads the command line arguments and the config file.
+The script ``run_chain.py`` reads the command line arguments and the config file
+from the specified case.
 It then calls the function :func:`run_chain.restart_runs`, which divides the
 simulation time according to the specified restart steps. Then it calls
-:func:`run_chain.run_chain` for each sub-run. This function sets up the directory
-structure of the chain and then starts the specified :ref:`jobs<jobs-section>`
-sequentially.
+:func:`run_chain.run_chunk` for each part (chunk) of the simulation workflow.
+This function sets up the directory structure of the chain and then submits the
+specified :ref:`jobs<jobs-section>` via ``sbatch`` to the Slurm workload manager,
+taking job dependencies into account.
 
 Test Cases
 ----------
@@ -89,6 +88,10 @@ the script::
 This will run all the individual scripts in ``jenkins/scripts/``, which 
 can also be launched separately if desired.
 
+These cases undergo regulary testing to ensure that the Processing Chain runs
+correctly. A corresponding Jenkins plan is launched on a weekly basis and 
+when triggered within a GitHub pull request.
+
 Directory Structure
 -------------------
 
@@ -108,6 +111,11 @@ run looks like this::
 	        ├── cfg.int2lm_input/
 	        ├── cfg.int2lm_work/
 	        └── cfg.int2lm_output/
+
+As one can see, it creates working directories for both the ``int2lm`` preprocessor
+and ``cosmo``. Additionally, and this is always the case, the ``checkpoints`` 
+directory holds all the job logfiles. Whenever a job has successfully finished,
+the logfile is copied from the ``working`` to the ``finished`` sub-directory.
                    
 Running the ``cosmo-ghg-test`` case therefore produces the following
 directories and files (showing four levels of directories deep)::
@@ -124,7 +132,7 @@ directories and files (showing four levels of directories deep)::
 	│   │   │   ├── online_vprm
 	│   │   │   ├── post_cosmo
 	│   │   │   ├── post_int2lm
-	│   │   │   └── prepare_data
+	│   │   │   └── prepare_cosmo
 	│   │   └── working/
 	│   │       ├── biofluxes
 	│   │       ├── cosmo
@@ -134,7 +142,7 @@ directories and files (showing four levels of directories deep)::
 	│   │       ├── online_vprm
 	│   │       ├── post_cosmo
 	│   │       ├── post_int2lm
-	│   │       └── prepare_data
+	│   │       └── prepare_cosmo
 	│   ├── cosmo/
 	│   │   ├── input/
 	│   │   │   ├── oem/
@@ -177,7 +185,7 @@ directories and files (showing four levels of directories deep)::
 		│   │   ├── online_vprm
 		│   │   ├── post_cosmo
 		│   │   ├── post_int2lm
-		│   │   └── prepare_data
+		│   │   └── prepare_cosmo
 		│   └── working/
 		│       ├── biofluxes
 		│       ├── cosmo
@@ -187,7 +195,7 @@ directories and files (showing four levels of directories deep)::
 		│       ├── online_vprm
 		│       ├── post_cosmo
 		│       ├── post_int2lm
-		│       └── prepare_data
+		│       └── prepare_cosmo
 		├── cosmo/
 		│   ├── input/
 		│   │   ├── oem
@@ -222,7 +230,7 @@ directories and files (showing four levels of directories deep)::
 
 -------------------------------------------
 
-.. autofunction:: run_chain.run_chain
+.. autofunction:: run_chain.run_chunk
 
 -------------------------------------------	
 
