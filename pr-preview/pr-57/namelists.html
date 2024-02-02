@@ -152,7 +152,7 @@
   <section id="namelist-and-runscript-templates">
 <span id="namelists-section"></span><h1>Namelist and Runscript Templates<a class="headerlink" href="#namelist-and-runscript-templates" title="Permalink to this heading"></a></h1>
 <p>The namelists and run jobs for <strong>int2lm</strong> and <strong>COSMO</strong>, as well as for <strong>icontools</strong> and <strong>ICON</strong> are dynamically generated
-using templates located in the <code class="docutils literal notranslate"><span class="pre">cases/</span></code> directory. These templates are essentially
+using templates located in the <code class="docutils literal notranslate"><span class="pre">cases/&lt;casename&gt;</span></code> directory. These templates are essentially
 text files containing “normal” namelist parameters alongside Python variables enclosed in curly braces.</p>
 <p>During runtime, these template files are read by their respective jobs.
 The resulting strings are formatted through Python’s <code class="docutils literal notranslate"><span class="pre">.format()</span></code> function, facilitating the

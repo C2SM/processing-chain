@@ -4,7 +4,7 @@ Namelist and Runscript Templates
 --------------------------------
 
 The namelists and run jobs for **int2lm** and **COSMO**, as well as for **icontools** and **ICON** are dynamically generated
-using templates located in the ``cases/`` directory. These templates are essentially
+using templates located in the ``cases/<casename>`` directory. These templates are essentially
 text files containing "normal" namelist parameters alongside Python variables enclosed in curly braces.
 
 During runtime, these template files are read by their respective jobs. 
