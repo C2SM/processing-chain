@@ -85,7 +85,7 @@ Header of ``config.yaml`` for the ``cosmo-ghg-spinup-test`` case
 
 ::
 
-    model: cosmo-ghg
+    workflow: cosmo-ghg
     constraint: gpu
     ntasks_per_node: 12
     restart_step: PT6H
@@ -98,7 +98,7 @@ Header of ``config.yaml`` for the ``icon-art-oem-test`` case
 
 ::
 
-    model: icon-art-oem
+    workflow: icon-art-oem
     constraint: gpu
     run_on: cpu
     compute_queue: normal
