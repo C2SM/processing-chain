@@ -6,16 +6,18 @@
 Processing Chain
 ================
 
-The Processing Chain is a collection of Python scripts to prepare the
-necessary input data, submit the compute jobs to the queue on CSCS systems
-and to apply post-processing steps. In addition to the standard versions
-of the COSMO and ICON models, it can also handle several variants of these
-models, most notably COSMO-GHG (greenhouse gas extension) and
-ICON-ART (Aerosols and Reactive Trace gases).
+The Processing Chain is a Python-based workflow tool designed to streamline
+weather and climate simulations.
+It facilitates the preparation of essential input data, submission of compute
+jobs to the queue on CSCS HPC systems, and the implementation of post-processing
+steps.
+In addition to supporting standard versions of the COSMO and ICON models,
+it is equipped to handle various model variants, notably COSMO-GHG
+(Greenhouse Gas Extension) and ICON-ART (Aerosols and Reactive Trace Gases)
 
-The Processing Chain can be flexibly adapted according to your needs, e.g.,
-by defining your own workflows, by creating your own simulation cases, 
-or by adding new jobs and scripts.
+The Processing Chain can be easily customized to meet your specific requirements.
+This includes defining custom workflows, creating your own simulation cases,
+and integrating new jobs and auxiliary scripts.
 
 .. toctree::
     :maxdepth: 2
