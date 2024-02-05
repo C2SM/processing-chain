@@ -1,7 +1,9 @@
-name: Deploy PR previews
+name: Build and Deploy Documentation to PR Previews
 
 on:
   pull_request:
+    paths:
+      - 'docs/**'
     types:
       - opened
       - reopened
@@ -16,10 +18,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Build docs
         uses: C2SM/sphinx-action@sphinx-latest
         with:
-          pre-build-command: "pip install sphinx_rtd_theme && pip install sphinx-copybutton"
           build-command: "sphinx-build -b html . _build"
           docs-folder: "docs/"
 
