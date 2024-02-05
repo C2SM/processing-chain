@@ -70,9 +70,9 @@ def get_horizontal_distances(longitude, latitude, icon_grid_path, k=5):
 
     return distances, indices
 
+
 def get_nearest_vertical_distances(model_topography, model_levels,
-                                   base_height_msl,
-                                   inlet_height_agl,
+                                   base_height_msl, inlet_height_agl,
                                    interpolation_strategy):
     """
     Get the 2 nearest distances between ICON grid points and specified
@@ -112,8 +112,7 @@ def get_nearest_vertical_distances(model_topography, model_levels,
     target_altitude = [
         model_topography.isel({
             "station": i
-        }).values +
-        inlet_height_agl[i] if strategy == 'ground' else
+        }).values + inlet_height_agl[i] if strategy == 'ground' else
         np.repeat(base_height_msl[i], model_topography.shape[1]) +
         inlet_height_agl[i] if strategy == 'mountain' else
         np.repeat(base_height_msl[i], model_topography.shape[1]) / 2 +
@@ -139,6 +138,7 @@ def get_nearest_vertical_distances(model_topography, model_levels,
         (model_levels - target_altitude).values, vertical_indices, axis=0)
 
     return np.abs(vertical_distances).T, vertical_indices.T
+
 
 def icon_to_point(longitude,
                   latitude,
@@ -227,8 +227,8 @@ def icon_to_point(longitude,
     model_topography = icon_subset.z_ifc[-1]
     model_levels = icon_subset.z_mc
     vertical_distances, icon_level_indices = get_nearest_vertical_distances(
-        model_topography, model_levels, inlet_height_agl,
-        base_height_msl, interpolation_strategy)
+        model_topography, model_levels, inlet_height_agl, base_height_msl,
+        interpolation_strategy)
 
     vertical_interp = vertical_distances[:, :, ::-1] / (vertical_distances.sum(
         axis=-1, keepdims=True))
@@ -250,8 +250,7 @@ def icon_to_point(longitude,
         'longitude': (['station'], longitude),
         'latitude': (['station'], latitude),
         'inlet_height_agl': (['station'], inlet_height_agl),
-        'base_height_msl':
-        (['station'], base_height_msl),
+        'base_height_msl': (['station'], base_height_msl),
         'interpolation_strategy': (['station'], interpolation_strategy)
     })
     # Perform the interpolations
