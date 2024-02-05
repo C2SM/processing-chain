@@ -42,7 +42,7 @@ chem:
     suffix: .grb
     inc: 3
     chem_in_to_chem_out_remap_tracers:
-        TRCH4_chemtr: CH4_BG
+        CH4_BG: TRCH4_chemtr
 
 icontools_runjobs:
     - icontools_remap_ic_runjob.cfg
