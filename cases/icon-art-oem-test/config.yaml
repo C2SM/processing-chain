@@ -41,6 +41,8 @@ chem:
     nameformat: '%Y%m%d_%H'
     suffix: .grb
     inc: 3
+    chem_in_to_chem_out_remap_tracers:
+        TRCH4_chemtr: CH4_BG
 
 icontools_runjobs:
     - icontools_remap_ic_runjob.cfg
