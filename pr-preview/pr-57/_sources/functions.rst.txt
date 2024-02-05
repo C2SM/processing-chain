@@ -8,6 +8,7 @@ Jobs
 * :func:`jobs.cosmo.main`
 * :func:`jobs.emissions.main`
 * :func:`jobs.icon.main`
+* :func:`jobs.icontools.main`
 * :func:`jobs.int2lm.main`
 * :func:`jobs.obs_nudging.main`
 * :func:`jobs.octe.main`
@@ -16,7 +17,8 @@ Jobs
 * :func:`jobs.photo_rate.main`
 * :func:`jobs.post_cosmo.main`
 * :func:`jobs.post_int2lm.main`
-* :func:`jobs.prepare_data.main`
+* :func:`jobs.prepare_cosmo.main`
+* :func:`jobs.prepare_icon.main`
 * :func:`jobs.reduce_output.main`
 * :func:`jobs.verify_chain.main`
 
@@ -39,6 +41,10 @@ Jobs
 -------------------------------------------
 
 .. autofunction:: jobs.icon.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.icontools.main
 
 -------------------------------------------
 
@@ -74,7 +80,11 @@ Jobs
 
 -------------------------------------------
 
-.. autofunction:: jobs.prepare_data.main
+.. autofunction:: jobs.prepare_cosmo.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.prepare_icon.main
 
 -------------------------------------------
 

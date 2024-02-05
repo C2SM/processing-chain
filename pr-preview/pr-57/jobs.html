@@ -105,7 +105,6 @@
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.prepare_data.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
 </ul>
@@ -190,7 +189,7 @@ because some of them depend on others:</p>
 on <code class="docutils literal notranslate"><span class="pre">icontools</span></code>, the order of execution is <code class="docutils literal notranslate"><span class="pre">prepare_icon</span></code> –&gt; <code class="docutils literal notranslate"><span class="pre">icontools</span></code>
 –&gt; <code class="docutils literal notranslate"><span class="pre">prepare_art</span></code>. Note that if we had another job in there without dependencies,
 it would run in parallel to the others.</p>
-<p>Since the <code class="docutils literal notranslate"><span class="pre">icon</span></code> depends on all other jobs, it will be executed last. Note that
+<p>Since <code class="docutils literal notranslate"><span class="pre">icon</span></code> depends on all other jobs, it will be executed last. Note that
 these dependencies are all listed under the <code class="docutils literal notranslate"><span class="pre">current</span></code> keyword, targeting
 the current chunk. For <code class="docutils literal notranslate"><span class="pre">icon</span></code>, there is an additional <code class="docutils literal notranslate"><span class="pre">previous</span></code> keyword.
 This means that an <code class="docutils literal notranslate"><span class="pre">icon</span></code> simulation will always wait until the simulation
@@ -222,7 +221,7 @@ Make sure the function is documented with a docstring.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2018-2023, C2SM.</p>
+    <p>&#169; Copyright 2018-2024, C2SM.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

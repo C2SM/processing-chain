@@ -104,7 +104,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#jobs.prepare_data.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
 </ul>
@@ -156,6 +155,7 @@
 <li><p><a class="reference internal" href="#jobs.cosmo.main" title="jobs.cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.emissions.main" title="jobs.emissions.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></p></li>
 <li><p><a class="reference internal" href="#jobs.int2lm.main" title="jobs.int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.obs_nudging.main" title="jobs.obs_nudging.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.octe.main" title="jobs.octe.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></p></li>
@@ -164,7 +164,8 @@
 <li><p><a class="reference internal" href="#jobs.photo_rate.main" title="jobs.photo_rate.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.post_cosmo.main" title="jobs.post_cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.post_int2lm.main" title="jobs.post_int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></p></li>
-<li><p><a class="reference internal" href="#jobs.prepare_data.main" title="jobs.prepare_data.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></p></li>
 <li><p><a class="reference internal" href="#jobs.reduce_output.main" title="jobs.reduce_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.verify_chain.main" title="jobs.verify_chain.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></p></li>
 </ul>
@@ -287,6 +288,7 @@ using the information in <code class="docutils literal notranslate"><span class=
 </dl>
 </dd></dl>
 
+<hr class="docutils" />
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.int2lm.main">
@@ -459,43 +461,7 @@ also read in the specified variables and take them as an input for
 </dd></dl>
 
 <hr class="docutils" />
-<dl class="py function">
-<dt class="sig sig-object py" id="jobs.prepare_data.main">
-<span class="sig-prename descclassname"><span class="pre">jobs.prepare_data.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/prepare_data.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.prepare_data.main" title="Permalink to this definition"></a></dt>
-<dd><p><strong>ICON and COSMO Data Preparation</strong></p>
-<p>This function prepares input data for ICON and COSMO simulations by creating necessary directories,
-copying meteorological files, and handling specific data processing for each model.</p>
-<p><strong>ICON:</strong></p>
-<ul class="simple">
-<li><p>Create directories <code class="docutils literal notranslate"><span class="pre">cfg.icon_input_icbc</span></code> and <code class="docutils literal notranslate"><span class="pre">cfg.icon_work</span></code>.</p></li>
-<li><p>Submit the runscript for the DWD ICON tools to remap the meteorological files.</p></li>
-<li><p>All runscripts specified in <code class="docutils literal notranslate"><span class="pre">cfg.icontools_runjobs</span></code> are submitted.</p></li>
-<li><p>The meteorological files are read from the original input directory (<code class="docutils literal notranslate"><span class="pre">cfg.input_root_meteo</span></code>),
-and the remapped meteorological files are saved in the input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.icon_input/icbc</span></code>).</p></li>
-<li><p>The constant variable ‘GEOSP’ is added to the files not containing it using python-cdo bindings.</p></li>
-</ul>
-<p><strong>COSMO:</strong></p>
-<ul class="simple">
-<li><p>Copy meteorological files to <strong>int2lm</strong> input.</p></li>
-<li><p>Create the necessary directory <code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/meteo</span></code>.</p></li>
-<li><p>Copy meteorological files from the project directory (<code class="docutils literal notranslate"><span class="pre">cfg.meteo['dir']/cfg.meteo['prefix']YYYYMMDDHH</span></code>)
-to the int2lm input folder on scratch (<code class="docutils literal notranslate"><span class="pre">cfg.int2lm_input/meteo</span></code>).</p></li>
-<li><p>For nested runs (meteorological files are COSMO output: <code class="docutils literal notranslate"><span class="pre">cfg.meteo['prefix']</span> <span class="pre">==</span> <span class="pre">'lffd'</span></code>),
-also copy the <code class="docutils literal notranslate"><span class="pre">*c.nc</span></code>-file with constant parameters.</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cfg</strong> (<em>Config</em>) – Object holding all user-configuration parameters as attributes.</p></li>
-<li><p><strong>model_cfg</strong> (<em>dict</em>) – Model configuration settings loaded from the <code class="docutils literal notranslate"><span class="pre">config\/models.yaml</span></code> file.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>RuntimeError</strong> – If any subprocess returns a non-zero exit code during execution.</p>
-</dd>
-</dl>
-</dd></dl>
-
+<hr class="docutils" />
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.reduce_output.main">
@@ -811,7 +777,7 @@ read by <strong>COSMO</strong>.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2018-2023, C2SM.</p>
+    <p>&#169; Copyright 2018-2024, C2SM.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
