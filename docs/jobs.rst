@@ -46,7 +46,7 @@ on ``icontools``, the order of execution is ``prepare_icon`` --> ``icontools``
 --> ``prepare_art``. Note that if we had another job in there without dependencies,
 it would run in parallel to the others.
 
-Since the ``icon`` depends on all other jobs, it will be executed last. Note that
+Since ``icon`` depends on all other jobs, it will be executed last. Note that
 these dependencies are all listed under the ``current`` keyword, targeting
 the current chunk. For ``icon``, there is an additional ``previous`` keyword.
 This means that an ``icon`` simulation will always wait until the simulation
