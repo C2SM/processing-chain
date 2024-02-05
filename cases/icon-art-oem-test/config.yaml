@@ -41,7 +41,7 @@ chem:
     nameformat: '%Y%m%d_%H'
     suffix: .grb
     inc: 3
-    chem_in_to_chem_out_remap_tracers:
+    remap_tracers:
         CH4_BG: TRCH4_chemtr
 
 icontools_runjobs:
