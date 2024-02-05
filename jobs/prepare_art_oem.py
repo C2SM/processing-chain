@@ -76,8 +76,7 @@ def main(cfg):
             ds_chem['PS'].attrs["long_name"] = 'surface pressure'
             # Remapping chemical tracer names
             if "remap_tracers" in cfg.chem:
-                for chem_in, chem_out in cfg.chem[
-                        'remap_tracers'].items():
+                for chem_in, chem_out in cfg.chem['remap_tracers'].items():
                     ds_chem[chem_out] = ds_chem[chem_in]
             # merge:
             ds_merged = xr.merge([ds_meteo, ds_chem], compat="override")
