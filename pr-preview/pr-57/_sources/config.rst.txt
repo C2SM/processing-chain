@@ -25,7 +25,7 @@ This is a non-exhaustive list containing the most important configuration variab
 +------------------------+-------------------------------------------------------------------------+
 | Variable               | Description                                                             |
 +========================+=========================================================================+
-|| ``case_path``         || The path to the case directory under ``cases/ `` for the specified     |
+|| ``case_path``         || The path to the case directory under ``cases/`` for the specified      |
 ||                       || casename.                                                              |
 +------------------------+-------------------------------------------------------------------------+
 | ``casename``           | The name of the case. Derived from the folder name under ``case_path``. |
@@ -65,7 +65,7 @@ This is a non-exhaustive list containing the most important configuration variab
 | ``user_mail``          | The user's email address, determined based on system configuration.     |
 +------------------------+-------------------------------------------------------------------------+
 || ``user_name``         || The username of the current user, obtained from the ``$USER``          |
-||                       || environment variable.                                                  |            |
+||                       || environment variable.                                                  |
 +------------------------+-------------------------------------------------------------------------+
 | ``workflow``           | The name of the workflow from ``workflows.yaml`` or a self-defined one. |
 +------------------------+-------------------------------------------------------------------------+
