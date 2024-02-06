@@ -375,14 +375,18 @@ class Config():
 
     def get_dep_cmd(self, job_name, add_dep=None):
         """Generate the part of the sbatch command that sepcifies dependencies for `job_name`"""
-        # Default: async case
-        if dep_ids := self.get_dep_ids(job_name, add_dep=add_dep):
-            dep_str = ':'.join(map(str, dep_ids))
-            return f'--dependency=afterok:{dep_str}'
+        if not self.force_sync:
+            # Default: async case
+            if dep_ids := self.get_dep_ids(job_name, add_dep=add_dep):
+                dep_str = ':'.join(map(str, dep_ids))
+                return f'--dependency=afterok:{dep_str}'
+            else:
+                # job_name has no dependencies but still belongs to an async workflow
+                # so don't use --wait
+                return None
         else:
-            # job_name has no dependencies but still belongs to an async workflow
-            # so don't use --wait
-            return None
+            # Needed for nested run_chain.py
+            return '--wait'
 
     def submit(self, job_name, script, add_dep=None):
         """Submit job with dependencies"""
