@@ -25,7 +25,7 @@ This is a non-exhaustive list containing the most important configuration variab
 +------------------------+-------------------------------------------------------------------------+
 | Variable               | Description                                                             |
 +========================+=========================================================================+
-|| ``case_path``         || The path to the case directory under 'cases/' for the specified        |
+|| ``case_path``         || The path to the case directory under ``cases/ `` for the specified     |
 ||                       || casename.                                                              |
 +------------------------+-------------------------------------------------------------------------+
 | ``casename``           | The name of the case. Derived from the folder name under ``case_path``. |
@@ -35,7 +35,7 @@ This is a non-exhaustive list containing the most important configuration variab
 +------------------------+-------------------------------------------------------------------------+
 | ``compute_account``    | The compute account to be used based on user information.               |
 +------------------------+-------------------------------------------------------------------------+
-| ``constraint``         | The computational constraint ('gpu' or 'mc').                           |
+| ``constraint``         | The computational constraint (``gpu`` or ``mc``).                       |
 +------------------------+-------------------------------------------------------------------------+
 || ``email``             || The user's email address, initially set to None and updated using the  |
 ||                       || set_email method.                                                      |
@@ -53,9 +53,9 @@ This is a non-exhaustive list containing the most important configuration variab
 +------------------------+-------------------------------------------------------------------------+
 | ``restart_step``       | The restart step in ISO 8601 format.                                    |
 +------------------------+-------------------------------------------------------------------------+
-| ``restart_step_hours`` | The restart step in hours, derived from the 'restart_step' attribute.   |
+| ``restart_step_hours`` | The restart step in hours, derived from the ``restart_step`` attribute. |
 +------------------------+-------------------------------------------------------------------------+
-| ``run_on``             | The architecture the model runs on ('cpu' or 'gpu').                    |
+| ``run_on``             | The architecture the model runs on (``cpu`` or ``gpu``).                |
 +------------------------+-------------------------------------------------------------------------+
 | ``spinup``             | Spin-up duration in hours. Activates spinup behavior if set.            |
 +------------------------+-------------------------------------------------------------------------+
@@ -64,8 +64,8 @@ This is a non-exhaustive list containing the most important configuration variab
 +------------------------+-------------------------------------------------------------------------+
 | ``user_mail``          | The user's email address, determined based on system configuration.     |
 +------------------------+-------------------------------------------------------------------------+
-|| ``user_name``         || The username of the current user, obtained from the 'USER' environment |
-||                       || variable.                                                              |
+|| ``user_name``         || The username of the current user, obtained from the ``$USER``          |
+||                       || environment variable.                                                  |            |
 +------------------------+-------------------------------------------------------------------------+
 | ``workflow``           | The name of the workflow from ``workflows.yaml`` or a self-defined one. |
 +------------------------+-------------------------------------------------------------------------+
