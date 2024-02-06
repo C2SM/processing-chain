@@ -415,10 +415,11 @@ class Config():
 
         return job_id
 
-    def create_sbatch_script(self, job_name):
-        """Create an sbatch script to launch jobs individually.
+    def submit_basic_python(self, job_name):
+        """Create an sbatch script to launch basic python jobs individually.
         Use run_chain.py arguments to submit those jobs.
         """
+        # Build job script
         walltime = getattr(self, 'walltime', {}).get(job_name, "00:30:00")
         script_lines = [
             '#!/usr/bin/env bash',
@@ -442,7 +443,8 @@ class Config():
         with open(job_file, mode='w') as job_script:
             job_script.write('\n'.join(script_lines))
 
-        return job_file
+        # Submit job
+        self.submit(job_name, job_file)
 
     def wait_for_previous(self):
         """Wait for all jobs of the previous stage to be finished.

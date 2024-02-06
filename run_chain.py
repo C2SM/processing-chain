@@ -170,7 +170,7 @@ def run_chunk(cfg, force, resume):
                 print(f'    └── Skipping "{job_name}" job')
                 skip = True
             else:
-                print(f'    └── Starting "{job_name}" job')
+                print(f'    └── Submitting "{job_name}" job')
 
                 # Logfile settings
                 cfg.logfile = cfg.log_working_dir / job_name
@@ -179,8 +179,7 @@ def run_chunk(cfg, force, resume):
                 # Submit the job
                 job = getattr(jobs, job_name)
                 if hasattr(job, 'BASIC_PYTHON_JOB') and job.BASIC_PYTHON_JOB:
-                    script = cfg.create_sbatch_script(job_name)
-                    cfg.submit(job_name, script)
+                    cfg.submit_basic_python(job_name)
                 else:
                     job.main(cfg)
 
