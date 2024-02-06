@@ -121,7 +121,8 @@ def main(cfg):
 
     # Copy cosmo executable
     cfg.cosmo_execname = Path(cfg.cosmo['binary_file'])
-    tools.copy_file(cfg.cosmo['binary_file'], cfg.cosmo_run / cfg.cosmo_execname)
+    tools.copy_file(cfg.cosmo['binary_file'],
+                    cfg.cosmo_run / cfg.cosmo_execname)
 
     # Prepare namelist and submit job
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
