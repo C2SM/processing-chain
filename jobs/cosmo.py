@@ -120,7 +120,7 @@ def main(cfg):
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
     # Copy cosmo executable
-    cfg.cosmo_execname = Path(cfg.cosmo['binary_file'])
+    cfg.cosmo_execname = Path(cfg.cosmo['binary_file']).name
     tools.copy_file(cfg.cosmo['binary_file'],
                     cfg.cosmo_run / cfg.cosmo_execname)
 

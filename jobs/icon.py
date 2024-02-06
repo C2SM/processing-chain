@@ -33,7 +33,7 @@ def main(cfg):
                  "submit the job to the queue")
 
     # Copy icon executable
-    cfg.icon_execname = Path(cfg.icon['binary_file'])
+    cfg.icon_execname = Path(cfg.icon['binary_file']).name
     tools.create_dir(cfg.icon_work, "icon_work")
     tools.copy_file(cfg.icon_binary_file, cfg.icon_work / cfg.icon_execname)
 
