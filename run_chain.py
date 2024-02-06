@@ -207,7 +207,8 @@ def run_chunk(cfg, force, resume):
 
                 exitcode = 0
             except Exception:
-                subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
+                exitcode = 1
+                subject = "ERROR or TIMEOUT in job '%s' for chunk '%s'" % (
                     job_name, cfg.chunk_id)
                 logging.exception(subject)
                 if cfg.user_mail:
@@ -217,7 +218,7 @@ def run_chunk(cfg, force, resume):
                     tools.send_mail(cfg.user_mail, subject, message)
 
             if exitcode != 0 or not (cfg.log_finished_dir / job_name).exists():
-                subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
+                subject = "ERROR or TIMEOUT in job '%s' for chunk '%s'" % (
                     job_name, cfg.chunk_id)
                 if cfg.user_mail:
                     message = tools.prepare_message(cfg.log_working_dir /

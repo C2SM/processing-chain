@@ -82,7 +82,7 @@ def main(cfg):
         merged_file = os.path.join(cfg.icon_input_icbc, merged_filename)
 
         # Copy GEOSP file from last run if not present
-        if not os.path.exists(geosp_file):
+        if hasattr(cfg, 'icon_input_icbc_prev') and not os.path.exists(geosp_file):
             geosp_src_file = os.path.join(cfg.icon_input_icbc_prev,
                                           geosp_filename)
             tools.copy_file(geosp_src_file,

@@ -323,14 +323,14 @@ class Config():
         self.chunk_list = []
         for startdate_sim in tools.iter_hours(self.startdate, self.enddate,
                                               self.restart_step_hours):
+            enddate_sim = startdate_sim + timedelta(
+                hours=self.restart_step_hours)
             if 'spinup' in self.workflow['features'] and hasattr(
                     self, 'spinup'):
                 if startdate_sim > self.startdate:
                     startdate_sim = startdate_sim - timedelta(
                         hours=self.spinup)
 
-            enddate_sim = startdate_sim + timedelta(
-                hours=self.restart_step_hours)
             startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
             enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
             chunk_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
