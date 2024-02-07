@@ -38,7 +38,7 @@ and integrating new jobs and auxiliary scripts.
 
 .. toctree::
     :maxdepth: 2
-    :caption: Jobs
+    :caption: Jobs & Workflows
 
     jobs
 
