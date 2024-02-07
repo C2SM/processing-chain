@@ -64,13 +64,13 @@ This is a non-exhaustive list containing the most important configuration variab
 +------------------------+-------------------------------------------------------------------------+
 | ``user_mail``          | The user's email address, determined based on system configuration.     |
 +------------------------+-------------------------------------------------------------------------+
-|| ``user_name``         || The username of the current user, obtained from the ``$USER``          |
-||                       || environment variable.                                                  |
+|| ``user_name``         || Your email address to receive notifications. Either provide it         |
+||                       || directly here or in ``~/.forward``.                                    |
 +------------------------+-------------------------------------------------------------------------+
 | ``workflow``           | The name of the workflow from ``workflows.yaml`` or a self-defined one. |
 +------------------------+-------------------------------------------------------------------------+
-|| ``work_root``         || The root directory for processing chain execution, typically located   |
-||                       || under the source directory.                                            |
+|| ``work_root``         || The working directory where all output is stored. Should be somewhere  |
+||                       || on ``$SCRATCH$``. By default, it is set to ``<chain_src_dir>/work``.   |
 +------------------------+-------------------------------------------------------------------------+
 
 
