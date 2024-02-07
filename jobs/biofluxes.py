@@ -3,10 +3,13 @@
 
 import os
 import logging
-from . import tools, prepare_data
+
+from . import tools, prepare_cosmo
+
+BASIC_PYTHON_JOB = True
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Prepare biofluxes files for COSMO simulations.
 
     Copies biofluxes files from the project folder (:attr:`cfg.vprm['dir']`)
@@ -16,11 +19,9 @@ def main(cfg, model_cfg):
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
-    tools.check_model(cfg, 'cosmo-ghg')
-    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
+    tools.change_logfile(cfg.logfile)
+    prepare_cosmo.set_cfg_variables(cfg)
 
     scratch_path = os.path.join(cfg.int2lm_input, 'vprm')
 

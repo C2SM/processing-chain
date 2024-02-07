@@ -166,14 +166,18 @@ def change_logfile(filename):
     """
 
     fileh = logging.FileHandler(filename, 'a', delay=True)
-    # log_format = logging.Formatter('%(levelname)s:%(message)s')
-    # fileh.setFormatter(log_format)
+    log_format = logging.Formatter('%(levelname)s: %(message)s')
+    fileh.setFormatter(log_format)
 
     log = logging.getLogger()  # root logger
+    log.setLevel(logging.INFO)  # Set the desired logging level
+
     if len(log.handlers) > 0:
-        log.handlers = [fileh]  # set the new handler
+        # If there are existing handlers, replace them with the new handler
+        log.handlers = [fileh]
     else:
-        logging.basicConfig(filename=filename, level=logging.INFO)
+        # If no existing handlers, add the new handler
+        log.addHandler(fileh)
 
 
 def create_dir(path, readable_name):
@@ -195,6 +199,7 @@ def create_dir(path, readable_name):
     """
     try:
         os.makedirs(path, exist_ok=True)
+        logging.info(f"Created {readable_name} directory at path {path}")
     except (OSError, Exception) as e:
         logging.error("Creating {} directory at path {} failed with {}".format(
             readable_name, path,
@@ -420,7 +425,7 @@ def check_job_completion(log_finished_dir, job, waittime=3000):
 
     log_finished_dir : directory for logfiles of finished jobs
 
-    job: string of job name, e.g. "prepare_data"
+    job: string of job name, e.g. "prepare_icon"
 
     waittime : time to wait (factor of .1 second)
                Defaults to 3000 (300 seconds)

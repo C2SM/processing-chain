@@ -15,8 +15,10 @@ import math
 
 from . import tools
 
+BASIC_PYTHON_JOB = True
 
-def main(cfg, model_cfg):
+
+def main(cfg):
     """
     Calculates 2D column data and writes them into a new netCDF file.
     Only a fixed number of levels from **COSMO** output are considered.
@@ -41,9 +43,8 @@ def main(cfg, model_cfg):
     ----------	
     cfg : Config
         Object holding all user-configuration parameters as attributes
-    model_cfg : dict 
-        Model configuration settings loaded from the ``config\/models.yaml`` file.
     """
+    tools.change_logfile(cfg.logfile)
     cosmo_output = cfg.cosmo_output
     output_path = cfg.cosmo_output_reduced
 
@@ -68,6 +69,12 @@ def main(cfg, model_cfg):
 
     # Wait for Cosmo to finish first
     tools.check_job_completion(cfg.log_finished_dir, "cosmo")
+
+    # Number of levels and switch for unit conversion for 'reduce_output' job
+    if not hasattr(cfg, 'output_levels'):
+        cfg.output_levels = -1
+    if not hasattr(cfg, 'convert_gas'):
+        cfg.convert_gas = True
     """Get list of constant files"""
     cfiles = []
     read_cfile = False
@@ -113,11 +120,10 @@ def main(cfg, model_cfg):
     py_file = os.path.join(tool_path, 'reduce_output_start_end.py')
     alternate_csv_file = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                       'variables.csv')
-    logfile = os.path.join(cfg.log_working_dir, 'reduce_output')
     logging.info('Submitting job to the queue...')
 
     result = subprocess.run([
-        "sbatch", '--output=' + logfile, '--open-mode=append', '--wait',
+        "sbatch", '--output=' + cfg.logfile, '--open-mode=append', '--wait',
         bash_file, py_file, cosmo_output, output_path, str_startdate,
         str_enddate,
         str(cfg.reduce_output['output_levels']),

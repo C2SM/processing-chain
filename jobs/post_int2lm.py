@@ -5,11 +5,14 @@ import logging
 import os
 import glob
 import netCDF4 as nc
+
 from datetime import datetime, timedelta
-from . import tools, int2lm
+from . import tools, prepare_cosmo
+
+BASIC_PYTHON_JOB = True
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Combine multiple **int2lm** tracer-output files into a single one for
     **COSMO**.
 
@@ -27,10 +30,9 @@ def main(cfg, model_cfg):
     ----------	
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
-    cfg = int2lm.set_cfg_variables(cfg, model_cfg)
+    prepare_cosmo.set_cfg_variables(cfg)
+    tools.change_logfile(cfg.logfile)
 
     # Int2lm processing always starts at hstart=0, thus modifying inidate
     inidate_int2lm_yyyymmddhh = cfg.startdate_sim_yyyymmddhh

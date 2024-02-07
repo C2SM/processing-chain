@@ -3,13 +3,14 @@
 
 import os
 import logging
-import shutil
 
 from datetime import timedelta
 from . import tools
 
+BASIC_PYTHON_JOB = True
 
-def main(cfg, model_cfg):
+
+def main(cfg):
     """Copy and rename the obs_nudging files to the **COSMO** input directory.
 
     In the folder ``cfg.obs_nudging_dir``, the files are saved in the format
@@ -26,9 +27,8 @@ def main(cfg, model_cfg):
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
+    tools.change_logfile(cfg.logfile)
     dest_dir = os.path.join(cfg.cosmo_input, "obs_nudging")
     tools.create_dir(dest_dir, "obs nudging input")
 

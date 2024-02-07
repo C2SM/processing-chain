@@ -7,6 +7,8 @@ import netCDF4 as nc
 
 from . import tools
 
+BASIC_PYTHON_JOB = True
+
 
 def comp_data(dataset1, dataset2, variables):
     """Use tools.helper.datasets_equal to compare the datasets.
@@ -14,7 +16,7 @@ def comp_data(dataset1, dataset2, variables):
     tools.helper.datasets_equal(dataset1, dataset2, variables, verbose=True)
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Compare outputs of the chain to a reference.
 
     Looks for the reference-file in ``cfg.verify_chain['reference_dir']``.
@@ -37,9 +39,8 @@ def main(cfg, model_cfg):
     ----------	
     cfg : Config
         Object holding all user-configuration parameters as attributes
-    model_cfg : dict 
-        Model configuration settings loaded from the ``config\/models.yaml`` file.
     """
+    tools.change_logfile(cfg.logfile)
     logging.info("Started verification")
     for (ref_file,
          run_file), variables in cfg.verify_chain['values_to_check'].items():

@@ -7,6 +7,6 @@ input_processing-chain.tgz
 input/
 output/
 work/
-src/*/
+ext/*/
 *.code-workspace
 .vscode/
