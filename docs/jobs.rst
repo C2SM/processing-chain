@@ -9,7 +9,7 @@ to the Slurm workload manager.
 The order of job submission is based on the list given in ``workflows.yaml`` 
 (or in ``config.yaml`` in case a custom, user-defined workflow is used.)
 
-Let's have a look at the ``icon-art`` example::
+Let's have a look at the ``icon-art`` example:
 
 ..  code-block:: yaml
     :caption: Part of icon-art workflow
