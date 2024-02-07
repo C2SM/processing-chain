@@ -14,28 +14,20 @@ BASIC_PYTHON_JOB = True
 
 
 def main(cfg):
-    """Setup the namelists for a COSMO tracer run and submit the job to the queue.
-
-    Necessary for both COSMO and COSMOART simulations.
-
-    Decide if the soil model should be TERRA or TERRA multi-layer depending on
-    the ``startdate`` of the simulation.
+    """Setup the namelists for a COSMO run and submit the job to the queue.
 
     Create necessary directory structure to run COSMO (run, output, and
     restart directories, defined in ``cfg.cosmo_run``, ``cfg.cosmo_output``,
     and ``cfg.cosmo_restart_out``).
 
     Copy the COSMO-executable from
-    ``cfg.cosmo_bin`` to ``cfg.cosmo_run/cosmo``.
+    ``cfg.cosmo['binary_file']`` to ``cfg.cosmo_run/cfg.cosmo['execname']``.
 
-    Convert the tracer-csv-file to a COSMO-namelist file.
+    Convert the tracer csv file to a COSMO namelist file.
 
-    Format the COSMO-namelist-templates
-    (COSMO: ``AF,ORG,IO,DYN,PHY,DIA,ASS``,
-    COSMOART: ``ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY``)
-    using the information in ``cfg``.
+    Format the COSMO namelist templates using the information in ``cfg``.
 
-    Format the runscript-template and submit the job.
+    Format the runscript template and submit the job.
 
     Parameters
     ----------
@@ -128,9 +120,9 @@ def main(cfg):
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
     # Copy cosmo executable
-    cfg.cosmo['execname'] = 'cosmo.exe'
+    cfg.cosmo_execname = Path(cfg.cosmo['binary_file']).name
     tools.copy_file(cfg.cosmo['binary_file'],
-                    os.path.join(cfg.cosmo_run, cfg.cosmo['execname']))
+                    cfg.cosmo_run / cfg.cosmo_execname)
 
     # Prepare namelist and submit job
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,

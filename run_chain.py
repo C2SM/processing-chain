@@ -3,11 +3,7 @@
 
 from datetime import datetime, timedelta
 import pytz
-
 import logging
-import os
-import sys
-import time
 import shutil
 import argparse
 
@@ -174,7 +170,7 @@ def run_chunk(cfg, force, resume):
                 print(f'    └── Skipping "{job_name}" job')
                 skip = True
             else:
-                print(f'    └── Starting "{job_name}" job')
+                print(f'    └── Submitting "{job_name}" job')
 
                 # Logfile settings
                 cfg.logfile = cfg.log_working_dir / job_name
@@ -183,8 +179,7 @@ def run_chunk(cfg, force, resume):
                 # Submit the job
                 job = getattr(jobs, job_name)
                 if hasattr(job, 'BASIC_PYTHON_JOB') and job.BASIC_PYTHON_JOB:
-                    script = cfg.create_sbatch_script(job_name)
-                    cfg.submit(job_name, script)
+                    cfg.submit_basic_python(job_name)
                 else:
                     job.main(cfg)
 
@@ -207,7 +202,8 @@ def run_chunk(cfg, force, resume):
 
                 exitcode = 0
             except Exception:
-                subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
+                exitcode = 1
+                subject = "ERROR or TIMEOUT in job '%s' for chunk '%s'" % (
                     job_name, cfg.chunk_id)
                 logging.exception(subject)
                 if cfg.user_mail:
@@ -217,7 +213,7 @@ def run_chunk(cfg, force, resume):
                     tools.send_mail(cfg.user_mail, subject, message)
 
             if exitcode != 0 or not (cfg.log_finished_dir / job_name).exists():
-                subject = "ERROR or TIMEOUT in job '%s' for chain '%s'" % (
+                subject = "ERROR or TIMEOUT in job '%s' for chunk '%s'" % (
                     job_name, cfg.chunk_id)
                 if cfg.user_mail:
                     message = tools.prepare_message(cfg.log_working_dir /
@@ -351,7 +347,7 @@ def main():
 
         print("╔════════════════════════════════════════╗")
         print("║       Starting Processing Chain        ║")
-        print("║════════════════════════════════════════║")
+        print("╠════════════════════════════════════════╣")
         print(f"║      Case: {casename: <27} ║")
         print(f"║  Workflow: {cfg.workflow_name: <27} ║")
         print("╚════════════════════════════════════════╝")

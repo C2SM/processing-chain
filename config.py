@@ -319,36 +319,18 @@ class Config():
                 else:
                     setattr(self, subkey, v)
 
-    def format_duration(self, duration):
-        """
-        Format a duration represented by a datetime.timedelta object into a human-readable string.
-
-        Parameters:
-        - duration (datetime.timedelta): The duration to be formatted.
-
-        Returns:
-        - str: A string representing the formatted duration in the "0d 0h 0m 0s" format.
-        """
-        seconds = duration.total_seconds()
-        days, remainder = divmod(seconds, 86400)
-        hours, remainder = divmod(remainder, 3600)
-        minutes, seconds = divmod(remainder, 60)
-
-        formatted_duration = f"{int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
-        return formatted_duration
-
     def get_chunk_list(self):
         self.chunk_list = []
         for startdate_sim in tools.iter_hours(self.startdate, self.enddate,
                                               self.restart_step_hours):
+            enddate_sim = startdate_sim + timedelta(
+                hours=self.restart_step_hours)
             if 'spinup' in self.workflow['features'] and hasattr(
                     self, 'spinup'):
                 if startdate_sim > self.startdate:
                     startdate_sim = startdate_sim - timedelta(
                         hours=self.spinup)
 
-            enddate_sim = startdate_sim + timedelta(
-                hours=self.restart_step_hours)
             startdate_sim_yyyymmddhh = startdate_sim.strftime("%Y%m%d%H")
             enddate_sim_yyyymmddhh = enddate_sim.strftime("%Y%m%d%H")
             chunk_id = f"{startdate_sim_yyyymmddhh}_{enddate_sim_yyyymmddhh}"
@@ -359,7 +341,7 @@ class Config():
             self.chunk_list.append(chunk_id)
 
     def get_previous_chunk_id(self, current_chunk_id):
-        """Get the previous chunk ID based on the current chunk ID."""
+        """Get the previous chunk ID based on the current `chunk_id`"""
         index = self.chunk_list.index(current_chunk_id)
         if index > 0:
             self.chunk_id_prev = self.chunk_list[index - 1]
@@ -381,33 +363,29 @@ class Config():
             dep_id_list = []
 
         # Add job dependencies
-        if not self.force_sync:
-            # Could be that job has no dependency, even in an async config,
-            # e.g., prepare_data
-            if deps := self.workflow['dependencies'].get(job_name):
-                for stage in 'previous', 'current':
-                    if dep_stage := deps.get(stage):
-                        for job in dep_stage:
-                            # Could be that dep job id does not exist, e.g.,
-                            # if dep job is deactivated or it's the first chunk
-                            if dep_id := self.job_ids[stage].get(job):
-                                dep_id_list.extend(dep_id)
+        if deps := self.workflow['dependencies'].get(job_name):
+            for stage in 'previous', 'current':
+                if dep_stage := deps.get(stage):
+                    for job in dep_stage:
+                        # Could be that dep job id does not exist, e.g.,
+                        # if dep job is deactivated or it's the first chunk
+                        if dep_id := self.job_ids[stage].get(job):
+                            dep_id_list.extend(dep_id)
         return dep_id_list
 
     def get_dep_cmd(self, job_name, add_dep=None):
-        """Generate the part of the sbatch command that sepcifies dependencies for job_name."""
-        if not self.force_sync:
-            # Default: async case
-            if dep_ids := self.get_dep_ids(job_name, add_dep=add_dep):
-                dep_str = ':'.join(map(str, dep_ids))
-                return f'--dependency=afterok:{dep_str}'
-            else:
-                # job_name has no dependencies but still belongs to an async workflow
-                # so don't use --wait
-                return None
-        else:
-            # Needed for nested run_chain.py
+        """Generate the part of the sbatch command that sepcifies dependencies for `job_name`"""
+        # Needed for nested run_chain.py
+        if self.force_sync:
             return '--wait'
+
+        if dep_ids := self.get_dep_ids(job_name, add_dep=add_dep):
+            dep_str = ':'.join(map(str, dep_ids))
+            return f'--dependency=afterok:{dep_str}'
+
+        # job_name has no dependencies but still belongs to an async workflow
+        # so don't use --wait
+        return None
 
     def submit(self, job_name, script, add_dep=None):
         """Submit job with dependencies"""
@@ -437,10 +415,11 @@ class Config():
 
         return job_id
 
-    def create_sbatch_script(self, job_name):
-        """Create an sbatch script to launch jobs individually.
+    def submit_basic_python(self, job_name):
+        """Create an sbatch script to launch basic python jobs individually.
         Use run_chain.py arguments to submit those jobs.
         """
+        # Build job script
         walltime = getattr(self, 'walltime', {}).get(job_name, "00:30:00")
         script_lines = [
             '#!/usr/bin/env bash',
@@ -464,7 +443,8 @@ class Config():
         with open(job_file, mode='w') as job_script:
             job_script.write('\n'.join(script_lines))
 
-        return job_file
+        # Submit job
+        self.submit(job_name, job_file)
 
     def wait_for_previous(self):
         """Wait for all jobs of the previous stage to be finished.

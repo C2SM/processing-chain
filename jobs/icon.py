@@ -2,25 +2,18 @@
 # -*- coding: utf-8 -*-
 
 import logging
+from pathlib import Path
 from . import tools, prepare_icon
 
 BASIC_PYTHON_JOB = False
 
 
 def main(cfg):
-    """Setup the namelists for an ICON tracer run and submit the job to
+    """Setup the namelists for an ICON run and submit the job to
     the queue.
-
-    Necessary for both ICON and ICONART simulations.
-
-    Create necessary directory structure to run ICON (run, output, and
-    restart directories, defined in ``cfg.icon_work``, ``cfg.icon_output``,
-    and ``cfg.icon_restart_out``).
 
     Copy the ICON-executable from
     ``cfg.icon_binary_file`` to ``cfg.icon_work/icon.exe``.
-
-    Use the tracer-csv-file to append ICON-namelist file.
 
     Format the ICON-namelist-templates:
     ``icon_master.namelist.cfg, icon_NAMELIST_NWP.cfg``,
@@ -40,9 +33,9 @@ def main(cfg):
                  "submit the job to the queue")
 
     # Copy icon executable
-    execname = 'icon.exe'
+    cfg.icon_execname = Path(cfg.icon['binary_file']).name
     tools.create_dir(cfg.icon_work, "icon_work")
-    tools.copy_file(cfg.icon_binary_file, cfg.icon_work / execname)
+    tools.copy_file(cfg.icon_binary_file, cfg.icon_work / cfg.icon_execname)
 
     # Symlink the restart file to the last run into the icon/run folder
     if cfg.lrestart == '.TRUE.':
