@@ -60,6 +60,10 @@ Another effect of this workflow definition is that the ``prepare_icon``,
 ``icontools`` and ``prepare_art`` jobs will also be launched for the next chunk,
 as they are not dependent on their previous ones. 
 
+.. image:: _static/processing_chain_workflow_icon_art.png
+
+   Flowchart for the ``icon-art`` workflow.
+
 
 Adding New Jobs
 ---------------
