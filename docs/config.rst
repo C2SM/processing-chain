@@ -83,7 +83,7 @@ case configuration file.
 Header of ``config.yaml`` for the ``cosmo-ghg-spinup-test`` case
 ================================================================
 
-::
+..  code-block:: yaml
 
     workflow: cosmo-ghg
     constraint: gpu
@@ -96,7 +96,7 @@ Header of ``config.yaml`` for the ``cosmo-ghg-spinup-test`` case
 Header of ``config.yaml`` for the ``icon-art-oem-test`` case
 ============================================================
 
-::
+..  code-block:: yaml
 
     workflow: icon-art-oem
     constraint: gpu
@@ -124,7 +124,9 @@ Further variables
 
 Furthermore, there are additional variables to set that are tied to the individual jobs.
 These config variables themselves are dictionaries. Let's have a look at and example
-for the the ``cfg.meteo`` variable::
+for the the ``cfg.meteo`` variable:
+
+..  code-block:: yaml
 
     meteo:
         dir: ./input/cosmo-ghg/meteo

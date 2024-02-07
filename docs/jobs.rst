@@ -12,7 +12,6 @@ The order of job submission is based on the list given in ``workflows.yaml``
 Let's have a look at the ``icon-art`` example:
 
 ..  code-block:: yaml
-   :caption: Part of icon-art workflow
 
    icon-art:
       features:
@@ -27,9 +26,11 @@ This workflow consists of four jobs: ``prepare_icon``, ``icontools``,
 ``prepare_art`` and ``icon``.
 
 These jobs will be submitted, however, they are not starting at the same time,
-because some of them depend on others::
+because some of them depend on others:
 
-     dependencies:
+..  code-block:: yaml
+
+      dependencies:
          icontools:
             current:
               - prepare_icon
