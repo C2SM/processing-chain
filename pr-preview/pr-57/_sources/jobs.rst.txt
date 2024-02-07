@@ -12,7 +12,7 @@ The order of job submission is based on the list given in ``workflows.yaml``
 Let's have a look at the ``icon-art`` example:
 
 ..  code-block:: yaml
-    :caption: Part of icon-art workflow
+   :caption: Part of icon-art workflow
 
    icon-art:
       features:
