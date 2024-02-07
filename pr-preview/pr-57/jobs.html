@@ -158,16 +158,34 @@ to the Slurm workload manager.</p>
 <p>The order of job submission is based on the list given in <code class="docutils literal notranslate"><span class="pre">workflows.yaml</span></code>
 (or in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> in case a custom, user-defined workflow is used.)</p>
 <p>Let’s have a look at the <code class="docutils literal notranslate"><span class="pre">icon-art</span></code> example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">icon</span><span class="o">-</span><span class="n">art</span><span class="p">:</span>
-   <span class="n">features</span><span class="p">:</span>
-      <span class="o">-</span> <span class="n">restart</span>
-   <span class="n">jobs</span><span class="p">:</span>
-      <span class="o">-</span> <span class="n">prepare_icon</span>
-      <span class="o">-</span> <span class="n">icontools</span>
-      <span class="o">-</span> <span class="n">prepare_art</span>
-      <span class="o">-</span> <span class="n">icon</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span>  <span class="n">code</span><span class="o">-</span><span class="n">block</span><span class="p">::</span> <span class="n">yaml</span>
 </pre></div>
 </div>
+<blockquote>
+<div><blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">caption<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Part of icon-art workflow</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>icon-art:</dt><dd><dl class="simple">
+<dt>features:</dt><dd><ul class="simple">
+<li><p>restart</p></li>
+</ul>
+</dd>
+<dt>jobs:</dt><dd><ul class="simple">
+<li><p>prepare_icon</p></li>
+<li><p>icontools</p></li>
+<li><p>prepare_art</p></li>
+<li><p>icon</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
 <p>This workflow consists of four jobs: <code class="docutils literal notranslate"><span class="pre">prepare_icon</span></code>, <code class="docutils literal notranslate"><span class="pre">icontools</span></code>,
 <code class="docutils literal notranslate"><span class="pre">prepare_art</span></code> and <code class="docutils literal notranslate"><span class="pre">icon</span></code>.</p>
 <p>These jobs will be submitted, however, they are not starting at the same time,
