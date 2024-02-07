@@ -27,7 +27,7 @@ contain additional runscripts to be submitted via ``sbatch``.
 	``./run_chain.py <case1> <case2>``. With that, the full chain is executed for 
 	``case1`` first, and afterwards for ``case2``.
 
-There are several optional arguments available to change the behavior of the chain:
+There are several optional arguments available to change the behavior of the chain::
 
 	$ ./run_chain.py -h
 
