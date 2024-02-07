@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
@@ -102,6 +103,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
 </ul>
@@ -155,6 +158,8 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tools</span>
 
+<span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">True</span>
+
 
 <span class="k">def</span> <span class="nf">comp_data</span><span class="p">(</span><span class="n">dataset1</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Use tools.helper.datasets_equal to compare the datasets.</span>
@@ -162,7 +167,7 @@
     <span class="n">tools</span><span class="o">.</span><span class="n">helper</span><span class="o">.</span><span class="n">datasets_equal</span><span class="p">(</span><span class="n">dataset1</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.verify_chain.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.verify_chain.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare outputs of the chain to a reference.</span>
 
 <span class="sd">    Looks for the reference-file in ``cfg.verify_chain[&#39;reference_dir&#39;]``.</span>
@@ -185,9 +190,8 @@
 <span class="sd">    ----------	</span>
 <span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes</span>
-<span class="sd">    model_cfg : dict </span>
-<span class="sd">        Model configuration settings loaded from the ``config\/models.yaml`` file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">change_logfile</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">)</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Started verification&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">ref_file</span><span class="p">,</span>
          <span class="n">run_file</span><span class="p">),</span> <span class="n">variables</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">verify_chain</span><span class="p">[</span><span class="s1">&#39;values_to_check&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

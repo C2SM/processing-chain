@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jobs.prepare_icon &mdash; Processing Chain v3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=09616d5f" />
+
+  
+    <link rel="shortcut icon" href="../../_static/processing-chain-favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=de725823"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=a5fa425f"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #5d6d7e" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v3.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../features.html">Feature Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environment.html">Conda Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#install-miniconda">1. Install Miniconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtorun.html">How to Run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#starting-the-chain">Starting the Chain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#what-it-does">What it Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#test-cases">Test Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#directory-structure">Directory Structure</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code-structure.html">Code Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config.html">Configuration File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#configuration-variables">Configuration Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-to-set-in-config-yaml">Variables to Set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../namelists.html">Namelist and Runscript Templates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../namelists.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../namelists.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Jobs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html#adding-new-jobs">Adding New Jobs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../functions.html">Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../functions.html#tools">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.cams4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.check_model.check_model"><code class="docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.comp_nc.datasets_equal"><code class="docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.ctnoaa4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.mozart2int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.reduce_output_start_end.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.string2char.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #5d6d7e" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Processing Chain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">jobs.prepare_icon</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for jobs.prepare_icon</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tools</span>
+
+<span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">icon_base</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span> <span class="o">/</span> <span class="s1">&#39;icon&#39;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_base</span> <span class="o">/</span> <span class="s1">&#39;input&#39;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input</span> <span class="o">/</span> <span class="s1">&#39;icbc&#39;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">icon_work</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_base</span> <span class="o">/</span> <span class="s1">&#39;run&#39;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">icon_output</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_base</span> <span class="o">/</span> <span class="s1">&#39;output&#39;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">icon_output_reduced</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_base</span> <span class="o">/</span> <span class="s1">&#39;output_reduced&#39;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">icon_restart_out</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_base</span> <span class="o">/</span> <span class="s1">&#39;restart&#39;</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id_prev</span><span class="p">:</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">icon_restart_in</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chain_root_prev</span> <span class="o">/</span> <span class="s1">&#39;icon&#39;</span> <span class="o">/</span> <span class="s1">&#39;run&#39;</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc_prev</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chain_root_prev</span> <span class="o">/</span> <span class="s1">&#39;icon&#39;</span> <span class="o">/</span> <span class="s1">&#39;input&#39;</span> <span class="o">/</span> <span class="s1">&#39;icbc&#39;</span>
+
+    <span class="n">cfg</span><span class="o">.</span><span class="n">input_files_scratch</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">dsc</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">input_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">input_files</span><span class="p">[</span><span class="n">dsc</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">:=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">input_files_scratch</span><span class="p">[</span><span class="n">dsc</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input</span> <span class="o">/</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="n">cfg</span><span class="o">.</span><span class="n">create_vars_from_dicts</span><span class="p">()</span>
+
+    <span class="n">cfg</span><span class="o">.</span><span class="n">ini_datetime_string</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:00:00Z&#39;</span><span class="p">)</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">end_datetime_string</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enddate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:00:00Z&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">lrestart</span> <span class="o">==</span> <span class="s1">&#39;.TRUE.&#39;</span><span class="p">:</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">restart_filename</span> <span class="o">=</span> <span class="s1">&#39;restart_atm_DOM01.nc&#39;</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">restart_file</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_restart_in</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">restart_filename</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">restart_file_scratch</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_work</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">restart_filename</span>
+
+    <span class="c1"># Nudge type (global or nothing)</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">nudge_type</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span>
+                                  <span class="s1">&#39;era5&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cfg</span><span class="o">.</span><span class="n">era5_global_nudging</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="c1"># Time step for global nudging in seconds</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">nudging_step_seconds</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nudging_step</span> <span class="o">*</span> <span class="mi">3600</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;nudging_step&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="c1"># Prescribed initial conditions for CH4, CO and/or OH</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">iart_init_gas</span> <span class="o">=</span> <span class="mi">4</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;species_inicond&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cfg</span><span class="o">.</span><span class="n">species_inicond</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim_yyyymmdd_hh</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">_%H&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.prepare_icon.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **ICON Data Preparation**</span>
+
+<span class="sd">    This function prepares input data for ICON simulations by creating necessary directories,</span>
+<span class="sd">    copying meteorological files, and handling specific data processing.</span>
+
+<span class="sd">    - Create working directories and copy input files</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If any subprocess returns a non-zero exit code during execution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">change_logfile</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">)</span>
+
+    <span class="c1"># Create directories</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_work</span><span class="p">,</span> <span class="s2">&quot;icon_work&quot;</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s2">&quot;icon_input_icbc&quot;</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_output</span><span class="p">,</span> <span class="s2">&quot;icon_output&quot;</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_restart_out</span><span class="p">,</span> <span class="s2">&quot;icon_restart_out&quot;</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Copy ICON input data (IC/BC) to working directory&#39;</span><span class="p">)</span>
+    <span class="c1"># Copy input files to scratch</span>
+    <span class="n">script_lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;#!/usr/bin/env bash&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;#SBATCH --job-name=&quot;copy_input_</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">casename</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim_yyyymmddhh</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim_yyyymmddhh</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;#SBATCH --account=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">compute_account</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;#SBATCH --time=00:10:00&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;#SBATCH --partition=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">compute_queue</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;#SBATCH --constraint=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">constraint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;#SBATCH --nodes=1&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;#SBATCH --output=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;#SBATCH --open-mode=append&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;#SBATCH --chdir=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_work</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">target</span><span class="p">,</span> <span class="n">destination</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">input_files</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">input_files_scratch</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rsync -av </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="p">(</span><span class="n">script</span> <span class="o">:=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_work</span> <span class="o">/</span> <span class="s1">&#39;copy_input.job&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_lines</span><span class="p">))</span>
+
+    <span class="n">cfg</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="s1">&#39;prepare_icon&#39;</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018-2024, C2SM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

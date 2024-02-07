@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
@@ -102,6 +103,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
 </ul>
@@ -153,7 +156,7 @@
 <div class="viewcode-block" id="check_model"><a class="viewcode-back" href="../../../functions.html#jobs.tools.check_model.check_model">[docs]</a><span class="k">def</span> <span class="nf">check_model</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s1">&#39;COSMO&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the model specified in cfg matched the prescribed model.</span>
 
-<span class="sd">    Check that cfg.model == model. If not, raises a value-error.</span>
+<span class="sd">    Check that cfg.workflow_name == model. If not, raises a value-error.</span>
 <span class="sd">    Ignores capitalization of the strings</span>
 
 <span class="sd">    Parameters</span>
@@ -165,10 +168,10 @@
 <span class="sd">        Prescribed model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#don&#39;t care about capitalization</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">cfg</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cfg</span><span class="o">.</span><span class="n">workflow_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The model specified in the configuration file is </span><span class="si">{}</span><span class="s2">&quot;</span>
                          <span class="s2">&quot;, but the job only applies to </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                             <span class="n">cfg</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">model</span><span class="p">))</span></div>
+                             <span class="n">cfg</span><span class="o">.</span><span class="n">workflow_name</span><span class="p">,</span> <span class="n">model</span><span class="p">))</span></div>
 </pre></div>
 
            </div>

@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
@@ -102,6 +103,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
 </ul>
@@ -154,8 +157,10 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tools</span>
 
+<span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.photo_rate.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.photo_rate.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy photolysis-rate file to the **COSMOART** input directory.</span>
 
 <span class="sd">    Only necessary for **COSMOART** simulations.</span>
@@ -167,10 +172,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes.</span>
-<span class="sd">    model_cfg : dict</span>
-<span class="sd">        Model configuration settings loaded from the ``config/models.yaml`` file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tools</span><span class="o">.</span><span class="n">check_model</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;cosmo-art&#39;</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">change_logfile</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">)</span>
 
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Copying photolysis-rate file from </span><span class="si">{}</span><span class="s2"> to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">cfg</span><span class="o">.</span><span class="n">photo_rate_file</span><span class="p">,</span>

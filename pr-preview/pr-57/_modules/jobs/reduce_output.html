@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
@@ -102,6 +103,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
 </ul>
@@ -163,8 +166,10 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tools</span>
 
+<span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.reduce_output.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.reduce_output.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates 2D column data and writes them into a new netCDF file.</span>
 <span class="sd">    Only a fixed number of levels from **COSMO** output are considered.</span>
@@ -189,9 +194,8 @@
 <span class="sd">    ----------	</span>
 <span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes</span>
-<span class="sd">    model_cfg : dict </span>
-<span class="sd">        Model configuration settings loaded from the ``config\/models.yaml`` file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">change_logfile</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">)</span>
     <span class="n">cosmo_output</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_output</span>
     <span class="n">output_path</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_output_reduced</span>
 
@@ -216,6 +220,12 @@
 
     <span class="c1"># Wait for Cosmo to finish first</span>
     <span class="n">tools</span><span class="o">.</span><span class="n">check_job_completion</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_finished_dir</span><span class="p">,</span> <span class="s2">&quot;cosmo&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Number of levels and switch for unit conversion for &#39;reduce_output&#39; job</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;output_levels&#39;</span><span class="p">):</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">output_levels</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;convert_gas&#39;</span><span class="p">):</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">convert_gas</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get list of constant files&quot;&quot;&quot;</span>
     <span class="n">cfiles</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">read_cfile</span> <span class="o">=</span> <span class="kc">False</span>
@@ -261,11 +271,10 @@
     <span class="n">py_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tool_path</span><span class="p">,</span> <span class="s1">&#39;reduce_output_start_end.py&#39;</span><span class="p">)</span>
     <span class="n">alternate_csv_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_src_dir</span><span class="p">,</span> <span class="s1">&#39;cases&#39;</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">casename</span><span class="p">,</span>
                                       <span class="s1">&#39;variables.csv&#39;</span><span class="p">)</span>
-    <span class="n">logfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span><span class="p">,</span> <span class="s1">&#39;reduce_output&#39;</span><span class="p">)</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Submitting job to the queue...&#39;</span><span class="p">)</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span>
-        <span class="s2">&quot;sbatch&quot;</span><span class="p">,</span> <span class="s1">&#39;--output=&#39;</span> <span class="o">+</span> <span class="n">logfile</span><span class="p">,</span> <span class="s1">&#39;--open-mode=append&#39;</span><span class="p">,</span> <span class="s1">&#39;--wait&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;sbatch&quot;</span><span class="p">,</span> <span class="s1">&#39;--output=&#39;</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">,</span> <span class="s1">&#39;--open-mode=append&#39;</span><span class="p">,</span> <span class="s1">&#39;--wait&#39;</span><span class="p">,</span>
         <span class="n">bash_file</span><span class="p">,</span> <span class="n">py_file</span><span class="p">,</span> <span class="n">cosmo_output</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">str_startdate</span><span class="p">,</span>
         <span class="n">str_enddate</span><span class="p">,</span>
         <span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">reduce_output</span><span class="p">[</span><span class="s1">&#39;output_levels&#39;</span><span class="p">]),</span>

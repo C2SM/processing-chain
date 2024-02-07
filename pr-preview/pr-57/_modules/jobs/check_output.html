@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
@@ -102,6 +103,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
 </ul>
@@ -175,6 +178,8 @@
     <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tools</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">tools</span>
+
+<span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">True</span>
 
 
 <span class="k">def</span> <span class="nf">pkl_path</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">pid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -847,7 +852,7 @@
                        <span class="n">duration</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.check_output.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.check_output.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check output variables for physical reasonability and create plots.</span>
 
 <span class="sd">    This function checks the output variables to ensure they are in a physically</span>
@@ -860,9 +865,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes.</span>
-<span class="sd">    model_cfg : dict</span>
-<span class="sd">        Model configuration settings loaded from the ``config/models.yaml`` file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">change_logfile</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">)</span>
     <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
 
     <span class="n">to_print</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;check_output</span>
@@ -872,8 +876,6 @@
 <span class="s2">============== StartTime: </span><span class="si">%s</span><span class="s2"> </span>
 <span class="s2">=====================================================&quot;&quot;&quot;</span> <span class="o">%</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">logfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span><span class="p">,</span> <span class="s2">&quot;check_output&quot;</span><span class="p">)</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">logfile</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">to_print</span><span class="p">)</span>
 
     <span class="c1"># if cfg.compute_host!=&quot;daint&quot;:</span>
@@ -898,7 +900,7 @@
 <span class="s2">#SBATCH --time=00:30:00</span>
 <span class="s2">#SBATCH --constraint=mc</span>
 <span class="s2">#SBATCH --ntasks=1</span>
-<span class="s2">#SBATCH --output=</span><span class="si">{logfile}</span>
+<span class="s2">#SBATCH --output=</span><span class="si">{cfg.logfile}</span>
 
 
 <span class="s2">export EASYBUILD_PREFIX=/store/empa/em05/easybuild</span>
@@ -928,7 +930,7 @@
                                    <span class="n">cosmo_output</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_output</span><span class="p">,</span>
                                    <span class="n">output_root</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">output_root</span><span class="p">,</span>
                                    <span class="n">work_log</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span><span class="p">,</span>
-                                   <span class="n">logfile</span><span class="o">=</span><span class="n">logfile</span><span class="p">,</span>
+                                   <span class="n">logfile</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">,</span>
                                    <span class="n">chain</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_src_dir</span><span class="p">,</span>
                                    <span class="n">chain_root</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="p">,</span>
                                    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;get_data&#39;</span><span class="p">)</span>
@@ -969,7 +971,7 @@
                                    <span class="n">casename</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">casename</span><span class="p">,</span>
                                    <span class="n">cosmo_output</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_output</span><span class="p">,</span>
                                    <span class="n">output_root</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">output_root</span><span class="p">,</span>
-                                   <span class="n">logfile</span><span class="o">=</span><span class="n">logfile</span><span class="p">,</span>
+                                   <span class="n">logfile</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">,</span>
                                    <span class="n">chain</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_src_dir</span><span class="p">,</span>
                                    <span class="n">chain_root</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="p">,</span>
                                    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;plot_maps&#39;</span><span class="p">)</span>
@@ -1009,9 +1011,10 @@
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">to_print</span><span class="p">)</span>
 
     <span class="c1"># Check for errors</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">logfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">if</span> <span class="s1">&#39;ERROR&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Logfile containing errors! See </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">logfile</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Logfile containing errors! See </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                               <span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>

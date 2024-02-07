@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
@@ -102,6 +103,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
 </ul>
@@ -152,22 +155,15 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">pytz</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tools</span><span class="p">,</span> <span class="n">prepare_data</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tools</span><span class="p">,</span> <span class="n">prepare_cosmo</span>
+
+<span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">True</span>
 
 
-<span class="k">def</span> <span class="nf">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
-
-    <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;int2lm_run&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="p">,</span> <span class="s1">&#39;int2lm&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">))</span>
-    <span class="nb">setattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;int2lm_output&#39;</span><span class="p">,</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="p">,</span> <span class="s1">&#39;int2lm&#39;</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">cfg</span>
-
-
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.int2lm.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.int2lm.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup the namelist for int2lm and submit the job to the queue.</span>
 
 <span class="sd">    Necessary for both COSMO and COSMOART simulations.</span>
@@ -197,11 +193,9 @@
 <span class="sd">    ----------	</span>
 <span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes.</span>
-<span class="sd">    model_cfg : dict</span>
-<span class="sd">        Model configuration settings loaded from the ``config/models.yaml`` file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cfg</span> <span class="o">=</span> <span class="n">prepare_data</span><span class="o">.</span><span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>
-    <span class="n">cfg</span> <span class="o">=</span> <span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">change_logfile</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">)</span>
+    <span class="n">prepare_cosmo</span><span class="o">.</span><span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
 
     <span class="c1"># Total number of processes</span>
     <span class="n">np_tot</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">int2lm</span><span class="p">[</span><span class="s1">&#39;np_x&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">cfg</span><span class="o">.</span><span class="n">int2lm</span><span class="p">[</span><span class="s1">&#39;np_y&#39;</span><span class="p">]</span>
@@ -225,7 +219,7 @@
         <span class="n">extpar_dir</span><span class="p">)</span>
 
     <span class="c1"># Copy landuse and plant-functional-type files</span>
-    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;cosmo-art&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;photo_rate&#39;</span><span class="p">):</span>
         <span class="n">lu_file_src</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">int2lm</span><span class="p">[</span><span class="s1">&#39;lu_file&#39;</span><span class="p">]</span>
         <span class="n">lu_file_dst</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extpar_dir</span><span class="p">,</span> <span class="s1">&#39;landuse.nc&#39;</span><span class="p">)</span>
         <span class="n">tools</span><span class="o">.</span><span class="n">copy_file</span><span class="p">(</span><span class="n">lu_file_src</span><span class="p">,</span> <span class="n">lu_file_dst</span><span class="p">)</span>
@@ -295,12 +289,8 @@
                            <span class="n">cfg</span><span class="o">.</span><span class="n">int2lm</span><span class="p">[</span><span class="s1">&#39;runjob_filename&#39;</span><span class="p">]))</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
         <span class="n">int2lm_runscript</span> <span class="o">=</span> <span class="n">input_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-    <span class="c1"># Logfile variables</span>
-    <span class="n">logfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span><span class="p">,</span> <span class="s2">&quot;int2lm&quot;</span><span class="p">)</span>
-    <span class="n">logfile_finish</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_finished_dir</span><span class="p">,</span> <span class="s2">&quot;int2lm&quot;</span><span class="p">)</span>
-
-    <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">int2lm_run</span><span class="p">,</span> <span class="s2">&quot;run.job&quot;</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+    <span class="n">script</span> <span class="o">=</span> <span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">int2lm_run</span> <span class="o">/</span> <span class="s1">&#39;run_int2lm.job&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
         <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
             <span class="n">int2lm_runscript</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span>
                                     <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">int2lm</span><span class="p">,</span>
@@ -309,16 +299,11 @@
                                     <span class="n">ini_hour</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim_yyyymmddhh</span><span class="p">[</span><span class="mi">8</span><span class="p">:],</span>
                                     <span class="n">np_tot</span><span class="o">=</span><span class="n">np_tot</span><span class="p">,</span>
                                     <span class="n">hstop_int2lm</span><span class="o">=</span><span class="n">hstop_int2lm</span><span class="p">,</span>
-                                    <span class="n">logfile</span><span class="o">=</span><span class="n">logfile</span><span class="p">,</span>
-                                    <span class="n">logfile_finish</span><span class="o">=</span><span class="n">logfile_finish</span><span class="p">))</span>
+                                    <span class="n">logfile</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">,</span>
+                                    <span class="n">logfile_finish</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile_finish</span><span class="p">))</span>
 
     <span class="c1"># Submit job</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="p">[</span><span class="s2">&quot;sbatch&quot;</span><span class="p">,</span> <span class="s2">&quot;--wait&quot;</span><span class="p">,</span>
-         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">int2lm_run</span><span class="p">,</span> <span class="s2">&quot;run.job&quot;</span><span class="p">)])</span>
-    <span class="n">exitcode</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span>
-    <span class="k">if</span> <span class="n">exitcode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;sbatch returned exitcode </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">exitcode</span><span class="p">))</span></div>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="s1">&#39;int2lm&#39;</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
