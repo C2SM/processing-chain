@@ -1,7 +1,9 @@
 # Configuration file for the 'cosmo-ghg-spinup-test' case with COSMO-GHG
 
-model: cosmo-ghg
+workflow: cosmo-ghg-spinup
 constraint: gpu
+run_on: gpu
+compute_queue: normal
 ntasks_per_node: 12
 restart_step: PT6H
 spinup: 3

@@ -28,6 +28,8 @@ try:
 except ImportError:
     import tools
 
+BASIC_PYTHON_JOB = True
+
 
 def pkl_path(folder, pid=None):
     """ Returns the path (and creates it, if necessary) to the stored
@@ -699,7 +701,7 @@ def create_animations(cfg):
                        duration=300)
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Check output variables for physical reasonability and create plots.
 
     This function checks the output variables to ensure they are in a physically
@@ -712,9 +714,8 @@ def main(cfg, model_cfg):
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
+    tools.change_logfile(cfg.logfile)
     date = dt.datetime.today()
 
     to_print = """check_output
@@ -724,8 +725,6 @@ def main(cfg, model_cfg):
 ============== StartTime: %s 
 =====================================================""" % date.strftime("%s")
 
-    logfile = os.path.join(cfg.log_working_dir, "check_output")
-    logging.basicConfig(filename=logfile, level=logging.INFO)
     logging.info(to_print)
 
     # if cfg.compute_host!="daint":
@@ -750,7 +749,7 @@ def main(cfg, model_cfg):
 #SBATCH --time=00:30:00
 #SBATCH --constraint=mc
 #SBATCH --ntasks=1
-#SBATCH --output={logfile}
+#SBATCH --output={cfg.logfile}
 
 
 export EASYBUILD_PREFIX=/store/empa/em05/easybuild
@@ -780,7 +779,7 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
                                    cosmo_output=cfg.cosmo_output,
                                    output_root=cfg.output_root,
                                    work_log=cfg.log_working_dir,
-                                   logfile=logfile,
+                                   logfile=cfg.logfile,
                                    chain=cfg.chain_src_dir,
                                    chain_root=cfg.chain_root,
                                    action='get_data')
@@ -821,7 +820,7 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
                                    casename=cfg.casename,
                                    cosmo_output=cfg.cosmo_output,
                                    output_root=cfg.output_root,
-                                   logfile=logfile,
+                                   logfile=cfg.logfile,
                                    chain=cfg.chain_src_dir,
                                    chain_root=cfg.chain_root,
                                    action='plot_maps')
@@ -861,9 +860,10 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
     logging.info(to_print)
 
     # Check for errors
-    with open(logfile) as f:
+    with open(cfg.logfile) as f:
         if 'ERROR' in f.read():
-            raise RuntimeError('Logfile containing errors! See %s' % logfile)
+            raise RuntimeError('Logfile containing errors! See %s' %
+                               cfg.logfile)
 
 
 if __name__ == '__main__':

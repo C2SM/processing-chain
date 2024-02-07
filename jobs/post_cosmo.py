@@ -4,9 +4,10 @@
 import logging
 import os
 import datetime
-from subprocess import call
 
-from . import tools, int2lm, cosmo
+from . import tools, prepare_cosmo
+
+BASIC_PYTHON_JOB = False
 
 
 def logfile_header_template():
@@ -45,7 +46,7 @@ def runscript_commands_template():
     ])
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Copy the output of a **COSMO**-run to a user-defined position.
 
     Write a runscript to copy all files (**COSMO** settings & output,
@@ -62,15 +63,10 @@ def main(cfg, model_cfg):
     ----------	
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
-    cfg = int2lm.set_cfg_variables(cfg, model_cfg)
-    cfg = cosmo.set_cfg_variables(cfg, model_cfg)
+    tools.change_logfile(cfg.logfile)
+    prepare_cosmo.set_cfg_variables(cfg)
 
-    logfile = os.path.join(cfg.log_working_dir, "post_cosmo")
-    cosmo_run_dir = cfg.cosmo_run
-    runscript_path = os.path.join(cfg.cosmo_run, "post_cosmo.job")
     copy_path = os.path.join(
         cfg.post_cosmo['output_root'],
         cfg.startdate_sim_yyyymmddhh + "_" + cfg.enddate_sim_yyyymmddhh)
@@ -82,16 +78,16 @@ def main(cfg, model_cfg):
     runscript_content = "#!/bin/bash\n"
     runscript_content += runscript_header_template().format(
         compute_account=cfg.compute_account,
-        logfile=logfile,
+        logfile=cfg.logfile,
         constraint=cfg.constraint,
         cosmo_run=cfg.cosmo_run)
 
     if os.path.isdir(cfg.cosmo_output_reduced):
-        cosmo_output_src = cfg.cosmo_output_reduced.rstrip('/')
+        cosmo_output_src = str(cfg.cosmo_output_reduced).rstrip('/')
         cosmo_output_dest = os.path.join(copy_path,
                                          "cosmo_output_reduced").rstrip('/')
     else:
-        cosmo_output_src = cfg.cosmo_output.rstrip('/')
+        cosmo_output_src = str(cfg.cosmo_output).rstrip('/')
         cosmo_output_dest = os.path.join(copy_path, "cosmo_output").rstrip('/')
 
     # Create new directories
@@ -108,36 +104,22 @@ def main(cfg, model_cfg):
     # Format the runscript
     runscript_content += runscript_commands_template().format(
         target_dir=copy_path.rstrip('/'),
-        int2lm_run_src=cfg.int2lm_run.rstrip('/'),
+        int2lm_run_src=str(cfg.int2lm_run).rstrip('/'),
         int2lm_run_dest=int2lm_run_path.rstrip('/'),
-        cosmo_run_src=cfg.cosmo_run.rstrip('/'),
+        cosmo_run_src=str(cfg.cosmo_run).rstrip('/'),
         cosmo_run_dest=cosmo_run_path.rstrip('/'),
         cosmo_output_src=cosmo_output_src,
         cosmo_output_dest=cosmo_output_dest_path,
-        logs_src=cfg.log_finished_dir.rstrip('/'),
+        logs_src=str(cfg.log_finished_dir).rstrip('/'),
         logs_dest=logs_path.rstrip('/'))
 
-    # Wait for Cosmo to finish first
-    tools.check_job_completion(cfg.log_finished_dir, "cosmo")
-
-    with open(runscript_path, "w") as script:
-        script.write(runscript_content)
+    os.makedirs(cfg.cosmo_run, exist_ok=True)
+    script = (cfg.cosmo_run / 'run_post_cosmo.job')
+    with open(script, "w") as outf:
+        outf.write(runscript_content)
 
     logging.info("Submitting the copy job to the xfer queue")
     logging.info("Make sure you have the module 'xalt' unloaded!")
 
-    sbatch_wait = getattr(cfg, "wait", "True")
-
-    if sbatch_wait:
-        exitcode = call(["sbatch", "--wait", runscript_path])
-        logging.info(logfile_header_template().format(
-            "ENDS", str(datetime.datetime.today())))
-
-        # copy own logfile aswell
-        tools.copy_file(logfile, os.path.join(copy_path, "logs/"))
-
-    else:
-        exitcode = call(["sbatch", runscript_path])
-
-    if exitcode != 0:
-        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+    # Submit job
+    cfg.submit('post_cosmo', script)

@@ -4,22 +4,15 @@
 import os
 import logging
 import shutil
-import subprocess
 import pytz
-from datetime import datetime, timedelta
-from . import tools, prepare_data
+
+from datetime import datetime
+from . import tools, prepare_cosmo
+
+BASIC_PYTHON_JOB = True
 
 
-def set_cfg_variables(cfg, model_cfg):
-
-    setattr(cfg, 'int2lm_run', os.path.join(cfg.chain_root, 'int2lm', 'run'))
-    setattr(cfg, 'int2lm_output',
-            os.path.join(cfg.chain_root, 'int2lm', 'output'))
-
-    return cfg
-
-
-def main(cfg, model_cfg):
+def main(cfg):
     """Setup the namelist for int2lm and submit the job to the queue.
 
     Necessary for both COSMO and COSMOART simulations.
@@ -49,11 +42,9 @@ def main(cfg, model_cfg):
     ----------	
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
-    cfg = prepare_data.set_cfg_variables(cfg, model_cfg)
-    cfg = set_cfg_variables(cfg, model_cfg)
+    tools.change_logfile(cfg.logfile)
+    prepare_cosmo.set_cfg_variables(cfg)
 
     # Total number of processes
     np_tot = cfg.int2lm['np_x'] * cfg.int2lm['np_y']
@@ -77,7 +68,7 @@ def main(cfg, model_cfg):
         extpar_dir)
 
     # Copy landuse and plant-functional-type files
-    if cfg.model == 'cosmo-art':
+    if hasattr(cfg, 'photo_rate'):
         lu_file_src = cfg.int2lm['lu_file']
         lu_file_dst = os.path.join(extpar_dir, 'landuse.nc')
         tools.copy_file(lu_file_src, lu_file_dst)
@@ -147,12 +138,8 @@ def main(cfg, model_cfg):
                            cfg.int2lm['runjob_filename'])) as input_file:
         int2lm_runscript = input_file.read()
 
-    # Logfile variables
-    logfile = os.path.join(cfg.log_working_dir, "int2lm")
-    logfile_finish = os.path.join(cfg.log_finished_dir, "int2lm")
-
-    output_file = os.path.join(int2lm_run, "run.job")
-    with open(output_file, "w") as outf:
+    script = (cfg.int2lm_run / 'run_int2lm.job')
+    with open(script, "w") as outf:
         outf.write(
             int2lm_runscript.format(cfg=cfg,
                                     **cfg.int2lm,
@@ -161,13 +148,8 @@ def main(cfg, model_cfg):
                                     ini_hour=cfg.startdate_sim_yyyymmddhh[8:],
                                     np_tot=np_tot,
                                     hstop_int2lm=hstop_int2lm,
-                                    logfile=logfile,
-                                    logfile_finish=logfile_finish))
+                                    logfile=cfg.logfile,
+                                    logfile_finish=cfg.logfile_finish))
 
     # Submit job
-    result = subprocess.run(
-        ["sbatch", "--wait",
-         os.path.join(int2lm_run, "run.job")])
-    exitcode = result.returncode
-    if exitcode != 0:
-        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+    cfg.submit('int2lm', script)

@@ -11,6 +11,8 @@ from netCDF4 import Dataset
 
 from . import tools
 
+BASIC_PYTHON_JOB = True
+
 
 def create_dir_and_copy_input(dest_dir, lambdas_src, maps_src):
     """Create a directory at dest_dir (**COSMO** input) and copy src there.
@@ -161,7 +163,7 @@ def perturb_bgs_in_dir(lambdas_nc, directory):
                         entry.name))
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Copy necessary input files for **COSMO** and perturb BG.
 
     Copies the NetCDF-files found at ``cfg.octe_maps`` and ``cfg.octe_lambdas`` to
@@ -176,9 +178,8 @@ def main(cfg, model_cfg):
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
+    tools.change_logfile(cfg.logfile)
     dest_dir = join(cfg.cosmo_input, 'octe')
     create_dir_and_copy_input(dest_dir=dest_dir,
                               lambdas_src=cfg.octe_lambdas,

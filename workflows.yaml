@@ -1,0 +1,237 @@
+cosmo:
+  features:
+    - restart
+  jobs:
+    - prepare_cosmo
+    - int2lm
+    - cosmo
+    - post_cosmo
+  dependencies:
+    int2lm:
+      current:
+        - prepare_cosmo
+    cosmo:
+      previous:
+        - cosmo
+    post_cosmo:
+      current:
+        - cosmo
+
+cosmo-ghg:
+  features:
+    - restart
+    - tracers
+  jobs:
+    - prepare_cosmo
+    - emissions
+    - biofluxes
+    - oem
+    - online_vprm
+    - int2lm
+    - post_int2lm
+    - cosmo
+    - post_cosmo
+  dependencies:
+    emissions:
+      current:
+        - prepare_cosmo
+    biofluxes:
+      current:
+        - prepare_cosmo
+    oem:
+      current:
+        - prepare_cosmo
+    online_vprm:
+      current:
+        - prepare_cosmo
+    int2lm:
+      current:
+        - prepare_cosmo
+        - emissions
+        - biofluxes
+        - oem
+        - online_vprm
+    post_int2lm:
+      current:
+        - int2lm
+    cosmo:
+      current:
+        - post_int2lm
+      previous:
+        - cosmo
+    post_cosmo:
+      current:
+        - cosmo
+
+cosmo-ghg-spinup:
+  features:
+    - restart
+    - tracers
+    - spinup
+  jobs:
+    - prepare_cosmo
+    - emissions
+    - biofluxes
+    - oem
+    - online_vprm
+    - int2lm
+    - post_int2lm
+    - cosmo
+    - post_cosmo
+  dependencies:
+    emissions:
+      current:
+        - prepare_cosmo
+    biofluxes:
+      current:
+        - prepare_cosmo
+    oem:
+      current:
+        - prepare_cosmo
+    online_vprm:
+      current:
+        - prepare_cosmo
+    int2lm:
+      current:
+        - prepare_cosmo
+        - emissions
+        - biofluxes
+        - oem
+        - online_vprm
+    post_int2lm:
+      current:
+        - int2lm
+      previous:
+        - cosmo
+    cosmo:
+      current:
+        - post_int2lm
+      previous:
+        - cosmo
+    post_cosmo:
+      current:
+        - cosmo
+
+cosmo-art:
+  features:
+    - nesting
+    - spinup
+  jobs:
+    - prepare_cosmo
+    - emissions
+    - obs_nudging
+    - photo_rate
+    - int2lm
+    - cosmo
+    - post_cosmo
+  dependencies:
+    emissions:
+      current:
+        - prepare_cosmo
+    obs_nudging:
+      current:
+        - prepare_cosmo
+    photo_rate:
+      current:
+        - prepare_cosmo
+    int2lm:
+      current:
+        - prepare_cosmo
+        - emissions
+        - obs_nudging
+        - photo_rate
+    cosmo:
+      previous:
+        - cosmo
+    post_cosmo:
+      current:
+        - cosmo
+
+icon:
+  features:
+    - restart
+  jobs:
+    - prepare_icon
+    - icontools
+    - icon
+  dependencies:
+    icontools:
+      current:
+        - prepare_icon
+    icon:
+      current:
+        - prepare_icon
+        - icontools
+      previous:
+        - icon
+
+icon-art:
+  features:
+    - restart
+  jobs:
+    - prepare_icon
+    - icontools
+    - prepare_art
+    - icon
+  dependencies:
+    icontools:
+      current:
+        - prepare_icon
+    prepare_art:
+      current:
+        - icontools
+    icon:
+      current:
+        - prepare_icon
+        - icontools
+        - prepare_art
+      previous:
+        - icon
+
+icon-art-global:
+  features:
+    - restart
+  jobs:
+    - prepare_icon
+    - prepare_art_global
+    - icon
+  dependencies:
+    prepare_art_global:
+      current:
+        - prepare_icon
+      previous:
+        - icon
+    icon:
+      current:
+        - prepare_icon
+        - prepare_art_global
+      previous:
+        - icon
+
+icon-art-oem:
+  features:
+    - restart
+  jobs:
+    - prepare_icon
+    - icontools
+    - prepare_art
+    - prepare_art_oem
+    - icon
+  dependencies:
+    icontools:
+      current:
+        - prepare_icon
+    prepare_art:
+      current:
+        - icontools
+    prepare_art_oem:
+      current:
+        - prepare_art
+    icon:
+      current:
+        - prepare_icon
+        - icontools
+        - prepare_art
+        - prepare_art_oem
+      previous:
+        - icon

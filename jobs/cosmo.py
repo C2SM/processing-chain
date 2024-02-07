@@ -4,88 +4,38 @@
 import logging
 import os
 import subprocess
-import csv
+from pathlib import Path
+
+from datetime import datetime
 from .tools import write_cosmo_input_ghg
-from . import tools
-from datetime import datetime, timedelta
+from . import tools, prepare_cosmo
+
+BASIC_PYTHON_JOB = True
 
 
-def set_cfg_variables(cfg, model_cfg):
-    setattr(cfg, 'cosmo_base', os.path.join(cfg.chain_root, 'cosmo'))
-    setattr(cfg, 'cosmo_input', os.path.join(cfg.chain_root, 'cosmo', 'input'))
-    setattr(cfg, 'cosmo_run', os.path.join(cfg.chain_root, 'cosmo', 'run'))
-    setattr(cfg, 'cosmo_output', os.path.join(cfg.chain_root, 'cosmo',
-                                              'output'))
-    setattr(cfg, 'cosmo_output_reduced',
-            os.path.join(cfg.chain_root, 'cosmo', 'output_reduced'))
-
-    # Number of tracers
-    if 'tracers' in model_cfg['models'][cfg.model]['features']:
-        tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
-                                      'cosmo_tracers.csv')
-        if os.path.isfile(tracer_csvfile):
-            with open(tracer_csvfile, 'r') as csv_file:
-                reader = csv.DictReader(csv_file, delimiter=',')
-                reader = [r for r in reader if r[''] != '#']
-                setattr(cfg, 'in_tracers', len(reader))
-        else:
-            raise FileNotFoundError(f"File not found: {tracer_csvfile}")
-
-        # tracer_start namelist paramter for spinup simulation
-        if hasattr(cfg, 'spinup'):
-            if cfg.first_one:
-                setattr(cfg, 'tracer_start', 0)
-            else:
-                setattr(cfg, 'tracer_start', cfg.spinup)
-        else:
-            setattr(cfg, 'tracer_start', 0)
-
-    # asynchronous I/O
-    if hasattr(cfg, 'cfg.cosmo_np_io'):
-        if cfg.cosmo_np_io == 0:
-            setattr(cfg, 'lasync_io', '.FALSE.')
-            setattr(cfg, 'num_iope_percomm', 0)
-        else:
-            setattr(cfg, 'lasync_io', '.TRUE.')
-            setattr(cfg, 'num_iope_percomm', 1)
-
-    return cfg
-
-
-def main(cfg, model_cfg):
-    """Setup the namelists for a COSMO tracer run and submit the job to the queue.
-
-    Necessary for both COSMO and COSMOART simulations.
-
-    Decide if the soil model should be TERRA or TERRA multi-layer depending on
-    the ``startdate`` of the simulation.
+def main(cfg):
+    """Setup the namelists for a COSMO run and submit the job to the queue.
 
     Create necessary directory structure to run COSMO (run, output, and
     restart directories, defined in ``cfg.cosmo_run``, ``cfg.cosmo_output``,
     and ``cfg.cosmo_restart_out``).
 
     Copy the COSMO-executable from
-    ``cfg.cosmo_bin`` to ``cfg.cosmo_run/cosmo``.
+    ``cfg.cosmo['binary_file']`` to ``cfg.cosmo_run/cfg.cosmo['execname']``.
 
-    Convert the tracer-csv-file to a COSMO-namelist file.
+    Convert the tracer csv file to a COSMO namelist file.
 
-    Format the COSMO-namelist-templates
-    (COSMO: ``AF,ORG,IO,DYN,PHY,DIA,ASS``,
-    COSMOART: ``ART,ASS,DIA,DYN,EPS,INI,IO,ORG,PHY``)
-    using the information in ``cfg``.
+    Format the COSMO namelist templates using the information in ``cfg``.
 
-    Format the runscript-template and submit the job.
+    Format the runscript template and submit the job.
 
     Parameters
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
-    model_cfg : dict
-        Model configuration settings loaded from the ``config/models.yaml`` file.
     """
-    cfg = set_cfg_variables(cfg, model_cfg)
-    logfile = os.path.join(cfg.log_working_dir, "cosmo")
-    logfile_finish = os.path.join(cfg.log_finished_dir, "cosmo")
+    tools.change_logfile(cfg.logfile)
+    prepare_cosmo.set_cfg_variables(cfg)
 
     logging.info("Setup the namelist for a COSMO tracer run and "
                  "submit the job to the queue")
@@ -106,11 +56,10 @@ def main(cfg, model_cfg):
         tools.create_dir(ini_dir, "cosmo_input_initial")
         startfiletime = datetime.strptime(cfg.laf_startfile[-10:], "%Y%m%d%H")
         if cfg.startdate_sim >= startfiletime:
-            starttime_last = cfg.startdate_sim - timedelta(
-                hours=cfg.restart_step)
             work_root = os.path.dirname(os.path.dirname(cfg.chain_root))
             last_output_path = os.path.join(work_root, cfg.casename,
-                                            cfg.job_id_prev, 'cosmo', 'output')
+                                            cfg.chunk_id_prev, 'cosmo',
+                                            'output')
             laf_output_refdate = cfg.startdate_sim.strftime("%Y%m%d%H")
             last_laf_filename = "laf" + laf_output_refdate
             # At the beginning, use original laf_startfile
@@ -148,7 +97,7 @@ def main(cfg, model_cfg):
                                 laf_output_refdate=laf_output_refdate,
                             ))
                     # Execute fieldextra
-                    with open(logfile, "a+") as log:
+                    with open(cfg.logfile, "a+") as log:
                         result = subprocess.run(
                             [cfg.fieldextra_bin, output_file_merge],
                             stdout=log)
@@ -166,23 +115,21 @@ def main(cfg, model_cfg):
 
     # Create restart directory if feature is present and
     # if there is no spinup
-    if 'restart' in model_cfg['models'][cfg.model]['features'] and not \
+    if 'restart' in cfg.workflow['features'] and not \
        hasattr(cfg, 'spinup'):
         tools.create_dir(cfg.cosmo_restart_out, "cosmo_restart_out")
 
     # Copy cosmo executable
-    cfg.cosmo['execname'] = cfg.model.lower()
+    cfg.cosmo_execname = Path(cfg.cosmo['binary_file']).name
     tools.copy_file(cfg.cosmo['binary_file'],
-                    os.path.join(cfg.cosmo_run, cfg.cosmo['execname']))
+                    cfg.cosmo_run / cfg.cosmo_execname)
 
     # Prepare namelist and submit job
     tracer_csvfile = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                   'cosmo_tracers.csv')
-    if cfg.model == 'cosmo':
-        namelist_names = ['ORG', 'IO', 'DYN', 'PHY', 'DIA', 'ASS', 'SAT']
-    elif cfg.model == 'cosmo-ghg':
+    if hasattr(cfg, 'cams') or hasattr(cfg, 'mozart'):
         namelist_names = ['AF', 'ORG', 'IO', 'DYN', 'GHG', 'PHY', 'DIA', 'ASS']
-    elif cfg.model == 'cosmo-art':
+    elif hasattr(cfg, 'photo_rate'):
         namelist_names = [
             'ART', 'ASS', 'DIA', 'DYN', 'EPS', 'INI', 'IO', 'ORG', 'PHY'
         ]
@@ -190,6 +137,8 @@ def main(cfg, model_cfg):
             # When doing online emissions in COSMO-ART, an additional
             # namelist is required
             namelist_names += ['OAE']
+    elif hasattr(cfg, 'cosmo'):
+        namelist_names = ['ORG', 'IO', 'DYN', 'PHY', 'DIA', 'ASS', 'SAT']
 
     for section in namelist_names:
         namelist_file = os.path.join(
@@ -221,7 +170,7 @@ def main(cfg, model_cfg):
 
     # Append INPUT_GHG namelist with tracer definitions from csv file
     if os.path.isfile(tracer_csvfile):
-        if cfg.model == 'cosmo-ghg':
+        if hasattr(cfg, 'cams') or hasattr(cfg, 'mozart'):
             input_ghg_filename = os.path.join(cfg.cosmo_run, 'INPUT_GHG')
 
             write_cosmo_input_ghg.main(tracer_csvfile, input_ghg_filename, cfg)
@@ -232,18 +181,15 @@ def main(cfg, model_cfg):
     with open(runscript_file) as input_file:
         cosmo_runscript = input_file.read()
 
-    output_file = os.path.join(cfg.cosmo_run, "run.job")
-    with open(output_file, "w") as outf:
+    Path(cfg.cosmo_run).mkdir(parents=True, exist_ok=True)
+    script = (cfg.cosmo_run / 'run_cosmo.job')
+    with open(script, "w") as outf:
         outf.write(
             cosmo_runscript.format(cfg=cfg,
                                    **cfg.cosmo,
                                    np_tot=np_tot,
-                                   logfile=logfile,
-                                   logfile_finish=logfile_finish))
+                                   logfile=cfg.logfile,
+                                   logfile_finish=cfg.logfile_finish))
 
-    result = subprocess.run(
-        ["sbatch", "--wait",
-         os.path.join(cfg.cosmo_run, 'run.job')])
-    exitcode = result.returncode
-    if exitcode != 0:
-        raise RuntimeError("sbatch returned exitcode {}".format(exitcode))
+    # Submit job
+    cfg.submit('cosmo', script)
