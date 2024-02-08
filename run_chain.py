@@ -296,9 +296,6 @@ def main():
         # Load configs
         cfg = Config(casename)
 
-        # Make ntry a Config variable
-        cfg.ntry = args.ntry
-
         # Convert relative to absolute paths
         cfg.convert_paths_to_absolute()
 
