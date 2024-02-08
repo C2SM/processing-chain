@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('../jobs/tools'))  # Tools subfolder
 # -- Project information ------------------------------------------------
 
 project = 'Processing Chain'
-copyright = '2018-2023, C2SM'
+copyright = '2018-2024, C2SM'
 author = 'Processing Chain Administrators'
 version = 'v3.1'
 release = 'v3.1'

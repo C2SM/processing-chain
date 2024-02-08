@@ -3,73 +3,67 @@
 Overview
 --------
 
-The jobs described here are available for use in the processing chain.
-For every model, you can choose from a list of available jobs.
-As some jobs depend on the result of others, the order indicated here
-has to be respected.
+Jobs have to be part of the respective workflow. They are submitted via ``sbatch``
+to the Slurm workload manager.
 
-``cosmo``:
+The order of job submission is based on the list given in ``workflows.yaml`` 
+(or in ``config.yaml`` in case a custom, user-defined workflow is used.)
 
-1.  :func:`jobs.prepare_data.main`
-2.  :func:`jobs.int2lm.main`
-3.  :func:`jobs.cosmo.main`
-4.  :func:`jobs.check_output.main`
-5.  :func:`jobs.reduce_output.main` 
-6.  :func:`jobs.post_cosmo.main` |
-    :func:`jobs.verify_chain.main`
+Let's have a look at the ``icon-art`` example:
 
-``cosmo-ghg``:
+..  code-block:: yaml
 
-1.  :func:`jobs.biofluxes.main` |   
-    :func:`jobs.emissions.main` | 
-    :func:`jobs.online_vprm.main` | 
-    :func:`jobs.oem.main` | 
-    :func:`jobs.obs_nudging.main` |
-    :func:`jobs.prepare_data.main`
-2.  :func:`jobs.int2lm.main`
-3.  :func:`jobs.post_int2lm.main`
-4.  :func:`jobs.octe.main`
-5.  :func:`jobs.cosmo.main`
-6.  :func:`jobs.check_output.main`
-7.  :func:`jobs.reduce_output.main` 
-8.  :func:`jobs.post_cosmo.main` |
-    :func:`jobs.verify_chain.main`
+   icon-art:
+      features:
+         - restart
+      jobs:
+         - prepare_icon
+         - icontools
+         - prepare_art
+         - icon
 
-``cosmo-art``:
+This workflow consists of four jobs: ``prepare_icon``, ``icontools``,
+``prepare_art`` and ``icon``.
 
-1. :func:`jobs.emissions.main` | 
-   :func:`jobs.photo_rate.main` | 
-   :func:`jobs.obs_nudging.main` |
-   :func:`jobs.online_vprm.main` | 
-   :func:`jobs.oem.main` |
-   :func:`jobs.prepare_data.main`
-2. :func:`jobs.int2lm.main`
-3. :func:`jobs.cosmo.main`
-4. :func:`jobs.check_output.main`
-5. :func:`jobs.reduce_output.main`
-6. :func:`jobs.post_cosmo.main` | 
-   :func:`jobs.verify_chain.main`
+These jobs will be submitted, however, they are not starting at the same time,
+because some of them depend on others:
 
-``icon``:
+..  code-block:: yaml
 
-1.  :func:`jobs.prepare_data.main`
-2.  :func:`jobs.icon.main`
+      dependencies:
+         icontools:
+            current:
+              - prepare_icon
+         prepare_art:
+            current:
+              - icontools
+         icon:
+            current:
+              - prepare_icon
+              - icontools
+              - prepare_art
+            previous:
+              - icon
 
-``icon-art``:
+Since ``icontools`` depends on ``prepare_icon``, and ``prepare_art`` depends
+on ``icontools``, the order of execution is ``prepare_icon`` --> ``icontools``
+--> ``prepare_art``. Note that if we had another job in there without dependencies,
+it would run in parallel to the others.
 
-1.  :func:`jobs.prepare_data.main`
-2.  :func:`jobs.icon.main`
+Since ``icon`` depends on all other jobs, it will be executed last. Note that
+these dependencies are all listed under the ``current`` keyword, targeting
+the current chunk. For ``icon``, there is an additional ``previous`` keyword.
+This means that an ``icon`` simulation will always wait until the simulation
+from the last chunk is finished (because the restart file has to be available).
 
-``icon-art-global``:
+Another effect of this workflow definition is that the ``prepare_icon``, 
+``icontools`` and ``prepare_art`` jobs will also be launched for the next chunk,
+as they are not dependent on their previous ones. 
 
-1.  :func:`jobs.prepare_data.main`
-2.  :func:`jobs.icon.main`
+.. figure:: _static/processing_chain_workflow_icon_art.png
+   :alt: Flowchart for the ``icon-art`` workflow.
 
-``icon-art-oem``:
-
-1.  :func:`jobs.prepare_data.main` 
-2.  :func:`jobs.oem.main`
-3.  :func:`jobs.icon.main`
+   Flowchart for the ``icon-art`` workflow.
 
 
 Adding New Jobs
@@ -81,6 +75,5 @@ Adding a new job to the chain is simple:
    a function called ``main`` which takes the same arguments as every other job.
    Make sure the function is documented with a docstring.
 2. Import it in ``jobs/__init__.py`` to make it accessible to ``run_chain.py``.
-3. Add the function to the documentation. You find the file describing this page
-   at ``docs/jobs.rst``.
+3. Add the job to your workflow.
 

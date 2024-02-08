@@ -6,13 +6,18 @@
 Processing Chain
 ================
 
-The Processing Chain is a collection of Python scripts to prepare the
-necessary input data, submit the compute jobs to the queue on Piz Daint
-and to apply post-processing steps. In addition to the standard versions
-of the COSMO and ICON models, it can als handle several variants of these
-models, namely COSMO-GHG, COSMO-ART and ICON-ART. The chain can be flexibly
-adapted according to your needs, e.g., by creating your own case,
-adding new jobs or custom scripts.
+The Processing Chain is a Python-based workflow tool designed to streamline
+weather and climate simulations.
+It facilitates the preparation of essential input data, submission of compute
+jobs to the queue on CSCS HPC systems, and the implementation of post-processing
+steps.
+In addition to supporting standard versions of the COSMO and ICON models,
+it is equipped to handle various model variants, notably COSMO-GHG
+(Greenhouse Gas Extension) and ICON-ART (Aerosols and Reactive Trace Gases)
+
+The Processing Chain can be easily customized to meet your specific requirements.
+This includes defining custom workflows, creating your own simulation cases,
+and integrating new jobs and auxiliary scripts.
 
 .. toctree::
     :maxdepth: 2
@@ -33,13 +38,13 @@ adding new jobs or custom scripts.
 
 .. toctree::
     :maxdepth: 2
-    :caption: Jobs
+    :caption: Jobs & Workflows
 
     jobs
 
 .. toctree::
     :maxdepth: 2
-    :caption: Function Reference
+    :caption: API
 
     functions
 

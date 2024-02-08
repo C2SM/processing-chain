@@ -3,7 +3,9 @@
 Code Structure
 --------------
 
-The Processing Chain code is structured as follows::
+The Processing Chain code is structured as follows:
+
+.. code-block:: bash
 
     $ tree -L 3 -F --dirsfirst 
     .
@@ -27,8 +29,6 @@ The Processing Chain code is structured as follows::
     │   └── icon-test/              # ICON test case
     │       ├── config.yaml
     │       └── *.cfg
-    ├── config/
-    │   └── models.yaml             # file to store model features and default jobs
     ├── docs/                       # folder for Sphinx documentation 
     │   ├── _static/                # folder for static assets
     │   │   ├── custom.css          # custom CSS styles
@@ -39,7 +39,7 @@ The Processing Chain code is structured as follows::
     │   └── *.rst                   # documentation files (reStructuredText)
     ├── env/
     │   └── environment.yml         # conda environment file
-    ├── externals/                  # folder for other code (spack, models, etc.)
+    ├── ext/                        # folder for other code (spack, models, etc.)
     ├── jenkins/                    # automated Jenkins testing
     │   ├── scripts/                
     │   │   └── *.sh                # individual Shell scripts for testing
@@ -50,4 +50,6 @@ The Processing Chain code is structured as follows::
     │   └── *.py                    # job scripts
     ├── LICENSE                     # license file
     ├── README.md                   # README file
-    └── run_chain.py                # main script
+    ├── config.py                   # file containing the Config class
+    ├── run_chain.py                # main script
+    └── workflows.yaml              # file to store workflows with job dependencies

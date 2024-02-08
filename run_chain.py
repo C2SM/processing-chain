@@ -13,18 +13,18 @@ from config import Config
 
 
 def parse_arguments():
-    """Parse command line arguments for the processing chain script.
+    """Parse command line arguments for the Processing Chain script.
 
     Parses and retrieves command line arguments, allowing users to specify
     run identifiers, jobs to execute, and various options to control the
-    execution of the processing chain.
+    execution of the Processing Chain.
 
     Returns
     -------
     argparse.Namespace
         A namespace object containing parsed command line arguments.
     """
-    parser = argparse.ArgumentParser(description="Run the processing chain.")
+    parser = argparse.ArgumentParser(description="Run the Processing Chain.")
 
     parser.add_argument("casenames",
                         nargs='+',
@@ -33,9 +33,9 @@ def parse_arguments():
                         "to be in cases/<casename>/. The runs are executed "
                         "sequentially in the order they're given here.")
 
-    jobs_help = ("List of job-names to be executed. A job is a .py-"
+    jobs_help = ("List of job names to be executed. A job is a .py "
                  "file in jobs/ with a main()-function which "
-                 "handles one aspect of the processing chain, for "
+                 "handles one aspect of the Processing Chain, for "
                  "example copying meteo-input data or launching a "
                  "job for int2lm. "
                  "Jobs are executed in the order in which they are "
@@ -78,23 +78,16 @@ def parse_arguments():
                   " even if they have been started already or were finished"
                   " previously. WARNING: Only logfiles get deleted,"
                   " other effects of a given job (copied files etc.)"
-                  " are simply overwritten. This may cause errors.")
+                  " are simply overwritten. This may cause errors"
+                  " or unexpected behavior.")
     parser.add_argument("-f", "--force", action='store_true', help=force_help)
 
-    tries_help = ("Amount of time the cosmo job is re-tried before crashing."
-                  " Default is 1.")
-    parser.add_argument("-t",
-                        "--try",
-                        help=tries_help,
-                        dest="ntry",
-                        type=int,
-                        default=1)
-
     resume_help = (
-        "Resume the processing chain by restarting the last unfinished job."
+        "Resume the Processing Chain by restarting the last unfinished job."
         " WARNING: Only the logfile gets deleted,"
         " other effects of a given job (copied files etc.)"
-        " are simply overwritten. This may cause errors.")
+        " are simply overwritten. This may cause errors."
+        " or unexpected behavior.")
     parser.add_argument("-r",
                         "--resume",
                         help=resume_help,
@@ -109,7 +102,7 @@ def parse_arguments():
 def run_chunk(cfg, force, resume):
     """Run a chunk of the processing chain, managing job execution and logging.
 
-    This function sets up and manages the execution of a processing chain, handling
+    This function sets up and manages the execution of a Processing Chain, handling
     job execution, logging, and various configuration settings.
 
     Parameters

@@ -3,12 +3,11 @@
 Feature Overview
 ================
 
-- Preparing input data
-- Submiting compute jobs to the HPC queue
-- Applying post-processing steps
-- Cycling over time periods
+- Asynchronous submission of compute jobs to the HPC queue
+- Intuitive definition of job dependencies
+- Automatic cycling over time periods including folder structure creation 
+- Various jobs for pre- and post-processing steps
 - Using model built-in restarts or custom spinup
 - Nested runs possible
-- Automatic folder structure creation
-- Easy creation of own cases and setups
-- Various examples for COSMO and ICON available
+- Easy creation of own cases and workflows
+- Various examples for COSMO and ICON workflows available 
