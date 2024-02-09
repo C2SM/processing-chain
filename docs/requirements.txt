@@ -1,2 +1,14 @@
-psphinxTheme
-karma-sphinx-theme
+cdo
+nco
+netcdf4
+numpy
+f90nml
+cartopy
+matplotlib
+scipy
+pillow
+xarray
+cdsapi
+sphinx
+sphinx_rtd_theme
+sphinx-copybutton

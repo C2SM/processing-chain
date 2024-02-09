@@ -1,6 +1,6 @@
 # Configuration file for the 'icon-art-oem-test' case with ICON
 
-model: icon-art-oem
+workflow: icon-art-oem
 constraint: gpu
 run_on: cpu
 compute_queue: normal
@@ -21,6 +21,13 @@ filename_format: <output_filename>_DOM<physdom>_<ddhhmmss>
 lateral_boundary_grid_order: lateral_boundary
 art_input_folder: ./input/icon-art-oem/ART
 
+walltime:
+    prepare_icon: '00:10:00'
+    icontools: '00:30:00'
+    prepare_art: '00:10:00'
+    prepare_art_oem: '00:10:00'
+    icon: '00:30:00'
+
 meteo:
     dir: ./input/meteo
     prefix: ifs_
@@ -34,6 +41,8 @@ chem:
     nameformat: '%Y%m%d_%H'
     suffix: .grb
     inc: 3
+    remap_tracers:
+        CH4_BG: TRCH4_chemtr
 
 icontools_runjobs:
     - icontools_remap_ic_runjob.cfg
@@ -60,7 +69,7 @@ input_files:
     oem_monthofyear_nc: ./input/icon-art-oem/OEM/monthofyear.nc
 
 icon:
-    binary_file: ./src/icon-art/bin/icon
+    binary_file: ./ext/icon-art/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
     walltime: '00:10:00'

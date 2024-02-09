@@ -1,6 +1,6 @@
-# Configuration file for the 'icon-test' case with ICON
+# Configuration file for the 'icon-async-test' case with ICON
 
-model: icon
+workflow: icon
 constraint: gpu
 run_on: cpu
 compute_queue: normal
@@ -17,6 +17,11 @@ inidata_filename: ifs_init_2018010100.nc
 output_filename: NWP_LAM
 filename_format: <output_filename>_DOM<physdom>_<ddhhmmss>
 lateral_boundary_grid_order: lateral_boundary
+
+walltime:
+    prepare_icon: '00:10:00'
+    icontools: '00:30:00'
+    icon: '00:30:00'
 
 meteo:
     dir: ./input/meteo
@@ -41,10 +46,9 @@ input_files:
     map_file_ana: ./input/icon/mapping/map_file.ana
 
 icon:
-    binary_file: ./src/icon/bin/icon
+    binary_file: ./ext/icon/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
-    walltime: '00:10:00'
     np_tot: 8
     np_io: 1
     np_restart: 1

@@ -6,27 +6,23 @@ import logging
 
 from . import tools
 
+BASIC_PYTHON_JOB = True
 
-def main(cfg, model_cfg):
+
+def main(cfg):
     """Copy photolysis-rate file to the **COSMOART** input directory.
 
     Only necessary for **COSMOART** simulations.
 
-    Copy the photolysis-rate file from the project (``cfg.photo_rate_file``) to
-    the **COSMOART** input folder on scratch (``cfg.cosmo_input/art_photolysis``).
+    Copy the photolysis-rate file from the project (`cfg.photo_rate_file`) to
+    the **COSMOART** input folder on scratch (`cfg.cosmo_input/art_photolysis`).
 
     Parameters
-    ----------	
-    start_time : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the start_time
-    hstop : int
-        Length of simulation (in hours)
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    ----------
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
     """
-    tools.check_model(cfg, 'cosmo-art')
+    tools.change_logfile(cfg.logfile)
 
     logging.info("Copying photolysis-rate file from {} to {}".format(
         cfg.photo_rate_file,

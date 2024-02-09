@@ -23,9 +23,9 @@ eval "$(conda shell.bash hook)"
 conda activate proc-chain
 
 # Setup spack
-if [[ -d src/spack-c2sm ]]; then
+if [[ -d ext/spack-c2sm ]]; then
   echo spack folder already exists - activating spack...
-  . src/spack-c2sm/setup-env.sh
+  . ext/spack-c2sm/setup-env.sh
 else
   echo building spack...
   ./jenkins/scripts/setup-spack.sh
@@ -41,7 +41,7 @@ else
 fi
 
 # Build int2lm
-if [[ -f src/int2lm/test/testsuite/int2lm ]]; then
+if [[ -f ext/int2lm/test/testsuite/int2lm ]]; then
   echo int2lm executable already exists - skipping build...
 else
   echo building int2lm...
@@ -49,7 +49,7 @@ else
 fi
 
 # Build COSMO-GHG
-if [[ -f src/cosmo-ghg/cosmo/ACC/cosmo_gpu ]]; then
+if [[ -f ext/cosmo-ghg/cosmo/ACC/cosmo_gpu ]]; then
   echo cosmo executable already exists - skipping build.
 else
   echo building cosmo...
@@ -57,7 +57,7 @@ else
 fi
 
 # Build ICON
-if [[ -f src/icon/bin/icon ]]; then
+if [[ -f ext/icon/bin/icon ]]; then
   echo icon executable already exists - skipping build.
 else
   echo building icon...
@@ -65,7 +65,7 @@ else
 fi
 
 # Build ICON-ART
-if [[ -f src/icon-art/bin/icon ]]; then
+if [[ -f ext/icon-art/bin/icon ]]; then
   echo icon-art executable already exists - skipping build.
 else
   echo building icon-art...
@@ -73,7 +73,7 @@ else
 fi
 
 # Test COSMO-GHG
-if [[ -f work/cosmo-ghg-test/2015010100_6_12/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+if [[ -f work/cosmo-ghg-test/2015010106_2015010112/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg test case already finished - skipping test.
 else
   echo running cosmo-ghg test case...
@@ -81,7 +81,7 @@ else
 fi
 
 # Test COSMO-GHG (spinup)
-if [[ -f work/cosmo-ghg-spinup-test/2015010106_-3_6/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+if [[ -f work/cosmo-ghg-spinup-test/2015010109_2015010118/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg test case already finished - skipping test.
 else
   echo running cosmo-ghg-spinup test case...
@@ -89,7 +89,7 @@ else
 fi
 
 # Test ICON
-if [[ -f work/icon-test/2018010100_6_12/checkpoints/finished/icon && "$force_execution" == false ]]; then
+if [[ -f work/icon-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon test case already finished - skipping test.
 else
   echo running icon test case...
@@ -97,7 +97,7 @@ else
 fi
 
 # Test ICON-ART
-if [[ -f work/icon-art-oem-test/2018010100_0_24/checkpoints/finished/icon && "$force_execution" == false ]]; then
+if [[ -f work/icon-art-oem-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon-art test case already finished - skipping test.
 else
   echo running icon-art-oem test case...
@@ -105,7 +105,7 @@ else
 fi
 
 # Test ICON-ART-GLOBAL
-if [[ -f work/icon-art-global-test/2018010100_0_24/checkpoints/finished/icon && "$force_execution" == false ]]; then
+if [[ -f work/icon-art-global-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon-art-global test case already finished - skipping test.
 else
   echo running icon-art-global test case...

@@ -15,15 +15,17 @@ import math
 
 from . import tools
 
+BASIC_PYTHON_JOB = True
 
-def main(startdate, enddate, cfg, model_cfg):
+
+def main(cfg):
     """
     Calculates 2D column data and writes them into a new netCDF file.
     Only a fixed number of levels from **COSMO** output are considered.
     Those files are written into a new directory ``cosmo_output_reduced``.
 
     The number of levels is set by the configuration variable
-    ``cfg.output_levels`` (default = all levels).
+    ``cfg.reduce_output['output_levels']`` (default = all levels).
     
     **Important**: If several ``GRIBOUT`` sections are used to split the output
     data, then this code only works in case of the following:
@@ -39,16 +41,10 @@ def main(startdate, enddate, cfg, model_cfg):
 
     Parameters
     ----------	
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
     """
-
+    tools.change_logfile(cfg.logfile)
     cosmo_output = cfg.cosmo_output
     output_path = cfg.cosmo_output_reduced
 
@@ -73,6 +69,12 @@ def main(startdate, enddate, cfg, model_cfg):
 
     # Wait for Cosmo to finish first
     tools.check_job_completion(cfg.log_finished_dir, "cosmo")
+
+    # Number of levels and switch for unit conversion for 'reduce_output' job
+    if not hasattr(cfg, 'output_levels'):
+        cfg.output_levels = -1
+    if not hasattr(cfg, 'convert_gas'):
+        cfg.convert_gas = True
     """Get list of constant files"""
     cfiles = []
     read_cfile = False
@@ -118,16 +120,15 @@ def main(startdate, enddate, cfg, model_cfg):
     py_file = os.path.join(tool_path, 'reduce_output_start_end.py')
     alternate_csv_file = os.path.join(cfg.chain_src_dir, 'cases', cfg.casename,
                                       'variables.csv')
-    logfile = os.path.join(cfg.log_working_dir, 'reduce_output')
     logging.info('Submitting job to the queue...')
 
     result = subprocess.run([
-        "sbatch", '--output=' + logfile, '--open-mode=append', '--wait',
+        "sbatch", '--output=' + cfg.logfile, '--open-mode=append', '--wait',
         bash_file, py_file, cosmo_output, output_path, str_startdate,
         str_enddate,
-        str(cfg.output_levels),
+        str(cfg.reduce_output['output_levels']),
         str(output_step), alternate_csv_file,
-        str(cfg.convert_gas)
+        str(cfg.reduce_output['convert_gas'])
     ])
     exitcode = result.returncode
 

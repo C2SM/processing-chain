@@ -4,7 +4,6 @@ channels:
   - defaults
 dependencies:
   - python=3.9
-  - sphinx_rtd_theme
   - cdo
   - nco
   - netcdf4
@@ -13,8 +12,10 @@ dependencies:
   - cartopy
   - matplotlib
   - scipy
-  - sphinx
   - pillow
   - xarray
-  - dask
   - cdsapi
+  - scikit-learn
+  - sphinx
+  - sphinx_rtd_theme
+  - sphinx-copybutton

@@ -1,29 +1,30 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
 
 import os
 import logging
 
-from . import tools, cosmo
+from . import tools, prepare_cosmo
+
+BASIC_PYTHON_JOB = True
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Copy emission and profile files to the **cosmo** or **icon** input
     directory.
 
     Parameters
     ----------
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+
+    Raises
+    ------
+    RuntimeError
+        If an error occurs during the process.
     """
-    cfg = cosmo.set_cfg_variables(cfg, model_cfg)
+    tools.change_logfile(cfg.logfile)
+    prepare_cosmo.set_cfg_variables(cfg)
 
     oem_dir = cfg.oem['dir']
     oem_gridded_emissions_nc = os.path.join(oem_dir,
@@ -51,9 +52,9 @@ def main(cfg, model_cfg):
         raise RuntimeError("At least one of (hod/dow/moy) or (hoy) netcdfs "
                            " have to be given for online emissions")
 
-    if cfg.model.startswith('icon'):
+    if hasattr(cfg, 'icon'):
         input_dir = cfg.icon_input
-    else:
+    elif hasattr(cfg, 'cosmo'):
         input_dir = cfg.cosmo_input
     dest_dir = os.path.join(input_dir, "oem")
     tools.create_dir(dest_dir, "online emissions input")

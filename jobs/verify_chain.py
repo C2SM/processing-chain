@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Job to verify the correctness of the chain. The output of the example-case is
-# compared to a reference output.
-
-# Author: dao, david.ochsner@empa.ch
-
 import os
 import logging
 import netCDF4 as nc
 
 from . import tools
+
+BASIC_PYTHON_JOB = True
 
 
 def comp_data(dataset1, dataset2, variables):
@@ -19,52 +16,50 @@ def comp_data(dataset1, dataset2, variables):
     tools.helper.datasets_equal(dataset1, dataset2, variables, verbose=True)
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Compare outputs of the chain to a reference.
 
-    Looks for the reference-file in ``cfg.reference_dir``.
+    Looks for the reference-file in ``cfg.verify_chain['reference_dir']``.
     
-    Looks for the output file in ``cfg.output_dir`` (if not ``None``), else it
+    Looks for the output file in ``cfg.verify_chain['output_dir']`` (if not ``None``), else it
     goes to the output directory created by the **COSMO**-job.
     
-    In the dict ``cfg.values_to_check``, the user specifies the names of the
+    In the dict ``cfg.verify_chain['values_to_check']``, the user specifies the names of the
     files to be compared as keys, and the variables to compare as a list.
 
     To compare the temperatures of the last output of the example case, the
-    following variables should be added to the ``config.py`` file: ::
+    following variables should be added to the ``config.yaml`` file: ::
 
-        reference_dir = os.path.join(input_root, "reference_output")
-        output_dir = None
-        values_to_check = {("reference_lffd2015010200.nc","lffd2015010200.nc"):
+        verify_chain['reference_dir'] = os.path.join(input_root, "reference_output")
+        verify_chain['output_dir'] = None
+        verify_chain['values_to_check'] = {("reference_lffd2015010200.nc","lffd2015010200.nc"):
               ['T']}
 
     Parameters
     ----------	
-    start_time : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the start_time
-    hstop : int
-        Length of simulation (in hours)
-    cfg : config-object
+    cfg : Config
         Object holding all user-configuration parameters as attributes
     """
+    tools.change_logfile(cfg.logfile)
     logging.info("Started verification")
-    for (ref_file, run_file), variables in cfg.values_to_check.items():
+    for (ref_file,
+         run_file), variables in cfg.verify_chain['values_to_check'].items():
         logging.info("Comparing " + str(variables))
 
         # reference file location
-        ref_file_path = os.path.join(cfg.reference_dir, ref_file)
+        ref_file_path = os.path.join(cfg.verify_chain['reference_dir'],
+                                     ref_file)
 
         # run data location
-        if cfg.output_dir is None:
+        if cfg.verify_chain['output_dir'] is None:
             # Standard output location
             run_file_path = os.path.join(
                 cfg.output_root, cfg.startdate_sim_yyyymmddhh + "_" +
                 cfg.enddate_sim_yyyymmddhh, "cosmo_output", run_file)
         else:
             # User-provided output location
-            run_file_path = os.path.join(cfg.output_dir, run_file)
+            run_file_path = os.path.join(cfg.verify_chain['output_dir'],
+                                         run_file)
 
         logging.info("Output file: " + str(run_file_path))
         logging.info("Reference file: " + str(ref_file_path))

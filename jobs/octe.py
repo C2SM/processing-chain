@@ -11,6 +11,8 @@ from netCDF4 import Dataset
 
 from . import tools
 
+BASIC_PYTHON_JOB = True
+
 
 def create_dir_and_copy_input(dest_dir, lambdas_src, maps_src):
     """Create a directory at dest_dir (**COSMO** input) and copy src there.
@@ -161,28 +163,23 @@ def perturb_bgs_in_dir(lambdas_nc, directory):
                         entry.name))
 
 
-def main(cfg, model_cfg):
+def main(cfg):
     """Copy necessary input files for **COSMO** and perturb BG.
 
-    Copies the NetCDF-files found at cfg.octe_maps and cfg.octe_lambdas to
+    Copies the NetCDF-files found at ``cfg.octe_maps`` and ``cfg.octe_lambdas`` to
     the **COSMO** input-directory.
 
     Perturbs the background tracer field. To do that, it reads the lambda-value
-    from the cfg.octe_lambdas (last value along the nparam-dimension) and
+    from the ``cfg.octe_lambdas`` (last value along the nparam-dimension) and
     scales the BG-field produced by int2lm, creating a new variable for each
     ensemble.
 
     Parameters
     ----------
-    starttime : datetime-object
-        The starting date of the simulation
-    hstart : int
-        Offset (in hours) of the actual start from the starttime
-    hstop : int
-        Length of simulation (in hours)
-    cfg : config-object
-        Object holding all user-configuration parameters as attributes
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
     """
+    tools.change_logfile(cfg.logfile)
     dest_dir = join(cfg.cosmo_input, 'octe')
     create_dir_and_copy_input(dest_dir=dest_dir,
                               lambdas_src=cfg.octe_lambdas,

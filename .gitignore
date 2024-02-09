@@ -1,4 +1,5 @@
 docs/build/
+docs/_build/
 *__pycache__/
 *.pyc
 fieldextra.diagnostic
@@ -6,5 +7,6 @@ input_processing-chain.tgz
 input/
 output/
 work/
-src/*/
+ext/*/
 *.code-workspace
+.vscode/

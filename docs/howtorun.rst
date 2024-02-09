@@ -1,118 +1,245 @@
-.. _script-section:
+.. _howtorun-section:
 
 How to Run
 ==========
 
 The Python file ``run_chain.py`` in the root directory is the main script of the
 Processing Chain.
-It reads the user's input from the command line and from the ``config.py`` file of the
+It reads the user's input from the command line and from the ``config.yaml`` file of the
 respective case.
 Then it will start the Processing Chain.
 
 Starting the Chain
 ------------------
 
-The chain has to be run with the following command: ::
+The chain has to be run with the following command:
 
-    $ python run_chain.py <casename> <startdate> <hstart> <hstop> -j [jobs]
+.. code-block:: bash
 
-``<casename>`` is the name of a directory in the ``cases/``-directory where
-there is a ``config.py``-file specifying the configurations, as well as templates
-for the necessary namelist files for **int2lm**, **COSMO** or **ICON**.
+    $ ./run_chain.py <casename>
 
-If you don't supply a joblist, the default joblist will be executed.
+Here, ``<casename>`` is the name of a directory in the ``cases/``-directory where
+there is a ``config.yaml``-file specifying the configuration, as well as templates
+for the necessary namelist files for **int2lm**, **COSMO** or **ICON**. It may also
+contain additional runscripts to be submitted via ``sbatch``.
 
-For **COSMO**, that is ``prepare_data`` ``emissions`` ``biofluxes`` ``int2lm``
-``post_int2lm`` ``cosmo`` ``post_cosmo``,
+.. hint::
+	Technically, you can run several cases (instead of a single case) in one command,
+	which is useful for nested runs, for example. This can be achieved by running
+	``./run_chain.py <case1> <case2>``. With that, the full chain is executed for 
+	``case1`` first, and afterwards for ``case2``.
 
-For **COSMOART** it is ``prepare_data`` ``emissions`` ``obs_nudging``
-``photo_rate`` ``int2lm`` ``cosmo`` ``post_cosmo``.
+There are several optional arguments available to change the behavior of the chain:
 
-For **ICON** it is ``prepare_data`` ``icon``.
+.. code-block:: bash
 
-For **ICONART** it is ``prepare_data`` ``icon``.
+	$ ./run_chain.py -h
 
-For **ICONARTOEM** it is ``prepare_data`` ``oae`` ``icon``.
+* ``-h``, ``--help``
+  	Show this help message and exit.
+* ``-j [JOB_LIST ...]``, ``--jobs [JOB_LIST ...]``
+    List of job names to be executed.
+    A job is a ``.py`` file in i``jobs/`` with a ``main()`` function, which
+    handles one aspect of the Processing Chain, for
+    example copying ``meteo`` input data or launching a
+    job for ``int2lm``. Jobs are executed in the order
+    in which they are given here. If no jobs are
+    given, default jobs will be executed as defined
+    in ``config/models.yaml``.
+* ``-f``, ``--force``
+    Force the Processing Chain to redo all specified
+    jobs, even if they have been started already or
+    were finished previously. WARNING: Only logfiles
+    get deleted, other effects of a given job
+    (copied files etc.) are simply overwritten. This
+    may cause errors or unexpected behavior.
+* ``-r``, ``--resume`` 
+    Resume the Processing Chain by restarting the
+    last unfinished job. WARNING: Only the logfile
+    gets deleted, other effects of a given job
+    (copied files etc.) are simply overwritten. This
+    may cause errors or unexpected behavior.
 
-The model type can be chosen by setting the variable ``target`` in the ``config.py``-file.
-
-To run the **COSMO-GHG** example test case, run::
-
-    $ python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -j prepare_data emissions biofluxes int2lm post_int2lm cosmo post_cosmo
-
-To run the **COSMO-ART** example case, run::
-
-    $ python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 24 -j prepare_data emissions obs_nudging photo_rate int2lm cosmo post_cosmo
-
-To run the **ICON** or **ICON-ART** example cases, run::
-
-    $ python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon
-
-or::
-
-    $ python run_chain.py icon-art-test 2018-01-01 0 24 -j prepare_data icon
-
-To run the **ICON-OEM** example cases, run::
-
-    $ python run_chain.py icon-oem-test 2018-01-01 0 24 -j prepare_data oae icon
-
-or::
-
-    $ python run_chain.py icon-oem-ensembles-test 2018-01-01 0 24 -j prepare_data oae icon
-        
 What it Does
 ------------
 
-The script ``run_chain.py`` reads the command-line arguments and the config-file.
-It then calls the function :func:`run_chain.restart_runs` which divides the
-simuation time according to the specified restart steps. Then it calls
-:func:`run_chain.run_chain` for each sub-run. This function sets up the directory
-structure of the chain and then starts the specified :ref:`jobs<jobs-section>`
-sequentially.
+The script ``run_chain.py`` reads the command line arguments and the config file
+from the specified case.
+It then calls the function :func:`run_chain.restart_runs`, which divides the
+simulation time according to the specified restart steps. Then it calls
+:func:`run_chain.run_chunk` for each part (chunk) of the simulation workflow.
+This function sets up the directory structure of the chain and then submits the
+specified :ref:`jobs<jobs-section>` via ``sbatch`` to the Slurm workload manager,
+taking job dependencies into account.
 
-The directory structure generated by the Processing Chain for a **COSMO** run
-looks like this:::
+Test Cases
+----------
 
-  cfg.work_root/
-    + output/cfg.output_root/
-    \ <casename>/cfg.chain_root/
-                   + cfg.int2lm_base/
-		   |   + cfg.int2lm_input/
-		   |   + cfg.int2lm_work/
-		   |   \ cfg.int2lm_output/
-		   + cfg.cosmo_base/
-		   |   + cfg.cosmo_work/
-		   |   + cfg.cosmo_output/
-		   |   \ cfg.cosmo_restart_out/
-		   \ checkpoints/
-		       + cfg.log_working_dir/
-		       \ cfg.log_finished_dir/
+The following test cases are available:
+
+* ``cosmo-ghg-spinup-test``
+* ``cosmo-ghg-test``
+* ``icon-test``
+* ``icon-art-oem-test``
+* ``icon-art-global-test``
+
+To be able to run these test cases, it is necessary to provide the input data,
+to setup spack and to compile the models and tools. All this is automized via
+the script::
+
+	$ ./jenkins/scripts/jenkins.sh
+
+This will run all the individual scripts in ``jenkins/scripts/``, which 
+can also be launched separately if desired.
+
+These cases undergo regulary testing to ensure that the Processing Chain runs
+correctly. A corresponding Jenkins plan is launched on a weekly basis and 
+when triggered within a GitHub pull request.
+
+Directory Structure
+-------------------
+
+The directory structure generated by the Processing Chain for a ``cosmo-ghg``
+run looks like this:
+
+.. code-block:: bash
+
+	cfg.work_root/cfg.casename/
+	└── cfg.chain_root/
+	    ├── checkpoints/
+	    │   ├── cfg.log_working_dir/
+	    │   ├── cfg.log_finished_dir/
+	    ├── cfg.cosmo_base/
+	    │   ├── cfg.cosmo_work/
+	    │   ├── cfg.cosmo_output/
+	    │   ├── cfg.cosmo_restart_out/
+	    └── cfg.int2lm_base/
+	        ├── cfg.int2lm_input/
+	        ├── cfg.int2lm_work/
+	        └── cfg.int2lm_output/
+
+As one can see, it creates working directories for both the ``int2lm`` preprocessor
+and ``cosmo``. Additionally, and this is always the case, the ``checkpoints`` 
+directory holds all the job logfiles. Whenever a job has successfully finished,
+the logfile is copied from the ``working`` to the ``finished`` sub-directory.
                    
-Running the ``cosmo-ghg-11km-test``-case therefore produces the following directories:::
+Running the ``cosmo-ghg-test`` case therefore produces the following
+directories and files (showing four levels of directories deep):
 
-  $SCRATCH/processing_chain/
-             + output/cosmo-ghg-11km-test
-	     \ cosmo-ghg-11km-test/2015010100_0_24/
-	                 + int2lm/
-			 |   + input/
-			 |   |  + emissions/
-			 |   |  + extpart/
-			 |   |  + prepare_data/
-			 |   |  \ vprm/
-			 |   + run/
-			 |   |  + int2lm   # executable
-			 |   |  + INPUT
-			 |   |  \ run.job
-			 |   \ output/
-			 + cosmo/
-			 |   + run/
-			 |   |  + cosmo    # executable
-			 |   |  + INPUT_*
-			 |   |  \ run.job
-			 |   + output/
-			 |   \ restart/
-			 \ checkpoints
-			     + working/    # 1 logfile per started job
-			     \ finished    # 1 logfile per finished job
+.. code-block:: bash
 
+	work/cosmo-ghg-test
+	├── 2015010100_2015010106/
+	│   ├── checkpoints/
+	│   │   ├── finished/
+	│   │   │   ├── biofluxes
+	│   │   │   ├── cosmo
+	│   │   │   ├── emissions
+	│   │   │   ├── int2lm
+	│   │   │   ├── oem
+	│   │   │   ├── online_vprm
+	│   │   │   ├── post_cosmo
+	│   │   │   ├── post_int2lm
+	│   │   │   └── prepare_cosmo
+	│   │   └── working/
+	│   │       ├── biofluxes
+	│   │       ├── cosmo
+	│   │       ├── emissions
+	│   │       ├── int2lm
+	│   │       ├── oem
+	│   │       ├── online_vprm
+	│   │       ├── post_cosmo
+	│   │       ├── post_int2lm
+	│   │       └── prepare_cosmo
+	│   ├── cosmo/
+	│   │   ├── input/
+	│   │   │   ├── oem/
+	│   │   │   └── vprm/
+	│   │   ├── output/
+	│   │   │   └── lffd*.nc
+	│   │   ├── restart/
+	│   │   │   └── lrff00060000o.nc
+	│   │   └── run/
+	│   │       ├── cosmo-ghg
+	│   │       ├── INPUT_*
+	│   │       ├── post_cosmo.job
+	│   │       ├── run.job
+	│   │       └── YU*
+	│   └── int2lm/
+	│       ├── input/
+	│       │   ├── emissions
+	│       │   ├── extpar
+	│       │   ├── icbc
+	│       │   ├── meteo
+	│       │   └── vprm
+	│       ├── output/
+	│       │   ├── laf*.nc
+	│       │   └── lbfd*.nc
+	│       └── run/
+	│           ├── INPUT
+	│           ├── INPUT_ART
+	│           ├── int2lm
+	│           ├── OUTPUT
+	│           ├── run.job
+	│           └── YU*
+	└── 2015010106_2015010112/
+		├── checkpoints/
+		│   ├── finished/
+		│   │   ├── biofluxes
+		│   │   ├── cosmo
+		│   │   ├── emissions
+		│   │   ├── int2lm
+		│   │   ├── oem
+		│   │   ├── online_vprm
+		│   │   ├── post_cosmo
+		│   │   ├── post_int2lm
+		│   │   └── prepare_cosmo
+		│   └── working/
+		│       ├── biofluxes
+		│       ├── cosmo
+		│       ├── emissions
+		│       ├── int2lm
+		│       ├── oem
+		│       ├── online_vprm
+		│       ├── post_cosmo
+		│       ├── post_int2lm
+		│       └── prepare_cosmo
+		├── cosmo/
+		│   ├── input/
+		│   │   ├── oem
+		│   │   └── vprm
+		│   ├── output/
+		│   │   └── lffd*.nc
+		│   ├── restart/
+		│   │   └── lrff00060000o.nc
+		│   └── run/
+		│       ├── cosmo-ghg
+		│       ├── INPUT_*
+		│       ├── post_cosmo.job
+		│       ├── run.job
+		│       └── YU*
+		└── int2lm/
+			├── input/
+			│   ├── emissions
+			│   ├── extpar
+			│   ├── icbc
+			│   ├── meteo
+			│   └── vprm
+			├── output/
+			│   ├── laf*.nc
+			│   └── lbfd*.nc
+			└── run/
+				├── INPUT
+				├── INPUT_ART
+				├── int2lm
+				├── OUTPUT
+				├── run.job
+				└── YU*
 
+-------------------------------------------
+
+.. autofunction:: run_chain.run_chunk
+
+-------------------------------------------	
+
+.. autofunction:: run_chain.restart_runs
