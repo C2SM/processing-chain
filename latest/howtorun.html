@@ -1,21 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>How to Run &mdash; Processing Chain  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  <title>How to Run &mdash; Processing Chain v3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=09616d5f" />
+
+  
+    <link rel="shortcut icon" href="_static/processing-chain-favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=de725823"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -23,8 +26,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Configuration File" href="config.html" />
-    <link rel="prev" title="File Structure" href="file-structure.html" /> 
+    <link rel="next" title="Code Structure" href="code-structure.html" />
+    <link rel="prev" title="Conda Environment" href="environment.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -35,9 +38,13 @@
 
           
           
-          <a href="index.html" class="icon icon-home">
-            Processing Chain
+          <a href="index.html">
+            
+              <img src="_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                v3.1
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -48,42 +55,74 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="file-structure.html">File Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Feature Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment.html">Conda Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#install-miniconda">1. Install Miniconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">How to Run</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#starting-the-chain">Starting the Chain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#what-it-does">What it Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-cases">Test Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#directory-structure">Directory Structure</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="code-structure.html">Code Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">Configuration File</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="config.html#general-variables-in-config-py">General Variables in <code class="docutils literal notranslate"><span class="pre">config.py</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-biofluxes-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-cosmo-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-emissions-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-icon-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-int2lm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-prepare-data-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-oae-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oae.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-obs-nudging-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-octe-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-online-vprm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-photo-rate-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-post-int2lm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-reduce-output-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="config.html#variables-for-jobs-verify-chain-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#configuration-variables">Configuration Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-to-set-in-config-yaml">Variables to Set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="namelists.html">Namelist Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="namelists.html">Namelist and Runscript Templates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="namelists.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="namelists.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Jobs</span></p>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Jobs &amp; Workflows</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="jobs.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jobs.html#adding-new-jobs">Adding new jobs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jobs.html#list-of-available-jobs">List of available jobs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tools.html#conversion-functions">Conversion Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html#adding-new-jobs">Adding New Jobs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html#tools">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.cams4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.check_model.check_model"><code class="docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.comp_nc.datasets_equal"><code class="docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.ctnoaa4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.mozart2int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.reduce_output_start_end.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.string2char.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -113,108 +152,241 @@
            <div itemprop="articleBody">
              
   <section id="how-to-run">
-<span id="script-section"></span><h1>How to Run<a class="headerlink" href="#how-to-run" title="Permalink to this heading"></a></h1>
+<span id="howtorun-section"></span><h1>How to Run<a class="headerlink" href="#how-to-run" title="Permalink to this heading"></a></h1>
 <p>The Python file <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code> in the root directory is the main script of the
 Processing Chain.
-It reads the user’s input from the command line and from the <code class="docutils literal notranslate"><span class="pre">config.py</span></code> file of the
+It reads the user’s input from the command line and from the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> file of the
 respective case.
 Then it will start the Processing Chain.</p>
 <section id="starting-the-chain">
 <h2>Starting the Chain<a class="headerlink" href="#starting-the-chain" title="Permalink to this heading"></a></h2>
 <p>The chain has to be run with the following command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py &lt;casename&gt; &lt;startdate&gt; &lt;hstart&gt; &lt;hstop&gt; -j [jobs]
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./run_chain.py<span class="w"> </span>&lt;casename&gt;
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">&lt;casename&gt;</span></code> is the name of a directory in the <code class="docutils literal notranslate"><span class="pre">cases/</span></code>-directory where
-there is a <code class="docutils literal notranslate"><span class="pre">config.py</span></code>-file specifying the configurations, as well as templates
-for the necessary namelist files for <strong>int2lm</strong>, <strong>COSMO</strong> or <strong>ICON</strong>.</p>
-<p>If you don’t supply a joblist, the default joblist will be executed.</p>
-<p>For <strong>COSMO</strong>, that is <code class="docutils literal notranslate"><span class="pre">prepare_data</span></code> <code class="docutils literal notranslate"><span class="pre">emissions</span></code> <code class="docutils literal notranslate"><span class="pre">biofluxes</span></code> <code class="docutils literal notranslate"><span class="pre">int2lm</span></code>
-<code class="docutils literal notranslate"><span class="pre">post_int2lm</span></code> <code class="docutils literal notranslate"><span class="pre">cosmo</span></code> <code class="docutils literal notranslate"><span class="pre">post_cosmo</span></code>,</p>
-<p>For <strong>COSMOART</strong> it is <code class="docutils literal notranslate"><span class="pre">prepare_data</span></code> <code class="docutils literal notranslate"><span class="pre">emissions</span></code> <code class="docutils literal notranslate"><span class="pre">obs_nudging</span></code>
-<code class="docutils literal notranslate"><span class="pre">photo_rate</span></code> <code class="docutils literal notranslate"><span class="pre">int2lm</span></code> <code class="docutils literal notranslate"><span class="pre">cosmo</span></code> <code class="docutils literal notranslate"><span class="pre">post_cosmo</span></code>.</p>
-<p>For <strong>ICON</strong> it is <code class="docutils literal notranslate"><span class="pre">prepare_data</span></code> <code class="docutils literal notranslate"><span class="pre">icon</span></code>.</p>
-<p>For <strong>ICONART</strong> it is <code class="docutils literal notranslate"><span class="pre">prepare_data</span></code> <code class="docutils literal notranslate"><span class="pre">icon</span></code>.</p>
-<p>For <strong>ICONARTOEM</strong> it is <code class="docutils literal notranslate"><span class="pre">prepare_data</span></code> <code class="docutils literal notranslate"><span class="pre">oae</span></code> <code class="docutils literal notranslate"><span class="pre">icon</span></code>.</p>
-<p>The model type can be chosen by setting the variable <code class="docutils literal notranslate"><span class="pre">target</span></code> in the <code class="docutils literal notranslate"><span class="pre">config.py</span></code>-file.</p>
-<p>To run the <strong>COSMO-GHG</strong> example test case, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py cosmo-ghg-11km-test 2015-01-01 0 24 -j prepare_data emissions biofluxes int2lm post_int2lm cosmo post_cosmo
+<p>Here, <code class="docutils literal notranslate"><span class="pre">&lt;casename&gt;</span></code> is the name of a directory in the <code class="docutils literal notranslate"><span class="pre">cases/</span></code>-directory where
+there is a <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>-file specifying the configuration, as well as templates
+for the necessary namelist files for <strong>int2lm</strong>, <strong>COSMO</strong> or <strong>ICON</strong>. It may also
+contain additional runscripts to be submitted via <code class="docutils literal notranslate"><span class="pre">sbatch</span></code>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Technically, you can run several cases (instead of a single case) in one command,
+which is useful for nested runs, for example. This can be achieved by running
+<code class="docutils literal notranslate"><span class="pre">./run_chain.py</span> <span class="pre">&lt;case1&gt;</span> <span class="pre">&lt;case2&gt;</span></code>. With that, the full chain is executed for
+<code class="docutils literal notranslate"><span class="pre">case1</span></code> first, and afterwards for <code class="docutils literal notranslate"><span class="pre">case2</span></code>.</p>
+</div>
+<p>There are several optional arguments available to change the behavior of the chain:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./run_chain.py<span class="w"> </span>-h
 </pre></div>
 </div>
-<p>To run the <strong>COSMO-ART</strong> example case, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py cosmo-art-mother-test cosmo-art-nested-test 2015-06-26 0 24 -j prepare_data emissions obs_nudging photo_rate int2lm cosmo post_cosmo
-</pre></div>
-</div>
-<p>To run the <strong>ICON</strong> or <strong>ICON-ART</strong> example cases, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py icon-test 2018-01-01 0 24 -j prepare_data icon
-</pre></div>
-</div>
-<p>or:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py icon-art-test 2018-01-01 0 24 -j prepare_data icon
-</pre></div>
-</div>
-<p>To run the <strong>ICON-OEM</strong> example cases, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py icon-oem-test 2018-01-01 0 24 -j prepare_data oae icon
-</pre></div>
-</div>
-<p>or:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_chain.py icon-oem-ensembles-test 2018-01-01 0 24 -j prepare_data oae icon
-</pre></div>
-</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code></dt><dd><p>Show this help message and exit.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">-j</span> <span class="pre">[JOB_LIST</span> <span class="pre">...]</span></code>, <code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">[JOB_LIST</span> <span class="pre">...]</span></code></dt><dd><p>List of job names to be executed.
+A job is a <code class="docutils literal notranslate"><span class="pre">.py</span></code> file in i``jobs/`` with a <code class="docutils literal notranslate"><span class="pre">main()</span></code> function, which
+handles one aspect of the Processing Chain, for
+example copying <code class="docutils literal notranslate"><span class="pre">meteo</span></code> input data or launching a
+job for <code class="docutils literal notranslate"><span class="pre">int2lm</span></code>. Jobs are executed in the order
+in which they are given here. If no jobs are
+given, default jobs will be executed as defined
+in <code class="docutils literal notranslate"><span class="pre">config/models.yaml</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">-f</span></code>, <code class="docutils literal notranslate"><span class="pre">--force</span></code></dt><dd><p>Force the Processing Chain to redo all specified
+jobs, even if they have been started already or
+were finished previously. WARNING: Only logfiles
+get deleted, other effects of a given job
+(copied files etc.) are simply overwritten. This
+may cause errors or unexpected behavior.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">-r</span></code>, <code class="docutils literal notranslate"><span class="pre">--resume</span></code></dt><dd><p>Resume the Processing Chain by restarting the
+last unfinished job. WARNING: Only the logfile
+gets deleted, other effects of a given job
+(copied files etc.) are simply overwritten. This
+may cause errors or unexpected behavior.</p>
+</dd>
+</dl>
+</li>
+</ul>
 </section>
 <section id="what-it-does">
 <h2>What it Does<a class="headerlink" href="#what-it-does" title="Permalink to this heading"></a></h2>
-<p>The script <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code> reads the command-line arguments and the config-file.
-It then calls the function <code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.restart_runs()</span></code> which divides the
-simuation time according to the specified restart steps. Then it calls
-<code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.run_chain()</span></code> for each sub-run. This function sets up the directory
-structure of the chain and then starts the specified <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">jobs</span></a>
-sequentially.</p>
-<p>The directory structure generated by the Processing Chain for a <strong>COSMO</strong> run
-looks like this::</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfg</span><span class="o">.</span><span class="n">work_root</span><span class="o">/</span>
-  <span class="o">+</span> <span class="n">output</span><span class="o">/</span><span class="n">cfg</span><span class="o">.</span><span class="n">output_root</span><span class="o">/</span>
-  \ <span class="o">&lt;</span><span class="n">casename</span><span class="o">&gt;/</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="o">/</span>
-                 <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">int2lm_base</span><span class="o">/</span>
-                 <span class="o">|</span>   <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">int2lm_input</span><span class="o">/</span>
-                 <span class="o">|</span>   <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">int2lm_work</span><span class="o">/</span>
-                 <span class="o">|</span>   \ <span class="n">cfg</span><span class="o">.</span><span class="n">int2lm_output</span><span class="o">/</span>
-                 <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_base</span><span class="o">/</span>
-                 <span class="o">|</span>   <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_work</span><span class="o">/</span>
-                 <span class="o">|</span>   <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_output</span><span class="o">/</span>
-                 <span class="o">|</span>   \ <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_restart_out</span><span class="o">/</span>
-                 \ <span class="n">checkpoints</span><span class="o">/</span>
-                     <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span><span class="o">/</span>
-                     \ <span class="n">cfg</span><span class="o">.</span><span class="n">log_finished_dir</span><span class="o">/</span>
+<p>The script <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code> reads the command line arguments and the config file
+from the specified case.
+It then calls the function <code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.restart_runs()</span></code>, which divides the
+simulation time according to the specified restart steps. Then it calls
+<code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.run_chunk()</span></code> for each part (chunk) of the simulation workflow.
+This function sets up the directory structure of the chain and then submits the
+specified <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">jobs</span></a> via <code class="docutils literal notranslate"><span class="pre">sbatch</span></code> to the Slurm workload manager,
+taking job dependencies into account.</p>
+</section>
+<section id="test-cases">
+<h2>Test Cases<a class="headerlink" href="#test-cases" title="Permalink to this heading"></a></h2>
+<p>The following test cases are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-test</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">icon-test</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">icon-art-oem-test</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">icon-art-global-test</span></code></p></li>
+</ul>
+<p>To be able to run these test cases, it is necessary to provide the input data,
+to setup spack and to compile the models and tools. All this is automized via
+the script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./jenkins/scripts/jenkins.sh
 </pre></div>
 </div>
-<p>Running the <code class="docutils literal notranslate"><span class="pre">cosmo-ghg-11km-test</span></code>-case therefore produces the following directories::</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$SCRATCH/processing_chain/
-           + output/cosmo-ghg-11km-test
-           \ cosmo-ghg-11km-test/2015010100_0_24/
-                       + int2lm/
-                       |   + input/
-                       |   |  + emissions/
-                       |   |  + extpart/
-                       |   |  + prepare_data/
-                       |   |  \ vprm/
-                       |   + run/
-                       |   |  + int2lm   # executable
-                       |   |  + INPUT
-                       |   |  \ run.job
-                       |   \ output/
-                       + cosmo/
-                       |   + run/
-                       |   |  + cosmo    # executable
-                       |   |  + INPUT_*
-                       |   |  \ run.job
-                       |   + output/
-                       |   \ restart/
-                       \ checkpoints
-                           + working/    # 1 logfile per started job
-                           \ finished    # 1 logfile per finished job
+<p>This will run all the individual scripts in <code class="docutils literal notranslate"><span class="pre">jenkins/scripts/</span></code>, which
+can also be launched separately if desired.</p>
+<p>These cases undergo regulary testing to ensure that the Processing Chain runs
+correctly. A corresponding Jenkins plan is launched on a weekly basis and
+when triggered within a GitHub pull request.</p>
+</section>
+<section id="directory-structure">
+<h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Permalink to this heading"></a></h2>
+<p>The directory structure generated by the Processing Chain for a <code class="docutils literal notranslate"><span class="pre">cosmo-ghg</span></code>
+run looks like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cfg.work_root/cfg.casename/
+└──<span class="w"> </span>cfg.chain_root/
+<span class="w">    </span>├──<span class="w"> </span>checkpoints/
+<span class="w">    </span>│<span class="w">   </span>├──<span class="w"> </span>cfg.log_working_dir/
+<span class="w">    </span>│<span class="w">   </span>├──<span class="w"> </span>cfg.log_finished_dir/
+<span class="w">    </span>├──<span class="w"> </span>cfg.cosmo_base/
+<span class="w">    </span>│<span class="w">   </span>├──<span class="w"> </span>cfg.cosmo_work/
+<span class="w">    </span>│<span class="w">   </span>├──<span class="w"> </span>cfg.cosmo_output/
+<span class="w">    </span>│<span class="w">   </span>├──<span class="w"> </span>cfg.cosmo_restart_out/
+<span class="w">    </span>└──<span class="w"> </span>cfg.int2lm_base/
+<span class="w">        </span>├──<span class="w"> </span>cfg.int2lm_input/
+<span class="w">        </span>├──<span class="w"> </span>cfg.int2lm_work/
+<span class="w">        </span>└──<span class="w"> </span>cfg.int2lm_output/
 </pre></div>
 </div>
+<p>As one can see, it creates working directories for both the <code class="docutils literal notranslate"><span class="pre">int2lm</span></code> preprocessor
+and <code class="docutils literal notranslate"><span class="pre">cosmo</span></code>. Additionally, and this is always the case, the <code class="docutils literal notranslate"><span class="pre">checkpoints</span></code>
+directory holds all the job logfiles. Whenever a job has successfully finished,
+the logfile is copied from the <code class="docutils literal notranslate"><span class="pre">working</span></code> to the <code class="docutils literal notranslate"><span class="pre">finished</span></code> sub-directory.</p>
+<p>Running the <code class="docutils literal notranslate"><span class="pre">cosmo-ghg-test</span></code> case therefore produces the following
+directories and files (showing four levels of directories deep):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>work/cosmo-ghg-test
+├──<span class="w"> </span>2015010100_2015010106/
+│<span class="w">   </span>├──<span class="w"> </span>checkpoints/
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>finished/
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>biofluxes
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>cosmo
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>emissions
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>int2lm
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>oem
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>online_vprm
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>post_cosmo
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>post_int2lm
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>prepare_cosmo
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>working/
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>biofluxes
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>cosmo
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>emissions
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>int2lm
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>oem
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>online_vprm
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>post_cosmo
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>post_int2lm
+│<span class="w">   </span>│<span class="w">       </span>└──<span class="w"> </span>prepare_cosmo
+│<span class="w">   </span>├──<span class="w"> </span>cosmo/
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>input/
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>oem/
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>vprm/
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>output/
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>lffd*.nc
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>restart/
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>lrff00060000o.nc
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>run/
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>cosmo-ghg
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>INPUT_*
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>post_cosmo.job
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>run.job
+│<span class="w">   </span>│<span class="w">       </span>└──<span class="w"> </span>YU*
+│<span class="w">   </span>└──<span class="w"> </span>int2lm/
+│<span class="w">       </span>├──<span class="w"> </span>input/
+│<span class="w">       </span>│<span class="w">   </span>├──<span class="w"> </span>emissions
+│<span class="w">       </span>│<span class="w">   </span>├──<span class="w"> </span>extpar
+│<span class="w">       </span>│<span class="w">   </span>├──<span class="w"> </span>icbc
+│<span class="w">       </span>│<span class="w">   </span>├──<span class="w"> </span>meteo
+│<span class="w">       </span>│<span class="w">   </span>└──<span class="w"> </span>vprm
+│<span class="w">       </span>├──<span class="w"> </span>output/
+│<span class="w">       </span>│<span class="w">   </span>├──<span class="w"> </span>laf*.nc
+│<span class="w">       </span>│<span class="w">   </span>└──<span class="w"> </span>lbfd*.nc
+│<span class="w">       </span>└──<span class="w"> </span>run/
+│<span class="w">           </span>├──<span class="w"> </span>INPUT
+│<span class="w">           </span>├──<span class="w"> </span>INPUT_ART
+│<span class="w">           </span>├──<span class="w"> </span>int2lm
+│<span class="w">           </span>├──<span class="w"> </span>OUTPUT
+│<span class="w">           </span>├──<span class="w"> </span>run.job
+│<span class="w">           </span>└──<span class="w"> </span>YU*
+└──<span class="w"> </span>2015010106_2015010112/
+<span class="w">        </span>├──<span class="w"> </span>checkpoints/
+<span class="w">        </span>│<span class="w">   </span>├──<span class="w"> </span>finished/
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>biofluxes
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>cosmo
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>emissions
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>int2lm
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>oem
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>online_vprm
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>post_cosmo
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>post_int2lm
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>prepare_cosmo
+<span class="w">        </span>│<span class="w">   </span>└──<span class="w"> </span>working/
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>biofluxes
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>cosmo
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>emissions
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>int2lm
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>oem
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>online_vprm
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>post_cosmo
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>post_int2lm
+<span class="w">        </span>│<span class="w">       </span>└──<span class="w"> </span>prepare_cosmo
+<span class="w">        </span>├──<span class="w"> </span>cosmo/
+<span class="w">        </span>│<span class="w">   </span>├──<span class="w"> </span>input/
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>oem
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>vprm
+<span class="w">        </span>│<span class="w">   </span>├──<span class="w"> </span>output/
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>lffd*.nc
+<span class="w">        </span>│<span class="w">   </span>├──<span class="w"> </span>restart/
+<span class="w">        </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>lrff00060000o.nc
+<span class="w">        </span>│<span class="w">   </span>└──<span class="w"> </span>run/
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>cosmo-ghg
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>INPUT_*
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>post_cosmo.job
+<span class="w">        </span>│<span class="w">       </span>├──<span class="w"> </span>run.job
+<span class="w">        </span>│<span class="w">       </span>└──<span class="w"> </span>YU*
+<span class="w">        </span>└──<span class="w"> </span>int2lm/
+<span class="w">                </span>├──<span class="w"> </span>input/
+<span class="w">                </span>│<span class="w">   </span>├──<span class="w"> </span>emissions
+<span class="w">                </span>│<span class="w">   </span>├──<span class="w"> </span>extpar
+<span class="w">                </span>│<span class="w">   </span>├──<span class="w"> </span>icbc
+<span class="w">                </span>│<span class="w">   </span>├──<span class="w"> </span>meteo
+<span class="w">                </span>│<span class="w">   </span>└──<span class="w"> </span>vprm
+<span class="w">                </span>├──<span class="w"> </span>output/
+<span class="w">                </span>│<span class="w">   </span>├──<span class="w"> </span>laf*.nc
+<span class="w">                </span>│<span class="w">   </span>└──<span class="w"> </span>lbfd*.nc
+<span class="w">                </span>└──<span class="w"> </span>run/
+<span class="w">                        </span>├──<span class="w"> </span>INPUT
+<span class="w">                        </span>├──<span class="w"> </span>INPUT_ART
+<span class="w">                        </span>├──<span class="w"> </span>int2lm
+<span class="w">                        </span>├──<span class="w"> </span>OUTPUT
+<span class="w">                        </span>├──<span class="w"> </span>run.job
+<span class="w">                        </span>└──<span class="w"> </span>YU*
+</pre></div>
+</div>
+<hr class="docutils" />
+<hr class="docutils" />
 </section>
 </section>
 
@@ -222,14 +394,14 @@ looks like this::</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="file-structure.html" class="btn btn-neutral float-left" title="File Structure" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="config.html" class="btn btn-neutral float-right" title="Configuration File" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="environment.html" class="btn btn-neutral float-left" title="Conda Environment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="code-structure.html" class="btn btn-neutral float-right" title="Code Structure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2018-2023, C2SM.</p>
+    <p>&#169; Copyright 2018-2024, C2SM.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

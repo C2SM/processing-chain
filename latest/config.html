@@ -1,21 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Configuration File &mdash; Processing Chain  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  <title>Configuration File &mdash; Processing Chain v3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=09616d5f" />
+
+  
+    <link rel="shortcut icon" href="_static/processing-chain-favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=de725823"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -23,8 +26,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Namelist Templates" href="namelists.html" />
-    <link rel="prev" title="How to Run" href="howtorun.html" /> 
+    <link rel="next" title="Namelist and Runscript Templates" href="namelists.html" />
+    <link rel="prev" title="Code Structure" href="code-structure.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -35,9 +38,13 @@
 
           
           
-          <a href="index.html" class="icon icon-home">
-            Processing Chain
+          <a href="index.html">
+            
+              <img src="_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
           </a>
+              <div class="version">
+                v3.1
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -48,42 +55,74 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="file-structure.html">File Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Feature Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment.html">Conda Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#install-miniconda">1. Install Miniconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="howtorun.html">How to Run</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howtorun.html#starting-the-chain">Starting the Chain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howtorun.html#what-it-does">What it Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howtorun.html#test-cases">Test Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howtorun.html#directory-structure">Directory Structure</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="code-structure.html">Code Structure</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration File</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#general-variables-in-config-py">General Variables in <code class="docutils literal notranslate"><span class="pre">config.py</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-biofluxes-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-cosmo-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-emissions-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-icon-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-int2lm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-prepare-data-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-oae-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oae.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-obs-nudging-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-octe-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-online-vprm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-photo-rate-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-post-int2lm-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-reduce-output-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#variables-for-jobs-verify-chain-main">Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-variables">Configuration Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#variables-to-set-in-config-yaml">Variables to Set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="namelists.html">Namelist Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="namelists.html">Namelist and Runscript Templates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="namelists.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="namelists.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Jobs</span></p>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Jobs &amp; Workflows</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="jobs.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jobs.html#adding-new-jobs">Adding new jobs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jobs.html#list-of-available-jobs">List of available jobs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tools.html#conversion-functions">Conversion Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html#adding-new-jobs">Adding New Jobs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html#tools">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.cams4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.check_model.check_model"><code class="docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.comp_nc.datasets_equal"><code class="docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.ctnoaa4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.mozart2int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.reduce_output_start_end.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.string2char.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -112,613 +151,277 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <p id="config-section">The processing chain uses cases to describe a simulation. A case is a
-subdirectory in <code class="docutils literal notranslate"><span class="pre">cases/</span></code>, containing a <a class="reference internal" href="#config-py"><span class="std std-ref">Configuration File</span></a> and several
-<a class="reference internal" href="namelists.html#namelists"><span class="std std-ref">Namelist Templates</span></a> (for example <code class="docutils literal notranslate"><span class="pre">int2lm_INPUT.cfg</span></code>) which define the
-simulation.</p>
+  <p id="config-section">The Processing Chain uses cases to describe a simulation. A case is a
+subdirectory in <code class="docutils literal notranslate"><span class="pre">cases/</span></code>, containing a <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> and several
+<cite>namelist</cite> (e.g., <code class="docutils literal notranslate"><span class="pre">int2lm_INPUT.cfg</span></code>) and <cite>runscripts</cite> (e.g.,
+<code class="docutils literal notranslate"><span class="pre">icon_runjob.cfg</span></code>) <a class="reference internal" href="namelists.html#namelists-section"><span class="std std-ref">templates</span></a>,
+which define the simulation.</p>
 <section id="configuration-file">
-<span id="config-py"></span><h1>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this heading"></a></h1>
-<p>The configuration file contains most of the information that the <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">Overview</span></a> need to prepare and run the simulation, for example the location of the input data.
-This configuration-file is imported as a module in <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code>, and therefore
-it can contain python expression which are evaluated at runtime.</p>
-<div class="line-block">
+<span id="config-yaml"></span><h1>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this heading"></a></h1>
+<p>The case-dependent configuration file <code class="docutils literal notranslate"><span class="pre">&lt;casename&gt;/config.yaml</span></code> contains most
+of the information that the <a class="reference internal" href="jobs.html#jobs-section"><span class="std std-ref">jobs</span></a> need to prepare
+and run the simulation, for example the location of the input data.
+This configuration file is loaded in <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code> as an instance
+of the <code class="docutils literal notranslate"><span class="pre">Config()</span></code> class in <code class="docutils literal notranslate"><span class="pre">config.py</span></code>.</p>
+<section id="configuration-variables">
+<h2>Configuration Variables<a class="headerlink" href="#configuration-variables" title="Permalink to this heading"></a></h2>
+<p>This is a non-exhaustive list containing the most important configuration variables:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">case_path</span></code></div>
 <div class="line"><br /></div>
 </div>
-<section id="general-variables-in-config-py">
-<h2>General Variables in <code class="docutils literal notranslate"><span class="pre">config.py</span></code><a class="headerlink" href="#general-variables-in-config-py" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Used in</strong></p></td>
+</td>
+<td><div class="line-block">
+<div class="line">The path to the case directory under <code class="docutils literal notranslate"><span class="pre">cases/</span></code> for the specified</div>
+<div class="line">casename.</div>
+</div>
+</td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target</span></code></p></td>
-<td><p><strong>COSMO</strong> or <strong>COSMOART</strong>, defaults to <strong>COSMO</strong> if omitted</p></td>
-<td><p>all</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">casename</span></code></p></td>
+<td><p>The name of the case. Derived from the folder name under <code class="docutils literal notranslate"><span class="pre">case_path</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">subtarget</span></code></p></td>
-<td><p><strong>NONE</strong> or <strong>SPINUP</strong>, defaults to <strong>NONE</strong> if omitted</p></td>
-<td><p>all</p></td>
+<tr class="row-even"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">chain_src_dir</span></code></div>
+<div class="line"><br /></div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line">The source directory for the processing chain, typically the current</div>
+<div class="line">working directory.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">compute_account</span></code></p></td>
+<td><p>The compute account to be used based on user information.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">constraint</span></code></p></td>
-<td><p>Either ‘gpu’ or ‘mc’. Controls on which nodes int2lm and cosmo run. Make sure your executables are compiled for the chosen architecure.</p></td>
-<td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></p></td>
+<td><p>The computational constraint (<code class="docutils literal notranslate"><span class="pre">gpu</span></code> or <code class="docutils literal notranslate"><span class="pre">mc</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mail_address</span></code></p></td>
-<td><p>The processing-chain sends encountered errors to this address</p></td>
-<td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.__init__.send_mail()</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">compute_host</span></code></p></td>
-<td><p>On which infrastructure the processing chain is run. Usually ‘daint’</p></td>
-<td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">compute_queue</span></code></p></td>
-<td><p>Either ‘debug’ or ‘normal’</p></td>
-<td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">compute_account</span></code></p></td>
-<td><p>Which project the simulation belongs to</p></td>
-<td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chain_src_dir</span></code></p></td>
-<td><p>Path to the root of the chain</p></td>
-<td><p>all</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">casename</span></code></p></td>
-<td><p>Name of the simulation, the same as the directory-name the <code class="docutils literal notranslate"><span class="pre">config.py</span></code>-file is in</p></td>
-<td><p>all</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">input_root</span></code></p></td>
-<td><p>Path to zhe root of the input-direcetory tree</p></td>
-<td><p>all</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">output_root</span></code></p></td>
-<td><p>Path to where the results, logs and nameslists are copied to after the simulation is done</p></td>
-<td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">work_root</span></code></p></td>
-<td><p>Path to where the processing chain copies the input files to and starts the simulation from</p></td>
-<td><p>all</p></td>
-</tr>
-</tbody>
-</table>
-<div class="line-block">
+<tr class="row-odd"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">email</span></code></div>
 <div class="line"><br /></div>
 </div>
-</section>
-<section id="variables-for-jobs-biofluxes-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code><a class="headerlink" href="#variables-for-jobs-biofluxes-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
+</td>
+<td><div class="line-block">
+<div class="line">The user’s email address, initially set to None and updated using the</div>
+<div class="line">set_email method.</div>
+</div>
+</td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vprm_dir</span></code></p></td>
-<td><p>Path to the directory containing bioflux-files</p></td>
-<td><p>COSMO</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vprm_prefix</span></code></p></td>
-<td><p>Prefix of the the bioflux-files. Filenames are assumed to be <code class="docutils literal notranslate"><span class="pre">{vprm_prefix}YYYYMMDDHH.nc</span></code>. If multiple bioflux-datasets exists, this is a list of prefixes. All files are assumed to be in <code class="docutils literal notranslate"><span class="pre">vprm_dir</span></code></p></td>
-<td><p>COSMO</p></td>
-</tr>
-</tbody>
-</table>
-<div class="line-block">
+<tr class="row-even"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">enddate</span></code></div>
 <div class="line"><br /></div>
 </div>
-</section>
-<section id="variables-for-jobs-cosmo-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code><a class="headerlink" href="#variables-for-jobs-cosmo-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
+</td>
+<td><div class="line-block">
+<div class="line">The end date of the simulation in ISO 8601 format</div>
+<div class="line">(<code class="docutils literal notranslate"><span class="pre">YYYY-MM-DDTHH:mm:ssZ</span></code>).</div>
+</div>
+</td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cosmo_bin</span></code></p></td>
-<td><p>Path to the cosmo(art) executable</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">jobs</span></code></p></td>
+<td><p>List of job-names to be executed.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cosmo_namelist</span></code></p></td>
-<td><p>Path to the cosmo namelist-templates, ending in <code class="docutils literal notranslate"><span class="pre">cosmo_INPUT_</span></code>. The ending, for example <code class="docutils literal notranslate"><span class="pre">IO</span></code> or <code class="docutils literal notranslate"><span class="pre">ORG</span></code>, is added by the cosmo-job</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">log_finished_dir</span></code></p></td>
+<td><p>The directory for finished log files.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cosmo_runjob</span></code></p></td>
-<td><p>Path to the cosmo runjob-template</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">log_working_dir</span></code></p></td>
+<td><p>The directory for working log files.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cosmo_walltime</span></code></p></td>
-<td><p>Requested time for the cosmo slurm-batchjob</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ntasks_per_node</span></code></p></td>
+<td><p>The number of tasks per node, based on the node type.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cosmo_nodes</span></code></p></td>
-<td><p>Number of nodes for the cosmo slurm-batchjob</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">restart_step</span></code></p></td>
+<td><p>The restart step in ISO 8601 format.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ntasks_per_node</span></code></p></td>
-<td><p>Number of tasks per node</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">restart_step_hours</span></code></p></td>
+<td><p>The restart step in hours, derived from the <code class="docutils literal notranslate"><span class="pre">restart_step</span></code> attribute.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cosmo_np_x</span></code></p></td>
-<td><p>Number of processes in the x direction</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">run_on</span></code></p></td>
+<td><p>The architecture the model runs on (<code class="docutils literal notranslate"><span class="pre">cpu</span></code> or <code class="docutils literal notranslate"><span class="pre">gpu</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cosmo_np_y</span></code></p></td>
-<td><p>Number of processes in the y direction</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spinup</span></code></p></td>
+<td><p>Spin-up duration in hours. Activates spinup behavior if set.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cosmo_np_io</span></code></p></td>
-<td><p>Number of processes for IO</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cosmo_np_tot</span></code></p></td>
-<td><p>Total number of processes</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="variables-for-jobs-emissions-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code><a class="headerlink" href="#variables-for-jobs-emissions-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">emissions_dir</span></code></p></td>
-<td><p>Path to the input directory where the emissions-files are found. If there are multiple emissions-datasets, this is a list of paths to the directories of the datasets.</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">emis_gridname</span></code></p></td>
-<td><p>Prefix of the emissions-files. List for multiple datasets. Emission-filenames are assumed to be <code class="docutils literal notranslate"><span class="pre">{emis_gridname}YYYYMMDD.nc</span></code></p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-</tbody>
-</table>
-<div class="line-block">
+<tr class="row-odd"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">startdate</span></code></div>
 <div class="line"><br /></div>
 </div>
-</section>
-<section id="variables-for-jobs-icon-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code><a class="headerlink" href="#variables-for-jobs-icon-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
+</td>
+<td><div class="line-block">
+<div class="line">The start date of the simulation in ISO 8601 format</div>
+<div class="line">(<code class="docutils literal notranslate"><span class="pre">YYYY-MM-DDTHH:mm:ssZ</span></code>).</div>
+</div>
+</td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">icon_bin</span></code></p></td>
-<td><p>Path to the ICON executable</p></td>
-<td><p>ICON</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">user_mail</span></code></p></td>
+<td><p>The user’s email address, determined based on system configuration.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">icon_runjob</span></code></p></td>
-<td><p>Path to the ICON runjob template</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">icon_namelist_master</span></code></p></td>
-<td><p>Path to the ICON master namelist template</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">icon_namelist_nwp</span></code></p></td>
-<td><p>Path to the ICON NWP namelist template</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">icon_walltime</span></code></p></td>
-<td><p>Requested time for the ICON slurm-batchjob</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">icon_np_tot</span></code></p></td>
-<td><p>Total number of processes</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">input_root_mapping</span></code></p></td>
-<td><p>Path to the ICON dictionairy files</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">map_file_ana</span></code></p></td>
-<td><p>Name of the ICON dictionary file for analysis data</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">latbc_filename</span></code></p></td>
-<td><p>Name of the lateral boundary files (including key-words) for LAM-simulations</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inidata_filename</span></code></p></td>
-<td><p>Name of the intial condition file</p></td>
-<td><p>ICON</p></td>
-</tr>
-</tbody>
-</table>
-<div class="line-block">
+<tr class="row-odd"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">user_name</span></code></div>
 <div class="line"><br /></div>
 </div>
-</section>
-<section id="variables-for-jobs-int2lm-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code><a class="headerlink" href="#variables-for-jobs-int2lm-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
+</td>
+<td><div class="line-block">
+<div class="line">Your email address to receive notifications. Either provide it</div>
+<div class="line">directly here or in <code class="docutils literal notranslate"><span class="pre">~/.forward</span></code>.</div>
+</div>
+</td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">meteo_prefix</span></code></p></td>
-<td><p>Prefix of the meteo-files. Meteo-filenames are assumed to be <code class="docutils literal notranslate"><span class="pre">{meteo_prefix}YYMMDD</span></code></p></td>
-<td><p>COSMO, COSMO-ART</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">workflow</span></code></p></td>
+<td><p>The name of the workflow from <code class="docutils literal notranslate"><span class="pre">workflows.yaml</span></code> or a self-defined one.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_extpar_dir</span></code></p></td>
-<td><p>Path to the directory containing the extpar-file for int2lm</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_extpar_file</span></code></p></td>
-<td><p>The name of the int2lm extpar-file</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_bin</span></code></p></td>
-<td><p>Path to the int2lm executable</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_namelist</span></code></p></td>
-<td><p>Path to the int2lm namelist-template</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_runjob</span></code></p></td>
-<td><p>Path to the int2lm runjob-template</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_walltime</span></code></p></td>
-<td><p>Requested time for the int2lm slurm-batchjob</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_nodes</span></code></p></td>
-<td><p>Number of nodes for the int2lm slurm-batchjob</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_ntasks_per_node</span></code></p></td>
-<td><p>Number of tasks per node</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_np_x</span></code></p></td>
-<td><p>Number of processes in the x direction</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_np_y</span></code></p></td>
-<td><p>Number of processes in the y direction</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_np_tot</span></code></p></td>
-<td><p>Total number of processes</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_libgrib_dir</span></code></p></td>
-<td><p>Path to the libgrib-directory used by the int2lm-executable</p></td>
-<td><p>COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_lu_dir</span></code></p></td>
-<td><p>Path to the directory containing the landuse file</p></td>
-<td><p>COSMO-ART</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_lu_file</span></code></p></td>
-<td><p>Filename (inlcuding ending) of the landuse file</p></td>
-<td><p>COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_pft_dir</span></code></p></td>
-<td><p>Path to the directory containing the plant functional type file</p></td>
-<td><p>COSMO-ART</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm_pft_dir</span></code></p></td>
-<td><p>Filename (including ending) of the plant functional type file</p></td>
-<td><p>COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">post_int2lm_species</span></code></p></td>
-<td><p>List of variables for the post_int2lm-job</p></td>
-<td><p>COMSO</p></td>
-</tr>
-</tbody>
-</table>
-<div class="line-block">
+<tr class="row-odd"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">work_root</span></code></div>
 <div class="line"><br /></div>
 </div>
-</section>
-<section id="variables-for-jobs-prepare-data-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_data.main()</span></code><a class="headerlink" href="#variables-for-jobs-prepare-data-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">meteo_dir</span></code></p></td>
-<td><p>Path to the directory where the meteo-files are found. For a nested run, this is the casename of the mother-run. In that case, <code class="docutils literal notranslate"><span class="pre">meteo_prefix</span></code> and <code class="docutils literal notranslate"><span class="pre">`meteo_inc</span></code> can be omitted</p></td>
-<td><p>COSMO, COSMO-ART, ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">meteo_prefix</span></code></p></td>
-<td><p>Prefix of the meteo-files. Meteo-filenames are assumed to be <code class="docutils literal notranslate"><span class="pre">{meteo_prefix}YYMMDD</span></code></p></td>
-<td><p>COSMO, COSMO-ART, ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">meteo_nameformat</span></code></p></td>
-<td><p>Format for meteo files</p></td>
-<td><p>COSMO, COSMO-ART, ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">meteo_inc</span></code></p></td>
-<td><p>Increment in hours between meteo-files</p></td>
-<td><p>COSMO, COSMO-ART, ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">icontools_dir</span></code></p></td>
-<td><p>Path to the icontools executables</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">iconremap_bin</span></code></p></td>
-<td><p>Name of the iconremap executable</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">iconsub_bin</span></code></p></td>
-<td><p>Name of the iconsub executable</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">icontools_parameter</span></code></p></td>
-<td><p>Dictionary containing names of the icontools runscript and namelist templates</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mozart_file_orig</span></code></p></td>
-<td><p>Path to input-file for mozart-files</p></td>
-<td><p>COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mozart_dir_proc</span></code></p></td>
-<td><p>Path to the processed mozart-files. Processed mozart-files are stored here, if there are files found here then <code class="docutils literal notranslate"><span class="pre">file_dir_orig</span></code> is not used</p></td>
-<td><p>COSMO-ART</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mozart_inc</span></code></p></td>
-<td><p>Increment in hours between mozart-files</p></td>
-<td><p>COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mozart_prefix</span></code></p></td>
-<td><p>Prefix of the mozart-files</p></td>
-<td><p>COSMO-ART</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cams_dir_orig</span></code></p></td>
-<td><p>Path to input-directory for CAMS-files</p></td>
-<td><p>COSMO</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cams_dir_proc</span></code></p></td>
-<td><p>Path to the processed CAMS-files. Processed CAMS-files are stored here, if there are files found here then <code class="docutils literal notranslate"><span class="pre">cams_dir_orig</span></code> is not used</p></td>
-<td><p>COSMO</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cams_parameters</span></code></p></td>
-<td><p>Parameters for the processing of CAMS-data, more information in <code class="docutils literal notranslate"><span class="pre">config.py</span></code> of example case</p></td>
-<td><p>COSMO</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">icontools_dir</span></code></p></td>
-<td><p>Path to the icontools executables</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">iconremap_bin</span></code></p></td>
-<td><p>Name of the iconremap executable</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">iconsub_bin</span></code></p></td>
-<td><p>Name of the iconsub executable</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">icontools_parameter</span></code></p></td>
-<td><p>Dictionary containing names of the icontools runscript and namelist templates</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">input_root_chem</span></code></p></td>
-<td><p>Path to the chemical input files</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">chem_prefix</span></code></p></td>
-<td><p>Prefix of the chemical input files</p></td>
-<td><p>ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chem_nameformat</span></code></p></td>
-<td><p>Name format of the chemical input files</p></td>
-<td><p>ICON</p></td>
+</td>
+<td><div class="line-block">
+<div class="line">The working directory where all output is stored. Should be somewhere</div>
+<div class="line">on <code class="docutils literal notranslate"><span class="pre">$SCRATCH$</span></code>. By default, it is set to <code class="docutils literal notranslate"><span class="pre">&lt;chain_src_dir&gt;/work</span></code>.</div>
+</div>
+</td>
 </tr>
 </tbody>
 </table>
-<div class="line-block">
-<div class="line"><br /></div>
+</section>
+<section id="variables-to-set-in-config-yaml">
+<h2>Variables to Set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code><a class="headerlink" href="#variables-to-set-in-config-yaml" title="Permalink to this heading"></a></h2>
+<p>Here are two examples of which general variables should be set by the user in the
+case configuration file.</p>
+<section id="header-of-config-yaml-for-the-cosmo-ghg-spinup-test-case">
+<h3>Header of <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> for the <code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code> case<a class="headerlink" href="#header-of-config-yaml-for-the-cosmo-ghg-spinup-test-case" title="Permalink to this heading"></a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">workflow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosmo-ghg</span>
+<span class="nt">constraint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu</span>
+<span class="nt">ntasks_per_node</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12</span>
+<span class="nt">restart_step</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PT6H</span>
+<span class="nt">spinup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="nt">startdate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2015-01-01T00:00:00Z</span>
+<span class="nt">enddate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2015-01-01T18:00:00Z</span>
+</pre></div>
 </div>
 </section>
-<section id="variables-for-jobs-oae-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.oae.main()</span></code><a class="headerlink" href="#variables-for-jobs-oae-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oae_dir</span></code></p></td>
-<td><p>Path to where the online emission datasets are found</p></td>
-<td><p>COMSO, ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oae_gridded_emissions_nc</span></code></p></td>
-<td><p>Name of the main emission netCDF file (online emissions)</p></td>
-<td><p>COSMO, ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oae_vertical_profiles_nc</span></code></p></td>
-<td><p>Name of the netCDF file for vertical profile scaling (online emissions)</p></td>
-<td><p>COMSO, ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oae_hourofday_nc</span></code></p></td>
-<td><p>Name of the netCDF file for ‘hour of day’ scaling (online emissions)</p></td>
-<td><p>COSMO, ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oae_hourofyear_nc</span></code></p></td>
-<td><p>Name of the netCDF file for ‘hour of year’ scaling (online emissions)</p></td>
-<td><p>COSMO, ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oae_dayofweek_nc</span></code></p></td>
-<td><p>Name of the netCDF file for ‘day of week’ scaling (online emissions)</p></td>
-<td><p>COSMO, ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oae_monthofyear_nc</span></code></p></td>
-<td><p>Name of the netCDF file for ‘month of year’ scaling (online emissions)</p></td>
-<td><p>COSMO, ICON</p></td>
-</tr>
-</tbody>
-</table>
-<div class="line-block">
-<div class="line"><br /></div>
+<section id="header-of-config-yaml-for-the-icon-art-oem-test-case">
+<h3>Header of <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> for the <code class="docutils literal notranslate"><span class="pre">icon-art-oem-test</span></code> case<a class="headerlink" href="#header-of-config-yaml-for-the-icon-art-oem-test-case" title="Permalink to this heading"></a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">workflow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icon-art-oem</span>
+<span class="nt">constraint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpu</span>
+<span class="nt">run_on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cpu</span>
+<span class="nt">compute_queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">normal</span>
+<span class="nt">ntasks_per_node</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12</span>
+<span class="nt">restart_step</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PT6H</span>
+<span class="nt">startdate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2018-01-01T00:00:00Z</span>
+<span class="nt">enddate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2018-01-01T12:00:00Z</span>
+
+<span class="nt">eccodes_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./input/eccodes_definitions</span>
+<span class="nt">iconremap_bin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">iconremap</span>
+<span class="nt">iconsub_bin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">iconsub</span>
+<span class="nt">latbc_filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ifs_&lt;y&gt;&lt;m&gt;&lt;d&gt;&lt;h&gt;_lbc.nc</span>
+<span class="nt">inidata_prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ifs_init_</span>
+<span class="nt">inidata_nameformat</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%Y%m%d%H&#39;</span>
+<span class="nt">inidata_filename_suffix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.nc</span>
+<span class="nt">output_filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icon-art-oem-test</span>
+<span class="nt">filename_format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;output_filename&gt;_DOM&lt;physdom&gt;_&lt;ddhhmmss&gt;</span>
+<span class="nt">lateral_boundary_grid_order</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lateral_boundary</span>
+<span class="nt">art_input_folder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./input/icon-art-oem/ART</span>
+</pre></div>
 </div>
 </section>
-<section id="variables-for-jobs-obs-nudging-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code><a class="headerlink" href="#variables-for-jobs-obs-nudging-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bs_nudging_dir</span></code></p></td>
-<td><p>Path to where the nudging-datasets are found</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">obs_nudging_prefixes</span></code></p></td>
-<td><p>List of prefixes of nuding-files to copy</p></td>
-<td><p>COMSO, COSMO-ART</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">obs_nudging_date_format</span></code></p></td>
-<td><p>Date format of the nudging-files. If the obs-nudging-file is called <code class="docutils literal notranslate"><span class="pre">cdfin_temp-20150204000000-20150205000000</span></code>, the dateformat is <code class="docutils literal notranslate"><span class="pre">-%Y%m%d%H%M%S</span></code></p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-</tbody>
-</table>
-<div class="line-block">
-<div class="line"><br /></div>
+<section id="further-variables">
+<h3>Further variables<a class="headerlink" href="#further-variables" title="Permalink to this heading"></a></h3>
+<p>Furthermore, there are additional variables to set that are tied to the individual jobs.
+These config variables themselves are dictionaries. Let’s have a look at and example
+for the the <code class="docutils literal notranslate"><span class="pre">cfg.meteo</span></code> variable:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">meteo</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./input/cosmo-ghg/meteo</span>
+<span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laf</span>
+<span class="w">    </span><span class="nt">nameformat</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laf%Y%m%d%H</span>
+<span class="w">    </span><span class="nt">inc</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre></div>
 </div>
-</section>
-<section id="variables-for-jobs-octe-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code><a class="headerlink" href="#variables-for-jobs-octe-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">octe_lambdas</span></code></p></td>
-<td><p>Path to the netCDF file containing the lambda values used for generating online carbontracker ensembles</p></td>
-<td><p>COSMO</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">octe_maps</span></code></p></td>
-<td><p>Path to the netCDF file containing the regional and pft-type maps for generating online carbontracker ensembles</p></td>
-<td><p>COSMO</p></td>
-</tr>
-</tbody>
-</table>
-<div class="line-block">
-<div class="line"><br /></div>
+<p>These config variables can be accessed via <code class="docutils literal notranslate"><span class="pre">cfg.meteo['dir']</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.meteo['prefix']</span></code>, etc.
+as they are Python dictionaries.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>In <a class="reference internal" href="namelists.html#namelists-section"><span class="std std-ref">namelist and runscript template</span></a> files
+(see next section), this accessing does not work because of how the <code class="docutils literal notranslate"><span class="pre">.format()</span></code>
+method is implemented in Python. For that reason, the Processing Chain automatically
+creates new variables in the form of <code class="docutils literal notranslate"><span class="pre">cfg.meteo_dir</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.meteo_prefix</span></code>, etc.
+at the start to make them accessible for namelist and runjob templates.</p>
 </div>
-</section>
-<section id="variables-for-jobs-online-vprm-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code><a class="headerlink" href="#variables-for-jobs-online-vprm-main" title="Permalink to this heading"></a></h2>
+<section id="list-of-dictionary-variables">
+<h4>List of dictionary variables<a class="headerlink" href="#list-of-dictionary-variables" title="Permalink to this heading"></a></h4>
+<p>The following is a list of dictionary variables that exist for the Processing Chain.
+For the individual elements of those variables, please refer to the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>
+files within the test cases.</p>
 <table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Dictionary variable</p></th>
+<th class="head"><p>Used in job</p></th>
+</tr>
+</thead>
 <tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">meteo</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">prepare_cosmo</span></code>, <code class="docutils literal notranslate"><span class="pre">prepare_icon</span></code>, <code class="docutils literal notranslate"><span class="pre">icontools</span></code>, <code class="docutils literal notranslate"><span class="pre">int2lm</span></code>, <code class="docutils literal notranslate"><span class="pre">icon</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">online_vprm_dir</span></code></p></td>
-<td><p>Path to the directory containing netCDF files with pre-processed MODIS reflectance (<code class="docutils literal notranslate"><span class="pre">modis_filename</span></code>) and vegetation class fraction (<code class="docutils literal notranslate"><span class="pre">vegetation_filename</span></code>) data</p></td>
-<td><p>COSMO</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">icontools_runjobs</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">icontools</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">modis_filename</span></code></p></td>
-<td><p>Name of the pre-processed MODIS netCDF file</p></td>
-<td><p>COSMO</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">input_files</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">prepare_icon</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vegetation_filename</span></code></p></td>
-<td><p>Name of the pre-processed vegetation class fraction netCDF file</p></td>
-<td><p>COSMO</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chem</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">prepare_icon</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">era5</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">prepare_icon</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cams</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">prepare_cosmo</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">emissions</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">emissions</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vprm</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biofluxes</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oem</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">oem</span></code>, <code class="docutils literal notranslate"><span class="pre">cosmo</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">online_vprm</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">online_vprm</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int2lm</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">prepare_cosmo</span></code>, <code class="docutils literal notranslate"><span class="pre">emissions</span></code>, <code class="docutils literal notranslate"><span class="pre">biofluxes</span></code>, <code class="docutils literal notranslate"><span class="pre">octe</span></code>, <code class="docutils literal notranslate"><span class="pre">int2lm</span></code>, <code class="docutils literal notranslate"><span class="pre">post_int2lm</span></code>, <code class="docutils literal notranslate"><span class="pre">cosmo</span></code>, <code class="docutils literal notranslate"><span class="pre">post_cosmo</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">post_int2lm</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">post_int2lm</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cosmo</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">reduce_output</span></code>, <code class="docutils literal notranslate"><span class="pre">oem</span></code>, <code class="docutils literal notranslate"><span class="pre">photo_rate</span></code>, <code class="docutils literal notranslate"><span class="pre">octe</span></code>, <code class="docutils literal notranslate"><span class="pre">check_output</span></code>, <code class="docutils literal notranslate"><span class="pre">post_cosmo</span></code>, <code class="docutils literal notranslate"><span class="pre">cosmo</span></code>, <code class="docutils literal notranslate"><span class="pre">obs_nudging</span></code>, <code class="docutils literal notranslate"><span class="pre">online_vprm</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reduce_output</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">reduce_output</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">post_cosmo</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">post_cosmo</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">verify_chain</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">verify_chain</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">icon</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">oem</span></code>, <code class="docutils literal notranslate"><span class="pre">prepare_icon</span></code>, <code class="docutils literal notranslate"><span class="pre">icon</span></code></p></td>
 </tr>
 </tbody>
 </table>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 </section>
-<section id="variables-for-jobs-photo-rate-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code><a class="headerlink" href="#variables-for-jobs-photo-rate-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">photo_rate_file</span></code></p></td>
-<td><p>Path to the photolysis-rate file</p></td>
-<td><p>COSMO-ART</p></td>
-</tr>
-</tbody>
-</table>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 </section>
-<section id="variables-for-jobs-post-int2lm-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code><a class="headerlink" href="#variables-for-jobs-post-int2lm-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">post_int2lm_species</span></code></p></td>
-<td><p>List of variables for the post_int2lm-job</p></td>
-<td><p>COSMO</p></td>
-</tr>
-</tbody>
-</table>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</section>
-<section id="variables-for-jobs-reduce-output-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code><a class="headerlink" href="#variables-for-jobs-reduce-output-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">output_levels</span></code></p></td>
-<td><p>Number of output levels (starting from ground level) for the <code class="docutils literal notranslate"><span class="pre">reduce_output</span></code> job, defaults to <code class="docutils literal notranslate"><span class="pre">-1</span></code> if omitted, which means that all levels are kept</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">convert_gas</span></code></p></td>
-<td><p>Switch to convert the unit of trace gases to ppm or ppb. This leads to a better compression rate. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code> of omitted.</p></td>
-<td><p>COSMO, COSMO-ART</p></td>
-</tr>
-</tbody>
-</table>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</section>
-<section id="variables-for-jobs-verify-chain-main">
-<h2>Variables for <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code><a class="headerlink" href="#variables-for-jobs-verify-chain-main" title="Permalink to this heading"></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>Name</strong></p></td>
-<td><p><strong>Description</strong></p></td>
-<td><p><strong>Target</strong></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reference_dir</span></code></p></td>
-<td><p>Path to the reference output</p></td>
-<td><p>COSMO, COSMO-ART, ICON</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">output_dir</span></code></p></td>
-<td><p>Path to the output of cosmo. If the <code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code> job is executed, this can be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> and the path of the post_cosmo-job will be used</p></td>
-<td><p>COSMO, COSMO-ART, ICON</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">values_to_check</span></code></p></td>
-<td><p>Which files and variables are compared. This is a dict with a tuple of filenames as key. The first key element is the filename of the reference file, the second key element is the filename of the output-file of cosmo (usually <code class="docutils literal notranslate"><span class="pre">lffdYYYYMMDDHH.nc</span></code> and the value is a list of variables to compare between these two files)</p></td>
-<td><p>COSMO, COSMO-ART, ICON</p></td>
-</tr>
-</tbody>
-</table>
 </section>
 </section>
 
@@ -726,14 +429,14 @@ it can contain python expression which are evaluated at runtime.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="howtorun.html" class="btn btn-neutral float-left" title="How to Run" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="namelists.html" class="btn btn-neutral float-right" title="Namelist Templates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="code-structure.html" class="btn btn-neutral float-left" title="Code Structure" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="namelists.html" class="btn btn-neutral float-right" title="Namelist and Runscript Templates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2018-2023, C2SM.</p>
+    <p>&#169; Copyright 2018-2024, C2SM.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
