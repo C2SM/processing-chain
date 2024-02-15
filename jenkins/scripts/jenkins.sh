@@ -40,6 +40,15 @@ else
   ./jenkins/scripts/get_data.sh
 fi
 
+# Build icontools
+spack find icontools@c2sm-master%gcc
+if [[  $? -eq 0 ]]; then
+  echo icontools already installed - skipping build...
+else
+  echo building icontools...
+  ./jenkins/scripts/build_icontools.sh
+fi
+
 # Build int2lm
 if [[ -f ext/int2lm/test/testsuite/int2lm ]]; then
   echo int2lm executable already exists - skipping build...
