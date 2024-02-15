@@ -18,6 +18,12 @@ done
 
 set -e -x
 
+skip=false
+# Check if we are on Euler
+if [[ $(hostname) == eu-* ]]; then
+    skip=true
+fi
+
 # Activate conda environment
 eval "$(conda shell.bash hook)"
 conda activate proc-chain
@@ -50,7 +56,9 @@ else
 fi
 
 # Build int2lm
-if [[ -f ext/int2lm/test/testsuite/int2lm ]]; then
+if [[ "$skip" == true ]]; then
+  echo skipping int2lm build on Euler...
+elif [[ -f ext/int2lm/test/testsuite/int2lm ]]; then
   echo int2lm executable already exists - skipping build...
 else
   echo building int2lm...
@@ -58,7 +66,9 @@ else
 fi
 
 # Build COSMO-GHG
-if [[ -f ext/cosmo-ghg/cosmo/ACC/cosmo_gpu ]]; then
+if [[ "$skip" == true ]]; then
+  echo skipping cosmo-ghg build on Euler...
+elif [[ -f ext/cosmo-ghg/cosmo/ACC/cosmo_gpu ]]; then
   echo cosmo executable already exists - skipping build.
 else
   echo building cosmo...
@@ -82,7 +92,9 @@ else
 fi
 
 # Test COSMO-GHG
-if [[ -f work/cosmo-ghg-test/2015010106_2015010112/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+if [[ "$skip" == true ]]; then
+  echo skipping cosmo-ghg test on Euler...
+elif [[ -f work/cosmo-ghg-test/2015010106_2015010112/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg test case already finished - skipping test.
 else
   echo running cosmo-ghg test case...
@@ -90,8 +102,10 @@ else
 fi
 
 # Test COSMO-GHG (spinup)
+if [[ "$skip" == true ]]; then
+  echo skipping cosmo-ghg-spinup test on Euler...
 if [[ -f work/cosmo-ghg-spinup-test/2015010109_2015010118/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
-  echo cosmo-ghg test case already finished - skipping test.
+  echo cosmo-ghg-spinup test case already finished - skipping test.
 else
   echo running cosmo-ghg-spinup test case...
   ./jenkins/scripts/test_cosmo-ghg-spinup.sh
