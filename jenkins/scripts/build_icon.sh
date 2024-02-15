@@ -21,7 +21,7 @@ pushd ext
 rm -fr icon
 
 # Clone icon
-git clone --depth 1 --recurse-submodules --shallow-submodules -b ${BRANCH} ${GIT_REMOTE} icon
+git clone --depth 1 --recurse-submodules -b ${BRANCH} ${GIT_REMOTE} icon
 SPACK_TAG=`cat icon/config/cscs/SPACK_TAG`
     pushd icon
     spack env activate -p -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc
