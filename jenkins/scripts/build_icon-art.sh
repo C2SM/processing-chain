@@ -14,17 +14,24 @@ BRANCH=art
 GIT_REMOTE=git@github.com:C2SM/icon.git
 
 pushd ext
-# Activate spack
-. spack-c2sm/setup-env.sh
 
-# Remove icon-art folder (if existing)
+# Remove icon folder (if existing)
 rm -fr icon-art
 
-# Clone icon-art
-git clone --depth 1 --recurse-submodules --shallow-submodules -b ${BRANCH} ${GIT_REMOTE} icon-art
-SPACK_TAG=`cat icon-art/config/cscs/SPACK_TAG`
-    pushd icon-art
-    spack env activate -p -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc_art
+# Clone icon
+git clone --depth 1 --recurse-submodules -b ${BRANCH} ${GIT_REMOTE} icon-art
+
+pushd icon
+
+if [[ $(hostname) == eu-* ]]; then
+    ./jenkins/scripts/jenkins_euler.sh -b -fc gcc --configure euler.cpu.gcc.O2
+else
+    SPACK_TAG=`cat icon/config/cscs/SPACK_TAG`
+    . spack-c2sm/setup-env.sh
+    spack env activate -p -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc
     spack install -u build
-    popd
+fi
+
+popd
+
 popd

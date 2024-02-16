@@ -104,7 +104,7 @@ fi
 # Test COSMO-GHG (spinup)
 if [[ "$skip" == true ]]; then
   echo skipping cosmo-ghg-spinup test on Euler...
-if [[ -f work/cosmo-ghg-spinup-test/2015010109_2015010118/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+elif [[ -f work/cosmo-ghg-spinup-test/2015010109_2015010118/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg-spinup test case already finished - skipping test.
 else
   echo running cosmo-ghg-spinup test case...
