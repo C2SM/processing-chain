@@ -21,7 +21,7 @@ rm -fr icon-art
 # Clone icon
 git clone --depth 1 --recurse-submodules -b ${BRANCH} ${GIT_REMOTE} icon-art
 
-pushd icon
+pushd icon-art
 
 if [[ $(hostname) == eu-* ]]; then
     ./jenkins/scripts/jenkins_euler.sh -b -fc gcc --configure euler.cpu.gcc.O2
