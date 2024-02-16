@@ -12,17 +12,20 @@ function error {
 
 BRANCH=c2sm
 GIT_REMOTE=git@github.com:C2SM-RCM/cosmo-ghg.git
+MODEL=cosmo-ghg
 
 pushd ext
-# Activate spack
-. spack-c2sm/setup-env.sh
 
-# Remove cosmo-ghg folder (if existing)
-rm -fr cosmo-ghg
+# Clone the repo if not already existing
+if [[ ! -d "${MODEL}" ]]; then
+    git clone --depth 1 -b ${BRANCH} ${GIT_REMOTE} ${MODEL}
+fi
 
-# Clone cosmo-ghg
-git clone --depth 1 -b ${BRANCH} ${GIT_REMOTE}
-    pushd cosmo-ghg
-    spack devbuildcosmo cosmo @develop %nvhpc cosmo_target=gpu ^mpich%nvhpc
-    popd
+pushd ${MODEL}
+
+. ../spack-c2sm/setup-env.sh
+spack devbuildcosmo cosmo @develop %nvhpc cosmo_target=gpu ^mpich%nvhpc
+
+popd
+
 popd

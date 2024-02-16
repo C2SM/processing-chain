@@ -12,23 +12,23 @@ function error {
 
 BRANCH=art
 GIT_REMOTE=git@github.com:C2SM/icon.git
+MODEL=icon-art
 
 pushd ext
 
-# Remove icon folder (if existing)
-rm -fr icon-art
+# Clone the repo if not already existing
+if [[ ! -d "${MODEL}" ]]; then
+    git clone --depth --recurse-submodules 1 -b ${BRANCH} ${GIT_REMOTE} ${MODEL}
+fi
 
-# Clone icon
-git clone --depth 1 --recurse-submodules -b ${BRANCH} ${GIT_REMOTE} icon-art
-
-pushd icon-art
+pushd ${MODEL}
 
 if [[ $(hostname) == eu-* ]]; then
     ./jenkins/scripts/jenkins_euler.sh -b -fc gcc --configure euler.cpu.gcc.O2
 else
-    SPACK_TAG=`cat icon/config/cscs/SPACK_TAG`
-    . spack-c2sm/setup-env.sh
-    spack env activate -p -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc
+    SPACK_TAG=`cat config/cscs/SPACK_TAG`
+    . ../spack-c2sm/setup-env.sh
+    spack env activate -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc
     spack install -u build
 fi
 
