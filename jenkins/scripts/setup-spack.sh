@@ -28,6 +28,4 @@ pushd ext
 
 git clone --depth 1 --recurse-submodules --shallow-submodules -b ${SPACK_TAG} ${GIT_REMOTE}
 
-. spack-c2sm/setup-env.sh
-
 popd

@@ -30,12 +30,13 @@ conda activate proc-chain
 
 # Setup spack
 if [[ -d ext/spack-c2sm ]]; then
-  echo spack folder already exists - activating spack...
-  . ext/spack-c2sm/setup-env.sh
+  echo spack folder already exists - skipping build...
 else
   echo building spack...
   ./jenkins/scripts/setup-spack.sh
 fi
+echo activating spack...
+. ext/spack-c2sm/setup-env.sh
 
 # Preparation
 size=$(du -sb input | awk '{print $1}')
@@ -47,13 +48,16 @@ else
 fi
 
 # Build icontools
+set +e
 spack find icontools@c2sm-master%gcc
 if [[  $? -eq 0 ]]; then
   echo icontools already installed - skipping build...
 else
   echo building icontools...
+  set -e
   ./jenkins/scripts/build_icontools.sh
 fi
+set -e
 
 # Build int2lm
 if [[ "$skip" == true ]]; then
