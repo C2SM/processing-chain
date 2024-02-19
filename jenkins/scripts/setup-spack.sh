@@ -16,7 +16,7 @@ if [[ $(hostname) == eu-* ]]; then
     SPACK_TAG=main
 else
     git clone --depth 1 git@github.com:C2SM/icon.git icon-tag
-    SPACK_TAG=`cat config/cscs/SPACK_TAG`
+    SPACK_TAG=`cat icon-tag/config/cscs/SPACK_TAG`
     rm -fr icon-tag
 fi
 
