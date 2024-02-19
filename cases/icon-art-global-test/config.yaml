@@ -10,8 +10,8 @@ startdate: 2018-01-01T00:00:00Z
 enddate: 2018-01-01T12:00:00Z
 
 eccodes_dir: ./input/eccodes_definitions
-iconremap_bin: iconremap
-iconsub_bin: iconsub
+iconremap_bin: ./ext/icontools/icontools/iconremap
+iconsub_bin: ./ext/icontools/icontools/iconsub
 latbc_filename: ifs_<y><m><d><h>_lbc.nc
 inidata_prefix: ifs_init_
 inidata_nameformat: '%Y%m%d%H'
