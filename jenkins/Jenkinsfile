@@ -58,7 +58,7 @@ pipeline {
                 }
                 stage('Build int2lm') {
                     steps {
-                        './jenkins/scripts/build_int2lm.sh''
+                        './jenkins/scripts/build_int2lm.sh'
                     }
                     post {
                         failure {
@@ -69,7 +69,7 @@ pipeline {
                 }
                 stage('Build icontools') {
                     steps {
-                        './jenkins/scripts/build_icontools.sh''
+                        './jenkins/scripts/build_icontools.sh'
                     }
                     post {
                         failure {
