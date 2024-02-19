@@ -48,9 +48,7 @@ else
 fi
 
 # Build icontools
-set +e
-spack find icontools@c2sm-master%gcc
-if [[  $? -eq 0 ]]; then
+if [[ -f ext/icontools ]]; then
   echo icontools already installed - skipping build...
 else
   echo building icontools...

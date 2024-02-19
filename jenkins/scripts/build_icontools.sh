@@ -2,31 +2,16 @@
 
 set -e -x
 
-function error {
-    echo "*** Error: $@" >&2
-    exit 1
-}
-
 # Check if script is called correctly
 [[ $(git rev-parse --show-toplevel 2>/dev/null) = $(pwd) ]] || error "$0 not launched from toplevel of repository"
 
+source jenkins/scripts/common.sh
+
 BRANCH=master
 GIT_REMOTE=git@github.com:C2SM/icontools.git
-MODEL=icontools
+PACKAGE=icontools
+VERSION=c2sm-master
 COMPILER=gcc
+BUILD=dev-build
 
-pushd ext
-
-# Clone the repo if not already existing
-if [[ ! -d "${MODEL}" ]]; then
-    git clone --depth 1 -b ${BRANCH} ${GIT_REMOTE} ${MODEL}
-fi
-
-pushd ${MODEL}
-
-. ../spack-c2sm/setup-env.sh
-spack dev-build ${MODEL}@${BRANCH}%${COMPILER}
-
-popd
-
-popd
+clone_and_build_package "${BRANCH}" "${GIT_REMOTE}" "${PACKAGE}" "${VERSION}" "${COMPILER}" "${BUILD}" 
