@@ -48,14 +48,12 @@ else
 fi
 
 # Build icontools
-if [[ -f ext/icontools ]]; then
+if [[ -f ext/icontools/icontools/iconremap ]]; then
   echo icontools already installed - skipping build...
 else
   echo building icontools...
-  set -e
   ./jenkins/scripts/build_icontools.sh
 fi
-set -e
 
 # Build int2lm
 if [[ "$skip" == true ]]; then
