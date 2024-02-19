@@ -5,6 +5,7 @@ cartopy
 matplotlib
 scipy
 xarray
+netcdf4
 pyyaml
 f90nml
 cdsapi
