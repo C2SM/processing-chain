@@ -18,7 +18,7 @@ pushd ext
 
 # Clone the repo if not already existing
 if [[ ! -d "${MODEL}" ]]; then
-    git clone --depth --recurse-submodules 1 -b ${BRANCH} ${GIT_REMOTE} ${MODEL}
+    git clone --depth 1 --recurse-submodules -b ${BRANCH} ${GIT_REMOTE} ${MODEL}
 fi
 
 pushd ${MODEL}
