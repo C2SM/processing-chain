@@ -401,8 +401,8 @@ class Config():
                          capture_output=True,
                          check=True)
         except CalledProcessError as e:
-            with open(self.logfile('a')) as f:
-                f.write(e)
+            with self.logfile.open(mode='a') as f:
+                f.write(str(e))
                 raise (e)
 
         job_id = int(result.stdout)
