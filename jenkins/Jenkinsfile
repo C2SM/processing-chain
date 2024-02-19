@@ -8,30 +8,6 @@ pipeline {
         }
     }
     stages {
-        stage('Setup miniconda') {
-            environment {
-                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
-            }
-            steps {
-                sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-                sh 'rm -fr ${WORKSPACE}/miniconda'
-                sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
-                sh 'conda config --set always_yes yes --set changeps1 no'
-                sh 'conda config --add channels conda-forge'
-                sh 'conda update -n base -c defaults conda'
-                sh 'conda env create -f env/environment.yml'
-                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                    conda activate proc-chain
-                    conda deactivate
-                    rm miniconda.sh'''
-            }
-            post {
-                failure {
-                    echo 'Cleaning up workspace'
-                    deleteDir()
-                }
-            }
-        }
         stage('Setup spack') {
             steps {
                 sh './jenkins/scripts/setup-spack.sh'
@@ -45,6 +21,30 @@ pipeline {
         }
         stage('Preparation') {
             parallel {
+                stage('Setup miniconda') {
+                    environment {
+                        PATH = "${WORKSPACE}/miniconda/bin:$PATH"
+                    }
+                    steps {
+                        sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
+                        sh 'rm -fr ${WORKSPACE}/miniconda'
+                        sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
+                        sh 'conda config --set always_yes yes --set changeps1 no'
+                        sh 'conda config --add channels conda-forge'
+                        sh 'conda update -n base -c defaults conda'
+                        sh 'conda env create -f env/environment.yml'
+                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
+                            conda activate proc-chain
+                            conda deactivate
+                            rm miniconda.sh'''
+                    }
+                    post {
+                        failure {
+                            echo 'Cleaning up workspace'
+                            deleteDir()
+                        }
+                    }
+                }
                 stage('Get data') {
                     steps {
                         sh './jenkins/scripts/get_data.sh'
@@ -58,9 +58,18 @@ pipeline {
                 }
                 stage('Build int2lm') {
                     steps {
-                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                        conda activate proc-chain
-                        ./jenkins/scripts/build_int2lm.sh'''
+                        './jenkins/scripts/build_int2lm.sh''
+                    }
+                    post {
+                        failure {
+                            echo 'Cleaning up workspace'
+                            deleteDir()
+                        }
+                    }
+                }
+                stage('Build icontools') {
+                    steps {
+                        './jenkins/scripts/build_icontools.sh''
                     }
                     post {
                         failure {
@@ -71,9 +80,7 @@ pipeline {
                 }
                 stage('Build COSMO-GHG') {
                     steps {
-                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                        conda activate proc-chain
-                        ./jenkins/scripts/build_cosmo-ghg.sh'''
+                        './jenkins/scripts/build_cosmo-ghg.sh'
                     }
                     post {
                         failure {
@@ -84,9 +91,7 @@ pipeline {
                 }
                 stage('Build ICON') {
                     steps {
-                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                        conda activate proc-chain
-                        ./jenkins/scripts/build_icon.sh'''
+                        './jenkins/scripts/build_icon.sh'
                     }
                     post {
                         failure {
@@ -97,9 +102,7 @@ pipeline {
                 }
                 stage('Build ICON-ART') {
                     steps {
-                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                        conda activate proc-chain
-                        ./jenkins/scripts/build_icon-art.sh'''
+                        './jenkins/scripts/build_icon-art.sh'
                     }
                     post {
                         failure {
