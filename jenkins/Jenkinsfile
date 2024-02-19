@@ -58,7 +58,7 @@ pipeline {
                 }
                 stage('Build int2lm') {
                     steps {
-                        './jenkins/scripts/build_int2lm.sh'
+                        sh './jenkins/scripts/build_int2lm.sh'
                     }
                     post {
                         failure {
@@ -69,7 +69,7 @@ pipeline {
                 }
                 stage('Build icontools') {
                     steps {
-                        './jenkins/scripts/build_icontools.sh'
+                        sh './jenkins/scripts/build_icontools.sh'
                     }
                     post {
                         failure {
@@ -80,7 +80,7 @@ pipeline {
                 }
                 stage('Build COSMO-GHG') {
                     steps {
-                        './jenkins/scripts/build_cosmo-ghg.sh'
+                        sh './jenkins/scripts/build_cosmo-ghg.sh'
                     }
                     post {
                         failure {
@@ -91,7 +91,7 @@ pipeline {
                 }
                 stage('Build ICON') {
                     steps {
-                        './jenkins/scripts/build_icon.sh'
+                        sh './jenkins/scripts/build_icon.sh'
                     }
                     post {
                         failure {
@@ -102,7 +102,7 @@ pipeline {
                 }
                 stage('Build ICON-ART') {
                     steps {
-                        './jenkins/scripts/build_icon-art.sh'
+                        sh './jenkins/scripts/build_icon-art.sh'
                     }
                     post {
                         failure {
