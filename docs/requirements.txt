@@ -1,14 +1,14 @@
 cdo
 nco
-netcdf4
 numpy
-f90nml
 cartopy
 matplotlib
 scipy
-pillow
 xarray
+pyyaml
+f90nml
 cdsapi
+scikit-learn
 sphinx
 sphinx_rtd_theme
 sphinx-copybutton
