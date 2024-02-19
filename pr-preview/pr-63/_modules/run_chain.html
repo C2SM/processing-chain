@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>run_chain &mdash; Processing Chain v3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=09616d5f" />
+
+  
+    <link rel="shortcut icon" href="../_static/processing-chain-favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=de725823"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=a5fa425f"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #5d6d7e" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v3.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Feature Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environment.html">Conda Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../environment.html#install-miniconda">1. Install Miniconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howtorun.html">How to Run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howtorun.html#starting-the-chain">Starting the Chain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howtorun.html#what-it-does">What it Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howtorun.html#test-cases">Test Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howtorun.html#directory-structure">Directory Structure</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../code-structure.html">Code Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config.html">Configuration File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../config.html#configuration-variables">Configuration Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../config.html#variables-to-set-in-config-yaml">Variables to Set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../namelists.html">Namelist and Runscript Templates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../namelists.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../namelists.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Jobs &amp; Workflows</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../jobs.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../jobs.html#adding-new-jobs">Adding New Jobs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../functions.html">Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../functions.html#tools">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.tools.cams4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.tools.check_model.check_model"><code class="docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.tools.comp_nc.datasets_equal"><code class="docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.tools.ctnoaa4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.tools.mozart2int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.tools.reduce_output_start_end.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.tools.string2char.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #5d6d7e" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Processing Chain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">run_chain</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for run_chain</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">pytz</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="kn">import</span> <span class="nn">jobs</span>
+<span class="kn">from</span> <span class="nn">jobs</span> <span class="kn">import</span> <span class="n">tools</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">Config</span>
+
+
+<span class="k">def</span> <span class="nf">parse_arguments</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse command line arguments for the Processing Chain script.</span>
+
+<span class="sd">    Parses and retrieves command line arguments, allowing users to specify</span>
+<span class="sd">    run identifiers, jobs to execute, and various options to control the</span>
+<span class="sd">    execution of the Processing Chain.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    argparse.Namespace</span>
+<span class="sd">        A namespace object containing parsed command line arguments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Run the Processing Chain.&quot;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;casenames&quot;</span><span class="p">,</span>
+                        <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of identifiers for the runs. &quot;</span>
+                        <span class="s2">&quot;The config-files for each run is assumed &quot;</span>
+                        <span class="s2">&quot;to be in cases/&lt;casename&gt;/. The runs are executed &quot;</span>
+                        <span class="s2">&quot;sequentially in the order they&#39;re given here.&quot;</span><span class="p">)</span>
+
+    <span class="n">jobs_help</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;List of job names to be executed. A job is a .py &quot;</span>
+                 <span class="s2">&quot;file in jobs/ with a main()-function which &quot;</span>
+                 <span class="s2">&quot;handles one aspect of the Processing Chain, for &quot;</span>
+                 <span class="s2">&quot;example copying meteo-input data or launching a &quot;</span>
+                 <span class="s2">&quot;job for int2lm. &quot;</span>
+                 <span class="s2">&quot;Jobs are executed in the order in which they are &quot;</span>
+                 <span class="s2">&quot;given here. &quot;</span>
+                 <span class="s2">&quot;If no jobs are given, default jobs will be executed&quot;</span>
+                 <span class="s2">&quot;as defined in config/workflows.yaml.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-j&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;--jobs&quot;</span><span class="p">,</span>
+                        <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span>
+                        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;job_list&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="n">jobs_help</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">chunks_help</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;List of chunks to be executed. A chunk is time&quot;</span>
+                   <span class="s2">&quot;frame within the total simulation period.&quot;</span>
+                   <span class="s2">&quot;It has the format `YYYYMMDDHH_YYYYMMDDHH`.&quot;</span>
+                   <span class="s2">&quot;If no chunks are given, all chunks within the&quot;</span>
+                   <span class="s2">&quot;simulation period will be executed.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-c&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;--chunks&quot;</span><span class="p">,</span>
+                        <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span>
+                        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;chunk_list&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="n">chunks_help</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">sync_help</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Force synchronous execution.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;--force-sync&quot;</span><span class="p">,</span>
+                        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="n">sync_help</span><span class="p">)</span>
+
+    <span class="n">no_logging_help</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Disable logging for chain_status.log.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--no-logging&quot;</span><span class="p">,</span>
+                        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_false&#39;</span><span class="p">,</span>
+                        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;enable_logging&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="n">no_logging_help</span><span class="p">)</span>
+
+    <span class="n">force_help</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Force the processing chain to redo all specified jobs,&quot;</span>
+                  <span class="s2">&quot; even if they have been started already or were finished&quot;</span>
+                  <span class="s2">&quot; previously. WARNING: Only logfiles get deleted,&quot;</span>
+                  <span class="s2">&quot; other effects of a given job (copied files etc.)&quot;</span>
+                  <span class="s2">&quot; are simply overwritten. This may cause errors&quot;</span>
+                  <span class="s2">&quot; or unexpected behavior.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--force&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">force_help</span><span class="p">)</span>
+
+    <span class="n">resume_help</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Resume the Processing Chain by restarting the last unfinished job.&quot;</span>
+        <span class="s2">&quot; WARNING: Only the logfile gets deleted,&quot;</span>
+        <span class="s2">&quot; other effects of a given job (copied files etc.)&quot;</span>
+        <span class="s2">&quot; are simply overwritten. This may cause errors.&quot;</span>
+        <span class="s2">&quot; or unexpected behavior.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-r&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;--resume&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="n">resume_help</span><span class="p">,</span>
+                        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;resume&quot;</span><span class="p">,</span>
+                        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">args</span>
+
+
+<div class="viewcode-block" id="run_chunk"><a class="viewcode-back" href="../howtorun.html#run_chain.run_chunk">[docs]</a><span class="k">def</span> <span class="nf">run_chunk</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">resume</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run a chunk of the processing chain, managing job execution and logging.</span>
+
+<span class="sd">    This function sets up and manages the execution of a Processing Chain, handling</span>
+<span class="sd">    job execution, logging, and various configuration settings.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding user-defined configuration parameters as attributes.</span>
+<span class="sd">    force : bool</span>
+<span class="sd">        If True, it will force the execution of jobs regardless of their completion status.</span>
+<span class="sd">    resume : bool</span>
+<span class="sd">        If True, it will resume the last unfinished job.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If an error or timeout occurs during job execution.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This function sets various configuration values based on the provided parameters.</span>
+<span class="sd">    - It checks for job completion status and resumes or forces execution accordingly.</span>
+<span class="sd">    - Job log files are managed, and errors or timeouts are handled with notifications.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Set forecast time</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">forecasttime</span> <span class="o">=</span> <span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim</span> <span class="o">-</span>
+                        <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">3600</span>
+
+    <span class="c1"># Logging</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">work_root</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">casename</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span> <span class="o">/</span> <span class="s1">&#39;checkpoints&#39;</span> <span class="o">/</span> <span class="s1">&#39;working&#39;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">log_finished_dir</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span> <span class="o">/</span> <span class="s1">&#39;checkpoints&#39;</span> <span class="o">/</span> <span class="s1">&#39;finished&#39;</span>
+
+    <span class="c1"># Create working directories</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span><span class="p">,</span> <span class="s2">&quot;chain_root&quot;</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span><span class="p">,</span> <span class="s2">&quot;log_working&quot;</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_finished_dir</span><span class="p">,</span> <span class="s2">&quot;log_finished&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Config variables for spinup and restart runs</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_restart_in</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_restart_out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;spinup&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id_prev</span><span class="p">:</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">chain_root_prev</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">work_root</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">casename</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id_prev</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">last_cosmo_output</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chain_root_prev</span> <span class="o">/</span> <span class="s1">&#39;cosmo&#39;</span> <span class="o">/</span> <span class="s1">&#39;output&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;restart&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">workflow</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id_prev</span><span class="p">:</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">chain_root_prev</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">work_root</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">casename</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id_prev</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_restart_in</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chain_root_prev</span> <span class="o">/</span> <span class="s1">&#39;cosmo&#39;</span> <span class="o">/</span> <span class="s1">&#39;restart&#39;</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_restart_out</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chain_root</span> <span class="o">/</span> <span class="s1">&#39;cosmo&#39;</span> <span class="o">/</span> <span class="s1">&#39;restart&#39;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cfg</span><span class="o">.</span><span class="n">force_sync</span><span class="p">:</span>
+        <span class="c1"># Empty curent job ids</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">job_ids</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Submit current chunk</span>
+        <span class="k">for</span> <span class="n">job_name</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">jobs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_finished_dir</span> <span class="o">/</span> <span class="n">job_name</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
+                <span class="c1"># Skip job if already finished</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    └── Skipping &quot;</span><span class="si">{</span><span class="n">job_name</span><span class="si">}</span><span class="s1">&quot; job&#39;</span><span class="p">)</span>
+                <span class="n">skip</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    └── Submitting &quot;</span><span class="si">{</span><span class="n">job_name</span><span class="si">}</span><span class="s1">&quot; job&#39;</span><span class="p">)</span>
+
+                <span class="c1"># Logfile settings</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span> <span class="o">/</span> <span class="n">job_name</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">logfile_finish</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">log_finished_dir</span> <span class="o">/</span> <span class="n">job_name</span>
+
+                <span class="c1"># Submit the job</span>
+                <span class="n">job</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">jobs</span><span class="p">,</span> <span class="n">job_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="s1">&#39;BASIC_PYTHON_JOB&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">job</span><span class="o">.</span><span class="n">BASIC_PYTHON_JOB</span><span class="p">:</span>
+                    <span class="n">cfg</span><span class="o">.</span><span class="n">submit_basic_python</span><span class="p">(</span><span class="n">job_name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">job</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+        <span class="c1"># Wait for previous chunk jobs, monitor them and cycle info</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">cycle</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># For nested run_chain.py</span>
+        <span class="k">for</span> <span class="n">job_name</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">jobs</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    └── Process &quot;</span><span class="si">{</span><span class="n">job_name</span><span class="si">}</span><span class="s1">&quot; for chunk &quot;</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Change the log file</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span> <span class="o">/</span> <span class="n">job_name</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">logfile_finish</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">log_finished_dir</span> <span class="o">/</span> <span class="n">job_name</span>
+
+                <span class="c1"># Launch the job</span>
+                <span class="n">to_call</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">jobs</span><span class="p">,</span> <span class="n">job_name</span><span class="p">)</span>
+                <span class="n">to_call</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">logfile_finish</span><span class="p">)</span>
+
+                <span class="n">exitcode</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">exitcode</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">subject</span> <span class="o">=</span> <span class="s2">&quot;ERROR or TIMEOUT in job &#39;</span><span class="si">%s</span><span class="s2">&#39; for chunk &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="n">job_name</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">user_mail</span><span class="p">:</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">prepare_message</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span> <span class="o">/</span>
+                                                    <span class="n">job_name</span><span class="p">)</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Sending log file to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">cfg</span><span class="o">.</span><span class="n">user_mail</span><span class="p">)</span>
+                    <span class="n">tools</span><span class="o">.</span><span class="n">send_mail</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">user_mail</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">exitcode</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_finished_dir</span> <span class="o">/</span> <span class="n">job_name</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">subject</span> <span class="o">=</span> <span class="s2">&quot;ERROR or TIMEOUT in job &#39;</span><span class="si">%s</span><span class="s2">&#39; for chunk &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="n">job_name</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">user_mail</span><span class="p">:</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">prepare_message</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">log_working_dir</span> <span class="o">/</span>
+                                                    <span class="n">job_name</span><span class="p">)</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Sending log file to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">cfg</span><span class="o">.</span><span class="n">user_mail</span><span class="p">)</span>
+                    <span class="n">tools</span><span class="o">.</span><span class="n">send_mail</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">user_mail</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="restart_runs"><a class="viewcode-back" href="../howtorun.html#run_chain.restart_runs">[docs]</a><span class="k">def</span> <span class="nf">restart_runs</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">resume</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Start subchains in specified intervals and manage restarts.</span>
+
+<span class="sd">    This function slices the total runtime of the processing chain according to the</span>
+<span class="sd">    `cfg.restart_step_hours` configuration. It calls `run_chunk()` for each</span>
+<span class="sd">    specified interval.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+<span class="sd">    force : bool</span>
+<span class="sd">        If True, it will force the execution of jobs regardless of their completion status.</span>
+<span class="sd">    resume : bool</span>
+<span class="sd">        If True, it will resume the last unfinished job.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The function iterates over specified intervals, calling `run_chunk()` for each.</span>
+<span class="sd">    - It manages restart settings and logging for each subchain.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">chunk_id</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunks</span><span class="p">:</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id</span> <span class="o">=</span> <span class="n">chunk_id</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">get_previous_chunk_id</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id</span><span class="p">)</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim_yyyymmddhh</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim_yyyymmddhh</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:]</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim_yyyymmddhh</span><span class="p">,</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">pytz</span><span class="o">.</span><span class="n">UTC</span><span class="p">)</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim_yyyymmddhh</span><span class="p">,</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">pytz</span><span class="o">.</span><span class="n">UTC</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;spinup&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">workflow</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;spinup&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span> <span class="o">==</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span><span class="p">:</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">first_one</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">second_one</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">lrestart</span> <span class="o">=</span> <span class="s1">&#39;.FALSE.&#39;</span>
+            <span class="k">elif</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span> <span class="o">==</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span>
+                    <span class="n">hours</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">restart_step_hours</span><span class="p">):</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">first_one</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">second_one</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">lrestart</span> <span class="o">=</span> <span class="s1">&#39;.TRUE.&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">first_one</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">second_one</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">lrestart</span> <span class="o">=</span> <span class="s1">&#39;.TRUE.&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Set restart variable (only takes effect for ICON)</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">lrestart</span> <span class="o">=</span> <span class="s2">&quot;.FALSE.&quot;</span> <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span> <span class="o">==</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span> <span class="k">else</span> <span class="s2">&quot;.TRUE.&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;└── Starting chunk &quot;</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">chunk_id</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+
+        <span class="n">run_chunk</span><span class="p">(</span><span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">resume</span><span class="o">=</span><span class="n">resume</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main script for running a processing chain.</span>
+
+<span class="sd">    This script handles the execution of a processing chain for one or more</span>
+<span class="sd">    specified cases. It loads model configurations, prepares the environment,</span>
+<span class="sd">    and starts the chain based on the provided settings.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    None (Command-line arguments are parsed internally)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This script uses command-line arguments to specify cases and job lists.</span>
+<span class="sd">    - It loads model configurations, converts paths to absolute, sets restart </span>
+<span class="sd">      settings, and starts the chain.</span>
+<span class="sd">    - Depending on the model&#39;s features, it may run with or without restarts</span>
+<span class="sd">      or utilize spin-up restarts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_arguments</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">casename</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">casenames</span><span class="p">:</span>
+        <span class="c1"># Load configs</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">casename</span><span class="p">)</span>
+
+        <span class="c1"># Convert relative to absolute paths</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">convert_paths_to_absolute</span><span class="p">()</span>
+
+        <span class="c1"># Set restart step in hours</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">set_restart_step_hours</span><span class="p">()</span>
+
+        <span class="c1"># Duplicate variables in the form of &lt;dict&gt;_&lt;value&gt; for better</span>
+        <span class="c1"># access within namelist template.</span>
+        <span class="c1"># E.g.: cfg.meteo[&#39;dir&#39;] -&gt; cfg.meteo_dir</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">create_vars_from_dicts</span><span class="p">()</span>
+
+        <span class="c1"># Check if jobs are set or if default ones are used</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">job_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">jobs</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">workflow</span><span class="p">[</span><span class="s1">&#39;jobs&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">jobs</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">job_list</span>
+
+        <span class="c1"># Check sync is forced</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">force_sync</span><span class="p">:</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">force_sync</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">force_sync</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Check constraint</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">constraint</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">cfg</span><span class="o">.</span><span class="n">constraint</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;gpu&#39;</span><span class="p">,</span> <span class="s1">&#39;mc&#39;</span><span class="p">],</span> <span class="p">(</span><span class="s2">&quot;Unknown constraint, use&quot;</span>
+                                                     <span class="s2">&quot;gpu or mc&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get complete chunk list</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">get_chunk_list</span><span class="p">()</span>
+
+        <span class="c1"># Print config before chain starts</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">print_config</span><span class="p">()</span>
+
+        <span class="c1"># Get custom chunks if specified</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">chunks</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">chunk_list</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">chunk_list</span> <span class="k">else</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chunk_list</span>
+
+        <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">case_root</span><span class="p">,</span> <span class="s2">&quot;case_root&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;╔════════════════════════════════════════╗&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;║       Starting Processing Chain        ║&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;╠════════════════════════════════════════╣&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;║      Case: </span><span class="si">{</span><span class="n">casename</span><span class="si">:</span><span class="s2"> &lt;27</span><span class="si">}</span><span class="s2"> ║&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;║  Workflow: </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">workflow_name</span><span class="si">:</span><span class="s2"> &lt;27</span><span class="si">}</span><span class="s2"> ║&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;╚════════════════════════════════════════╝&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check for restart compatibility and spinup</span>
+        <span class="k">if</span> <span class="s1">&#39;restart&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">workflow</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+            <span class="n">restart_runs</span><span class="p">(</span><span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">force</span><span class="p">,</span> <span class="n">resume</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">resume</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No restarts are used.&quot;</span><span class="p">)</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enddate</span>
+            <span class="n">run_chunk</span><span class="p">(</span><span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">force</span><span class="p">,</span> <span class="n">resume</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">resume</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;╔════════════════════════════════════════╗&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;║       Processing Chain Completed       ║&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;╚════════════════════════════════════════╝&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018-2024, C2SM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
