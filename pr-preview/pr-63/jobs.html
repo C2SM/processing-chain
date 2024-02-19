@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overview &mdash; Processing Chain v3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=09616d5f" />
+
+  
+    <link rel="shortcut icon" href="_static/processing-chain-favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=de725823"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=a5fa425f"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Jobs" href="functions.html" />
+    <link rel="prev" title="Namelist and Runscript Templates" href="namelists.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #5d6d7e" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v3.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Feature Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment.html">Conda Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#install-miniconda">1. Install Miniconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howtorun.html">How to Run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howtorun.html#starting-the-chain">Starting the Chain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howtorun.html#what-it-does">What it Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howtorun.html#test-cases">Test Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howtorun.html#directory-structure">Directory Structure</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code-structure.html">Code Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="config.html#configuration-variables">Configuration Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#variables-to-set-in-config-yaml">Variables to Set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="namelists.html">Namelist and Runscript Templates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Jobs &amp; Workflows</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#adding-new-jobs">Adding New Jobs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html#tools">Tools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #5d6d7e" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Processing Chain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Overview</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/jobs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="overview">
+<span id="jobs-section"></span><h1>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h1>
+<p>Jobs have to be part of the respective workflow. They are submitted via <code class="docutils literal notranslate"><span class="pre">sbatch</span></code>
+to the Slurm workload manager.</p>
+<p>The order of job submission is based on the list given in <code class="docutils literal notranslate"><span class="pre">workflows.yaml</span></code>
+(or in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> in case a custom, user-defined workflow is used.)</p>
+<p>Let’s have a look at the <code class="docutils literal notranslate"><span class="pre">icon-art</span></code> example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">icon-art</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">features</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">restart</span>
+<span class="w">   </span><span class="nt">jobs</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prepare_icon</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icontools</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prepare_art</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icon</span>
+</pre></div>
+</div>
+<p>This workflow consists of four jobs: <code class="docutils literal notranslate"><span class="pre">prepare_icon</span></code>, <code class="docutils literal notranslate"><span class="pre">icontools</span></code>,
+<code class="docutils literal notranslate"><span class="pre">prepare_art</span></code> and <code class="docutils literal notranslate"><span class="pre">icon</span></code>.</p>
+<p>These jobs will be submitted, however, they are not starting at the same time,
+because some of them depend on others:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">dependencies</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">icontools</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">current</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prepare_icon</span>
+<span class="w">   </span><span class="nt">prepare_art</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">current</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icontools</span>
+<span class="w">   </span><span class="nt">icon</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">current</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prepare_icon</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icontools</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prepare_art</span>
+<span class="w">      </span><span class="nt">previous</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icon</span>
+</pre></div>
+</div>
+<p>Since <code class="docutils literal notranslate"><span class="pre">icontools</span></code> depends on <code class="docutils literal notranslate"><span class="pre">prepare_icon</span></code>, and <code class="docutils literal notranslate"><span class="pre">prepare_art</span></code> depends
+on <code class="docutils literal notranslate"><span class="pre">icontools</span></code>, the order of execution is <code class="docutils literal notranslate"><span class="pre">prepare_icon</span></code> –&gt; <code class="docutils literal notranslate"><span class="pre">icontools</span></code>
+–&gt; <code class="docutils literal notranslate"><span class="pre">prepare_art</span></code>. Note that if we had another job in there without dependencies,
+it would run in parallel to the others.</p>
+<p>Since <code class="docutils literal notranslate"><span class="pre">icon</span></code> depends on all other jobs, it will be executed last. Note that
+these dependencies are all listed under the <code class="docutils literal notranslate"><span class="pre">current</span></code> keyword, targeting
+the current chunk. For <code class="docutils literal notranslate"><span class="pre">icon</span></code>, there is an additional <code class="docutils literal notranslate"><span class="pre">previous</span></code> keyword.
+This means that an <code class="docutils literal notranslate"><span class="pre">icon</span></code> simulation will always wait until the simulation
+from the last chunk is finished (because the restart file has to be available).</p>
+<p>Another effect of this workflow definition is that the <code class="docutils literal notranslate"><span class="pre">prepare_icon</span></code>,
+<code class="docutils literal notranslate"><span class="pre">icontools</span></code> and <code class="docutils literal notranslate"><span class="pre">prepare_art</span></code> jobs will also be launched for the next chunk,
+as they are not dependent on their previous ones.</p>
+<figure class="align-default" id="id1">
+<img alt="Flowchart for the ``icon-art`` workflow." src="_images/processing_chain_workflow_icon_art.png" />
+<figcaption>
+<p><span class="caption-text">Flowchart for the <code class="docutils literal notranslate"><span class="pre">icon-art</span></code> workflow.</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="adding-new-jobs">
+<h1>Adding New Jobs<a class="headerlink" href="#adding-new-jobs" title="Permalink to this heading"></a></h1>
+<p>Adding a new job to the chain is simple:</p>
+<ol class="arabic simple">
+<li><p>In the directory <code class="docutils literal notranslate"><span class="pre">jobs/</span></code>, create a file called <code class="docutils literal notranslate"><span class="pre">&lt;jobname&gt;.py</span></code> containing
+a function called <code class="docutils literal notranslate"><span class="pre">main</span></code> which takes the same arguments as every other job.
+Make sure the function is documented with a docstring.</p></li>
+<li><p>Import it in <code class="docutils literal notranslate"><span class="pre">jobs/__init__.py</span></code> to make it accessible to <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code>.</p></li>
+<li><p>Add the job to your workflow.</p></li>
+</ol>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="namelists.html" class="btn btn-neutral float-left" title="Namelist and Runscript Templates" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="functions.html" class="btn btn-neutral float-right" title="Jobs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018-2024, C2SM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
