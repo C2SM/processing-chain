@@ -19,7 +19,7 @@ function clone_and_build_package {
 
   # Clone the repo if not already existing
   if [[ ! -d "${MODEL}" ]]; then
-      git clone --depth 1 --recurse-submodules -b ${BRANCH} ${GIT_REMOTE} ${PACKAGE} || error "Failed to clone repository"
+      git clone --depth 1 --recurse-submodules -b ${BRANCH} ${GIT_REMOTE} ${MODEL} || error "Failed to clone repository"
   fi
 
   pushd ${MODEL}
