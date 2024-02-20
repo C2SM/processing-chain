@@ -467,7 +467,7 @@ class Config():
                 f'#SBATCH --constraint={self.constraint}',
                 '',
                 f'cd {self.chain_src_dir}',
-                'eval "$(conda shell.bash hook)"', 
+                'eval "$(conda shell.bash hook)"',
                 'conda activate proc-chain',
                 f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
                 '',
@@ -503,8 +503,8 @@ class Config():
                     f'#SBATCH --account={self.compute_account}',
                     f'#SBATCH --partition={self.compute_queue}',
                     f'#SBATCH --constraint={self.constraint}',
-                    f'#SBATCH --dependency=afterany:{dep_str}', '', '# Do nothing',
-                    'exit 0'
+                    f'#SBATCH --dependency=afterany:{dep_str}', '',
+                    '# Do nothing', 'exit 0'
                 ]
             elif self.machine == 'euler':
                 script_lines = [
@@ -513,8 +513,8 @@ class Config():
                     f'#SBATCH --output={log_file}',
                     f'#SBATCH --partition={self.compute_queue}',
                     f'#SBATCH --constraint={self.constraint}',
-                    f'#SBATCH --dependency=afterany:{dep_str}', '', '# Do nothing',
-                    'exit 0'
+                    f'#SBATCH --dependency=afterany:{dep_str}', '',
+                    '# Do nothing', 'exit 0'
                 ]
             with open(job_file, mode='w') as wait_job:
                 wait_job.write('\n'.join(script_lines))
