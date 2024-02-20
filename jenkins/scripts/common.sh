@@ -24,7 +24,7 @@ function clone_and_build_package {
   pushd ${PACKAGE}
 
   . ../spack-c2sm/setup-env.sh
-  spack ${BUILD} ${PACKAGE}@${VERSION}%${COMPILER} ${FLAGS}  || error "Failed to build ${PACKAGE}"
+  spack ${BUILD} -u build ${PACKAGE}@${VERSION}%${COMPILER} ${FLAGS}  || error "Failed to build ${PACKAGE}"
 
   popd
 

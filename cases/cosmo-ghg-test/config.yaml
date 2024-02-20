@@ -47,7 +47,7 @@ online_vprm:
 int2lm:
     extpar_dir: ./input/cosmo-ghg/extpar
     extpar_filename: test_domain.nc
-    binary_file: ./ext/int2lm/test/testsuite/int2lm
+    binary_file: ./ext/int2lm/TESTSUITE/int2lm
     namelist_filename: int2lm_INPUT.cfg
     runjob_filename: int2lm_runjob.cfg
     compute_queue: normal
