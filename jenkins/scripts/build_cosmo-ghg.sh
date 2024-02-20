@@ -9,7 +9,7 @@ source jenkins/scripts/common.sh
 
 BRANCH=c2sm
 GIT_REMOTE=git@github.com:C2SM-RCM/cosmo-ghg.git
-PACKAGE=cosmo-ghg
+PACKAGE=cosmo
 VERSION=develop
 COMPILER=nvhpc
 BUILD=devbuildcosmo
