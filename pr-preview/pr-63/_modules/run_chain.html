@@ -471,7 +471,7 @@
             <span class="n">cfg</span><span class="o">.</span><span class="n">force_sync</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># Check constraint</span>
-        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">constraint</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">constraint</span> <span class="ow">and</span> <span class="n">cfg</span><span class="o">.</span><span class="n">machine</span> <span class="o">==</span> <span class="s1">&#39;daint&#39;</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">cfg</span><span class="o">.</span><span class="n">constraint</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;gpu&#39;</span><span class="p">,</span> <span class="s1">&#39;mc&#39;</span><span class="p">],</span> <span class="p">(</span><span class="s2">&quot;Unknown constraint, use&quot;</span>
                                                      <span class="s2">&quot;gpu or mc&quot;</span><span class="p">)</span>
 
