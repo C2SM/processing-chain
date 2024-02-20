@@ -9,9 +9,10 @@ source jenkins/scripts/common.sh
 
 BRANCH=c2sm-features
 GIT_REMOTE=git@github.com:C2SM-RCM/int2lm.git
+MODEL=int2lm
 PACKAGE=int2lm
 VERSION=c2sm-features
 COMPILER=nvhpc
 BUILD=dev-build
 
-clone_and_build_package "${BRANCH}" "${GIT_REMOTE}" "${PACKAGE}" "${VERSION}" "${COMPILER}" "${BUILD}" 
+clone_and_build_package "${BRANCH}" "${GIT_REMOTE}" "${MODEL}" "${PACKAGE}" "${VERSION}" "${COMPILER}" "${BUILD}" 

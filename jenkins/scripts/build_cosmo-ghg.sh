@@ -9,10 +9,11 @@ source jenkins/scripts/common.sh
 
 BRANCH=c2sm
 GIT_REMOTE=git@github.com:C2SM-RCM/cosmo-ghg.git
+MODEL=cosmo-ghg
 PACKAGE=cosmo
 VERSION=develop
 COMPILER=nvhpc
 BUILD=devbuildcosmo
 FLAGS="cosmo_target=gpu ^mpich%nvhpc"
 
-clone_and_build_package "${BRANCH}" "${GIT_REMOTE}" "${PACKAGE}" "${VERSION}" "${COMPILER}" "${BUILD}" "${FLAGS}"
+clone_and_build_package "${BRANCH}" "${GIT_REMOTE}" "${MODEL}" "${PACKAGE}" "${VERSION}" "${COMPILER}" "${BUILD}" "${FLAGS}"
