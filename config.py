@@ -1,6 +1,7 @@
 from subprocess import run, CalledProcessError
 import os
 import yaml
+import socket
 from datetime import timedelta
 
 from jobs import tools
@@ -61,11 +62,15 @@ class Config():
         self.case_root = self.work_root / self.casename
         self.log_file = self.case_root / "chain_status.log"
 
+        # Set machine based on hostname
+        self.set_machine()
+
         # Set workflow and async attributes and initiate job ids dict
         self.set_workflow()
 
         # Specific settings based on the node type ('gpu' or 'mc')
-        self.set_node_info()
+        if self.machine == 'daint':
+            self.set_node_info()
 
     def load_config_file(self):
         """Load configuration settings from a YAML file and set them as attributes.
@@ -139,6 +144,19 @@ class Config():
         else:
             # Use standard account
             self.compute_account = os.popen("id -gn").read().splitlines()[0]
+
+    def set_machine(self):
+        try:
+            hostname = socket.gethostname()
+            if hostname.startswith('daint'):
+                self.machine = 'daint'
+            elif hostname.startswith('eu-'):
+                self.machine = 'euler'
+            else:
+                raise ValueError(f"Unsupported hostname: {hostname}")
+            print(f"You are on the {self.machine} machine.")
+        except Exception as e:
+            print(f"Error occurred: {e}")
 
     def set_node_info(self):
         """Set node-specific information based on configuration settings.
@@ -421,21 +439,39 @@ class Config():
         """
         # Build job script
         walltime = getattr(self, 'walltime', {}).get(job_name, "00:30:00")
-        script_lines = [
-            '#!/usr/bin/env bash',
-            f'#SBATCH --job-name={job_name}',
-            '#SBATCH --nodes=1',
-            f'#SBATCH --time={walltime}',
-            f'#SBATCH --output={self.logfile}',
-            '#SBATCH --open-mode=append',
-            f'#SBATCH --account={self.compute_account}',
-            f'#SBATCH --partition={self.compute_queue}',
-            f'#SBATCH --constraint={self.constraint}',
-            '',
-            f'cd {self.chain_src_dir}',
-            f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
-            '',
-        ]
+        if self.machine == 'daint':
+            script_lines = [
+                '#!/usr/bin/env bash',
+                f'#SBATCH --job-name={job_name}',
+                '#SBATCH --nodes=1',
+                f'#SBATCH --time={walltime}',
+                f'#SBATCH --output={self.logfile}',
+                '#SBATCH --open-mode=append',
+                f'#SBATCH --account={self.compute_account}',
+                f'#SBATCH --partition={self.compute_queue}',
+                f'#SBATCH --constraint={self.constraint}',
+                '',
+                f'cd {self.chain_src_dir}',
+                f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
+                '',
+            ]
+        elif self.machine == 'euler':
+            script_lines = [
+                '#!/usr/bin/env bash',
+                f'#SBATCH --job-name={job_name}',
+                '#SBATCH --ntasks=1',
+                f'#SBATCH --time={walltime}',
+                f'#SBATCH --output={self.logfile}',
+                '#SBATCH --open-mode=append',
+                f'#SBATCH --partition={self.compute_queue}',
+                f'#SBATCH --constraint={self.constraint}',
+                '',
+                f'cd {self.chain_src_dir}',
+                'eval "$(conda shell.bash hook)"', 
+                'conda activate proc-chain',
+                f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
+                '',
+            ]
 
         job_path = self.chain_root / 'job_scripts'
         job_path.mkdir(parents=True, exist_ok=True)
@@ -459,16 +495,27 @@ class Config():
             job_file = self.case_root / 'submit.wait.slurm'
             log_file = self.case_root / 'wait.log'
             dep_str = ':'.join(map(str, dep_ids))
-            script_lines = [
-                '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
-                '#SBATCH --nodes=1', '#SBATCH --time=00:01:00',
-                f'#SBATCH --output={log_file}',
-                f'#SBATCH --account={self.compute_account}',
-                f'#SBATCH --partition={self.compute_queue}',
-                f'#SBATCH --constraint={self.constraint}',
-                f'#SBATCH --dependency=afterany:{dep_str}', '', '# Do nothing',
-                'exit 0'
-            ]
+            if self.machine == 'daint':
+                script_lines = [
+                    '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
+                    '#SBATCH --nodes=1', '#SBATCH --time=00:01:00',
+                    f'#SBATCH --output={log_file}',
+                    f'#SBATCH --account={self.compute_account}',
+                    f'#SBATCH --partition={self.compute_queue}',
+                    f'#SBATCH --constraint={self.constraint}',
+                    f'#SBATCH --dependency=afterany:{dep_str}', '', '# Do nothing',
+                    'exit 0'
+                ]
+            elif self.machine == 'euler':
+                script_lines = [
+                    '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
+                    '#SBATCH --ntasks=1', '#SBATCH --time=00:01:00',
+                    f'#SBATCH --output={log_file}',
+                    f'#SBATCH --partition={self.compute_queue}',
+                    f'#SBATCH --constraint={self.constraint}',
+                    f'#SBATCH --dependency=afterany:{dep_str}', '', '# Do nothing',
+                    'exit 0'
+                ]
             with open(job_file, mode='w') as wait_job:
                 wait_job.write('\n'.join(script_lines))
 
