@@ -148,7 +148,7 @@ class Config():
     def set_machine(self):
         try:
             hostname = socket.gethostname()
-            if hostname.startswith('daint'):
+            if hostname.startswith('daint') or hostname.startswith('nid'):
                 self.machine = 'daint'
             elif hostname.startswith('eu-'):
                 self.machine = 'euler'
