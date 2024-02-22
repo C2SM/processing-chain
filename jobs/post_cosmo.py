@@ -7,7 +7,7 @@ import datetime
 
 from . import tools, prepare_cosmo
 
-BASIC_PYTHON_JOB = False
+BASIC_PYTHON_JOB = True
 
 
 def logfile_header_template():
@@ -39,10 +39,11 @@ def runscript_commands_template():
     commands = list()
 
     return '\n'.join([
-        "srun cp -Raf {int2lm_run_src}/. {int2lm_run_dest}/",
-        "srun cp -Raf {cosmo_run_src}/. {cosmo_run_dest}/",
-        "srun cp -Raf {cosmo_output_src}/. {cosmo_output_dest}/",
-        "srun cp -Raf {logs_src}/. {logs_dest}/"
+        "srun cp -Rafv {int2lm_run_src}/. {int2lm_run_dest}/",
+        "srun cp -Rafv {cosmo_run_src}/. {cosmo_run_dest}/",
+        "srun cp -Rafv {cosmo_output_src}/. {cosmo_output_dest}/",
+        "srun cp -Rafv {logs_src}/. {logs_dest}/",
+        "unset SLURM_MEM_PER_CPU"
     ])
 
 
