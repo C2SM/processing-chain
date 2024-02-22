@@ -84,7 +84,7 @@ reduce_output:
     output_levels: 20
 
 post_cosmo:
-    output_root: ./output/cosmo-ghg-test
+    output_root: ./output/cosmo-ghg-spinup-test
 
 verify_chain:
     reference_dir: null  # Set this value based on your use case
