@@ -25,7 +25,7 @@ if [[ $(hostname) == eu-* ]]; then
 else
     SPACK_TAG=`cat config/cscs/SPACK_TAG`
     . ../spack-c2sm/setup-env.sh
-    spack env activate -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc
+    spack env activate -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc_art
     spack install -u build
 fi
 
