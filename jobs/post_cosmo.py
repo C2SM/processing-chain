@@ -42,8 +42,7 @@ def runscript_commands_template():
         "srun cp -Rafv {int2lm_run_src}/. {int2lm_run_dest}/",
         "srun cp -Rafv {cosmo_run_src}/. {cosmo_run_dest}/",
         "srun cp -Rafv {cosmo_output_src}/. {cosmo_output_dest}/",
-        "srun cp -Rafv {logs_src}/. {logs_dest}/",
-        "unset SLURM_MEM_PER_CPU"
+        "srun cp -Rafv {logs_src}/. {logs_dest}/", "unset SLURM_MEM_PER_CPU"
     ])
 
 
