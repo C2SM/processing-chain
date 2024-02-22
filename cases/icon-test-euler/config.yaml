@@ -48,8 +48,7 @@ input_files:
 icon:
     binary_file: ./ext/icon/bin/icon
     runjob_filename: icon_runjob.cfg
-    compute_queue: normal
-    np_tot: 8
+    np_tot: 96
     np_io: 1
     np_restart: 1
     np_prefetch: 1
