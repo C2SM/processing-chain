@@ -2,27 +2,18 @@
 
 set -e -x
 
-function error {
-    echo "*** Error: $@" >&2
-    exit 1
-}
-
 # Check if script is called correctly
 [[ $(git rev-parse --show-toplevel 2>/dev/null) = $(pwd) ]] || error "$0 not launched from toplevel of repository"
 
+source jenkins/scripts/common.sh
+
 BRANCH=c2sm
 GIT_REMOTE=git@github.com:C2SM-RCM/cosmo-ghg.git
+MODEL=cosmo-ghg
+PACKAGE=cosmo
+VERSION=develop
+COMPILER=nvhpc
+BUILD=devbuildcosmo
+FLAGS="cosmo_target=gpu ^mpich%nvhpc"
 
-pushd ext
-# Activate spack
-. spack-c2sm/setup-env.sh
-
-# Remove cosmo-ghg folder (if existing)
-rm -fr cosmo-ghg
-
-# Clone cosmo-ghg
-git clone --depth 1 -b ${BRANCH} ${GIT_REMOTE}
-    pushd cosmo-ghg
-    spack devbuildcosmo cosmo @develop %nvhpc cosmo_target=gpu ^mpich%nvhpc
-    popd
-popd
+clone_and_build_package "${BRANCH}" "${GIT_REMOTE}" "${MODEL}" "${PACKAGE}" "${VERSION}" "${COMPILER}" "${BUILD}" "${FLAGS}"

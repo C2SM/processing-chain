@@ -3,19 +3,19 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.9
+  - python=3.11
   - cdo
   - nco
-  - netcdf4
   - numpy
-  - f90nml
   - cartopy
   - matplotlib
   - scipy
-  - pillow
   - xarray
+  - netcdf4
+  - pyyaml
   - cdsapi
   - scikit-learn
+  - f90nml
   - sphinx
   - sphinx_rtd_theme
   - sphinx-copybutton
