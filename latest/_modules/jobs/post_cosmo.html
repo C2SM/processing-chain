@@ -158,7 +158,7 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tools</span><span class="p">,</span> <span class="n">prepare_cosmo</span>
 
-<span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">True</span>
 
 
 <span class="k">def</span> <span class="nf">logfile_header_template</span><span class="p">():</span>
@@ -190,10 +190,10 @@
     <span class="n">commands</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
-        <span class="s2">&quot;srun cp -Raf </span><span class="si">{int2lm_run_src}</span><span class="s2">/. </span><span class="si">{int2lm_run_dest}</span><span class="s2">/&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;srun cp -Raf </span><span class="si">{cosmo_run_src}</span><span class="s2">/. </span><span class="si">{cosmo_run_dest}</span><span class="s2">/&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;srun cp -Raf </span><span class="si">{cosmo_output_src}</span><span class="s2">/. </span><span class="si">{cosmo_output_dest}</span><span class="s2">/&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;srun cp -Raf </span><span class="si">{logs_src}</span><span class="s2">/. </span><span class="si">{logs_dest}</span><span class="s2">/&quot;</span>
+        <span class="s2">&quot;srun cp -Rafv </span><span class="si">{int2lm_run_src}</span><span class="s2">/. </span><span class="si">{int2lm_run_dest}</span><span class="s2">/&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;srun cp -Rafv </span><span class="si">{cosmo_run_src}</span><span class="s2">/. </span><span class="si">{cosmo_run_dest}</span><span class="s2">/&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;srun cp -Rafv </span><span class="si">{cosmo_output_src}</span><span class="s2">/. </span><span class="si">{cosmo_output_dest}</span><span class="s2">/&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;srun cp -Rafv </span><span class="si">{logs_src}</span><span class="s2">/. </span><span class="si">{logs_dest}</span><span class="s2">/&quot;</span><span class="p">,</span> <span class="s2">&quot;unset SLURM_MEM_PER_CPU&quot;</span>
     <span class="p">])</span>
 
 
