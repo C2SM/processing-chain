@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jobs.tools.mozart2int2lm &mdash; Processing Chain v3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=09616d5f" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/processing-chain-favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=de725823"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=a5fa425f"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #5d6d7e" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v3.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html">Feature Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment.html">Conda Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../environment.html#install-miniconda">1. Install Miniconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../howtorun.html">How to Run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../howtorun.html#starting-the-chain">Starting the Chain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howtorun.html#what-it-does">What it Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howtorun.html#test-cases">Test Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howtorun.html#directory-structure">Directory Structure</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code-structure.html">Code Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuration File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../config.html#configuration-variables">Configuration Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../config.html#variables-to-set-in-config-yaml">Variables to Set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../namelists.html">Namelist and Runscript Templates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../namelists.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../namelists.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Jobs &amp; Workflows</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../jobs.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../jobs.html#adding-new-jobs">Adding New Jobs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../functions.html">Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../functions.html#tools">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.cams4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.check_model.check_model"><code class="docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.comp_nc.datasets_equal"><code class="docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.ctnoaa4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.mozart2int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.reduce_output_start_end.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.string2char.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #5d6d7e" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Processing Chain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">jobs.tools.mozart2int2lm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for jobs.tools.mozart2int2lm</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">time</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
+
+<span class="kn">from</span> <span class="nn">.nc_operations</span> <span class="kn">import</span> <span class="n">VariableCreator</span><span class="p">,</span> <span class="n">VariableCopier</span><span class="p">,</span> <span class="n">DimensionCopier</span>
+
+
+<span class="k">def</span> <span class="nf">date_from_days_since_0</span><span class="p">(</span><span class="n">days_since_00000101</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a float counting days since days since 0000-01-01 00:00:00</span>
+<span class="sd">    to a datetime object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">add_years</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">years</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a date that&#39;s `years` years after the date (or datetime)</span>
+<span class="sd">        object `d`. Return the same calendar date (month and day) in the</span>
+<span class="sd">        destination year, if it exists, otherwise use the following day</span>
+<span class="sd">        (thus changing February 29 to March 1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># from https://stackoverflow.com/a/15743908</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">d</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="n">years</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">d</span> <span class="o">+</span> <span class="p">(</span><span class="n">date</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="n">years</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">date</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">full_days</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">days_since_00000101</span><span class="p">)</span>
+    <span class="c1"># fromordinal starts from day 0</span>
+    <span class="n">timestamp_date</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">full_days</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># fromordinal starts at year 1</span>
+    <span class="n">timestamp_date</span> <span class="o">=</span> <span class="n">add_years</span><span class="p">(</span><span class="n">timestamp_date</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">hours</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">days_since_00000101</span> <span class="o">-</span> <span class="n">full_days</span><span class="p">)</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">hours</span> <span class="o">==</span> <span class="p">(</span><span class="n">days_since_00000101</span> <span class="o">-</span> <span class="n">full_days</span><span class="p">)</span> <span class="o">*</span> <span class="mi">24</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">&quot;Can&#39;t convert to time at not full hour.&quot;</span><span class="p">)</span>  <span class="c1"># too lazy</span>
+    <span class="n">timestamp_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="n">hours</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">timestamp_date</span><span class="p">,</span> <span class="n">timestamp_time</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">extract_data</span><span class="p">(</span><span class="n">in_path</span><span class="p">,</span> <span class="n">time_index</span><span class="p">,</span> <span class="n">dim_ops</span><span class="p">,</span> <span class="n">var_ops</span><span class="p">,</span> <span class="n">out_path_template</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract and transform indicated data from time_index to</span>
+<span class="sd">    out_path_template.</span>
+
+<span class="sd">    Create a new netcdf-file at out_path_template after replacing the</span>
+<span class="sd">    placeholders with the date from the time_index in in_path.</span>
+
+<span class="sd">    Create a &#39;time&#39; dimension and variable of size 1.</span>
+<span class="sd">    Add the ncattr calendar: &#39;proleptic_gregorian&#39; to the time-variable.</span>
+
+<span class="sd">    Copy and transform the dimensions specified in the dim_ops.</span>
+
+<span class="sd">    Copy and transform the variables specified in the var_ops.</span>
+
+<span class="sd">    Adjust longitude from [0, 360) to (-180, 180].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">in_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">date_from_days_since_0</span><span class="p">(</span><span class="n">inf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="n">time_index</span><span class="p">])</span>
+
+        <span class="n">out_path</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">out_path_template</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">of</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="n">dimname</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Create time variable</span>
+            <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span>
+                <span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;f8&#39;</span>
+                <span class="p">},</span>
+                <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;calendar&#39;</span><span class="p">:</span> <span class="s1">&#39;proleptic_gregorian&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;simulation_time&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;units&#39;</span><span class="p">:</span>
+                    <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;seconds since %Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+                <span class="p">},</span>
+                <span class="n">var_vals</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">of</span><span class="p">))</span>
+
+            <span class="c1"># Create date variable</span>
+            <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span><span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="p">},</span>
+                             <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;current date as 8 digit&#39;</span>
+                                               <span class="s1">&#39; integer (YYYYMMDD)&#39;</span><span class="p">)</span>
+                             <span class="p">},</span>
+                             <span class="n">var_vals</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span>
+                                 <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)))</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">of</span><span class="p">))</span>
+
+            <span class="c1"># Create datesec variable</span>
+            <span class="n">sec_from_midnight</span> <span class="o">=</span> <span class="p">((</span><span class="n">timestamp</span> <span class="o">-</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+            <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span><span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;datesec&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="p">},</span>
+                             <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span>
+                                 <span class="p">(</span><span class="s1">&#39;seconds to complete&#39;</span><span class="p">,</span> <span class="s1">&#39;current date&#39;</span><span class="p">),</span>
+                                 <span class="s1">&#39;units&#39;</span><span class="p">:</span>
+                                 <span class="s1">&#39;s&#39;</span>
+                             <span class="p">},</span>
+                             <span class="n">var_vals</span><span class="o">=</span><span class="n">sec_from_midnight</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">of</span><span class="p">))</span>
+
+            <span class="c1"># Transfer specified dimensions and variables</span>
+            <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">dim_ops</span> <span class="o">+</span> <span class="n">var_ops</span><span class="p">:</span>
+                <span class="n">op</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">of</span><span class="p">)</span>
+
+            <span class="c1"># Transform longitude: [0,360) -&gt; [-180,180)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">of</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])):</span>
+                <span class="k">if</span> <span class="n">of</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">180</span><span class="p">:</span>
+                    <span class="n">of</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">360</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../functions.html#jobs.tools.mozart2int2lm.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">infile</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract each timeslice from infile into seperate file in outdir.</span>
+
+<span class="sd">    Copies dimensions, renaming &#39;lev&#39; -&gt; &#39;level&#39;.</span>
+
+<span class="sd">    Copies, renames and combines variables (see source code for specifics).</span>
+
+<span class="sd">    Transforms &#39;lon&#39; to [-180, 180) range.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    _</span>
+<span class="sd">        Ignored</span>
+<span class="sd">    infile : str</span>
+<span class="sd">        Path to file to extract from</span>
+<span class="sd">    outdir : str</span>
+<span class="sd">        Path to the directory where the output files are written to</span>
+<span class="sd">    params : dict</span>
+<span class="sd">        Only entry: &#39;suffix&#39;</span>
+<span class="sd">        Processed files are stored as ``outdir/{suffix}_YYYYMMDDHH.nc``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">outname_template</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;suffix&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_%Y%m</span><span class="si">%d</span><span class="s1">%H.nc&#39;</span><span class="p">)</span>
+
+    <span class="n">dimpairs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span>
+            <span class="s1">&#39;lev&#39;</span><span class="p">,</span>  <span class="c1"># name in src</span>
+            <span class="s1">&#39;level&#39;</span><span class="p">),</span>  <span class="c1"># name in dst</span>
+        <span class="p">(</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;ilev&#39;</span><span class="p">,</span> <span class="s1">&#39;ilev&#39;</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="n">dim_copiers</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">DimensionCopier</span><span class="p">(</span><span class="n">src_name</span><span class="p">,</span> <span class="n">dst_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">src_name</span><span class="p">,</span> <span class="n">dst_name</span> <span class="ow">in</span> <span class="n">dimpairs</span>
+    <span class="p">]</span>
+
+    <span class="n">varpairs_to_copy</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">([</span><span class="s1">&#39;CH3CHO_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;GLYALD_VMR_inst&#39;</span><span class="p">],</span> <span class="s1">&#39;ALD&#39;</span><span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s1">&#39;CO_VMR_inst&#39;</span><span class="p">,</span>  <span class="c1"># name in src, lists added toghether</span>
+            <span class="s1">&#39;CO&#39;</span><span class="p">),</span>  <span class="c1"># name in dst</span>
+        <span class="p">(</span><span class="s1">&#39;CRESOL_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;CSL&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;C2H6_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;ETH&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;GLYOXAL_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;GLY&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;H2O2_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;H2O2&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;C3H8_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;HC3&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;HNO3_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;HNO3&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;BIGALK_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;HC5&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;CH2O_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;HCHO&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;HO2NO2_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;HNO4&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;HO2_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;HO2&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;ISOP_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;ISO&#39;</span><span class="p">),</span>
+        <span class="p">([</span><span class="s1">&#39;CH3COCH3_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;HYAC_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;MEK_VMR_inst&#39;</span><span class="p">],</span> <span class="s1">&#39;KET&#39;</span><span class="p">),</span>
+        <span class="p">([</span><span class="s1">&#39;MVK_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;MACR_VMR_inst&#39;</span><span class="p">],</span> <span class="s1">&#39;MACR&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;CH3COCHO_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;MGLY&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;MPAN_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;MPAN&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;N2O5_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;N2O5&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;NH3_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;NH3&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;NO_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;NO&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;NO2_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;NO2&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;NO3_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;NO3&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;OH_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;OH&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;C2H4_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;OL2&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;ONIT_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;ONIT&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;CH3OOH_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;OP1&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;C2H5OOH_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;OP2&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;CH3COOH_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;ORA2&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;O3_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;OZONE&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;CH3COOOH_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;PAA&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;PAN_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;PAN&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SO2_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;SO2&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;TOLUENE_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;TOL&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;DUST1&#39;</span><span class="p">,</span> <span class="s1">&#39;VSOILA&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;DUST2&#39;</span><span class="p">,</span> <span class="s1">&#39;VSOILB&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;DUST3&#39;</span><span class="p">,</span> <span class="s1">&#39;VSOILC&#39;</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="n">varpairs_to_copy_dimchange</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;NH4_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;VNH4Jm&#39;</span><span class="p">),</span>
+                                  <span class="p">([</span><span class="s1">&#39;OC1_VMR_inst&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;OC2_VMR_inst&#39;</span><span class="p">],</span> <span class="s1">&#39;VORG1Jm&#39;</span><span class="p">),</span>
+                                  <span class="p">(</span><span class="s1">&#39;SO4_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;VSO4Jm&#39;</span><span class="p">),</span>
+                                  <span class="p">([</span><span class="s1">&#39;CB1_VMR_inst&#39;</span><span class="p">,</span> <span class="s1">&#39;CB2_VMR_inst&#39;</span><span class="p">],</span> <span class="s1">&#39;VSOOTJ&#39;</span><span class="p">)]</span>
+
+    <span class="k">for</span> <span class="n">time_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Dataset</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+        <span class="c1"># Have to give dimensions explicitly because &#39;lev&#39; changes to &#39;level&#39;</span>
+        <span class="c1"># Have to give var_val_indices explicitly because we only copy one</span>
+        <span class="c1"># time index</span>
+        <span class="n">spacial_variable_options</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;level&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">)</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;var_val_indices&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">time_index</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="p">}</span>
+
+        <span class="c1"># 3D variables that simply get copied</span>
+        <span class="n">var_opts</span> <span class="o">=</span> <span class="p">[{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="n">src</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="n">dst</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">spacial_variable_options</span>
+        <span class="p">}</span> <span class="k">for</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span> <span class="ow">in</span> <span class="n">varpairs_to_copy</span><span class="p">]</span>
+
+        <span class="c1"># 3D variables with dimchange to mol/mol</span>
+        <span class="n">var_opts</span> <span class="o">+=</span> <span class="p">[{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="n">src</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="n">dst</span><span class="p">,</span>
+            <span class="s1">&#39;var_attrs&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;mol/mol&#39;</span>
+            <span class="p">},</span>
+            <span class="o">**</span><span class="n">spacial_variable_options</span>
+        <span class="p">}</span> <span class="k">for</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span> <span class="ow">in</span> <span class="n">varpairs_to_copy_dimchange</span><span class="p">]</span>
+
+        <span class="c1"># Others</span>
+        <span class="n">var_opts</span> <span class="o">+=</span> <span class="p">[{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;lat&#39;</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;lev&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;level&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;level&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;lon&#39;</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;P0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;P0&#39;</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;PS&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;PSURF&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">)</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;var_val_indices&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">time_index</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;hyam&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;hyam&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;level&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;hybm&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;hybm&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;level&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;ilev&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;ilev&#39;</span>
+        <span class="p">}]</span>
+
+        <span class="n">var_copiers</span> <span class="o">=</span> <span class="p">[</span><span class="n">VariableCopier</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">var_opts</span><span class="p">]</span>
+
+        <span class="n">extract_data</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">time_index</span><span class="p">,</span> <span class="n">dim_copiers</span><span class="p">,</span> <span class="n">var_copiers</span><span class="p">,</span>
+                     <span class="n">outname_template</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018-2024, C2SM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
