@@ -213,9 +213,7 @@ icon-art-oem:
     - restart
   jobs:
     - prepare_icon
-    - icontools
-    - prepare_art
-    - prepare_art_oem
+    - oem
     - icon
   dependencies:
     icontools:
@@ -230,8 +228,20 @@ icon-art-oem:
     icon:
       current:
         - prepare_icon
-        - icontools
-        - prepare_art
-        - prepare_art_oem
+        - oem
+      previous:
+        - icon
+
+icon-art-terraurb-test:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
       previous:
         - icon
