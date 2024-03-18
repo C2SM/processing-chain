@@ -235,3 +235,21 @@ icon-art-oem:
         - prepare_art_oem
       previous:
         - icon
+
+icon-art-full-chem:
+  features:
+    - restart
+  jobs:
+    - prepare_icon
+    - prepare_art_full_chem
+    - icon
+  dependencies:
+    prepare_art_full_chem:
+      current:
+        - prepare_icon
+    icon:
+      current:
+        - prepare_icon
+        - prepare_art_full_chem
+      previous:
+        - icon

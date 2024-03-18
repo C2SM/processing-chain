@@ -1,0 +1,185 @@
+&parameter
+  name = u 
+  out_name = U 
+  standard_name = eastward_wind
+  long_name = "horizontal velocity component" 
+  units = "m s-1"
+/
+&parameter
+  name = v  
+  out_name = V 
+  standard_name = northward_wind
+  long_name = "horizontal velocity component"
+  units = "m s-1"
+/
+&parameter
+  name = w
+  out_name = W 
+  standard_name = lagrangian_tendency_of_air_pressure
+  long_name = "vertical velocity"
+  units = "Pa s-1"
+/
+&parameter
+  name = t
+  out_name = T 
+  standard_name = air_temperature
+  long_name = "temperature" 
+  units = "K"
+/
+&parameter
+  name = q
+  out_name = QV 
+  standard_name = specific_humidity
+  long_name = "specific humidity" 
+  units = "kg kg-1"
+/
+&parameter
+  name = clwc
+  out_name = QC 
+  long_name = "specific cloud liquid water content"
+  units = "kg kg-1"
+/
+&parameter
+  name = ciwc
+  out_name = QI 
+  long_name = "specific cloud ice water content"
+  units = "kg kg-1"
+/
+&parameter
+  name = crwc 
+  out_name = QR
+  long_name = "specific rain water content"
+  units = "kg kg-1"
+/
+&parameter
+  name = cswc 
+  out_name = QS 
+  long_name = "specific snow water content"
+  units = "kg kg-1"
+/
+&parameter
+  name = lnsp
+  out_name = LNPS 
+  long_name = "logarithm of surface pressure"
+/
+&parameter
+  name = Z
+  out_name = GEOP_SFC
+  standard_name = geopotential
+  long_name = "surface geopotential"
+  units = "m2 s-2"
+/
+&parameter
+  name = z 
+  out_name = GEOP_ML
+  standard_name = geopotential
+  long_name = "model level geopotential"
+  units = "m2 s-2"
+/
+&parameter
+  name = TSN 
+  out_name = T_SNOW
+  standard_name = temperature_in_surface_snow
+  long_name = "temperature of snow layer"
+  units = "K"
+/
+&parameter
+  name = RSN 
+  out_name = RHO_SNOW 
+  long_name = "snow density"
+  unit = "kg m-3" 
+/
+&parameter
+  name = ASN 
+  out_name = ALB_SNOW
+  long_name = "snow albedo"
+  unit = "(0 - 1)"
+/
+&parameter
+  name = SD 
+  out_name = W_SNOW
+  standard_name = lwe_thickness_of_surface_snow_amount
+  long_name = "snow depth"
+  unit = "m of water equivalent"
+/
+&parameter
+  name = SKT 
+  out_name = SKT 
+  long_name = "skin temperature"
+  unit = "K"
+/
+&parameter
+  name = SSTK
+  out_name = SST
+  long_name = "sea surface temperature"
+  unit = "K"
+/
+&parameter
+  name = SRC 
+  out_name = W_I 
+  long_name = "skin reservoir content"
+  unit = "m of water equivalent"
+/
+&parameter
+  name = LSM 
+  out_name = LSM 
+  standard_name = land_binary_mask
+  long_name = "land-sea mask"
+  unit = "(0 - 1)"
+/
+&parameter
+  name = CI 
+  out_name = CI
+  standard_name = sea_ice_area_fraction
+  long_name = "sea ice cover"
+  unit = "(0 - 1)" 
+/
+&parameter
+  name = STL1 
+  out_name = STL1 
+  standard_name = surface_temperature
+  long_name = "soil temperature level 1"
+  unit = "K"
+/
+&parameter
+  name = STL2 
+  out_name = STL2 
+  long_name = "soil temperature level 2"
+  unit = "K"
+/
+&parameter
+  name = STL3
+  out_name = STL3 
+  long_name = "soil temperature level 3"
+  unit = "K"
+/
+&parameter
+  name = STL4
+  out_name = STL4 
+  long_name = "soil temperature level 4"
+  unit = "K"
+/
+&parameter
+  name = SWVL1
+  out_name = SMIL1 
+  long_name = "soil moisture index layer 1"
+  unit = "m3 m-3"
+/
+&parameter
+  name = SWVL2
+  out_name = SMIL2 
+  long_name = "soil moisture index layer 2"
+  unit = "m3 m-3"
+/
+&parameter
+  name = SWVL3
+  out_name = SMIL3 
+  long_name = "soil moisture index layer 3"
+  unit = "m3 m-3"
+/
+&parameter
+  name = SWVL4
+  out_name = SMIL4
+  long_name = "soil moisture index layer 4"
+  unit = "m3 m-3"
+/
