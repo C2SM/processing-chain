@@ -29,7 +29,8 @@ output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
 filename_format: <output_filename>_DOM<physdom>_<datetime2>
 lateral_boundary_grid_order: lateral_boundary
 art_input_folder: /store/c2sm/amrs/kdnmez/icon-nwp-new/externals/art
-dwdfg_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/icbc_input/remapped_ic/ICON-ART-UNSTRUCTURED_DOM01_20220701T000000Z.nc
+art_scratch_input_folder: /scratch/snx3000/kdnmez/UrbaNature/icon_art_run/input/art
+dwdfg_filename: ICON-ART-UNSTRUCTURED_DOM01_20220701T000000Z.nc
 
 icontools_runjobs:
     - copy_icbc.cfg
@@ -40,7 +41,7 @@ input_files:
     map_file_latbc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/map_file_ZH.latbc
     lateral_boundary_grid: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/lateral_boundary.grid.nc
     lrtm_filename: /store/c2sm/amrs/kdnmez/icon-nwp-new/data/rrtmg_lw.nc
-    map_file_ana: ./input/icon-art-oem/mapping/map_file.ana
+    map_file_ana: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/map_file.ana
     chemtracer_xml_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/xml/updated_Zurich_summer23.xml
     oem_gridded_emissions_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/oem_gridded_emissions.nc
     oem_vertical_profiles_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/vertical_profiles.nc
@@ -48,7 +49,8 @@ input_files:
     oem_dayofweek_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/dayofweek.nc
     oem_monthofyear_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/monthofyear.nc
     extpar_filename: /store/c2sm/amrs/kdnmez/extpar-run/UrbaNature/icon_zürich_basel_CLCplus/extpar_final_output_CLCplus_UrbaNature.nc
-    
+    vegetation_indices: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/vprm/VPRM_indices_ICON_example.nc
+
 
 
 
