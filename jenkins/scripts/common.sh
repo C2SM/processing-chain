@@ -24,7 +24,11 @@ function clone_and_build_package {
 
   pushd ${MODEL}
 
-  . ../spack-c2sm/setup-env.sh
+  if [[ "${MODEL}" == cosmo_ghg ]]; then
+    . ../spack-c2sm-cosmo/setup-env.sh
+  else
+    . ../spack-c2sm/setup-env.sh
+  fi
   spack ${BUILD} -u build ${PACKAGE}@${VERSION}%${COMPILER} ${FLAGS}  || error "Failed to build ${PACKAGE}"
 
   popd

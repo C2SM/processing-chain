@@ -2,13 +2,12 @@
 
 set -e -x
 
-function error {
-    echo "*** Error: $@" >&2
-    exit 1
-}
+source jenkins/scripts/common.sh
 
 # Check if script is called correctly
 [[ $(git rev-parse --show-toplevel 2>/dev/null) = $(pwd) ]] || error "$0 not launched from toplevel of repository"
+
+SPACK_TAG_COSMO=v0.18.1.12
 
 if [[ $(hostname) == eu-* ]]; then
     source /cluster/apps/local/env2lmod.sh
@@ -32,6 +31,10 @@ rm -fr ext/spack-c2sm
 
 pushd ext
 
+# Clone Spack for ICON
 git clone --depth 1 --recurse-submodules --shallow-submodules -b ${SPACK_TAG} ${GIT_REMOTE}
+
+# Clone Spack for COSMO-GHG
+git clone --depth 1 --recurse-submodules --shallow-submodules -b ${SPACK_TAG_COSMO} ${GIT_REMOTE} spack-c2sm-cosmo
 
 popd
