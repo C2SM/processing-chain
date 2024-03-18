@@ -22,11 +22,18 @@ pushd ${MODEL}
 
 if [[ $(hostname) == eu-* ]]; then
     ./jenkins/scripts/jenkins_euler.sh -b -fc gcc --configure euler.cpu.gcc.O2
-else
-    SPACK_TAG=`cat config/cscs/SPACK_TAG`
+elif [[ $(hostname) == daint* ]]; then 
+    SPACK_TAG=`cat config/cscs/SPACK_TAG_DAINT`
     . ../spack-c2sm/setup-env.sh
     spack env activate -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc
     spack install -u build
+elif [[ $(hostname) == balfrin* ]]; then 
+    SPACK_TAG=`cat config/cscs/SPACK_TAG_BALFRIN`
+    . ../spack-c2sm/setup-env.sh
+    spack env activate -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc
+    spack install -u build
+else
+    error "Unknown hostname: $(hostname)"
 fi
 
 popd
