@@ -14,10 +14,16 @@ if [[ $(hostname) == eu-* ]]; then
     source /cluster/apps/local/env2lmod.sh
     module load git/2.31.1
     SPACK_TAG=main
-else
+elif [[ $(hostname) == daint* ]]; then 
     git clone --depth 1 git@github.com:C2SM/icon.git icon-tag
-    SPACK_TAG=`cat icon-tag/config/cscs/SPACK_TAG`
+    SPACK_TAG=`cat icon-tag/config/cscs/SPACK_TAG_DAINT`
     rm -fr icon-tag
+elif [[ $(hostname) == balfrin* ]]; then 
+    git clone --depth 1 git@github.com:C2SM/icon.git icon-tag
+    SPACK_TAG=`cat icon-tag/config/cscs/SPACK_TAG_BALFRIN`
+    rm -fr icon-tag
+else
+    error "Unknown hostname: $(hostname)"
 fi
 
 GIT_REMOTE=https://github.com/C2SM/spack-c2sm.git
