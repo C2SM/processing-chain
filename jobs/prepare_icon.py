@@ -34,6 +34,12 @@ def set_cfg_variables(cfg):
         cfg.restart_filename = 'restart_atm_DOM01.nc'
         cfg.restart_file = cfg.icon_restart_in / cfg.restart_filename
         cfg.restart_file_scratch = cfg.icon_work / cfg.restart_filename
+        cfg.ini_LBC_filename = cfg.startdate.strftime(cfg.lbcdata_prefix +
+                                                      cfg.lbcdata_nameformat + 
+                                                      cfg.lbcdata_filename_suffix
+                                                      )
+        cfg.ini_LBC_file = cfg.icon_input_icbc_prev / cfg.ini_LBC_filename
+        cfg.ini_LBC_file_scratch = cfg.icon_input_icbc / cfg.ini_LBC_filename
 
     # Nudge type (global or nothing)
     cfg.nudge_type = 2 if hasattr(cfg,
