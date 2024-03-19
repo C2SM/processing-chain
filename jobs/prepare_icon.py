@@ -95,7 +95,7 @@ def main(cfg):
     with (script := cfg.icon_work / 'copy_input.job').open('w') as f:
         f.write('\n'.join(script_lines))
 
-    # extras for kuta's version
+    # extras for kutay's version
     os.system(fr"cp -rf {cfg.latbc_copy_path} {cfg.icon_input_icbc}")
     os.system(fr"cp -rf {cfg.inicond_filename} {cfg.icon_input_icbc}")
 
