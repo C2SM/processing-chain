@@ -245,3 +245,47 @@ icon-art-terraurb-test:
         - copy_icbc
       previous:
         - icon
+
+icon-art-vprm-noterraurb-clcplus:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+
+icon-art-vprm-constant-terraurb-clcplus:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+
+icon-art-vprm-spatially-varying-terraurb-clcplus:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon

@@ -6,8 +6,8 @@ run_on: cpu
 compute_queue: normal
 ntasks_per_node: 36
 startdate: 2022-07-01T00:00:00Z
-enddate: 2022-07-02T01:00:00Z
-restart_step: PT24H
+enddate: 2022-07-07T23:00:00Z
+restart_step: PT72H
 lterra_urb: .TRUE.
 lurbalb: .TRUE.
 lurbahf: .TRUE.
@@ -21,18 +21,18 @@ walltime:
 eccodes_dir: /store/c2sm/amrs/kdnmez/eccodes_definitions
 iconremap_bin: iconremap
 iconsub_bin: iconsub
-latbc_filename: ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
-latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/icbc_input/new_EU_runs/remapped_bc/ICON-ART-UNSTRUCTURED_DOM01_2022070*
-inidata_prefix: ICON-ART-UNSTRUCTURED_DOM01_
+latbc_filename: reduced_ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
+latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/icbc_input/new_EU_runs/remapped_bc/reduced_ICON-ART-UNSTRUCTURED_DOM01_2022070*
+inidata_prefix: reduced_ICON-ART-UNSTRUCTURED_DOM01_
 inidata_nameformat: '<y><m><d>T<h>0000Z'
 inidata_filename_suffix: .nc
-inicond_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/icbc_input/remapped_ic/ICON-ART-UNSTRUCTURED_DOM01_20220701T000000Z.nc
+inicond_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/icbc_input/new_EU_runs/remapped_ic/reduced_ICON-ART-UNSTRUCTURED_DOM01_20220701T000000Z.nc
 output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
 filename_format: <output_filename>_DOM<physdom>_<datetime2>
 lateral_boundary_grid_order: lateral_boundary
 art_input_folder: /store/c2sm/amrs/kdnmez/icon-nwp-new/externals/art
 art_scratch_input_folder: /scratch/snx3000/kdnmez/UrbaNature/icon_art_run/input/art
-dwdfg_filename: ICON-ART-UNSTRUCTURED_DOM01_20220701T000000Z.nc
+dwdfg_filename: reduced_ICON-ART-UNSTRUCTURED_DOM01_20220701T000000Z.nc
 
 icontools_runjobs:
     - copy_icbc.cfg
