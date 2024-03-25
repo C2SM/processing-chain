@@ -7,7 +7,7 @@ compute_queue: normal
 ntasks_per_node: 36
 startdate: 2022-07-01T00:00:00Z
 enddate: 2022-07-07T23:00:00Z
-restart_step: PT72H
+restart_step: PT166H
 lterra_urb: .FALSE.
 lurbalb: .FALSE.
 lurbahf: .FALSE.
@@ -15,7 +15,7 @@ lurbahf: .FALSE.
 walltime:
     prepare_icon: '00:20:00'
     oem: '00:10:00'
-    icon: '01:10:00'
+    icon: '02:00:00'
 
 
 eccodes_dir: /store/c2sm/amrs/kdnmez/eccodes_definitions
@@ -60,7 +60,7 @@ icon:
     binary_file: /store/c2sm/amrs/kdnmez/icon-nwp-new/cpu/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
-    walltime: '01:30:00'
+    walltime: '02:00:00'
     np_tot: 20
     np_io: 1
     np_restart: 0
