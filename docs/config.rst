@@ -1,7 +1,7 @@
 .. _config-section:
 
-The Processing Chain uses cases to describe a simulation. A case is a
-subdirectory in ``cases/``, containing a ``config.yaml`` and several
+The Processing Chain uses cases to describe a simulation. A case is 
+a subdirectory in ``cases/``, containing a ``config.yaml`` and several
 `namelist` (e.g., ``int2lm_INPUT.cfg``) and `runscripts` (e.g.,
 ``icon_runjob.cfg``) :ref:`templates<namelists-section>`,
 which define the simulation.
