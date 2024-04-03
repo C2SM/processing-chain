@@ -1,0 +1,67 @@
+# Configuration file for the 'icon-art-terraurb-test' case with ICON
+
+workflow: icon-art-vprm-constant-terraurb-corinecustom
+constraint: mc
+run_on: cpu
+compute_queue: normal
+ntasks_per_node: 36
+startdate: 2022-07-01T00:00:00Z
+enddate: 2022-07-07T23:00:00Z
+restart_step: PT166H
+lterra_urb: .TRUE.
+lurbalb: .TRUE.
+lurbahf: .TRUE.
+
+walltime:
+    prepare_icon: '00:20:00'
+    oem: '00:10:00'
+    icon: '02:00:00'
+
+
+eccodes_dir: /store/c2sm/amrs/kdnmez/eccodes_definitions
+iconremap_bin: iconremap
+iconsub_bin: iconsub
+latbc_filename: reduced_ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
+latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/icbc_input/new_EU_runs/remapped_bc/reduced_ICON-ART-UNSTRUCTURED_DOM01_2022070*
+inidata_prefix: reduced_ICON-ART-UNSTRUCTURED_DOM01_
+inidata_nameformat: '<y><m><d>T<h>0000Z'
+inidata_filename_suffix: .nc
+inicond_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/icbc_input/new_EU_runs/remapped_ic/reduced_ICON-ART-UNSTRUCTURED_DOM01_20220701T000000Z.nc
+output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
+filename_format: <output_filename>_DOM<physdom>_<datetime2>
+lateral_boundary_grid_order: lateral_boundary
+art_input_folder: /store/c2sm/amrs/kdnmez/icon-nwp-new/externals/art
+art_scratch_input_folder: /scratch/snx3000/kdnmez/UrbaNature/icon_art_run/input/art
+dwdfg_filename: reduced_ICON-ART-UNSTRUCTURED_DOM01_20220701T000000Z.nc
+
+icontools_runjobs:
+    - copy_icbc.cfg
+
+input_files:
+    radiation_grid_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01.parent.nc
+    dynamics_grid_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01.nc
+    map_file_latbc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/map_file_ZH.latbc
+    lateral_boundary_grid: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/lateral_boundary.grid.nc
+    lrtm_filename: /store/c2sm/amrs/kdnmez/icon-nwp-new/data/rrtmg_lw.nc
+    map_file_ana: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/map_file.ana
+    chemtracer_xml_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/xml/updated_Zurich_summer23.xml
+    oem_gridded_emissions_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/oem_gridded_emissions.nc
+    oem_vertical_profiles_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/vertical_profiles.nc
+    oem_hourofday_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/hourofday.nc
+    oem_dayofweek_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/dayofweek.nc
+    oem_monthofyear_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/monthofyear.nc
+    extpar_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/extpar_final_output_UrbaNature_modified_corine_TerraUrb_Zurich_Basel_R19B9_URBANPARAM.nc
+    vegetation_indices: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/vprm/VPRM_indices_ICON_example.nc
+
+
+
+
+icon:
+    binary_file: /store/c2sm/amrs/kdnmez/icon-nwp-new/cpu/bin/icon
+    runjob_filename: icon_runjob.cfg
+    compute_queue: normal
+    walltime: '02:00:00'
+    np_tot: 20
+    np_io: 1
+    np_restart: 0
+    np_prefetch: 1

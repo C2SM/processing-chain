@@ -289,3 +289,75 @@ icon-art-vprm-spatially-varying-terraurb-clcplus:
         - copy_icbc
       previous:
         - icon
+
+icon-art-vprm-noterraurb-corinecustom:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+
+icon-art-vprm-constant-terraurb-corinecustom:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+
+icon-art-vprm-spatially-varying-terraurb-corinecustom:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-art-vprm-constant-terraurb-clcplus_oldEU:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-art-vprm-spatially-varying-terraurb-clcplus_oldEU:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
