@@ -23,3 +23,4 @@ from . import prepare_icon
 from . import reduce_output
 from . import verify_chain
 from . import prepare_art_full_chem
+from . import prepare_art_full_chem_LAM

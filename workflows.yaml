@@ -253,3 +253,22 @@ icon-art-full-chem:
         - prepare_art_full_chem
       previous:
         - icon
+
+icon-art-full-chem-LAM:
+  features: 
+    - restart
+  jobs:
+    - prepare_icon
+    - prepare_art_full_chem_LAM
+    - icon
+  dependencies:
+    prepare_art_full_chem_LAM:
+      current:
+        - prepare_icon
+    icon:
+      current:
+        - prepare_icon
+        - prepare_art_full_chem_LAM
+      previous:
+        - icon
+
