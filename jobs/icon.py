@@ -44,15 +44,12 @@ def main(cfg):
     # Get name of initial file
     if hasattr(cfg, 'inicond_filename'):
         inidata_filename = cfg.icon_input_icbc / cfg.inicond_filename
-    elif (hasattr(cfg, 'inidata_prefix') 
-          and hasattr(cfg, 'inidata_nameformat') 
-          and hasattr(cfg, 'inidata_filename_suffix')
-          ):
+    elif (hasattr(cfg, 'inidata_prefix') and hasattr(cfg, 'inidata_nameformat')
+          and hasattr(cfg, 'inidata_filename_suffix')):
         inidata_filename = cfg.icon_input_icbc / str(
-            cfg.startdate.strftime(cfg.inidata_prefix + 
-                                       cfg.inidata_nameformat + 
-                                       cfg.inidata_filename_suffix)
-        )
+            cfg.startdate.strftime(cfg.inidata_prefix +
+                                   cfg.inidata_nameformat +
+                                   cfg.inidata_filename_suffix))
     else:
         print('Missing inidate_filename!')
         inidata_filename = cfg.icon_input_icbc / str(
