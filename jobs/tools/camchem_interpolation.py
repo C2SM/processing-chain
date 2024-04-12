@@ -323,39 +323,48 @@ def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date):
 
 ##################################
 
+def log_intpl_timeslice(pres_m, pres, var_data):
+    pres_m_flipped = np.flip(pres_m,axis=0)
+    pres_flipped = np.flip(pres,axis=0)
+    var_data_flipped = np.flip(var_data,axis=0)
 
-def log_interpolate_1d(dt, dlat, dlon, pres_m, pres, var_data):
+    # -- Find meteo levels lying above given chem level 
+    # -- (that is, meteo levels with lower pressure than given chem level)
+    above_target = pres_flipped[:,np.newaxis] <= pres_m_flipped
 
-    p_interp = pres_m[dt, :, dlat, dlon]
-    p_in = pres[dt, :, dlat, dlon]
-    y_in = var_data[dt, :, dlat, dlon]
+    # -- Calculate number of levels below given chem level
+    # -- (that is, number of meteo levels with higher pressire than given chem level)
+    lev_count = (pres_flipped[:,np.newaxis]>=pres_m_flipped).sum(axis=0)
 
-    index = np.searchsorted(p_in,
-                            p_interp,
-                            side='left',
-                            sorter=np.argsort(p_in))
-    y_interp = np.zeros_like(p_interp, dtype=float)
-    alpha = np.zeros_like(p_interp, dtype=float)
+    # -- Find indices of first meteo levels lying above given chem level
+    # -- The index is set to -1 if no meteo levels are found
+    first_above_target = np.where(lev_count == len(pres_flipped), -1, np.argmax(above_target, axis=0))
 
-    valid_indices = (0 < index) & (index <= len(p_in) - 1)
-    alpha[valid_indices] = np.log(p_interp[valid_indices] / p_in[index[valid_indices] - 1]) / \
-                           np.log(p_in[index[valid_indices]] / p_in[index[valid_indices] - 1])
+    # -- Select indices of 2 closest neighbouring levels for given chem level
+    vertical_indices = np.stack([first_above_target, first_above_target-1], axis=0)
 
-    y_interp[valid_indices] = alpha[valid_indices] * y_in[index[valid_indices]] + \
-                              (1 - alpha[valid_indices]) * y_in[index[valid_indices] - 1]
+    # --  Set both indices to highest/lower chem level if given chem level is above/below all meteo levels
+    vertical_indices[:,first_above_target==0] = 0
+    vertical_indices[:,first_above_target==-1] = len(pres_flipped)-1 
 
-    y_interp[index == 0] = y_in[0]
-    y_interp[index == len(p_in)] = y_in[-1]
+    # -- Select pressure values of 2 closest neighbouring levels
+    pk_below = np.take_along_axis((pres_flipped), vertical_indices[1], axis=0) # this is the pressure of the lower level (higher pressure)
+    pk_up = np.take_along_axis((pres_flipped), vertical_indices[0], axis=0) # this is the pressure of the upper level (lower pressure) 
 
-    return dt, dlat, dlon, y_interp
+    # -- Compute interpolation weights
+    alpha = (np.log(pres_m_flipped/pk_up))/(np.log(pk_below/pk_up)) 
+    weights = np.stack([alpha, 1-alpha], axis=0) 
 
+    # -- Weights for chem levels lying above/below all meteo levels
+    weights[:,first_above_target==0] = 0.5 
+    weights[:,first_above_target==-1] = 0.5
 
-def interpolate_at_point(dt, dlat, dlon, pres_m, pres, var_data):
-    var_col = log_interpolate_1d(pres_m[dt, :, dlat, dlon],
-                                 pres[dt, :, dlat, dlon], var_data[dt, :, dlat,
-                                                                   dlon])
-    return dt, dlat, dlon, var_col
+    # Interpolate
+    var_data_intpl_flipped = np.take_along_axis(var_data_flipped, vertical_indices[1], axis=0) * weights[0] + \
+                np.take_along_axis(var_data_flipped, vertical_indices[0], axis=0) * weights[1]
 
+    var_data_intpl = np.flip(var_data_intpl_flipped,axis=0)   
+    return var_data_intpl
 
 def hybrid_pressure_interpolation(in_ds, out_ds, var_name, time_indices):
     """Perform vertical interpolation of 'var_name'. 
@@ -363,29 +372,19 @@ def hybrid_pressure_interpolation(in_ds, out_ds, var_name, time_indices):
     """
     # Pressure on vertical levels of meteo data
     pres_m = out_ds['pres_m'][:]
-    # Pressure on vertical levels of chemistry data
+    # Pressure on vertical levels of chemistry data 
     pres = out_ds['pres'][:]
-    var_data = in_ds[var_name][np.s_[time_indices, :]]
+    var_data = in_ds[var_name][np.s_[time_indices,:]]
 
-    var_arr = np.zeros(
-        (out_ds.dimensions['time'].size, out_ds.dimensions['lev_m'].size,
-         out_ds.dimensions['lat'].size, out_ds.dimensions['lon'].size))
+    var_arr = np.zeros((out_ds.dimensions['time'].size, 
+                        out_ds.dimensions['lev_m'].size, 
+                        out_ds.dimensions['lat'].size, 
+                        out_ds.dimensions['lon'].size))
 
-    args_list = [(dt, dlat, dlon, pres_m, pres, var_data)
-                 for dt in range(len(out_ds['time'][:]))
-                 for dlat in range(len(out_ds['lat'][:]))
-                 for dlon in range(len(out_ds['lon'][:]))]
+    for dt in range(len(out_ds['time'][:])):
+        var_arr[dt,:,:,:] = log_intpl_timeslice(pres_m[dt,:,:,:], pres[dt,:,:,:], var_data[dt,:,:,:])
 
-    num_proc = multiprocessing.cpu_count()
-
-    with multiprocessing.Pool(num_proc) as pool:
-        results = pool.starmap(log_interpolate_1d, args_list)
-
-    for result in results:
-        dt, dlat, dlon, var_col = result
-        var_arr[dt, :, dlat, dlon] = var_col
     return var_arr
-
 
 def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
                end_chunk, ref_date):
@@ -434,15 +433,11 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
                 # Date between two time steps
                 delta_t = time_difference / 2.
                 timestamp_interp = timestamp_now + timedelta(hours=delta_t)
-                print(time_index)
-                print(timestamp_interp)
 
                 if start_chunk <= timestamp_interp <= end_chunk:
                     if time_index not in time_index_lst:
                         time_index_lst.append(time_index)
                     time_index_lst.append(time_index + 1)
-
-        print(time_index_lst)
 
         with Dataset(out_filename, 'w') as out_ds:
             # -- Set global attributes
@@ -586,7 +581,6 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
 
             # -- Interpolate fields
             for var_name in spec:
-                print('Vertical interpolation for ' + var_name)
                 arr = hybrid_pressure_interpolation(c_ds, out_ds, var_name,
                                                     time_index_lst)
                 (VariableCreator(var_args={
