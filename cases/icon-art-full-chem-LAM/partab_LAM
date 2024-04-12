@@ -1,0 +1,210 @@
+&parameter
+name	= ua
+out_name	= u
+standard_name = eastward_wind
+long_name = "Zonal wind"
+units = "m s-1"
+/
+&parameter
+name	= va
+out_name	= v
+standard_name = northward_wind
+long_name = "Meridional wind"
+units = "m s-1"
+/
+&parameter
+name	= wa
+out_name	= w
+standard_name = upward_air_velocity
+long_name = "Vertical velocity"
+units = "m s-1"
+/
+&parameter
+name	= pres
+out_name	= P
+long_name = "Pressure"
+units = "Pa"
+/
+&parameter
+name	= temp
+out_name	= T
+long_name = "Temperature"
+units = "K"
+/
+&parameter
+name	= hus
+out_name	= qv
+long_name = "Specific humidity"
+units = "kg kg-1"
+/
+&parameter
+name	= clw
+out_name	= qc
+long_name = "specific cloud water content" 
+units = "kg kg-1"
+/
+&parameter
+name	= cli
+out_name	= qi
+long_name = "specific cloud ice content"
+units = "kg kg-1"
+/
+&parameter
+name	= qr
+out_name	= qr
+long_name = "specific rain content"
+units = "kg kg-1"
+/
+&parameter
+name	= qs
+out_name	= qs
+long_name = "specific snow content" 
+units = "kg kg-1"
+/
+&parameter
+name	= z_ifc
+out_name	= hhl
+standard_name = geometric_height_at_half_level_center
+long_name = "geometric height at half level center" 
+units = "m"
+/
+&parameter
+name	= tke
+out_name	= tke
+standard_name = specific_kinetic_energy_of_air
+long_name = "turbulent kinetic energy" 
+units = "m2 s-2"
+/
+&parameter
+name	= ts
+out_name	= t_g
+long_name = "weighted surface temperature" 
+units = "K"
+/
+&parameter
+name	= t_ice
+out_name	= t_ice
+long_name = "sea/lake-ice temperature" 
+units = "K"
+/
+&parameter
+name	= h_ice
+out_name	= h_ice 
+long_name = "sea/lake-ice depth" 
+units = "m"
+/
+&parameter
+name	= t_mnw_lk
+out_name	= t_mnw_lk
+long_name = "mean temperature of the water column" 
+units = "K"
+/
+&parameter
+name	= t_wml_lk
+out_name	= t_wml_lk
+long_name = "mixed-layer temperature" 
+units = "K"
+/
+&parameter
+name	= h_ml_lk
+out_name	= h_ml_lk
+long_name = "mixed-layer thickness" 
+units = "m"
+/
+&parameter
+name	= t_bot_lk
+out_name	= t_bot_lk
+long_name = "temperature at the water-bottom sediment interface" 
+units = "K"
+/
+&parameter
+name	= c_t_lk
+out_name	= c_t_lk
+long_name = "shape factor (temp. profile in lake thermocline)" 
+units = "-"
+/
+&parameter
+name	= qv_s
+out_name	= qv_s
+long_name = "specific humidity at the surface" 
+units = "kg kg-1"
+/
+&parameter
+name	= w_i
+out_name	= w_i
+long_name = "weighted water content of interception water" 
+units = "kg m-2"
+/
+&parameter
+name	= t_so
+out_name	= t_so
+long_name = "weighted soil temperature (main level)" 
+units = "K"
+/
+&parameter
+name	= gz0
+out_name	= z0
+long_name = "roughness length" 
+units = "m"
+/
+&parameter
+name	= alb_si
+out_name	= ALB_SEAICE
+long_name = "sea ice albedo (diffuse)" 
+units = "%"
+/
+&parameter
+name	= smi
+out_name	= smi
+long_name = "soil moisture index" 
+units = "-"
+/
+&parameter
+name	= w_so_ice
+out_name	= w_so_ice
+long_name = "ice content" 
+units = "kg m-2"
+/
+&parameter
+name	= t_snow
+out_name	= t_snow
+long_name = "weighted temperature of the snow-surface" 
+units = "K"
+/
+&parameter
+name	= w_snow
+out_name	= w_snow
+long_name = "weighted water equivalent of snow" 
+units = "kg m-2"
+/
+&parameter
+name	= rho_snow
+out_name	= rho_snow
+long_name = "weighted snow density" 
+units = "kg m-3"
+/
+&parameter
+name	= h_snow
+out_name	= h_snow
+long_name = "weighted snow depth" 
+units = "m"
+/
+&parameter
+name	= freshsnow
+out_name	= FRESHSNW
+long_name = "weighted indicator for age of snow in top of snow layer" 
+units = "1"
+/
+&parameter
+name	= fr_seaice
+out_name	= FR_ICE
+long_name = "fraction of sea ice" 
+units = "1"
+/
+&parameter
+name	= fr_land
+out_name	= fr_land
+standard_name = land_area_fraction
+long_name = "Fraction land" 
+units = "1"
+/

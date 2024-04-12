@@ -1,0 +1,78 @@
+# Configuration file for the 'icon-art-full-chem-test' case with ICON
+
+workflow: icon-art-full-chem-LAM
+constraint: mc
+run_on: cpu
+compute_queue: normal
+compute_account: s1298
+ntasks_per_node: 36
+restart_step: PT12H
+startdate: 2019-07-13T00:00:00Z
+enddate: 2019-07-26T00:00:00Z
+
+eccodes_dir: /users/icontest/pool/data/ICON/mch/eccodes_definitions
+latbc_filename: LBC_<y><m><d><h>.nc
+inidata_prefix: IC_
+inidata_nameformat: '%Y%m%d%H'
+inidata_filename_suffix: .nc
+lbcdata_prefix: LBC_
+lbcdata_nameformat: '%Y%m%d%H'
+lbcdata_filename_suffix: .nc
+output_filename: icon-full-chem-CH
+filename_format: <output_filename>_<datetime2>
+lateral_boundary_grid_order: lateral_boundary
+art_input_folder: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/art
+
+walltime:
+    prepare_icon: '00:10:00'
+    prepare_art_full_chem_LAM: '00:15:00'
+    icon: '01:00:00'
+
+LAM:
+    prefix: icon-art-full-chem_EU_
+    suffix: .nc
+    icon_output_nameformat: '%Y%m%dT%H%M%SZ'
+    inc: 2
+    icon_output_dir: '/scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/ICON_output'
+
+chem:
+    ini_filename: ART_ICE_iconR3B08-grid_0099.nc
+
+aero: 
+    ini_filename: ART_IAE_iconR3B08-grid_0099.nc
+
+
+input_files:
+    radiation_grid_filename: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem/grid/icon_R03B07_DOM01.nc
+    dynamics_grid_filename: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem/grid/icon_R03B08_DOM02.nc
+    map_file_latbc: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem/grid/map_file.latbc
+    lateral_boundary_grid: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem/grid/lateral_boundary_DOM02.grid.nc
+    extpar_filename: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem/grid/extpar_DOM02.nc
+    cldopt_filename: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem/rad/rrtm_cldopt.nc
+    lrtm_filename: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem/rad/rrtmg_lw.nc
+    map_file_ana: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem/mapping/map_file.ana
+    meccatracer_xml_filename: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/xml/mecca_tracers.xml
+    oem_gridded_emissions_nc: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/oem/oem_gridded_emissions_DOM02.nc
+    oem_vertical_profiles_nc: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/oem/vertical_profiles_DOM02.nc
+    oem_hourofday_nc: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/oem/hourofday_DOM02.nc
+    oem_dayofweek_nc: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/oem/dayofweek_DOM02.nc
+    oem_monthofyear_nc: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/oem/monthofyear_DOM02.nc
+    aerodyn_tracers: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/aerodyn/tracers_aerosol.xml
+    aerodyn_modes: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/aerodyn/modes.xml
+    aerodyn_coag: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/aerodyn/coagulate.xml
+    aerodyn_emiss: /scratch/snx3000/ckeller/proc_chain_data/input/icon-art-full-chem-LAM/aerodyn/emiss.xml
+
+
+icon:
+    binary_file: /scratch/snx3000/ckeller/proc_chain_data/ext/icon-art/bin/icon
+    runjob_filename: icon_runjob.cfg
+    LAM_icjob: icon_LAM_ic.sh
+    LAM_lbcjob: icon_LAM_lbc.sh
+    compute_queue: normal
+    walltime: '01:00:00'
+    np_tot: 10
+    np_io: 3
+    np_restart: 1
+    np_prefetch: 1
+    timestep: 60.
+
