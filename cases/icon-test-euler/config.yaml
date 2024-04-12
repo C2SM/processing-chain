@@ -1,9 +1,9 @@
 # Configuration file for the 'icon-async-test' case with ICON
 
 workflow: icon
-constraint: gpu
+constraint: EPYC_7H12
 run_on: cpu
-compute_queue: normal
+compute_queue: normal.4h
 ntasks_per_node: 12
 restart_step: PT6H
 startdate: 2018-01-01T00:00:00Z
@@ -48,8 +48,7 @@ input_files:
 icon:
     binary_file: ./ext/icon/bin/icon
     runjob_filename: icon_runjob.cfg
-    compute_queue: normal
-    np_tot: 8
+    np_tot: 96
     np_io: 1
     np_restart: 1
     np_prefetch: 1

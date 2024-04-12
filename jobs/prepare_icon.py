@@ -83,15 +83,27 @@ def main(cfg):
 
     logging.info('Copy ICON input data (IC/BC) to working directory')
     # Copy input files to scratch
-    script_lines = [
-        '#!/usr/bin/env bash',
-        f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
-        f'#SBATCH --account={cfg.compute_account}', '#SBATCH --time=00:10:00',
-        f'#SBATCH --partition={cfg.compute_queue}',
-        f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
-        f'#SBATCH --output={cfg.logfile}', '#SBATCH --open-mode=append',
-        f'#SBATCH --chdir={cfg.icon_work}', ''
-    ]
+    if cfg.machine == 'daint':
+        script_lines = [
+            '#!/usr/bin/env bash',
+            f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
+            f'#SBATCH --account={cfg.compute_account}',
+            '#SBATCH --time=00:10:00',
+            f'#SBATCH --partition={cfg.compute_queue}',
+            f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
+            f'#SBATCH --output={cfg.logfile}', '#SBATCH --open-mode=append',
+            f'#SBATCH --chdir={cfg.icon_work}', ''
+        ]
+    elif cfg.machine == 'euler':
+        script_lines = [
+            '#!/usr/bin/env bash',
+            f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
+            '#SBATCH --time=00:10:00',
+            f'#SBATCH --partition={cfg.compute_queue}',
+            f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --ntasks=1',
+            f'#SBATCH --output={cfg.logfile}', '#SBATCH --open-mode=append',
+            f'#SBATCH --chdir={cfg.icon_work}', ''
+        ]
     for target, destination in zip(cfg.input_files.values(),
                                    cfg.input_files_scratch.values()):
         script_lines.append(f'rsync -av {target} {destination}')

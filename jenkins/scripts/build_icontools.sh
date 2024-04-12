@@ -7,12 +7,12 @@ set -e -x
 
 source jenkins/scripts/common.sh
 
-BRANCH=c2sm-features
-GIT_REMOTE=git@github.com:C2SM-RCM/int2lm.git
-MODEL=int2lm
-PACKAGE=int2lm
-VERSION=c2sm-features
-COMPILER=nvhpc
+BRANCH=master
+GIT_REMOTE=git@github.com:C2SM/icontools.git
+MODEL=icontools
+PACKAGE=icontools
+VERSION=c2sm-master
+COMPILER=gcc
 BUILD=dev-build
 
 clone_and_build_package "${BRANCH}" "${GIT_REMOTE}" "${MODEL}" "${PACKAGE}" "${VERSION}" "${COMPILER}" "${BUILD}" 

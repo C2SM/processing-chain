@@ -18,18 +18,27 @@ done
 
 set -e -x
 
+# Check if we are on Euler
+if [[ $(hostname) == eu-* ]]; then
+    host=euler
+elif [[ $(hostname) == daint* ]]; then
+    host=daint
+fi
+
+
 # Activate conda environment
 eval "$(conda shell.bash hook)"
 conda activate proc-chain
 
 # Setup spack
 if [[ -d ext/spack-c2sm ]]; then
-  echo spack folder already exists - activating spack...
-  . ext/spack-c2sm/setup-env.sh
+  echo spack folder already exists - skipping build...
 else
   echo building spack...
   ./jenkins/scripts/setup-spack.sh
 fi
+echo activating spack...
+. ext/spack-c2sm/setup-env.sh
 
 # Preparation
 size=$(du -sb input | awk '{print $1}')
@@ -40,8 +49,18 @@ else
   ./jenkins/scripts/get_data.sh
 fi
 
+# Build icontools
+if [[ -f ext/icontools/icontools/iconremap ]]; then
+  echo icontools already installed - skipping build...
+else
+  echo building icontools...
+  ./jenkins/scripts/build_icontools.sh
+fi
+
 # Build int2lm
-if [[ -f ext/int2lm/test/testsuite/int2lm ]]; then
+if [[ "$host" == euler ]]; then
+  echo skipping int2lm build on Euler...
+elif [[ -f ext/int2lm/TESTSUITE/int2lm ]]; then
   echo int2lm executable already exists - skipping build...
 else
   echo building int2lm...
@@ -49,7 +68,9 @@ else
 fi
 
 # Build COSMO-GHG
-if [[ -f ext/cosmo-ghg/cosmo/ACC/cosmo_gpu ]]; then
+if [[ "$host" == euler ]]; then
+  echo skipping cosmo-ghg build on Euler...
+elif [[ -f ext/cosmo-ghg/cosmo/ACC/cosmo_gpu ]]; then
   echo cosmo executable already exists - skipping build.
 else
   echo building cosmo...
@@ -73,7 +94,9 @@ else
 fi
 
 # Test COSMO-GHG
-if [[ -f work/cosmo-ghg-test/2015010106_2015010112/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+if [[ "$host" == euler ]]; then
+  echo skipping cosmo-ghg test on Euler...
+elif [[ -f work/cosmo-ghg-test/2015010106_2015010112/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
   echo cosmo-ghg test case already finished - skipping test.
 else
   echo running cosmo-ghg test case...
@@ -81,15 +104,19 @@ else
 fi
 
 # Test COSMO-GHG (spinup)
-if [[ -f work/cosmo-ghg-spinup-test/2015010109_2015010118/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
-  echo cosmo-ghg test case already finished - skipping test.
+if [[ "$host" == euler ]]; then
+  echo skipping cosmo-ghg-spinup test on Euler...
+elif [[ -f work/cosmo-ghg-spinup-test/2015010109_2015010118/checkpoints/finished/post_cosmo && "$force_execution" == false ]]; then
+  echo cosmo-ghg-spinup test case already finished - skipping test.
 else
   echo running cosmo-ghg-spinup test case...
   ./jenkins/scripts/test_cosmo-ghg-spinup.sh
 fi
 
 # Test ICON
-if [[ -f work/icon-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
+if [[ "$host" == euler ]]; then
+  echo skipping icon test on Euler...
+elif [[ -f work/icon-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon test case already finished - skipping test.
 else
   echo running icon test case...
@@ -97,7 +124,9 @@ else
 fi
 
 # Test ICON-ART
-if [[ -f work/icon-art-oem-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
+if [[ "$host" == euler ]]; then
+  echo skipping icon-art-oem test on Euler...
+elif [[ -f work/icon-art-oem-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon-art test case already finished - skipping test.
 else
   echo running icon-art-oem test case...
@@ -105,11 +134,23 @@ else
 fi
 
 # Test ICON-ART-GLOBAL
-if [[ -f work/icon-art-global-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
+if [[ "$host" == euler ]]; then
+  echo skipping icon-art-global test on Euler...
+elif [[ -f work/icon-art-global-test/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
   echo icon-art-global test case already finished - skipping test.
 else
   echo running icon-art-global test case...
   ./jenkins/scripts/test_icon-art-global.sh
+fi
+
+# Test ICON (Euler)
+if [[ "$host" == euler ]]; then
+    if [[ -f work/icon-test-euler/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
+      echo icon test case already finished - skipping test.
+    else
+      echo running icon test case...
+      ./jenkins/scripts/test_icon.sh
+    fi
 fi
 
 # Print success message
