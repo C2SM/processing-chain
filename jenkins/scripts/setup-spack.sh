@@ -32,7 +32,7 @@ rm -fr ext/spack-c2sm
 pushd ext
 
 # Clone Spack for ICON
-git clone --depth 1 --recurse-submodules --shallow-submodules -b ${SPACK_TAG} ${GIT_REMOTE}
+git clone --depth 1 --recurse-submodules --shallow-submodules -b ${SPACK_TAG} ${GIT_REMOTE} spack-c2sm
 
 # Clone Spack for COSMO-GHG
 git clone --depth 1 --recurse-submodules --shallow-submodules -b ${SPACK_TAG_COSMO} ${GIT_REMOTE} spack-c2sm-cosmo
