@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#SBATCH --account=s1152
+#SBATCH --job-name="extract_synth"
+#SBATCH --partition=normal
+#SBATCH --time=00:40:00
+#SBATCH --constraint=mc
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-core=1
+#SBATCH --ntasks-per-node=36
+#SBATCH --cpus-per-task=1
+
+python {extract_script}
