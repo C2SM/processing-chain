@@ -55,13 +55,12 @@ input_files:
 
 
 
-
 icon:
     binary_file: /store/c2sm/amrs/kdnmez/icon-nwp-new/cpu/icon_spatially_varying_executable/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
-    walltime: '02:00:00'
-    np_tot: 20
+    walltime: '00:10:00'
+    np_tot: 2
     np_io: 1
     np_restart: 0
     np_prefetch: 1
