@@ -50,7 +50,7 @@ input_files:
     oem_hourofday_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/hourofday.nc
     oem_dayofweek_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/dayofweek.nc
     oem_monthofyear_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/monthofyear.nc
-    extpar_filename: /store/c2sm/amrs/kdnmez/extpar-run/UrbaNature/icon_zürich_basel_CLCplus/spatially_varying_extpar_final_output_CLCplus_UrbaNature.nc
+    extpar_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/spatially_varying_extpar_final_output_CLCplus_UrbaNature.nc
     vegetation_indices: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/vprm/VPRM_indices_ICON_example.nc
 
 

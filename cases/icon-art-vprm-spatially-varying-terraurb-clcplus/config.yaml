@@ -50,7 +50,7 @@ input_files:
     oem_hourofday_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/hourofday.nc
     oem_dayofweek_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/dayofweek.nc
     oem_monthofyear_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/icon_Zurich_Basel_R19B9_wide_DOM01_zh_ch_tno_combined/monthofyear.nc
-    extpar_filename: /store/c2sm/amrs/kdnmez/extpar-run/UrbaNature/icon_zürich_basel_CLCplus/spatially_varying_extpar_final_output_CLCplus_UrbaNature.nc
+    extpar_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/grid_input/spatially_varying_extpar_final_output_CLCplus_UrbaNature.nc
     vegetation_indices: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/vprm/VPRM_indices_ICON_example.nc
 
 # the right extpar data to use for clcplus is: spatially_varying_extpar_final_output_CLCplus_UrbaNature.nc both for spatially varying and constant cases.
@@ -60,8 +60,8 @@ icon:
     binary_file: /store/c2sm/amrs/kdnmez/icon-nwp-new/cpu/icon_spatially_varying_executable/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
-    walltime: '02:00:00'
-    np_tot: 20
+    walltime: '00:10:00'
+    np_tot: 2
     np_io: 1
     np_restart: 0
     np_prefetch: 1
