@@ -31,6 +31,7 @@ output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
 filename_format: <output_filename>_DOM<physdom>_<datetime2>
 lateral_boundary_grid_order: lateral_boundary
 art_input_folder: /store/c2sm/amrs/kdnmez/icon-nwp-new/externals/art
+art_scratch_copy_folder: /scratch/snx3000/kdnmez/UrbaNature/icon_art_run/input
 art_scratch_input_folder: /scratch/snx3000/kdnmez/UrbaNature/icon_art_run/input/art
 dwdfg_filename: reduced_ICON-ART-UNSTRUCTURED_DOM01_20220701T000000Z.nc
 
