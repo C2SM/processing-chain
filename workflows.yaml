@@ -361,3 +361,17 @@ icon-art-vprm-spatially-varying-terraurb-clcplus_oldEU:
         - copy_icbc
       previous:
         - icon
+
+icon-art-vprm-spatially-varying-terraurb-clcplus-swissbuildings3D:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
