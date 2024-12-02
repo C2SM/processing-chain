@@ -49,6 +49,7 @@ chem:
     
 obs:
     fetch_ICOS: True
+    # From https://cpauth.icos-cp.eu
     ICOS_cookie_token: cpauthToken=WzE3MjkzNDMxNzIwNDQsImVyaWsua29lbmVAZW1wYS5jaCIsIlNhbWwiXR4FTcOofdFdurBv8MhnBQBBWQat65zbti2OCQ0t9tZd+rjAthGsn/WVSTwh/FadK3GpF0lh4Y1vxHMCuJKiytEMFREApm/O1TeA+2v1u7h8U0hAjn1Ao+ROzB/avbCzkI9vfxHOi2tTPOC4UomO99Dq7hZo0nNDYffeN4nxWd6kXoG3N6YKp5TzqZveL4GgWogZtaQm90+MdF5+NcPdxTM4mjD3qqsDG2TfwXttRd2WcSNhdAGE1b6o70wP1z22MewNhdCKmLLQH1mnhSXcfCJAwe67rugsSwAkWFpc0yusGylQKkdYiHYQw8vcYlkz1qgs1MNGB8URsHuETblnjqbG
     ICOS_path: /scratch/snx3000/ekoene/ICOS/
     fetch_OCO2: True

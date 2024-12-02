@@ -1,5 +1,4 @@
 import os
-import shutil
 import cdsapi
 import zipfile
 import logging
@@ -16,9 +15,10 @@ import certifi
 import urllib3
 import requests
 from time import sleep
-from subprocess import Popen
 from datetime import datetime, timedelta
-
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
+from . import iter_hours
 
 def fetch_CDS(product, date, levels, params, resolution, area, outloc):
     # Obtain CDS authentification from file
@@ -368,17 +368,187 @@ def fetch_ICOS_data(cookie_token,
         ds.to_netcdf(os.path.join(save_path, name))
 
 
-def fetch_OCO2(starttime,
-               endtime,
-               minlon,
-               maxlon,
-               minlat,
-               maxlat,
-               output_folder,
-               product="OCO2_L2_Lite_FP_11r"):
+def process_ICOS_data(ICOS_obs_folder, 
+                      start_date='01-01-2022',
+                      end_date='31-12-2022',
+                      output_folder='~/'):
+    """Package the downloaded ICOS data into a single file
 
-    # hmm. Not currently working. The data is there, https://oco2.gesdisc.eosdis.nasa.gov/data/OCO2_DATA/OCO2_L2_Lite_FP.11.1r/2020/
-    # but GES DISC doesn't currently have it anymore...
+    Parameters
+    ----------
+    ICOS_obs_folder str    e.g., /scratch/snx/[user]/ICOS_data/year
+    start_date      DateTime
+    end_date        DateTime
+    output_folder   str    e.g., /scratch/snx/[user]/ICOS_data/year/
+
+    """
+    # Future expected options (or retrieved from grid file); for now hardcoded
+    lon_lims = [-8.3, 17.5]
+    lat_lims = [40.9, 58.7]
+
+    # Utility for converting units to PPMv
+    toppm_dict = {'nmol mol-1':1e-9*1e6,
+                  'µmol mol-1':1e-6*1e6}
+
+    # Gather chosen dates
+    delta = end_date - start_date
+    chosen_dates = [
+        np.datetime64((start_date + timedelta(days=i, hours=h)).strftime('%Y-%m-%dT%H:%M:%S.000000000'))
+        for i in range(delta.days + 1)
+        for h in range(24)
+    ]
+    number_of_hourly_measurements = len(chosen_dates)
+    logging.info(f'A total of {number_of_hourly_measurements} hours are possible')
+
+    # Gather files
+    logging.info(f"Looking in folder {ICOS_obs_folder} for ICOS observation files with glob *{start_date.strftime('%d-%m-%Y')}_{end_date.strftime('%d-%m-%Y')}.nc")
+    files = list(Path(ICOS_obs_folder).glob(f"*{start_date.strftime('%d-%m-%Y')}_{end_date.strftime('%d-%m-%Y')}.nc"))
+    number_of_stations = len(files)
+    logging.info(f'Will package data from {number_of_stations} files, {files}')
+
+    # Prepare
+    obs_cnc_matrix = np.zeros((number_of_stations, number_of_hourly_measurements), dtype=np.float64)
+    obs_dates_matrix = np.zeros((number_of_stations, number_of_hourly_measurements), dtype = np.dtype('datetime64[ns]'))
+    obs_std_matrix = np.zeros((number_of_stations, number_of_hourly_measurements), dtype=np.float64)
+
+    # Set-up a function that can be called in parallel
+    def extract_obs_column(file):
+        logging.info(f'Opened file {file}')
+        try:
+            # Open dataset and extract metadata
+            ds = xr.open_dataset(file)
+            name = f"{ds.attrs['Full name of the station']}_{file.name.split('_')[-3][:-2]}"
+            id_st = ds.attrs['Station']
+            units = ds.attrs['Units']
+            masl = ds.attrs['Elevation above sea level']
+            diff = (ds.time.values[1] - ds.time.values[0]) / 3600000000000  # Time difference in hours
+            
+            if diff != 1:
+                logging.info(f'Observation data at station {name} is not hourly averaged ({diff} hours)')
+            
+            # Filter dataset to the desired time range
+            ds_filtered = ds.sel(time=slice(start_date, end_date))
+            
+            # Align `chosen_dates` with `ds_filtered.time`
+            ds_aligned = ds_filtered.reindex(time=chosen_dates, method='nearest', tolerance='1h')
+            
+            # Update observation arrays
+            obs_dates1 = ds_aligned.time.values
+            obs_std1 = ds_aligned.Stdev.values * toppm_dict[units]
+            obs_cnc1 = ds_aligned["co2"].values * toppm_dict[units]
+            lons, lats = ds.attrs['Longitude'], ds.attrs['Latitude']
+        
+        except Exception as e:
+            logging.info(f"Error processing file {file}: {e}")
+            obs_cnc1 = np.full(number_of_hourly_measurements, np.nan, dtype=np.float64)
+            obs_dates1 = np.full(number_of_hourly_measurements, np.datetime64("NaT"), dtype="datetime64[ns]")
+            obs_std1 = np.full(number_of_hourly_measurements, np.nan, dtype=np.float64)
+            name, id_st, masl, lons, lats = 'nan', 0, -999, np.nan, np.nan
+        
+        return name, obs_std1, obs_cnc1, obs_dates1, lons, lats, id_st, masl
+
+    # Process all data concurrently
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        results = list(executor.map(extract_obs_column, files))
+    M = list(zip(*results))
+
+    station_names = np.array(M[0])
+    obs_cnc = np.array(M[2])
+    obs_std = np.array(M[1])
+    obs_times = np.array(M[3])
+    obs_lons = np.array(M[4])
+    obs_lats = np.array(M[5])
+    obs_ids = np.array(M[6])
+    obs_masl = np.array(M[7])
+
+    # Initialize mask and removal list
+    stations_to_keep = []
+    mask_true = np.full_like(obs_cnc_matrix[0], True)
+
+    # Filter and populate matrices
+    for ix, (lon, lat, cnc, std, times) in enumerate(zip(obs_lons, obs_lats, obs_cnc, obs_std, obs_times)):
+        if any(np.isfinite(cnc)) and (lon_lims[0] < lon < lon_lims[-1]) and (lat_lims[0] < lat < lat_lims[-1]):
+            np.place(obs_cnc_matrix[ix], mask_true, cnc)
+            np.place(obs_std_matrix[ix], mask_true, std)
+            np.place(obs_dates_matrix[ix], mask_true, times)
+            stations_to_keep.append(ix)
+
+    # Convert keep list to numpy index array for slicing
+    stations_to_keep = np.array(stations_to_keep)
+
+    # Filter matrices and metadata
+    obs_cnc_matrix = obs_cnc_matrix[stations_to_keep]
+    obs_std_matrix = obs_std_matrix[stations_to_keep]
+    obs_dates_matrix = obs_dates_matrix[stations_to_keep]
+    station_names = station_names[stations_to_keep]
+    obs_lons = obs_lons[stations_to_keep]
+    obs_lats = obs_lats[stations_to_keep]
+    obs_ids = obs_ids[stations_to_keep]
+    obs_masl = obs_masl[stations_to_keep]
+    station_idcs = np.arange(len(station_names))
+
+    # Define data variables and attributes for xarray dataset
+    data_vars = {
+        "Concentration": (["station", "time"], obs_cnc_matrix, {
+            "units": "ppm", "long_name": "CO2_concentration"
+        }),
+        "Std": (["station", "time"], obs_std_matrix, {
+            "units": "ppm", "long_name": "CO2_concentrations_std"
+        }),
+        "Stations_names": (["station"], station_names, {
+            "units": "-", "long_name": "Stations_names"
+        }),
+        "Stations_ids": (["station"], obs_ids, {
+            "units": "-", "long_name": "Stations_names"
+        }),
+        "Stations_masl": (["station"], obs_masl, {
+            "units": "-", "long_name": "Elevation_heights_above_sl"
+        }),
+        "Lon": (["station"], obs_lons, {
+            "units": "degrees", "long_name": "Longitude"
+        }),
+        "Lat": (["station"], obs_lats, {
+            "units": "degrees", "long_name": "Latitude"
+        }),
+        "Dates": (["station", "time"], obs_dates_matrix, {
+            "long_name": "Dates"
+        }),
+    }
+
+    # Define coordinates
+    coords = {
+        "station": (["station"], station_idcs)
+    }
+    attrs = {
+        'creation_date':str(datetime.now()), 
+        'author':'Processing Chain'
+    }
+
+
+    # Create xarray dataset
+    ds_extracted_obs_matrix = xr.Dataset(
+        data_vars=data_vars,
+        coords=coords,
+        attrs=attrs
+    )
+
+    # Save dataset to file
+    output_filename = Path(output_folder) / f"Extracted_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}_alldates_masl.nc"
+    ds_extracted_obs_matrix.to_netcdf(output_filename)
+
+    logging.info(f"Finished extraction and stored obs_matrix for {len(obs_lons)} stations ")
+    logging.info(f"(from {number_of_stations} available ICOS stations), which were operating ")
+    logging.info(f"during the given period and are located inside the model domain, in the file: {output_filename}")
+
+
+def fetch_OCO2_data(starttime,
+                    endtime,
+                    minlon,
+                    maxlon,
+                    minlat,
+                    maxlat,
+                    output_folder,
+                    product="OCO2_L2_Lite_FP_11r"):
 
     # Set the product (based on the list above!) and other output settings
     product = product  # Standard
@@ -425,17 +595,11 @@ def fetch_OCO2(starttime,
         }
     }
 
-    print("still here...1")
-
     # Submit the subset request to the GES DISC Server
     response = get_http_data(subset_request)
 
-    print("and even here?")
-
     # Report the JobID and initial status
     myJobId = response['result']['jobId']
-    print('Job ID: ' + myJobId)
-    print('Job status: ' + response['result']['Status'])
 
     # Construct JSON WSP request for API method: GetStatus
     status_request = {
@@ -535,290 +699,62 @@ def fetch_OCO2(starttime,
     print('Finished')
 
 
-def process_OCO2():
-    ######### Some messages #########
-    print(
-        '============================================================================='
-    )
-    print(' Pre-processing Observation product, readable for CTDAS-ICON.')
-    print(' Data will be filtered base on a given ICON domain.')
-    print(' David Ho, MPI-BGC Jena')
-    print(
-        '============================================================================='
-    )
-    print('')
-    print('Loading neccessary packages...')
-    ## Import
-    import numpy as np
-    import pandas as pd
-    import xarray as xr
-    import glob
-    from netCDF4 import Dataset
-    import datetime
-    import time as TIME
-    import warnings
-    import os
-    warnings.filterwarnings("ignore")
-    print('')
-    #-- retrieve start time
-    t1 = TIME.time()
-    ######### Output path ###########
-    nc_out = '//scratch/snx3000/ekoene/OCO-2_filtered/'
-    if not os.path.exists(nc_out):
-        os.makedirs(nc_out)
-        print(f"Output folder '{nc_out}' created successfully.")
-    else:
-        print(f"Output folder '{nc_out}' already exists.")
-    ######### Time control ###########
-    Year = 2018
-    for month in range(1, 13):
-        if month in [4, 6, 9, 11]:
-            daymax = 30
-        elif month == 2:
-            daymax = 28
-        else:
-            daymax = 31
+def process_OCO2_data(OCO2_obs_folder, 
+                      start_date='01-01-2022',
+                      end_date='31-12-2022',
+                      output_folder='~/'):
+    """Package the downloaded ICOS data into a single file
 
-        ndays = np.arange(1, daymax + 1)  # 1st~31th
-        ######### Observation ###########
-        file_list = sorted(
-            glob.glob(
-                '/scratch/snx3000/ekoene/OCO-2/OCO2_L2_Lite_FP.11r:oco2_LtCO2_*'
-            ))
-        if len(file_list) == 0:
-            raise ValueError("File list is empty, stopping here!")
+    Parameters
+    ----------
+    OCO2_obs_folder str    e.g., /scratch/snx/[user]/OCO2_data/year
+    start_date      DateTime
+    end_date        DateTime
+    output_folder   str    e.g., /scratch/snx/[user]/ICOS_data/year/
 
-        ########## ICON grid ############
-        mainpath = '/users/ekoene/CTDAS_inputs/'
-        grid_file = mainpath + '/icon_europe_DOM01.nc'
-        ICON_GRID = xr.open_dataset(grid_file)
-        # Convert an array of size 1 to its scalar equivalent.
-        lon_min = np.min(ICON_GRID.clon.values)
-        lon_max = np.max(ICON_GRID.clon.values)
-        lat_min = np.min(ICON_GRID.clat.values)
-        lat_max = np.max(ICON_GRID.clat.values)
-        print('ICON grid extends:')
-        print('Longitude min. %7.4f, max. %7.4f' %
-              (np.rad2deg(lon_min), np.rad2deg(lon_max)))
-        print('Latitude min. %7.4f, max. %7.4f' %
-              (np.rad2deg(lat_min), np.rad2deg(lat_max)))
-        print('')
-        ########## Set bounds to filter ##########
-        offset = 1.2
-        sub_lon_min = np.rad2deg(lon_min) + offset
-        sub_lon_max = np.rad2deg(lon_max) - offset
-        sub_lat_min = np.rad2deg(lat_min) + offset
-        sub_lat_max = np.rad2deg(lat_max) - offset
-        print(
-            'To avoid cells at the domain boundary, subtracting: %s degree.' %
-            offset)
-        print('Filtered extends:')
-        print('Longitude min. %7.4f, max. %7.4f' % (sub_lon_min, sub_lon_max))
-        print('Latitude min. %7.4f, max. %7.4f' % (sub_lat_min, sub_lat_max))
-        print('')
+    """
+        
+    # # Process files
+    for day in iter_hours(start_date, end_date, 24):
 
-        ######## Begin Production #############
-        Total_nobs_before = np.array([])
-        Total_nobs_after = np.array([])
-        for day in ndays:
-            print('Processing: (%s/%s)' % (day, len(ndays)))
-            ######### Read data #########
-            try:
-                # Find a file in the file list
-                for file_name in file_list:
-                    if f"OCO2_L2_Lite_FP.11r:oco2_LtCO2_{str(Year)[2:]}{month:02d}{day:02d}" in file_name:
-                        s5p_file = file_name
-                        print('Opening file: %s' % s5p_file)
-                        s5p_data = Dataset(s5p_file)
-            except:
-                print('file %s not found.' % s5p_file)
-                print('Skipping...')
-                print('')
-                continue  # Continue to next iteration.
+        # Gather files
+        logging.info(f"Looking in folder {OCO2_obs_folder} for ICOS observation files with glob OCO2_L2_Lite*{day.strftime('%y%m%d')}*.nc4")
+        file = list(Path(OCO2_obs_folder).glob(f"OCO2_L2_Lite*{day.strftime('%y%m%d')}*.nc4"))
+        if not file:
+            continue
+        elif len(file)>0:
+            IndexError("Error, more OCO-2 files exist than expected. Review.")
+        else: 
+            logging.info(f'Will open data from {file}')
+        
+        # Open file
+        s5p_data = xr.open_dataset(file[0])
 
-        ######## Filter base of ICON domain ########
-            date_list = []
-            for timestamp in s5p_data['time'][:]:
-                value = datetime.datetime.fromtimestamp(timestamp)
-                date_list.append(value)
-
-            dictionary = {
-                'date_time': date_list[:],
-                'raw_time': s5p_data['time'][:],
-                'xco2': s5p_data['xco2'][:],
-                'lat': s5p_data['latitude'][:],
-                'lon': s5p_data['longitude'][:],
-                'qf': s5p_data['xco2_quality_flag']
-                [:],  # quality flag 0 = good; 1 = bad.
-            }
-            df_pixels = pd.DataFrame(data=dictionary)
-
-            ## Filter base on ICON domain ##
-            inside_domain_flag = ((df_pixels['lon'] > sub_lon_min) &
-                                  (df_pixels['lon'] < sub_lon_max) &
-                                  (df_pixels['lat'] > sub_lat_min) &
-                                  (df_pixels['lat'] < sub_lat_max) *
-                                  (df_pixels['qf'] == 0))
-
-            # -- Old hard coded settings:
-            # inside_domain_flag = ( ( df_pixels['lon'] > -20 ) & ( df_pixels['lon'] < 58 ) \
-            # & ( df_pixels['lat'] > 32 ) & ( df_pixels['lat'] < 69 ) )
-            ## Get the indexes from data frame ##
-            indexes = df_pixels[inside_domain_flag].index
-
-            ## Some messages
-            Before = len(s5p_data.variables['xco2'][:])
-            print('It had %i data' % Before)
-            Total_nobs_before = np.append(Total_nobs_before, Before)
-
-            After = len(s5p_data.variables['xco2'][indexes])
-            print('Now has %i' % After)
-            Total_nobs_after = np.append(Total_nobs_after, After)
-            if After == 0:
-                print('skipping')
-                continue
-
-            ######### Create/Write netCDF #########
-            _, tail = os.path.split(s5p_file)
-            output_path = os.path.join(
-                nc_out, 'OCO2_%04d%02d%02d_ctdas.nc' % (Year, month, day))
-            ncfile = Dataset(output_path, mode='w', format='NETCDF4')
-            print('Writing %s from %s' % (output_path, s5p_file))
-
-            ######### Def. attribute #########
-            ncfile.level_def = 'pressure_boundaries'
-            ncfile.retrieval_id = tail
-            ncfile.creator_name = 'Erik Koene (Empa)'
-            ncfile.date_created = str(datetime.datetime.now())
-            ######### Create dimension #########
-            #ncfile.createDimension( 'soundings', s5p_data.dimensions['sounding_dim'].size ) # Select all
-            ncfile.createDimension(
-                'soundings',
-                s5p_data['xco2'][indexes].size)  # Select the indexes
-            ncfile.createDimension('levels',
-                                   s5p_data.dimensions['levels'].size)
-            ncfile.createDimension('layers',
-                                   s5p_data.dimensions['levels'].size)
-            ncfile.createDimension('epoch_dimension',
-                                   s5p_data.dimensions['epoch_dimension'].size)
-            ######### Set variables #########
-            ### Lat/Lon
-            lat = ncfile.createVariable('latitude', np.float32, ('soundings'))
-            lat.units = 'degrees_north'
-            #lat[:] = s5p_data.variables['latitude'][:]
-            lat[:] = s5p_data.variables['latitude'][indexes]
-            lon = ncfile.createVariable('longitude', np.float32, ('soundings'))
-            lon.units = 'degrees_east'
-            #lon[:] = s5p_data.variables['longitude'][:]
-            lon[:] = s5p_data.variables['longitude'][indexes]
-            ### Time
-            date = ncfile.createVariable('date', np.uint32,
-                                         ('soundings', 'epoch_dimension'))
-            date.units = 'seconds since 1970-01-01 00:00:00'  #
-            date.long_name = 'date_time'
-            # Converting...
-            A = np.array([], np.uint32)
-            for timestamp in s5p_data['time'][indexes]:
-                value = datetime.datetime.fromtimestamp(timestamp)
-                time = np.array([
-                    value.year, value.month, value.day, value.hour,
-                    value.minute, value.second, value.microsecond
-                ], np.uint32)
-                A = np.concatenate([A, time], axis=0)
-            B = A.reshape(int(len(A) / 7), 7)
-            date[:] = B[:]
-            ##### Obs
-            obs = ncfile.createVariable('obs', np.float32, ('soundings'))
-            obs.units = '1e-6 [ppm]'
-            obs.long_name = 'column-averaged dry air mole fraction of atmospheric co2'
-            obs.comment = 'Retrieved column-averaged dry air mole fraction of atmospheric carbon dioxide (XCO2) in ppm for CTDAS'
-            obs[:] = s5p_data.variables['xco2'][indexes]  # Keep ppm units
-            ### qa flag
-            qa_f = ncfile.createVariable('quality_flag', np.int8,
-                                         ('soundings'))
-            qa_f.flag_values = '[0, 1]'
-            qa_f.long_name = 'quality flag for the retrieved column-averaged dry air mole fraction of atmospheric methane'
-            qa_f.comment = '0=good, 1=bad'
-            qa_f[:] = s5p_data.variables['xco2_quality_flag'][indexes]
-            ##### avg kernel
-            avg_kernel = ncfile.createVariable('averaging_kernel', np.float32,
-                                               ('soundings', 'layers'))
-            avg_kernel.units = '1'
-            avg_kernel.long_name = 'xco2 averaging kernel'
-            avg_kernel.comment = 'Represents the altitude sensitivity of the retrieval as a function of pressure. All values represent layer averages within the corresponding pressure levels. Profiles are ordered from surface to top of atmosphere.'
-            #avg_kernel[:] = s5p_data.variables['xch4_averaging_kernel'][:]
-            avg_kernel[:] = s5p_data.variables['xco2_averaging_kernel'][:][
-                indexes]
-            ### surface_pressure
-            psurf = ncfile.createVariable('surface_pressure', np.float32,
-                                          ('soundings'))
-            psurf.long_name = 'Surface pressure'
-            psurf.comment = 'Sliced from: OCO2_pressure_levels[:, 0] in Python. Pressure levels defined at the same levels as the averaging kernel and a priori profile layers. Levels were ordered from top of atmosphere to surface.'
-            psurf.unit = 'hPa'
-            #psurf[:] = s5p_data.variables['pressure_levels'][:, 0]
-            psurf[:] = s5p_data.variables['pressure_levels'][indexes, -1]
-            ##### pressure_levels
-            pres_lvls = ncfile.createVariable('pressure_levels', np.float32,
-                                              ('soundings', 'layers'))
-            pres_lvls.long_name = 'Pressure levels'
-            pres_lvls.comment = 'Sliced from: s5p_pressure_levels[:, 1:], Python. Pressure levels define the boundaries of the averaging kernel and a priori profile layers. Levels were ordered from top of atmosphere to surface.'
-            pres_lvls.unit = 'hPa'
-            pres_lvls[:] = s5p_data.variables['pressure_levels'][:, ::-1][
-                indexes]
-            #### pressure_weighting_function
-            pwf = ncfile.createVariable('pressure_weighting_function',
-                                        np.float32, ('soundings', 'layers'))
-            pwf.long_name = 'Pressure weighting function'
-            pwf.comment = 'Layer dependent weights needed to apply the averaging kernels.'
-            pwf[:] = s5p_data.variables['pressure_weight'][:, ::-1][indexes]
-            ### prior_profile
-            prior_profile = ncfile.createVariable('prior_profile', np.float32,
-                                                  ('soundings', 'layers'))
-            prior_profile.units = '1e-6 [ppm]'
-            prior_profile.long_name = 'a priori dry air mole fraction profile of atmospheric CO2'
-            prior_profile.comment = 'A priori dry-air mole fraction profile of atmospheric CO2 in ppm. All values represent layer averages within the corresponding pressure levels. Profiles are ordered from top of atmosphere to the surface.'
-            prior_profile[:] = s5p_data.variables[
-                'co2_profile_apriori'][:, ::-1][indexes]
-            ### prior
-            prior = ncfile.createVariable('prior', np.float32, ('soundings'))
-            prior.units = '1e-6 [ppm]'
-            prior.long_name = 'Prior'
-            prior.comment = 'The a priori CO2 profile uses the same formulation as used for TCCON GGG2020 retrievals'
-            prior[:] = s5p_data.variables["xco2_apriori"][indexes]
-            ### uncertainty
-            unc = ncfile.createVariable('uncertainty', np.float32,
-                                        ('soundings'))
-            unc.units = '1e-6 [ppm]'
-            unc.long_name = '1-sigma uncertainty of the retrieved column-averaged dry air mole fraction of atmospheric carbon dioxide'
-            unc.comment = '1-sigma uncertainty of the retrieved column-averaged dry air mole fraction of atmospheric carbon dioxide (XCO2) in ppm'
-            unc[:] = s5p_data.variables['xco2_uncertainty'][indexes]
-
-            ### Extras
-            # unique sounding_id
-            sounding_id = ncfile.createVariable('sounding_id', np.int64,
-                                                ('soundings'))
-            sounding_id.comment = 'Some numbers unique per observation'
-            # sounding_id[:] = s5p_data.variables['sounding_id'][indexes]
-            #s5p_obs = s5p_data.variables['xch4'][:]
-            s5p_obs = s5p_data.variables['xco2'][indexes]
-            to_add = int('%04d%02d%02d0000000' %
-                         (Year, month, day))  # datetime + 9 zeros
-            sounding_id[:] = np.arange(len(s5p_obs)) + to_add
-            print('Added %s to sounding id, unique per observation' % to_add)
-
-            # nobs
-            #nobs = ncfile.createVariable('nobs', np.unit32, ('soundings'))
-            #nobs.comment ='Number of observations'
-            #nobs[:] =
-            #print(ncfile)
-            ncfile.close()
-            print('Done! Closing netcdf, proceeding to the next file.')
-            print('')
-
-    t2 = TIME.time()
-    print('')
-    print('All done! Wallclock time: %0.3f seconds' % (t2 - t1))
-    sum_before = np.sum(Total_nobs_before)
-    sum_after = np.sum(Total_nobs_after)
-    print('Summary:')
-    print('Original nobs: %i. Filtered nobs: %i.' % (sum_before, sum_after))
+        # Process the 'time' variable: convert format, convert shape
+        # pressure_levels (rename, reverse direction), pressure_weight (rename, reverse, select)
+        # co2_profile_apriori (rename, reverse, select), xco2_apriori (rename, select)
+        # xco2_uncertainty (rename, select)
+        s5p_out = s5p_data[["latitude", "longitude", "date", 
+                            "xco2", "xco2_quality_flag", "xco2_averaging_kernel", "pressure_levels", 
+                            "pressure_levels", "pressure_weight", "co2_profile_apriori", "xco2_apriori",
+                              "xco2_uncertainty" ]]
+        s5p_out = s5p_out.rename({"levels": "layers",
+                             "sounding_id": "soundings",
+                             "xco2": "obs",
+                             "xco2_quality_flag": "quality_flag",
+                             "xco2_averaging_kernel": "averaging_kernel",
+                             "pressure_weight": "pressure_weighting_function",
+                             "co2_profile_apriori": "prior_profile",
+                             "xco2_apriori": "prior",
+                             "xco2_uncertainty": "uncertainty"})
+        s5p_out["pressure_levels"] = s5p_out.pressure_levels[:,::-1]
+        s5p_out["pressure_weighting_function"] = s5p_out.pressure_weighting_function[:,::-1]
+        s5p_out["surface_pressure"] = s5p_out.pressure_levels[:,0]
+        s5p_out.attrs.update({
+            'creation_date':str(datetime.now()), 
+            'author':'Processing Chain',
+            'level_def': 'pressure_boundaries',
+            'retrieval_id': file[0].name
+        })
+        print(s5p_out)
+        s5p_out.to_netcdf(output_folder / f"OCO2_{day.strftime('%Y%m%d')}_ctdas.nc")
