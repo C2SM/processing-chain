@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd {cfg.icon_input_icbc}
+cd {ERA5_folder}
 
 module load daint-mc CDO
 source ~/miniconda3/bin/activate
@@ -10,7 +10,7 @@ conda activate /scratch/snx3000/ekoene/conda/NCO
 
 # 1. Remap
 cdo griddes {filename} > triangular-grid.txt
-cdo remapnn,triangular-grid.txt cams_egg4_2018010100.nc cams_triangle.nc
+cdo remapnn,triangular-grid.txt {CAMS_file} cams_triangle.nc
 
 # 2. Write out the hybrid levels
 cat >CAMS_levels.txt <<EOL
@@ -52,4 +52,4 @@ ncrename -O -d nhym,lev cams_remapped.nc
 # 5. Place in inicond file
 ncks -A -v CO2 cams_remapped.nc {filename}
 ncap2 -s 'CO2_new[time,lev,ncells]=CO2; CO2=CO2_new;' {filename}
-ncks -C -O -x -v CO2_new {filename}
+ncks -C -O -x -v CO2_new {filename} {cfg.icon_input_icbc}/$(basename {filename})

@@ -50,7 +50,7 @@ chem:
 obs:
     fetch_ICOS: True
     # From https://cpauth.icos-cp.eu
-    ICOS_cookie_token: cpauthToken=WzE3MjkzNDMxNzIwNDQsImVyaWsua29lbmVAZW1wYS5jaCIsIlNhbWwiXR4FTcOofdFdurBv8MhnBQBBWQat65zbti2OCQ0t9tZd+rjAthGsn/WVSTwh/FadK3GpF0lh4Y1vxHMCuJKiytEMFREApm/O1TeA+2v1u7h8U0hAjn1Ao+ROzB/avbCzkI9vfxHOi2tTPOC4UomO99Dq7hZo0nNDYffeN4nxWd6kXoG3N6YKp5TzqZveL4GgWogZtaQm90+MdF5+NcPdxTM4mjD3qqsDG2TfwXttRd2WcSNhdAGE1b6o70wP1z22MewNhdCKmLLQH1mnhSXcfCJAwe67rugsSwAkWFpc0yusGylQKkdYiHYQw8vcYlkz1qgs1MNGB8URsHuETblnjqbG
+    ICOS_cookie_token: cpauthToken=WzE3MzMyNTAzMTQ5MDgsImVyaWsua29lbmVAZW1wYS5jaCIsIlNhbWwiXR491DfOcSH3wU5kg994O0tfjYmRz96JPlpjzGPnva+LfSUkoNo125YUECiAMGpmkU5F8pioS6dvd9tfk8UodxYuoIS3eF3u9sul3wK+C0cs3CnENtD2WSr0tIZptPecWUkSvPnGtPQkVQxEtJpNgCj8YLtwl2m6XRq0yUO/zbD8bZTsZxzvDpLjoV1LLdQX+p5/Gck0Epvlv8Qij5fnvpl40II4nHLCfBaeFNx3ZYYDdPA8XTLuoIAHkC7tlUvBmnC4t6lk/QLAq//0iZVawanyPSj6R+COJlEx74otpmXgPe3PknaYWwLFfT4dX4YoJFYQC+RQnChePOdS+YoO4Nv9
     ICOS_path: /scratch/snx3000/ekoene/ICOS/
     fetch_OCO2: True
     OCO2_path: /scratch/snx3000/ekoene/OCO2

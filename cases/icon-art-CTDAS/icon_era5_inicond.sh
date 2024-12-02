@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd {cfg.icon_input_icbc}
+cd {ERA5_folder}
 
 module load daint-mc CDO NCO
 

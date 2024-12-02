@@ -240,7 +240,6 @@ def fetch_CAMS_CO2(date, dir2move):
     with zipfile.ZipFile(download) as zf:
         for member in zf.infolist():
             filename = os.path.join(tmpdir, member.filename)
-            logging.info("Writing out CAMS data to file")
             ds_CAMS = xr.open_dataset(filename)
             for time in ds_CAMS.time:
                 outpath = os.path.join(
@@ -248,6 +247,7 @@ def fetch_CAMS_CO2(date, dir2move):
                     ds_CAMS.sel(time=time).time.dt.strftime('%Y%m%d%H').values
                     + '.nc')
                 if not os.path.isfile(outpath):
+                    logging.info("Writing out CAMS data to file")
                     ds_out = ds_CAMS.where(ds_CAMS.time == time,
                                            drop=True).squeeze()
                     ds_out.to_netcdf(outpath)
@@ -427,7 +427,8 @@ def process_ICOS_data(ICOS_obs_folder,
                 logging.info(f'Observation data at station {name} is not hourly averaged ({diff} hours)')
             
             # Filter dataset to the desired time range
-            ds_filtered = ds.sel(time=slice(start_date, end_date))
+            ds['time'] = ds['time']
+            ds_filtered = ds.sel(time=slice(start_date.replace(tzinfo=None), end_date.replace(tzinfo=None)))
             
             # Align `chosen_dates` with `ds_filtered.time`
             ds_aligned = ds_filtered.reindex(time=chosen_dates, method='nearest', tolerance='1h')
@@ -756,5 +757,4 @@ def process_OCO2_data(OCO2_obs_folder,
             'level_def': 'pressure_boundaries',
             'retrieval_id': file[0].name
         })
-        print(s5p_out)
         s5p_out.to_netcdf(output_folder / f"OCO2_{day.strftime('%Y%m%d')}_ctdas.nc")
