@@ -325,7 +325,7 @@ def main():
                                                      "gpu or mc")
         elif cfg.constraint and cfg.machine == 'eiger':
             assert cfg.constraint in ['mc'], ("Unknown constraint, use"
-                                                     "gpu or mc")
+                                              "gpu or mc")
 
         # Get complete chunk list
         cfg.get_chunk_list()
