@@ -53,7 +53,9 @@ def main(cfg):
         ERA5_folder = cfg.case_root / "global_inputs" / "ERA5"
         tools.create_dir(ERA5_folder, "CAMS input files")
 
-        times = list(tools.iter_hours(cfg.startdate_sim, (cfg.enddate_sim+timedelta(days=1)), cfg.meteo_nudging_step))
+        times = list(
+            tools.iter_hours(cfg.startdate_sim, (cfg.enddate_sim+timedelta(days=1)),
+                             cfg.meteo_nudging_step))
         logging.info(f"Time range considered here: {times}")
 
         file_list = [f"era5_ml_{(cfg.startdate_sim + timedelta(hours=i)).replace(tzinfo=None).isoformat()}.nc"
@@ -70,35 +72,49 @@ def main(cfg):
             chunks = list(tools.split_into_chunks(times, N, cfg.meteo_nudging_step))
             logging.info(f"Time range split up into chunks of {N} days, giving the following chunks: {chunks}")
 
-            # Run fetch_era5 in parallel over chunks
-            output_filenames = [None] * len(chunks)  # Create a list to store filenames in order
-            with ThreadPoolExecutor(max_workers=4) as executor:
-                futures = {executor.submit(fetch_era5, chunk, ERA5_folder, resolution=0.25, area=[60, -15, 35, 20]): i for i, chunk in enumerate(chunks)}
-                for future in futures:
-                    index = futures[future]  # Get the index of the future
-                    try:
-                        result = future.result()  # Get the result from the future
-                        output_filenames[index] = result  # Store the returned filename(s) in the correct order
-                        logging.info(f"Fetched data and saved to: {result}")
-                    except Exception as exc:
-                        logging.error(f"Generated an exception: {exc}")
-            logging.info(f"All fetched files: {output_filenames}")
+        # Run fetch_era5 in parallel over chunks
+        output_filenames = [None] * len(
+            chunks)  # Create a list to store filenames in order
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = {
+                executor.submit(fetch_era5,
+                                chunk,
+                                cfg.icon_input_icbc,
+                                resolution=0.25,
+                                area=[60, -15, 35, 20]):
+                i
+                for i, chunk in enumerate(chunks)
+            }
+            for future in futures:
+                index = futures[future]  # Get the index of the future
+                try:
+                    result = future.result()  # Get the result from the future
+                    output_filenames[
+                        index] = result  # Store the returned filename(s) in the correct order
+                    logging.info(f"Fetched data and saved to: {result}")
+                except Exception as exc:
+                    logging.error(f"Generated an exception: {exc}")
+        logging.info(f"All fetched files: {output_filenames}")
 
-            # Split files (with multiple days/times) into individual files using bash script
-            era5_split_template = cfg.case_path / cfg.meteo_era5_splitjob
-            era5_split_job = ERA5_folder / (cfg.meteo_era5_splitjob.stem + f'{cfg.startdate_sim.strftime("%Y%m%d")}' + cfg.meteo_era5_splitjob.suffix)
-            logging.info(f"Preparing ERA5 splitting script for ICON from {era5_split_template}")
-            ml_files = " ".join([f"{filenames[0]}" for filenames in output_filenames])
-            surf_files = " ".join([f"{filenames[1]}" for filenames in output_filenames])
-            with open(era5_split_template, 'r') as infile, open(era5_split_job, 'w') as outfile:
-                outfile.write(infile.read().format(
-                    cfg=cfg,
-                    ml_files=ml_files,
-                    surf_files=surf_files,
-                    ERA5_folder=ERA5_folder
-                ))
-            logging.info(f"Running ERA5 splitting script {era5_split_job}")
-            subprocess.run(["bash", era5_split_job], check=True, stdout=subprocess.PIPE)
+        # Split files (with multiple days/times) into individual files using bash script
+        era5_split_template = cfg.case_path / cfg.meteo_era5_splitjob
+        era5_split_job = cfg.icon_input_icbc / cfg.meteo_era5_splitjob
+        logging.info(
+            f"Preparing ERA5 splitting script for ICON from {era5_split_template}"
+        )
+        ml_files = " ".join(
+            [f"{filenames[0]}" for filenames in output_filenames])
+        surf_files = " ".join(
+            [f"{filenames[1]}" for filenames in output_filenames])
+        with open(era5_split_template,
+                  'r') as infile, open(era5_split_job, 'w') as outfile:
+            outfile.write(infile.read().format(cfg=cfg,
+                                               ml_files=ml_files,
+                                               surf_files=surf_files))
+        logging.info(f"Running ERA5 splitting script {era5_split_job}")
+        subprocess.run(["bash", era5_split_job],
+                       check=True,
+                       stdout=subprocess.PIPE)
 
     # -- 3. Process initial conditions data using bash script
     datestr = cfg.startdate_sim.strftime("%Y-%m-%dT%H:%M:%S")
@@ -194,10 +210,11 @@ def main(cfg):
                         species=[
                             'co2',
                         ])
-        tools.create_dir(cfg.case_root / "global_inputs" / "ICOS", "ICOS input files")
+        tools.create_dir(cfg.case_root / "global_inputs" / "ICOS",
+                         "ICOS input files")
         process_ICOS_data(ICOS_obs_folder=cfg.CTDAS_obs_ICOS_path,
                           start_date=cfg.startdate_sim,
-                          end_date=(cfg.enddate_sim+timedelta(days=1)),
+                          end_date=cfg.enddate_sim+timedelta(days=1),
                           output_folder=cfg.case_root / "global_inputs" / "ICOS"
         )
 

@@ -20,6 +20,7 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from . import iter_hours, create_dir
 
+
 def fetch_CDS(product, date, levels, params, resolution, area, outloc):
     # Obtain CDS authentification from file
     url_cmd = f"grep 'cds' ~/.cdsapirc"
@@ -391,23 +392,33 @@ def process_ICOS_data(ICOS_obs_folder,
     # Gather chosen dates
     delta = end_date - start_date
     chosen_dates = [
-        np.datetime64((start_date + timedelta(days=i, hours=h)).strftime('%Y-%m-%dT%H:%M:%S.000000000'))
-        for i in range(delta.days + 1)
-        for h in range(24)
+        np.datetime64((start_date + timedelta(
+            days=i, hours=h)).strftime('%Y-%m-%dT%H:%M:%S.000000000'))
+        for i in range(delta.days + 1) for h in range(24)
     ]
     number_of_hourly_measurements = len(chosen_dates)
-    logging.info(f'A total of {number_of_hourly_measurements} hours are possible')
+    logging.info(
+        f'A total of {number_of_hourly_measurements} hours are possible')
 
     # Gather files
-    logging.info(f"Looking in folder {ICOS_obs_folder} for ICOS observation files with glob *{start_date.strftime('%d-%m-%Y')}_{end_date.strftime('%d-%m-%Y')}.nc")
-    files = list(Path(ICOS_obs_folder).glob(f"*{start_date.strftime('%d-%m-%Y')}_{end_date.strftime('%d-%m-%Y')}.nc"))
+    logging.info(
+        f"Looking in folder {ICOS_obs_folder} for ICOS observation files with glob *{start_date.strftime('%d-%m-%Y')}_{end_date.strftime('%d-%m-%Y')}.nc"
+    )
+    files = list(
+        Path(ICOS_obs_folder).glob(
+            f"*{start_date.strftime('%d-%m-%Y')}_{end_date.strftime('%d-%m-%Y')}.nc"
+        ))
     number_of_stations = len(files)
     logging.info(f'Will package data from {number_of_stations} files, {files}')
 
     # Prepare
-    obs_cnc_matrix = np.zeros((number_of_stations, number_of_hourly_measurements), dtype=np.float64)
-    obs_dates_matrix = np.zeros((number_of_stations, number_of_hourly_measurements), dtype = np.dtype('datetime64[ns]'))
-    obs_std_matrix = np.zeros((number_of_stations, number_of_hourly_measurements), dtype=np.float64)
+    obs_cnc_matrix = np.zeros(
+        (number_of_stations, number_of_hourly_measurements), dtype=np.float64)
+    obs_dates_matrix = np.zeros(
+        (number_of_stations, number_of_hourly_measurements),
+        dtype=np.dtype('datetime64[ns]'))
+    obs_std_matrix = np.zeros(
+        (number_of_stations, number_of_hourly_measurements), dtype=np.float64)
 
     # Set-up a function that can be called in parallel
     def extract_obs_column(file):
@@ -419,31 +430,42 @@ def process_ICOS_data(ICOS_obs_folder,
             id_st = ds.attrs['Station']
             units = ds.attrs['Units']
             masl = ds.attrs['Elevation above sea level']
-            diff = (ds.time.values[1] - ds.time.values[0]) / 3600000000000  # Time difference in hours
-            
+            diff = (ds.time.values[1] - ds.time.values[0]
+                    ) / 3600000000000  # Time difference in hours
+
             if diff != 1:
-                logging.info(f'Observation data at station {name} is not hourly averaged ({diff} hours)')
-            
+                logging.info(
+                    f'Observation data at station {name} is not hourly averaged ({diff} hours)'
+                )
+
             # Filter dataset to the desired time range
             ds['time'] = ds['time']
             ds_filtered = ds.sel(time=slice(start_date.replace(tzinfo=None), end_date.replace(tzinfo=None)))
             
             # Align `chosen_dates` with `ds_filtered.time`
-            ds_aligned = ds_filtered.reindex(time=chosen_dates, method='nearest', tolerance='1h')
-            
+            ds_aligned = ds_filtered.reindex(time=chosen_dates,
+                                             method='nearest',
+                                             tolerance='1h')
+
             # Update observation arrays
             obs_dates1 = ds_aligned.time.values
             obs_std1 = ds_aligned.Stdev.values * toppm_dict[units]
             obs_cnc1 = ds_aligned["co2"].values * toppm_dict[units]
             lons, lats = ds.attrs['Longitude'], ds.attrs['Latitude']
-        
+
         except Exception as e:
             logging.info(f"Error processing file {file}: {e}")
-            obs_cnc1 = np.full(number_of_hourly_measurements, np.nan, dtype=np.float64)
-            obs_dates1 = np.full(number_of_hourly_measurements, np.datetime64("NaT"), dtype="datetime64[ns]")
-            obs_std1 = np.full(number_of_hourly_measurements, np.nan, dtype=np.float64)
+            obs_cnc1 = np.full(number_of_hourly_measurements,
+                               np.nan,
+                               dtype=np.float64)
+            obs_dates1 = np.full(number_of_hourly_measurements,
+                                 np.datetime64("NaT"),
+                                 dtype="datetime64[ns]")
+            obs_std1 = np.full(number_of_hourly_measurements,
+                               np.nan,
+                               dtype=np.float64)
             name, id_st, masl, lons, lats = 'nan', 0, -999, np.nan, np.nan
-        
+
         return name, obs_std1, obs_cnc1, obs_dates1, lons, lats, id_st, masl
 
     # Process all data concurrently
@@ -465,8 +487,10 @@ def process_ICOS_data(ICOS_obs_folder,
     mask_true = np.full_like(obs_cnc_matrix[0], True)
 
     # Filter and populate matrices
-    for ix, (lon, lat, cnc, std, times) in enumerate(zip(obs_lons, obs_lats, obs_cnc, obs_std, obs_times)):
-        if any(np.isfinite(cnc)) and (lon_lims[0] < lon < lon_lims[-1]) and (lat_lims[0] < lat < lat_lims[-1]):
+    for ix, (lon, lat, cnc, std, times) in enumerate(
+            zip(obs_lons, obs_lats, obs_cnc, obs_std, obs_times)):
+        if any(np.isfinite(cnc)) and (lon_lims[0] < lon < lon_lims[-1]) and (
+                lat_lims[0] < lat < lat_lims[-1]):
             np.place(obs_cnc_matrix[ix], mask_true, cnc)
             np.place(obs_std_matrix[ix], mask_true, std)
             np.place(obs_dates_matrix[ix], mask_true, times)
@@ -489,25 +513,32 @@ def process_ICOS_data(ICOS_obs_folder,
     # Define data variables and attributes for xarray dataset
     data_vars = {
         "Concentration": (["station", "time"], obs_cnc_matrix, {
-            "units": "ppm", "long_name": "CO2_concentration"
+            "units": "ppm",
+            "long_name": "CO2_concentration"
         }),
         "Std": (["station", "time"], obs_std_matrix, {
-            "units": "ppm", "long_name": "CO2_concentrations_std"
+            "units": "ppm",
+            "long_name": "CO2_concentrations_std"
         }),
         "Stations_names": (["station"], station_names, {
-            "units": "-", "long_name": "Stations_names"
+            "units": "-",
+            "long_name": "Stations_names"
         }),
         "Stations_ids": (["station"], obs_ids, {
-            "units": "-", "long_name": "Stations_names"
+            "units": "-",
+            "long_name": "Stations_names"
         }),
         "Stations_masl": (["station"], obs_masl, {
-            "units": "-", "long_name": "Elevation_heights_above_sl"
+            "units": "-",
+            "long_name": "Elevation_heights_above_sl"
         }),
         "Lon": (["station"], obs_lons, {
-            "units": "degrees", "long_name": "Longitude"
+            "units": "degrees",
+            "long_name": "Longitude"
         }),
         "Lat": (["station"], obs_lats, {
-            "units": "degrees", "long_name": "Latitude"
+            "units": "degrees",
+            "long_name": "Latitude"
         }),
         "Dates": (["station", "time"], obs_dates_matrix, {
             "long_name": "Dates"
@@ -515,28 +546,30 @@ def process_ICOS_data(ICOS_obs_folder,
     }
 
     # Define coordinates
-    coords = {
-        "station": (["station"], station_idcs)
-    }
+    coords = {"station": (["station"], station_idcs)}
     attrs = {
-        'creation_date':str(datetime.now()), 
-        'author':'Processing Chain'
+        'creation_date': str(datetime.now()),
+        'author': 'Processing Chain'
     }
 
     # Create xarray dataset
-    ds_extracted_obs_matrix = xr.Dataset(
-        data_vars=data_vars,
-        coords=coords,
-        attrs=attrs
-    )
+    ds_extracted_obs_matrix = xr.Dataset(data_vars=data_vars,
+                                         coords=coords,
+                                         attrs=attrs)
 
     # Save dataset to file
     output_filename = Path(output_folder) / f"Extracted_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}_alldates_masl.nc"
     ds_extracted_obs_matrix.to_netcdf(output_filename)
 
-    logging.info(f"Finished extraction and stored obs_matrix for {len(obs_lons)} stations ")
-    logging.info(f"(from {number_of_stations} available ICOS stations), which were operating ")
-    logging.info(f"during the given period and are located inside the model domain, in the file: {output_filename}")
+    logging.info(
+        f"Finished extraction and stored obs_matrix for {len(obs_lons)} stations "
+    )
+    logging.info(
+        f"(from {number_of_stations} available ICOS stations), which were operating "
+    )
+    logging.info(
+        f"during the given period and are located inside the model domain, in the file: {output_filename}"
+    )
 
 
 def fetch_OCO2_data(starttime,
@@ -697,7 +730,7 @@ def fetch_OCO2_data(starttime,
     print('Finished')
 
 
-def process_OCO2_data(OCO2_obs_folder, 
+def process_OCO2_data(OCO2_obs_folder,
                       start_date='01-01-2022',
                       end_date='31-12-2022',
                       output_folder='~/'):
@@ -711,19 +744,23 @@ def process_OCO2_data(OCO2_obs_folder,
     output_folder   str    e.g., /scratch/snx/[user]/ICOS_data/year/
 
     """
-        
+
     # # Process files
     for day in iter_hours(start_date, end_date, 24):
         # Gather files
-        logging.info(f"Looking in folder {OCO2_obs_folder} for ICOS observation files with glob OCO2_L2_Lite*{day.strftime('%y%m%d')}*.nc4")
-        file = list(Path(OCO2_obs_folder).glob(f"OCO2_L2_Lite*{day.strftime('%y%m%d')}*.nc4"))
+        logging.info(
+            f"Looking in folder {OCO2_obs_folder} for ICOS observation files with glob OCO2_L2_Lite*{day.strftime('%y%m%d')}*.nc4"
+        )
+        file = list(
+            Path(OCO2_obs_folder).glob(
+                f"OCO2_L2_Lite*{day.strftime('%y%m%d')}*.nc4"))
         if not file:
             continue
-        elif len(file)>0:
+        elif len(file) > 0:
             IndexError("Error, more OCO-2 files exist than expected. Review.")
-        else: 
+        else:
             logging.info(f'Will open data from {file}')
-        
+
         # Open file
         s5p_data = xr.open_dataset(file[0])
         s5p_out = s5p_data[["latitude", "longitude", "date", 
@@ -742,9 +779,36 @@ def process_OCO2_data(OCO2_obs_folder,
         s5p_out["pressure_levels"] = s5p_out.pressure_levels[:,::-1]
         s5p_out["pressure_weighting_function"] = s5p_out.pressure_weighting_function[:,::-1]
         s5p_out["surface_pressure"] = s5p_out.pressure_levels[:,0]
+
+        # Process the 'time' variable: convert format, convert shape
+        # pressure_levels (rename, reverse direction), pressure_weight (rename, reverse, select)
+        # co2_profile_apriori (rename, reverse, select), xco2_apriori (rename, select)
+        # xco2_uncertainty (rename, select)
+        s5p_out = s5p_data[[
+            "latitude", "longitude", "date", "xco2", "xco2_quality_flag",
+            "xco2_averaging_kernel", "pressure_levels", "pressure_levels",
+            "pressure_weight", "co2_profile_apriori", "xco2_apriori",
+            "xco2_uncertainty"
+        ]]
+        s5p_out = s5p_out.rename({
+            "levels": "layers",
+            "sounding_id": "soundings",
+            "xco2": "obs",
+            "xco2_quality_flag": "quality_flag",
+            "xco2_averaging_kernel": "averaging_kernel",
+            "pressure_weight": "pressure_weighting_function",
+            "co2_profile_apriori": "prior_profile",
+            "xco2_apriori": "prior",
+            "xco2_uncertainty": "uncertainty"
+        })
+        s5p_out["pressure_levels"] = s5p_out.pressure_levels[:, ::-1]
+        s5p_out[
+            "pressure_weighting_function"] = s5p_out.pressure_weighting_function[:, ::
+                                                                                 -1]
+        s5p_out["surface_pressure"] = s5p_out.pressure_levels[:, 0]
         s5p_out.attrs.update({
-            'creation_date':str(datetime.now()), 
-            'author':'Processing Chain',
+            'creation_date': str(datetime.now()),
+            'author': 'Processing Chain',
             'level_def': 'pressure_boundaries',
             'retrieval_id': file[0].name
         })
