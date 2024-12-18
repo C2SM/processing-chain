@@ -51,5 +51,8 @@ ncrename -O -d nhym,lev cams_remapped.nc
 
 # 5. Place in inicond file
 ncks -A -v CO2 cams_remapped.nc {inicond_filename}
-ncap2 -s 'CO2_new[time,lev,ncells]=CO2; CO2=CO2_new;' {inicond_filename}
-ncks -C -O -x -v CO2_new {inicond_filename} {cfg.icon_input_icbc}/$(basename {inicond_filename})
+ncap2 -s 'CO2_new[time,lev,ncells]=CO2;' {inicond_filename}
+ncks -C -O -x -v CO2 {inicond_filename} {era5_cams_ini_file}
+ncrename -v CO2_new,CO2 {era5_cams_ini_file}
+ncrename -d .cell,ncells {era5_cams_ini_file}
+ncrename -d .nv,vertices {era5_cams_ini_file}

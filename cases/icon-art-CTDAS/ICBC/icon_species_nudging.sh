@@ -51,5 +51,27 @@ ncrename -O -d nhym,lev cams_remapped.nc
 
 # 5. Place in inicond file
 ncks -A -v CO2 cams_remapped.nc {filename}
-ncap2 -s 'CO2_new[time,lev,ncells]=CO2; CO2=CO2_new;' {filename}
-ncks -C -O -x -v CO2_new {filename} {cfg.icon_input_icbc}/$(basename {filename})
+ncap2 -s 'CO2_new[time,lev,ncells]=CO2;' {filename}
+ncks -C -O -x -v CO2 {filename} tmp.nc
+ncrename -v CO2_new,CO2 tmp.nc
+
+# 6. Remap to lateral boundaries
+cat > NAMELIST_ICONSUB << EOF_1
+&iconsub_nml
+  grid_filename    = '{cfg.input_files_scratch_dynamics_grid_filename}',
+  output_type      = 4,
+  lwrite_grid      = .TRUE.,
+/
+&subarea_nml
+  ORDER            = "lateral_boundary",
+  grf_info_file    = '{cfg.input_files_scratch_dynamics_grid_filename}',
+  min_refin_c_ctrl = 1
+  max_refin_c_ctrl = 42
+/
+EOF_1
+
+{cfg.iconsub_bin} --nml NAMELIST_ICONSUB
+cdo selgrid,2 lateral_boundary.grid.nc triangular-grid_00_lbc.nc
+cdo remapdis,triangular-grid_00_lbc.nc tmp.nc {era5_cams_nudge_file}
+ncrename -d cell,ncells {era5_cams_nudge_file}
+ncrename -d nv,vertices {era5_cams_nudge_file}

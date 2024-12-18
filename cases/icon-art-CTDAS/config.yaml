@@ -4,29 +4,150 @@ workflow: icon
 constraint: gpu
 run_on: cpu
 compute_queue: normal
-ntasks_per_node: 36
+ntasks_per_node: 12
 startdate: 2018-01-01T00:00:00Z
 enddate: 2018-12-31T23:59:59Z
-restart_step: PT10D
-CTDAS_step: 240
+restart_step: PT10D # = CTDAS cycle length
+
+####### CTDAS options.
+# First of all, download https://git.wur.nl/ctdas/CTDAS/-/tree/ctdas-icon
+# (i.e., CTDAS with the ctdas-icon branch).
+# Execute `start_ctdas_icon.sh $SCRATCH ctdas_procchain`
+# which will put the CTDAS files into $SCRATCH/ctdas_procchain.
+# We will then 'patch' this CTDAS installation with the required files,
+# - ctdas-icon.py [which runs CTDAS; and imports the following patched classes]:
+    # - statevector class [which, ultimately, defines our ensemble members]
+    # - observation operator (obsoperator) class [which, ultimately, runs the ICON scripts & post-processing sampler]
+    # - observations class [which, ultimately, defines how to ingest the observations]
+    # - optimizer class [which, ultimately, defines how to do localization]
+# - rc-cteco2 file [which, ultimately, is how we pass general input like folder names etc to CTDAS]
+# - rc-job file [which, ultimately, is the setup for CTDAS like lag times, etc.]
+CTDAS:
+    nlag: 2
+    tracer: co2
+    regions: basegrid # choose: basegrid or parentgrid
+    nensembles: 180
+    # nregions: # read from cells->regions file
+    restart_init_time: 86400 # 1 day in seconds; using Michael Steiner's "overwriting" restart mechanism
+    nboundaries: 8
+    lambdas: # The first 16 lambdas must be the respiration and uptake ones [even if not relevant, e.g., for a CH4 simulation], followed by the oem_cat categories in the xml file, in order of appearance, but excluding any 
+        - 1,1,1,1,1,1,1,1 # Respiration (Evergreen Forest, Deciduous Forest, Mixed Forest, Shrubland, Savanna, Cropland, Grassland, Urban/Other)
+        - 1,1,1,1,1,1,1,1 # Uptake (E, D, M, S, SV, C, G, U)
+        - 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2 # Anthropogenic CO2 (ensemble tracer categories that are optimized)
+    obs:
+        fetch_ICOS: True
+        # From https://cpauth.icos-cp.eu
+        ICOS_cookie_token: cpauthToken=WzE3MzM5NDQ3ODY3MTMsImVyaWsua29lbmVAZW1wYS5jaCIsIlNhbWwiXR6qePH9961Ih4LRBIu9/o+z/K7OSbvSf3EKUqpHA8orTrPjUMcuWrhmFbcVZeZPJ6uHY45go7BivHNShHkeF02yXrsC9MaYschekdvPvO4K9a4u+oqYi4M9J/s4Xv9LGsGTeHytuXhnfzdRtPKY9dykeW/bS6Gy4Rmou4+xJpf//kDajrNBy4Z0Z6Lrj1csQibe+cYjDObplLmDVs1NufUxyorCL6XbhaI2RLqaAvDWUqQ9A8kpbSJvW8Mdxit+6gDg+6gfnBrKFgL9Bs9VGkOjGKEmNUbn6XzBqPfMnt2NWnxsXyK1lXtLruTWRqsPcbK2hLvw7vj7iTUSDMpLQ1ew
+        ICOS_path: /scratch/snx3000/ekoene/ICOS/
+        fetch_OCO2: True
+        OCO2_path: /scratch/snx3000/ekoene/OCO2
+    global_inputs:
+        inventories:
+            - /users/ekoene/inventories/inventories/INV_20180101.nc
+            - /users/ekoene/inventories/inventories/INV_20180111.nc
+            - /users/ekoene/inventories/inventories/INV_20180121.nc
+            - /users/ekoene/inventories/inventories/INV_20180131.nc
+            - /users/ekoene/inventories/inventories/INV_20180210.nc
+            - /users/ekoene/inventories/inventories/INV_20180220.nc
+            - /users/ekoene/inventories/inventories/INV_20180302.nc
+            - /users/ekoene/inventories/inventories/INV_20180312.nc
+            - /users/ekoene/inventories/inventories/INV_20180322.nc
+            - /users/ekoene/inventories/inventories/INV_20180401.nc
+            - /users/ekoene/inventories/inventories/INV_20180411.nc
+            - /users/ekoene/inventories/inventories/INV_20180421.nc
+            - /users/ekoene/inventories/inventories/INV_20180501.nc
+            - /users/ekoene/inventories/inventories/INV_20180511.nc
+            - /users/ekoene/inventories/inventories/INV_20180521.nc
+            - /users/ekoene/inventories/inventories/INV_20180531.nc
+            - /users/ekoene/inventories/inventories/INV_20180610.nc
+            - /users/ekoene/inventories/inventories/INV_20180620.nc
+            - /users/ekoene/inventories/inventories/INV_20180630.nc
+            - /users/ekoene/inventories/inventories/INV_20180710.nc
+            - /users/ekoene/inventories/inventories/INV_20180720.nc
+            - /users/ekoene/inventories/inventories/INV_20180730.nc
+            - /users/ekoene/inventories/inventories/INV_20180809.nc
+            - /users/ekoene/inventories/inventories/INV_20180819.nc
+            - /users/ekoene/inventories/inventories/INV_20180829.nc
+            - /users/ekoene/inventories/inventories/INV_20180908.nc
+            - /users/ekoene/inventories/inventories/INV_20180918.nc
+            - /users/ekoene/inventories/inventories/INV_20180928.nc
+            - /users/ekoene/inventories/inventories/INV_20181008.nc
+            - /users/ekoene/inventories/inventories/INV_20181018.nc
+            - /users/ekoene/inventories/inventories/INV_20181028.nc
+            - /users/ekoene/inventories/inventories/INV_20181107.nc
+            - /users/ekoene/inventories/inventories/INV_20181117.nc
+            - /users/ekoene/inventories/inventories/INV_20181127.nc
+            - /users/ekoene/inventories/inventories/INV_20181207.nc
+            - /users/ekoene/inventories/inventories/INV_20181217.nc
+        grid:
+            - /users/ekoene/CTDAS_inputs/icon_europe_DOM01.parent.nc
+            - /users/ekoene/CTDAS_inputs/icon_europe_DOM01.nc
+            - ./work/icon-art-CTDAS/global_inputs/ERA5/lateral_boundary.grid.nc # This is guaranteed to exist due to the ERA5/CAMS preprocessing
+        extpar:
+            - /users/ekoene/CTDAS_inputs/icon_extpar_EriksGrid.nc
+        VPRM:
+            - /users/ekoene/CTDAS_inputs/VPRM_indices_ICON_datestr.nc
+        XML:
+            - /users/ekoene/CTDAS_inputs/tracers_CO2_firstrun.xml
+            - /users/ekoene/CTDAS_inputs/tracers_CO2_restart.xml
+
+# # CTDAS ------------------------------------------------------------------------
+# ctdas_restart = False
+# ctdas_BG_run = False
+# # CTDAS cycle length in days
+# ctdas_cycle = int(restart_cycle_window / 60 / 60 / 24)
+# ctdas_nlag = 2
+# ctdas_tracer = 'co2'
+# # CTDAS number of regions and cells->regions file
+# ctdas_nreg_params = 21184
+# ctdas_regionsfile = vprm_regions_synth_nc # <--- Create 
+# # Number of boundaries, and boundaries mask/regions file
+# ctdas_bg_params = 8
+# ctdas_boundary_mask_file = '/scratch/snx3000/ekoene/boundary_mask_bg.nc'
+# # Number of ensemble members (make this consistent with your XML file!)
+# ctdas_optimizer_nmembers = 180
+# # CTDAS path
+# ctdas_dir = '/scratch/snx3000/ekoene/ctdas-icon/exec'
+# # Distance file from region to region (shape: [N_reg x N_reg]), for statevector localization
+# ctdas_sv_distances = '/scratch/snx3000/ekoene/CTDAS_cells2cells.nc'
+# # Distance file from region to stations (shape: [N_reg x N_obs]), for observation localization
+# ctdas_op_loc_coeffs = '/scratch/snx3000/ekoene/cells2stations.nc'
+# # Directory containing a file with all the observations
+# ctdas_datadir = '/scratch/snx3000/ekoene/ICOS_extracted/2018/'
+# # CTDAS localization setting
+# ctdas_system_localization = 'spatial'
+# # CTDAS statevector length for one window
+# ctdas_nparameters = 2 * ctdas_nreg_params + 8  # 2 (A , VPRM) * ctdas_nreg_params + ctdas_bg_params
+# # Extraction template
+# ctdas_extract_template = '/scratch/snx3000/ekoene/processing-chain/cases/VPRM_EU_ERA5_22/extract_template_icos_EU'
+# # ICON runscript template
+# ctdas_ICON_template = '/scratch/snx3000/ekoene/processing-chain/cases/VPRM_EU_ERA5_22/runscript_template_restart_icos_EU'
+# # Full path to SBATCH template that can submit extraction scripts
+# ctdas_sbatch_extract_template = '/scratch/snx3000/ekoene/processing-chain/cases/VPRM_EU_ERA5_22/sbatch_extract_template'
+# # Full path to possibly time-varying emissionsgrid (if not time-varying, supply a filename without {}!)
+# ctdas_oae_grid = "/scratch/snx3000/ekoene/inventories/INV_{}.nc"
+# ctdas_oae_grid_fname = '%Y%m%d'  # Specifies the naming scheme to use for the emission grids
+# # Spinup time length
+# ctdas_restart_init_time = 60 * 60 * 24  # 1 day in seconds
+# # Restart file for the first simulation
+# ctdas_first_restart_init = '/scratch/snx3000/ekoene/processing-chain/work/VPRM_EU_ERA5_22/2018010100_0_240/icon/output_INIT'
+# # Number of vertical levels
+# nvlev = 60
+# # NOT NEEDED FOR ANYTHING, EXCEPT TO MAKE CTDAS RUN
+# ctdas_obsoperator_home = '/scratch/snx3000/msteiner/ctdas_test/exec/da/rc/stilt'
+# ctdas_obsoperator_rc = os.path.join(ctdas_obsoperator_home, 'stilt_0.rc')
+# ctdas_regtype = 'olson19_oif30'
 
 eccodes_dir: ./input/eccodes_definitions
 iconremap_bin: ./ext/icontools/icontools/iconremap
-iconsub_bin: ./ext/icontools/icontools/iconsub
-latbc_filename: ifs_<y><m><d><h>_lbc.nc
-inidata_prefix: ifs_init_
-inidata_nameformat: '%Y%m%d%H'
-inidata_filename_suffix: .nc
-output_filename: icon-art-global-test
-filename_format: <output_filename>_DOM<physdom>_<ddhhmmss>
-lateral_boundary_grid_order: lateral_boundary
-art_input_folder: ./input/icon-art-global/art
+iconsub_bin: /scratch/snx3000/ekoene/spack-c2sm/spack/opt/spack/icontools-c2sm-master/gcc-9.3.0/zktezcs5cjwjsptd747zhipi53nd6phr/bin/iconsub
+art_input_folder: ./input/icon-art-oem/ART
 
 walltime:
     prepare_icon: '00:15:00'
     prepare_art_global: '00:10:00'
     icon: '00:05:00'
-    prepare_CTDAS: '3:00:00'
+    prepare_CTDAS: '20:00:00'
 
 meteo:
     nudging_step: 3
@@ -34,30 +155,20 @@ meteo:
     interpolate_CAMS_to_ERA5: True
     url: https://cds-beta.climate.copernicus.eu/api
     key: 1c2e45b1-dd08-4bc4-90c8-15c06304ae69
-    era5_splitjob: icon_era5_splitfiles.sh
-    era5_inijob: icon_era5_inicond.sh
-    era5_nudgingjob: icon_era5_nudging.sh
-
+    era5_splitjob: ICBC/icon_era5_splitfiles.sh
+    era5_inijob: ICBC/icon_era5_inicond.sh
+    era5_nudgingjob: ICBC/icon_era5_nudging.sh
+    partab: mypartab
 
 chem:
     nudging_step: 3
     fetch_CAMS: True
     url: https://ads-beta.atmosphere.copernicus.eu/api
     key: 1c2e45b1-dd08-4bc4-90c8-15c06304ae69
-    cams_inijob: icon_species_inicond.sh
-    cams_nudgingjob: icon_species_nudging.sh
+    cams_inijob: ICBC/icon_species_inicond.sh
+    cams_nudgingjob: ICBC/icon_species_nudging.sh
     
-obs:
-    fetch_ICOS: True
-    # From https://cpauth.icos-cp.eu
-    ICOS_cookie_token: cpauthToken=WzE3MzMyNTAzMTQ5MDgsImVyaWsua29lbmVAZW1wYS5jaCIsIlNhbWwiXR491DfOcSH3wU5kg994O0tfjYmRz96JPlpjzGPnva+LfSUkoNo125YUECiAMGpmkU5F8pioS6dvd9tfk8UodxYuoIS3eF3u9sul3wK+C0cs3CnENtD2WSr0tIZptPecWUkSvPnGtPQkVQxEtJpNgCj8YLtwl2m6XRq0yUO/zbD8bZTsZxzvDpLjoV1LLdQX+p5/Gck0Epvlv8Qij5fnvpl40II4nHLCfBaeFNx3ZYYDdPA8XTLuoIAHkC7tlUvBmnC4t6lk/QLAq//0iZVawanyPSj6R+COJlEx74otpmXgPe3PknaYWwLFfT4dX4YoJFYQC+RQnChePOdS+YoO4Nv9
-    ICOS_path: /scratch/snx3000/ekoene/ICOS/
-    fetch_OCO2: True
-    OCO2_path: /scratch/snx3000/ekoene/OCO2
-
 input_files:
-    inicond_filename: ./input/icon-art-global/icbc/era2icon_R2B03_2022060200.nc
-    map_file_nudging: ./input/icon-art-global/icbc/map_file.nudging
     radiation_grid_filename: /users/ekoene/CTDAS_inputs/icon_europe_DOM01.parent.nc
     dynamics_grid_filename: /users/ekoene/CTDAS_inputs/icon_europe_DOM01.nc
     extpar_filename: /users/ekoene/CTDAS_inputs/icon_extpar_EriksGrid.nc
@@ -65,16 +176,16 @@ input_files:
     lrtm_filename: ./input/icon-art-global/rad/rrtmg_lw.nc
     chemtracer_xml_filename: ./input/icon-art-global/config/tracers.xml
 
-icon:
-    binary_file: ./ext/icon-art/bin/icon
-    runjob_filename: icon_runjob.cfg
-    # era5_inijob: icon_era5_inicond.sh
-    # era5_nudgingjob: icon_era5_nudging.sh
-    species_inijob: icon_species_inicond.sh
-    species_nudgingjob: icon_species_nudging.sh
-    output_writing_step: 6
-    compute_queue: normal
-    np_tot: 32
-    np_io: 3
-    np_restart: 1
-    np_prefetch: 1
+# icon:
+#     binary_file: ./ext/icon-art/bin/icon
+#     runjob_filename: icon_runjob.cfg
+#     # era5_inijob: icon_era5_inicond.sh
+#     # era5_nudgingjob: icon_era5_nudging.sh
+#     species_inijob: icon_species_inicond.sh
+#     species_nudgingjob: icon_species_nudging.sh
+#     output_writing_step: 6
+#     compute_queue: normal
+#     np_tot: 32
+#     np_io: 3
+#     np_restart: 1
+#     np_prefetch: 1

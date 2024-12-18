@@ -135,7 +135,7 @@ def prepare_message(logfile_path):
         message = message[:2048] + \
                   "\n\n--------------------------------------------------\n" + \
                   "### Some lines are skipped here. Original logfile:\n" + \
-                  logfile_path + \
+                  logfile_path.name + \
                   "\n--------------------------------------------------\n\n" + \
                   message[-2048:]
 

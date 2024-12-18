@@ -154,10 +154,10 @@ rm smil_out.nc
 # --------------------------------------
 
 # -- Apply logarithm to surface pressure
-cdo expr,'LNPS=ln(PS);' era5_final.nc tmp.nc
+cdo expr,'LNPS=ln(PS); Q=QV; GEOP_SFC=GEOSP' era5_final.nc tmp.nc
 
 # -- Put the new variable LNSP in the original file
-ncks -A -v LNPS tmp.nc era5_final.nc
+ncks -A -v LNPS,Q,GEOP_SFC tmp.nc era5_final.nc
 rm tmp.nc
 
 # ---------------------------------

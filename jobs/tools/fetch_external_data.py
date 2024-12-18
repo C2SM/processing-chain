@@ -18,7 +18,7 @@ from time import sleep
 from datetime import datetime, timedelta
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
-from . import iter_hours
+from . import iter_hours, create_dir
 
 def fetch_CDS(product, date, levels, params, resolution, area, outloc):
     # Obtain CDS authentification from file
@@ -170,19 +170,19 @@ def fetch_era5_nudging(date, dir2move, resolution=1.0, area=None):
     return outfile_3D, outfile_surface
 
 
-def fetch_CAMS_CO2(date, dir2move):
+def fetch_CAMS_CO2(start_date, end_date, dir2move):
     """Fetch CAMS CO2 data from ECMWF for initial and boundary conditions
 
     Parameters
     ----------
-    date : initial date to fetch a year's worth of data
-
+    start_date : initial date to fetch data for
+    end_date   : final date to fetch data for
+    dir2move   : directory to move to
     """
 
     # Set a temporary destionation
     tmpdir = os.path.join(os.getenv('SCRATCH'), 'CAMS_i')
-    if not os.path.exists(tmpdir):
-        os.makedirs(tmpdir)
+    create_dir(tmpdir, 'Temporary output for CAMS data download')
 
     url_cmd = f"grep 'ads' ~/.cdsapirc"
     url = os.popen(url_cmd).read().strip().split(": ")[1]
@@ -190,67 +190,65 @@ def fetch_CAMS_CO2(date, dir2move):
     key = os.popen(key_cmd).read().strip().split(": ")[1]
     c = cdsapi.Client(url=url, key=key)
 
-    download = os.path.join(tmpdir, f'cams_GHG_{date.strftime("%Y")}.zip')
-    if not os.path.isfile(download):
-        c.retrieve(
-            'cams-global-greenhouse-gas-inversion', {
-                'variable':
-                'carbon_dioxide',
-                'quantity':
-                'concentration',
-                'input_observations':
-                'surface',
-                'time_aggregation':
-                'instantaneous',
-                'version':
-                'latest',
-                'year':
-                date.strftime('%Y'),
-                'month': [
-                    '01',
-                    '02',
-                    '03',
-                    '04',
-                    '05',
-                    '06',
-                    '07',
-                    '08',
-                    '09',
-                    '10',
-                    '11',
-                    '12',
-                ],
-                'format':
-                'zip',
-            }, download)
-        logging.info(f'downloaded the CAMS data!')
-    else:
-        logging.info(f'File already downloaded and present at {download}')
+    # Iterate over each year
+    current_date = start_date
+    while current_date.replace(tzinfo=None) <= end_date.replace(tzinfo=None):
+        year = current_date.year
+        start_month = current_date.month if current_date.year == start_date.year else 1
+        end_month = end_date.month if current_date.year == end_date.year else 12
+        months = [f"{month:02d}" for month in range(start_month, end_month + 1)]
 
-    # --- Extract the zip file
-    with zipfile.ZipFile(download) as zf:
-        for member in zf.infolist():
-            if not os.path.isfile(os.path.join(tmpdir, member.filename)):
+        # Define download file
+        download = os.path.join(tmpdir, f'cams_GHG_{year}_{start_date.strftime("%Y%m%d")}.zip')
+        if not os.path.isfile(download):
+            c.retrieve(
+                    'cams-global-greenhouse-gas-inversion', {
+                    'variable': 'carbon_dioxide',
+                    'quantity': 'concentration',
+                    'input_observations': 'surface',
+                    'time_aggregation': 'instantaneous',
+                    'version': 'latest',
+                    'year': str(year),
+                    'month': months,
+                    'format': 'zip',
+                },
+                download)
+            logging.info(f'Downloaded CAMS data for year {year}!')
+        else:
+            logging.info(f'File already downloaded: {download}')
+
+        # Unzip and process files
+        with zipfile.ZipFile(download) as zf:
+            for member in zf.infolist():
+                date_str = member.filename.split('_')[-1].split('.')[0]
+                member.filename = f"CAMS_{date_str}_{start_date.strftime('%Y%m%d')}"
+                filename = os.path.join(tmpdir, member.filename)
+                # Extract only files within the date range
                 try:
-                    zf.extract(member, tmpdir)
-                except zipfile.error as e:
-                    pass
+                    if not os.path.isfile(filename):
+                        zf.extract(member, tmpdir)
+                except Exception as e:
+                    logging.warning(f"Skipping file {member.filename}: {e}")
+                # Extract individual dates
+                try:
+                    ds_CAMS = xr.open_dataset(filename)
+                    for time in ds_CAMS.time:
+                        if np.datetime64(start_date) <= time.values <= np.datetime64(end_date):
+                            outpath = os.path.join(
+                                dir2move, 'cams_egg4_' +
+                                np.datetime_as_string(time.values, unit='h').replace('-', '').replace(':', '') +
+                                '.nc')
+                            if not os.path.isfile(outpath):
+                                logging.info(f"Writing CAMS data to {outpath}")
+                                ds_out = ds_CAMS.sel(time=time, drop=True).squeeze()
+                                ds_out.to_netcdf(outpath)
+                except Exception as e:
+                    logging.warning(f"Error processing file {filename}: {e}")
 
-    # --- Output files to folder
-    with zipfile.ZipFile(download) as zf:
-        for member in zf.infolist():
-            filename = os.path.join(tmpdir, member.filename)
-            ds_CAMS = xr.open_dataset(filename)
-            for time in ds_CAMS.time:
-                outpath = os.path.join(
-                    dir2move, 'cams_egg4_' +
-                    ds_CAMS.sel(time=time).time.dt.strftime('%Y%m%d%H').values
-                    + '.nc')
-                if not os.path.isfile(outpath):
-                    logging.info("Writing out CAMS data to file")
-                    ds_out = ds_CAMS.where(ds_CAMS.time == time,
-                                           drop=True).squeeze()
-                    ds_out.to_netcdf(outpath)
+        # Move to the next year
+        current_date = datetime(year + 1, 1, 1)
+
+    logging.info("Finished processing CAMS data.")
 
 
 def fetch_ICOS_data(cookie_token,
@@ -525,7 +523,6 @@ def process_ICOS_data(ICOS_obs_folder,
         'author':'Processing Chain'
     }
 
-
     # Create xarray dataset
     ds_extracted_obs_matrix = xr.Dataset(
         data_vars=data_vars,
@@ -717,7 +714,6 @@ def process_OCO2_data(OCO2_obs_folder,
         
     # # Process files
     for day in iter_hours(start_date, end_date, 24):
-
         # Gather files
         logging.info(f"Looking in folder {OCO2_obs_folder} for ICOS observation files with glob OCO2_L2_Lite*{day.strftime('%y%m%d')}*.nc4")
         file = list(Path(OCO2_obs_folder).glob(f"OCO2_L2_Lite*{day.strftime('%y%m%d')}*.nc4"))
@@ -730,11 +726,6 @@ def process_OCO2_data(OCO2_obs_folder,
         
         # Open file
         s5p_data = xr.open_dataset(file[0])
-
-        # Process the 'time' variable: convert format, convert shape
-        # pressure_levels (rename, reverse direction), pressure_weight (rename, reverse, select)
-        # co2_profile_apriori (rename, reverse, select), xco2_apriori (rename, select)
-        # xco2_uncertainty (rename, select)
         s5p_out = s5p_data[["latitude", "longitude", "date", 
                             "xco2", "xco2_quality_flag", "xco2_averaging_kernel", "pressure_levels", 
                             "pressure_levels", "pressure_weight", "co2_profile_apriori", "xco2_apriori",

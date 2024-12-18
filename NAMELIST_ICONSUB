@@ -1,0 +1,11 @@
+&iconsub_nml
+  grid_filename    = '/scratch/snx3000/ekoene/test_chain/procchain/processing-chain/work/icon-art-CTDAS/2018010100_2018011100/icon/input/icon_europe_DOM01.nc',
+  output_type      = 4,
+  lwrite_grid      = .TRUE.,
+/
+&subarea_nml
+  ORDER            = "lateral_boundary",
+  grf_info_file    = '/scratch/snx3000/ekoene/test_chain/procchain/processing-chain/work/icon-art-CTDAS/2018010100_2018011100/icon/input/icon_europe_DOM01.nc',
+  min_refin_c_ctrl = 1
+  max_refin_c_ctrl = 14
+/

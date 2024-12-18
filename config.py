@@ -596,11 +596,14 @@ class Config():
         # Get job info for all jobs
         self.slurm_info = {}
         for job_name in self.jobs:
-            for job_id in self.job_ids['previous'][job_name]:
-                self.slurm_info[job_name] = []
-                self.slurm_info[job_name].append(
-                    self.get_job_info(job_id, slurm_keys=info_keys,
-                                      parse=True))
+            if job_name == "prepare_CTDAS":
+                continue
+            else:
+                for job_id in self.job_ids['previous'][job_name]:
+                    self.slurm_info[job_name] = []
+                    self.slurm_info[job_name].append(
+                        self.get_job_info(job_id, slurm_keys=info_keys,
+                                        parse=True))
 
     def print_previous_slurm_summary(self):
         # Width of printed slurm piece of information
@@ -634,19 +637,25 @@ class Config():
             f.write(table_header)
             f.write('\n')
             for job_name in self.jobs:
-                for info in self.slurm_info[job_name]:
-                    f.write(line_format.format(**info))
-                    f.write('\n')
+                if job_name == "prepare_CTDAS":
+                    continue
+                else:
+                    for info in self.slurm_info[job_name]:
+                        f.write(line_format.format(**info))
+                        f.write('\n')
             f.write('\n')
 
     def check_previous_chunk_success(self):
         status = 0
         failed_jobs = []
         for job_name, info_list in self.slurm_info.items():
-            for info in info_list:
-                if info['State'] != 'COMPLETED':
-                    failed_jobs.append(job_name)
-                    status += 1
+            if job_name == "prepare_CTDAS":
+                continue
+            else:
+                for info in info_list:
+                    if info['State'] != 'COMPLETED':
+                        failed_jobs.append(job_name)
+                        status += 1
 
         if status > 0:
             raise RuntimeError(f"The following job(s) failed: {failed_jobs}")
