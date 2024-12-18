@@ -197,13 +197,16 @@ def fetch_CAMS_CO2(start_date, end_date, dir2move):
         year = current_date.year
         start_month = current_date.month if current_date.year == start_date.year else 1
         end_month = end_date.month if current_date.year == end_date.year else 12
-        months = [f"{month:02d}" for month in range(start_month, end_month + 1)]
+        months = [
+            f"{month:02d}" for month in range(start_month, end_month + 1)
+        ]
 
         # Define download file
-        download = os.path.join(tmpdir, f'cams_GHG_{year}_{start_date.strftime("%Y%m%d")}.zip')
+        download = os.path.join(
+            tmpdir, f'cams_GHG_{year}_{start_date.strftime("%Y%m%d")}.zip')
         if not os.path.isfile(download):
             c.retrieve(
-                    'cams-global-greenhouse-gas-inversion', {
+                'cams-global-greenhouse-gas-inversion', {
                     'variable': 'carbon_dioxide',
                     'quantity': 'concentration',
                     'input_observations': 'surface',
@@ -212,8 +215,7 @@ def fetch_CAMS_CO2(start_date, end_date, dir2move):
                     'year': str(year),
                     'month': months,
                     'format': 'zip',
-                },
-                download)
+                }, download)
             logging.info(f'Downloaded CAMS data for year {year}!')
         else:
             logging.info(f'File already downloaded: {download}')
@@ -234,14 +236,17 @@ def fetch_CAMS_CO2(start_date, end_date, dir2move):
                 try:
                     ds_CAMS = xr.open_dataset(filename)
                     for time in ds_CAMS.time:
-                        if np.datetime64(start_date) <= time.values <= np.datetime64(end_date):
+                        if np.datetime64(
+                                start_date) <= time.values <= np.datetime64(
+                                    end_date):
                             outpath = os.path.join(
-                                dir2move, 'cams_egg4_' +
-                                np.datetime_as_string(time.values, unit='h').replace('-', '').replace(':', '') +
-                                '.nc')
+                                dir2move, 'cams_egg4_' + np.datetime_as_string(
+                                    time.values, unit='h').replace(
+                                        '-', '').replace(':', '') + '.nc')
                             if not os.path.isfile(outpath):
                                 logging.info(f"Writing CAMS data to {outpath}")
-                                ds_out = ds_CAMS.sel(time=time, drop=True).squeeze()
+                                ds_out = ds_CAMS.sel(time=time,
+                                                     drop=True).squeeze()
                                 ds_out.to_netcdf(outpath)
                 except Exception as e:
                     logging.warning(f"Error processing file {filename}: {e}")
@@ -367,7 +372,7 @@ def fetch_ICOS_data(cookie_token,
         ds.to_netcdf(os.path.join(save_path, name))
 
 
-def process_ICOS_data(ICOS_obs_folder, 
+def process_ICOS_data(ICOS_obs_folder,
                       start_date='01-01-2022',
                       end_date='31-12-2022',
                       output_folder='~/'):
@@ -386,8 +391,7 @@ def process_ICOS_data(ICOS_obs_folder,
     lat_lims = [40.9, 58.7]
 
     # Utility for converting units to PPMv
-    toppm_dict = {'nmol mol-1':1e-9*1e6,
-                  'µmol mol-1':1e-6*1e6}
+    toppm_dict = {'nmol mol-1': 1e-9 * 1e6, 'µmol mol-1': 1e-6 * 1e6}
 
     # Gather chosen dates
     delta = end_date - start_date
@@ -440,8 +444,9 @@ def process_ICOS_data(ICOS_obs_folder,
 
             # Filter dataset to the desired time range
             ds['time'] = ds['time']
-            ds_filtered = ds.sel(time=slice(start_date.replace(tzinfo=None), end_date.replace(tzinfo=None)))
-            
+            ds_filtered = ds.sel(time=slice(start_date.replace(
+                tzinfo=None), end_date.replace(tzinfo=None)))
+
             # Align `chosen_dates` with `ds_filtered.time`
             ds_aligned = ds_filtered.reindex(time=chosen_dates,
                                              method='nearest',
@@ -558,7 +563,9 @@ def process_ICOS_data(ICOS_obs_folder,
                                          attrs=attrs)
 
     # Save dataset to file
-    output_filename = Path(output_folder) / f"Extracted_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}_alldates_masl.nc"
+    output_filename = Path(
+        output_folder
+    ) / f"Extracted_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}_alldates_masl.nc"
     ds_extracted_obs_matrix.to_netcdf(output_filename)
 
     logging.info(
@@ -763,22 +770,28 @@ def process_OCO2_data(OCO2_obs_folder,
 
         # Open file
         s5p_data = xr.open_dataset(file[0])
-        s5p_out = s5p_data[["latitude", "longitude", "date", 
-                            "xco2", "xco2_quality_flag", "xco2_averaging_kernel", "pressure_levels", 
-                            "pressure_levels", "pressure_weight", "co2_profile_apriori", "xco2_apriori",
-                              "xco2_uncertainty" ]]
-        s5p_out = s5p_out.rename({"levels": "layers",
-                             "sounding_id": "soundings",
-                             "xco2": "obs",
-                             "xco2_quality_flag": "quality_flag",
-                             "xco2_averaging_kernel": "averaging_kernel",
-                             "pressure_weight": "pressure_weighting_function",
-                             "co2_profile_apriori": "prior_profile",
-                             "xco2_apriori": "prior",
-                             "xco2_uncertainty": "uncertainty"})
-        s5p_out["pressure_levels"] = s5p_out.pressure_levels[:,::-1]
-        s5p_out["pressure_weighting_function"] = s5p_out.pressure_weighting_function[:,::-1]
-        s5p_out["surface_pressure"] = s5p_out.pressure_levels[:,0]
+        s5p_out = s5p_data[[
+            "latitude", "longitude", "date", "xco2", "xco2_quality_flag",
+            "xco2_averaging_kernel", "pressure_levels", "pressure_levels",
+            "pressure_weight", "co2_profile_apriori", "xco2_apriori",
+            "xco2_uncertainty"
+        ]]
+        s5p_out = s5p_out.rename({
+            "levels": "layers",
+            "sounding_id": "soundings",
+            "xco2": "obs",
+            "xco2_quality_flag": "quality_flag",
+            "xco2_averaging_kernel": "averaging_kernel",
+            "pressure_weight": "pressure_weighting_function",
+            "co2_profile_apriori": "prior_profile",
+            "xco2_apriori": "prior",
+            "xco2_uncertainty": "uncertainty"
+        })
+        s5p_out["pressure_levels"] = s5p_out.pressure_levels[:, ::-1]
+        s5p_out[
+            "pressure_weighting_function"] = s5p_out.pressure_weighting_function[:, ::
+                                                                                 -1]
+        s5p_out["surface_pressure"] = s5p_out.pressure_levels[:, 0]
 
         # Process the 'time' variable: convert format, convert shape
         # pressure_levels (rename, reverse direction), pressure_weight (rename, reverse, select)
@@ -812,4 +825,5 @@ def process_OCO2_data(OCO2_obs_folder,
             'level_def': 'pressure_boundaries',
             'retrieval_id': file[0].name
         })
-        s5p_out.to_netcdf(output_folder / f"OCO2_{day.strftime('%Y%m%d')}_ctdas.nc")
+        s5p_out.to_netcdf(output_folder /
+                          f"OCO2_{day.strftime('%Y%m%d')}_ctdas.nc")

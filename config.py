@@ -602,8 +602,9 @@ class Config():
                 for job_id in self.job_ids['previous'][job_name]:
                     self.slurm_info[job_name] = []
                     self.slurm_info[job_name].append(
-                        self.get_job_info(job_id, slurm_keys=info_keys,
-                                        parse=True))
+                        self.get_job_info(job_id,
+                                          slurm_keys=info_keys,
+                                          parse=True))
 
     def print_previous_slurm_summary(self):
         # Width of printed slurm piece of information

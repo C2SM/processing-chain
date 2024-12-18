@@ -2,7 +2,6 @@ import xarray as xr
 import numpy as np
 import subprocess
 
-
 import xarray as xr
 import numpy as np
 import subprocess
@@ -20,21 +19,25 @@ def create_lambda_regions(input_grid, output_path, lambdas_ids):
     cells = np.arange(ncells) + 1
 
     # Create dataset
-    ds_cells = xr.Dataset(
-        data_vars={
-            'REG': (['cell'], regions),
-            'Lambda_indicies': (['cat'], lambdas_ids)
-        },
-        coords={
-            'cell': (['cell'], cells),
-            'cat': (['cat'], categories)
-        },
-        attrs={
-            'author': 'Processing Chain'
-        }
-    )
+    ds_cells = xr.Dataset(data_vars={
+        'REG': (['cell'], regions),
+        'Lambda_indicies': (['cat'], lambdas_ids)
+    },
+                          coords={
+                              'cell': (['cell'], cells),
+                              'cat': (['cat'], categories)
+                          },
+                          attrs={'author': 'Processing Chain'})
 
-    ds_cells.to_netcdf(output_path, encoding={'REG': {'dtype': 'int32'}, 'cell': {'dtype': 'int32'}})
+    ds_cells.to_netcdf(output_path,
+                       encoding={
+                           'REG': {
+                               'dtype': 'int32'
+                           },
+                           'cell': {
+                               'dtype': 'int32'
+                           }
+                       })
     print(f"Lambda regions saved to {output_path}")
     return nregs, categories[-1]
 
@@ -90,20 +93,18 @@ EOF_1
         elif lon < 0 and lat > 0:
             boundary_regions[i][0 if abs(lon) > lat else 1] = 1
 
-    ds_boundary = xr.Dataset(
-        data_vars={
-            'boundaryregion': (['cell', 'reg'], boundary_regions),
-            'global_cell_idx': (['cell'], np.arange(len(clon)))
-        },
-        coords={
-            'cell': (['cell'], np.arange(len(clon))),
-            'reg': (['reg'], np.arange(8))
-        },
-        attrs={
-            'author': 'Erik Koene',
-            'email': 'erik.koene@empa.ch'
-        }
-    )
+    ds_boundary = xr.Dataset(data_vars={
+        'boundaryregion': (['cell', 'reg'], boundary_regions),
+        'global_cell_idx': (['cell'], np.arange(len(clon)))
+    },
+                             coords={
+                                 'cell': (['cell'], np.arange(len(clon))),
+                                 'reg': (['reg'], np.arange(8))
+                             },
+                             attrs={
+                                 'author': 'Erik Koene',
+                                 'email': 'erik.koene@empa.ch'
+                             })
     ds_boundary.to_netcdf(output_path)
     print(f"Boundary regions saved to {output_path}")
 
@@ -112,20 +113,16 @@ def create_boundary_prior_all_onesll_ones(output_path, nensembles):
     """
     Create boundary lambdas dataset and save to NetCDF.
     """
-    lambdas = np.ones((nensembles,8), dtype=np.float32)
-    ds_lambdas = xr.Dataset(
-        data_vars={
-            'lambda': (['ens', 'reg'], lambdas)
-        },
-        coords={
-            'ens': (['ens'], np.arange(nensembles)),
-            'reg': (['reg'], np.arange(8))
-        },
-        attrs={
-            'author': 'Erik Koene',
-            'email': 'erik.koene@empa.ch'
-        }
-    )
+    lambdas = np.ones((nensembles, 8), dtype=np.float32)
+    ds_lambdas = xr.Dataset(data_vars={'lambda': (['ens', 'reg'], lambdas)},
+                            coords={
+                                'ens': (['ens'], np.arange(nensembles)),
+                                'reg': (['reg'], np.arange(8))
+                            },
+                            attrs={
+                                'author': 'Erik Koene',
+                                'email': 'erik.koene@empa.ch'
+                            })
     ds_lambdas.to_netcdf(output_path)
     print(f"Boundary lambdas saved to {output_path}")
 
