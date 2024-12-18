@@ -109,7 +109,7 @@ EOF_1
     print(f"Boundary regions saved to {output_path}")
 
 
-def create_boundary_prior_all_onesll_ones(output_path, nensembles):
+def create_boundary_prior_all_ones(output_path, nensembles):
     """
     Create boundary lambdas dataset and save to NetCDF.
     """
