@@ -13,8 +13,8 @@ lurbalb: .TRUE.
 lurbahf: .TRUE.
 
 walltime:
-    prepare_icon: '00:20:00'
-    oem: '00:10:00'
+    prepare_icon: '01:00:00'
+    oem: '01:00:00'
     icon: '02:00:00'
 
 
@@ -31,8 +31,8 @@ output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
 filename_format: <output_filename>_DOM<physdom>_<datetime2>
 lateral_boundary_grid_order: lateral_boundary
 art_input_folder: /store/c2sm/amrs/kdnmez/icon-nwp-new/externals/art
-art_scratch_copy_folder: /scratch/snx3000/kdnmez/UrbaNature/icon_art_run/input
-art_scratch_input_folder: /scratch/snx3000/kdnmez/UrbaNature/icon_art_run/input/art
+art_scratch_copy_folder: /capstor/scratch/cscs/kdnmez/UrbaNature/icon_terra_urb_run/input
+art_scratch_input_folder: /capstor/scratch/cscs/kdnmez/UrbaNature/icon_terra_urb_run/input/art
 dwdfg_filename: reduced_ICON-ART-UNSTRUCTURED_DOM01_20220701T000000Z.nc
 
 icontools_runjobs:
@@ -58,7 +58,7 @@ input_files:
 
 
 icon:
-    binary_file: /store/c2sm/amrs/kdnmez/icon-nwp-new/cpu/icon_spatially_varying_executable/icon
+    binary_file: /capstor/scratch/cscs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-5npdwifgufix73rub3rbaael3x4cfcen/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
     walltime: '00:10:00'
