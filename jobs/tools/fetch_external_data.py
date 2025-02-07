@@ -257,8 +257,7 @@ def fetch_CAMS_CO2(start_date, end_date, dir2move):
     logging.info("Finished processing CAMS data.")
 
 
-def fetch_ICOS_data(cookie_token,
-                    query_type='any',
+def fetch_ICOS_data(query_type='any',
                     start_date='01-01-2022',
                     end_date='31-12-2022',
                     save_path='',
@@ -268,15 +267,12 @@ def fetch_ICOS_data(cookie_token,
     (e.g., https://data.icos-cp.eu/portal/#%7B%22filterCategories%22%3A%7B%22variable%22%3A%5B%22http%3A%2F%2Fmeta.icos-cp.eu%2Fresources%2Fcpmeta%2Fco2atcMoleFrac%22%5D%7D%2C%22filterTemporal%22%3A%7B%22df%22%3A%222017-12-31%22%2C%22dt%22%3A%222018-12-30%22%7D%7D)
     and then clicking the well-hidden SPARQL query button (situated right of "Data objects 1 to 20 of 167", consisting of an arrow.)
 
-    cookie_token    str    cpauthToken=WzE3M....
     query_type      str    [release, growing, any] correspond to the different file products at the ICOS-CP
     start_date      str    dd-mm-yyyy
     end_date        str    dd-mm-yyyy
     save_path       str    e.g., /scratch/snx/[user]/ICOS_data/year/
     species         list   can be ['co', 'co2', 'ch4'] or any subset thereof
     '''
-    meta, data = bootstrap.fromCookieToken(cookie_token)
-    cpauth.init_by(data.auth)
     # --- Build up an SQL query for the different species
     qd = ""
     for specie in species:
@@ -323,6 +319,13 @@ def fetch_ICOS_data(cookie_token,
 
     for d in result.data()['dobj']:
         obj = Dobj(d).data
+        outfn = os.path.join(save_path, 'ICOS_obs_' + str(specie)[2:-2] + '_' + query_type + '_' + str(
+            Dobj(d).station['id']) + '_' + str(
+                Dobj(d).meta['specificInfo']['acquisition']
+                ['samplingHeight']) + '_' + start_date + '_' + end_date + '.nc')
+        # Skip if filename exists
+        if os.path.isfile(outfn):
+            continue
 
         shape = np.shape(obj)
 
@@ -369,7 +372,7 @@ def fetch_ICOS_data(cookie_token,
             Dobj(d).station['id']) + '_' + str(
                 Dobj(d).meta['specificInfo']['acquisition']
                 ['samplingHeight']) + '_' + start_date + '_' + end_date + '.nc'
-        ds.to_netcdf(os.path.join(save_path, name))
+        ds.to_netcdf(outfn)
 
 
 def process_ICOS_data(ICOS_obs_folder,
@@ -386,6 +389,13 @@ def process_ICOS_data(ICOS_obs_folder,
     output_folder   str    e.g., /scratch/snx/[user]/ICOS_data/year/
 
     """
+    output_filename = Path(
+        output_folder
+    ) / f"Extracted_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}_alldates_masl.nc"
+    if os.path.isfile(output_filename):
+        return
+
+
     # Future expected options (or retrieved from grid file); for now hardcoded
     lon_lims = [-8.3, 17.5]
     lat_lims = [40.9, 58.7]
@@ -563,9 +573,6 @@ def process_ICOS_data(ICOS_obs_folder,
                                          attrs=attrs)
 
     # Save dataset to file
-    output_filename = Path(
-        output_folder
-    ) / f"Extracted_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}_alldates_masl.nc"
     ds_extracted_obs_matrix.to_netcdf(output_filename)
 
     logging.info(

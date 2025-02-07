@@ -152,6 +152,8 @@ class Config():
                 self.machine = 'daint'
             elif hostname.startswith('eu-'):
                 self.machine = 'euler'
+            elif hostname.startswith("santis-"):
+                self.machine = 'santis'
             else:
                 raise ValueError(f"Unsupported hostname: {hostname}")
             print(f"You are on the {self.machine} machine.")
@@ -472,6 +474,22 @@ class Config():
                 f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
                 '',
             ]
+        elif self.machine == 'santis':
+            script_lines = [
+                '#!/usr/bin/env bash',
+                f'#SBATCH --job-name={job_name}',
+                '#SBATCH --nodes=1',
+                f'#SBATCH --time={walltime}',
+                f'#SBATCH --output={self.logfile}',
+                '#SBATCH --open-mode=append',
+                f'#SBATCH --account={self.compute_account}',
+                f'#SBATCH --partition={self.compute_queue}',
+                f'#SBATCH --constraint={self.constraint}',
+                '',
+                f'cd {self.chain_src_dir}',
+                f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
+                '',
+            ]
 
         job_path = self.chain_root / 'job_scripts'
         job_path.mkdir(parents=True, exist_ok=True)
@@ -495,7 +513,7 @@ class Config():
             job_file = self.case_root / 'submit.wait.slurm'
             log_file = self.case_root / 'wait.log'
             dep_str = ':'.join(map(str, dep_ids))
-            if self.machine == 'daint':
+            if self.machine == 'daint' or self.machine == "santis":
                 script_lines = [
                     '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
                     '#SBATCH --nodes=1', '#SBATCH --time=00:01:00',

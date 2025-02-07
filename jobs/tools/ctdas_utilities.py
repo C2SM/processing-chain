@@ -53,11 +53,12 @@ def create_prior_all_ones(output_path, nensembles, ncats, nregs):
     print(f"Prior all ones saved to {output_path}")
 
 
-def create_boundary_regions(grid_filename, output_path):
+def create_boundary_regions(grid_filename, output_path, cdo_nco_cmd, cdo_nco_cmd_post):
     """
     Create boundary region masks based on geographical quadrants and save to NetCDF.
     """
     cmd = f"""
+{cdo_nco_cmd}
 cat > NAMELIST_ICONSUB << EOF_1
 &iconsub_nml
     grid_filename = '{grid_filename}',
@@ -72,7 +73,8 @@ cat > NAMELIST_ICONSUB << EOF_1
 /
 EOF_1
 
-/scratch/snx3000/ekoene/spack-c2sm/spack/opt/spack/icontools-c2sm-master/gcc-9.3.0/zktezcs5cjwjsptd747zhipi53nd6phr/bin/iconsub --nml NAMELIST_ICONSUB
+iconsub --nml NAMELIST_ICONSUB
+{cdo_nco_cmd_post}
     """
     subprocess.check_output(cmd, shell=True)
 

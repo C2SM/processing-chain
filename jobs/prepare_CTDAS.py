@@ -7,13 +7,15 @@ import xarray as xr
 import shutil
 import subprocess
 from . import tools, prepare_icon
+from .tools.generate_tracers_xml import generate_tracers_xml
 from .tools.fetch_external_data import fetch_era5, fetch_CAMS_CO2, fetch_ICOS_data, fetch_OCO2_data, process_ICOS_data, process_OCO2_data
 from .tools.ctdas_utilities import create_lambda_regions, create_prior_all_ones, create_boundary_regions, create_boundary_prior_all_ones
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import timedelta
+from pathlib import Path
+from subprocess import run
 
 BASIC_PYTHON_JOB = False
-
 
 def main(cfg):
     """
@@ -27,7 +29,7 @@ def main(cfg):
     5. Download ICOS station data for the chosen dates
     6. Download OCO-2 data for the chosen dates
     7. Prepare the folder output structure
-    8. Run the first one-day simulation
+    8. Prepare the first one-day simulation
     9. Patch the CTDAS directory with files of our own
 
     Parameters
@@ -115,9 +117,9 @@ def main(cfg):
             # Split files (with multiple days/times) into individual files using bash script
             era5_split_template = cfg.case_path / cfg.meteo_era5_splitjob
             era5_split_job = ERA5_folder / (
-                cfg.meteo_era5_splitjob.stem +
+                era5_split_template.stem +
                 f'{cfg.startdate_sim.strftime("%Y%m%d")}' +
-                cfg.meteo_era5_splitjob.suffix)
+                era5_split_template.suffix)
             logging.info(
                 f"Preparing ERA5 splitting script for ICON from {era5_split_template}"
             )
@@ -172,7 +174,7 @@ def main(cfg):
                 inicond_filename=era5_ini_file,
                 ERA5_folder=ERA5_folder,
                 CAMS_file=CAMS_folder /
-                f'cams_egg4_{cfg.startdate_sim.strftime("%Y%m%d%H")}.nc',
+                f'cams_egg4_{cfg.startdate_sim.strftime("%Y%m%dT%H")}.nc',
                 era5_cams_ini_file=era5_ini_file))
         logging.info(f"Running CAMS initial conditions script {cams_ini_job}")
         subprocess.run(["bash", cams_ini_job],
@@ -231,7 +233,7 @@ def main(cfg):
                         filename=era5_nudge_file,
                         ERA5_folder=ERA5_folder,
                         CAMS_file=CAMS_folder /
-                        f'cams_egg4_{time.strftime("%Y%m%d%H")}.nc',
+                        f'cams_egg4_{time.strftime("%Y%m%dT%H")}.nc',
                         era5_cams_nudge_file=era5_nudge_file_final,
                     ))
                 subprocess.run(["bash", cams_nudge_job],
@@ -242,8 +244,7 @@ def main(cfg):
     # Lots of potential for 'dehardcoding' things here, but that has to be done with
     # a lot of care.
     if cfg.CTDAS_obs_fetch_ICOS:
-        fetch_ICOS_data(cookie_token=cfg.CTDAS_obs_ICOS_cookie_token,
-                        start_date=cfg.startdate_sim.strftime("%d-%m-%Y"),
+        fetch_ICOS_data(start_date=cfg.startdate_sim.strftime("%d-%m-%Y"),
                         end_date=(cfg.enddate_sim +
                                   timedelta(days=1)).strftime("%d-%m-%Y"),
                         save_path=cfg.CTDAS_obs_ICOS_path,
@@ -260,25 +261,6 @@ def main(cfg):
 
     # -- 6. Download OCO2 data
     if cfg.CTDAS_obs_fetch_OCO2:
-        # A user must do the following steps to obtain access to OCO2 data
-        # from getpass import getpass
-        # import os
-        # from subprocess import Popen
-        # urs = 'urs.earthdata.nasa.gov'    # Earthdata URL to call for authentication
-        # prompts = ['Enter NASA Earthdata Login Username \n(or create an account at urs.earthdata.nasa.gov): ',
-        #         'Enter NASA Earthdata Login Password: ']
-        # homeDir = os.path.expanduser("~") + os.sep
-        # with open(homeDir + '.netrc', 'w') as file:
-        #     file.write('machine {} login {} password {}'.format(urs, getpass(prompt=prompts[0]), getpass(prompt=prompts[1])))
-        #     file.close()
-        # with open(homeDir + '.urs_cookies', 'w') as file:
-        #     file.write('')
-        #     file.close()
-        # with open(homeDir + '.dodsrc', 'w') as file:
-        #     file.write('HTTP.COOKIEJAR={}.urs_cookies\n'.format(homeDir))
-        #     file.write('HTTP.NETRC={}.netrc'.format(homeDir))
-        #     file.close()
-        # Popen('chmod og-rw ~/.netrc', shell=True)
         fetch_OCO2_data(cfg.startdate_sim,
                         (cfg.enddate_sim + timedelta(days=1)),
                         -8,
@@ -297,12 +279,12 @@ def main(cfg):
 
     # -- 7. Create the required folder structure
     # For the ICON runs
-    tools.create_dir(cfg.icon_base / "output_prior", "Prior")
-    tools.create_dir(cfg.icon_base / "output_opt_once", "1 time optimized")
-    tools.create_dir(cfg.icon_base / "output_opt_twice", "2 times optimized")
+    # tools.create_dir(cfg.icon_base / "output_prior", "Prior")
+    # tools.create_dir(cfg.icon_base / "output_opt_once", "1 time optimized")
+    # tools.create_dir(cfg.icon_base / "output_opt_twice", "2 times optimized")
 
     # For the sampling
-    tools.create_dir(cfg.case_root / "global_output" / "extracted_ICOS",
+    tools.create_dir(cfg.case_root / "global_outputs" / "extracted_ICOS",
                      "Output of the extraction script")
 
     # -- 8. Initialize the first one-day run, only for the first lag
@@ -316,10 +298,11 @@ def main(cfg):
                 f'#SBATCH --account={cfg.compute_account}',
                 '#SBATCH --time=00:10:00',
                 f'#SBATCH --partition={cfg.compute_queue}',
-                f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
+                f'#SBATCH --constraint={cfg.constraint}', 
+                '#SBATCH --nodes=1',
                 f'#SBATCH --output={cfg.logfile}',
                 '#SBATCH --open-mode=append',
-                f'#SBATCH --chdir={cfg.icon_work}', ''
+                f'#SBATCH --chdir={cfg.case_root / "global_inputs"}', ''
             ]
         elif cfg.machine == 'euler':
             script_lines = [
@@ -327,23 +310,52 @@ def main(cfg):
                 f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
                 '#SBATCH --time=00:10:00',
                 f'#SBATCH --partition={cfg.compute_queue}',
-                f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --ntasks=1',
+                f'#SBATCH --constraint={cfg.constraint}', 
+                '#SBATCH --ntasks=1',
                 f'#SBATCH --output={cfg.logfile}',
                 '#SBATCH --open-mode=append',
-                f'#SBATCH --chdir={cfg.icon_work}', ''
+                f'#SBATCH --chdir={cfg.case_root / "global_inputs"}', ''
             ]
-        for category in cfg.CTDAS_global_inputs:
-            tools.create_dir(
-                cat_folder := cfg.case_root / "global_inputs" / category,
-                category)
-            for file in category:
-                source = (p := Path(file))
-                destination = cat_folder / p.name
-                script_lines.append(f'rsync -av {source} {destination}')
+        elif cfg.machine == 'santis':
+            script_lines = [
+                '#!/usr/bin/env bash',
+                f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
+                '#SBATCH --nodes=1',
+                f'#SBATCH --time=00:10:00',
+                f'#SBATCH --output={cfg.logfile}',
+                '#SBATCH --open-mode=append',
+                f'#SBATCH --account={cfg.compute_account}',
+                f'#SBATCH --partition={cfg.compute_queue}',
+                f'#SBATCH --constraint={cfg.constraint}',
+                f'#SBATCH --chdir={cfg.case_root / "global_inputs"}', ''
+            ]
+
+
+        for attr in dir(cfg):
+            if attr.startswith('CTDAS_global_inputs_'):
+                category = attr[len('CTDAS_global_inputs_'):]
+                tools.create_dir(
+                    cat_folder := cfg.case_root / "global_inputs" / category,
+                    category)
+                for file in getattr(cfg, attr):
+                    source = (p := Path(file))
+                    destination = cat_folder / p.name
+                    script_lines.append(f'rsync -av {source} {destination}')
         with (script :=
-              cfg.icon_work / 'copy_global_inputs.job').open('w') as f:
+            cfg.case_root / "global_inputs" / 'copy_global_inputs.job').open('w') as f:
             f.write('\n'.join(script_lines))
+            f.flush()
             cfg.submit('global_inputs', script)
+
+        tools.create_dir(
+            xml_folder := cfg.case_root / "global_inputs" / "XML",
+            "XML")
+        TR_prior = generate_tracers_xml(cfg.tracers,cfg.CTDAS_nensembles, restart=False)
+        TR_restart=generate_tracers_xml(cfg.tracers,cfg.CTDAS_nensembles, restart=True)
+        with open(xml_folder / "tracers_firstrun.xml", "w", encoding="utf-8") as file:
+            file.write(TR_prior)
+        with open(xml_folder / "tracers_restart.xml", "w", encoding="utf-8") as file:
+            file.write(TR_restart)
 
         # -- 8.2 Create the ensemble data for the first day
         tools.create_dir(OEM_folder := cfg.case_root / "global_inputs" / "OEM",
@@ -357,36 +369,147 @@ def main(cfg):
                 OEM_folder / "lambdaregions.nc", lambdas)
             create_prior_all_ones(OEM_folder / "prior_all_ones.nc",
                                   nensembles=cfg.CTDAS_nensembles,
-                                  ncats=lambdas.max(),
+                                  ncats=max(lambdas),
                                   nregs=nregs)
         else:
             raise NotImplementedError('Only basegrid is implemented for now')
         create_boundary_regions(
-            '/users/ekoene/CTDAS_inputs/icon_europe_DOM01.nc',
-            '/scratch/snx3000/ekoene/boundary_mask_bg.nc')
+            cfg.input_files_dynamics_grid_filename,
+            OEM_folder / 'boundary_mask_bg.nc',
+            cfg.cdo_nco_cmd,
+            cfg.cdo_nco_cmd_post)
         create_boundary_prior_all_ones(
-            '/scratch/snx3000/ekoene/boundary_lambdas_bg.nc',
+            OEM_folder / 'boundary_lambdas_bg.nc',
             nensembles=cfg.CTDAS_nensembles)
 
-        # Create a folder an `nlag` period earlier / icon / output_opt_twice
+        # -- 8.3 Prepare the first one-day simulation
+        logging.info("Creating output file for first run")
+        tools.create_dir(initial_output := cfg.case_root / "global_outputs" / f"opt2_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}",
+                         "Create initial conditions output file")
 
-        # then initialize the runscript file
+        logging.info("Preparing ICON script for first run")
+        icon_ini_template = cfg.case_path / cfg.icon_runjob_filename
+        icon_ini_job = cfg.icon_work / (icon_ini_template.stem +
+                                      f'{cfg.startdate_sim.strftime("%Y%m%d")}'
+                                      + icon_ini_template.suffix)
+        with open(icon_ini_template, 'r') as infile, open(icon_ini_job,
+                                                          'w') as outfile:
+            outfile.write(infile.read().format(
+                cfg=cfg,
+                ini_restart_string=cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                ini_restart_end_string=f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
+                inifile_nc=cfg.icon_input_icbc / f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+                tracers_xml=cfg.case_root / "global_inputs" / "XML" / "tracers_firstrun.xml",
+                emissionsgrid_nc=cfg.case_root / "global_inputs" / "inventories" / f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",                
+                vertical_profile_nc=OEM_folder / "vertical_profiles.nc",
+                hour_of_year_nc=OEM_folder / "hourofyear8784.nc",
+                lambda_nc=OEM_folder / "prior_all_ones.nc",
+                lambda_regions_nc=OEM_folder / "lambdaregions.nc",
+                bg_lambda_nc=OEM_folder / "boundary_lambdas_bg.nc",
+                bg_lambda_regions_nc=OEM_folder / "boundary_mask_bg.nc",
+                vprm_coeffs_nc=cfg.case_root / "global_inputs" / cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
+                latbc_boundary_grid_nc=cfg.case_root / "global_inputs" / "grid" / "lateral_boundary.grid.nc",
+                output_directory=initial_output,
+                restart_file=cfg.case_root / "global_outputs" / f"opt2_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}" / f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+                restart_init_time=cfg.CTDAS_restart_init_time,
+                output_init=cfg.CTDAS_restart_init_time)
+                )
 
-        # era5_split_template = cfg.case_path / cfg.firstrunscript
-        # era5_split_job =  / cfg.meteo_era5_splitjob
-        # era5_split_job = era5_split_job.parent / (era5_split_job.stem + f'{cfg.startdate_sim.strftime("%Y%m%d")}' + era5_split_job.suffix)
-        # logging.info(f"Preparing ERA5 splitting script for ICON from {era5_split_template}")
-        # ml_files = " ".join([f"{filenames[0]}" for filenames in output_filenames])
-        # surf_files = " ".join([f"{filenames[1]}" for filenames in output_filenames])
-        # with open(era5_split_template, 'r') as infile, open(era5_split_job, 'w') as outfile:
-        #     outfile.write(infile.read().format(
-        #         cfg=cfg,
-        #         ml_files=ml_files,
-        #         surf_files=surf_files,
-        #         ERA5_folder=ERA5_folder
-        #     ))
-        # logging.info(f"Running ERA5 splitting script {era5_split_job}")
-        # subprocess.run(["bash", era5_split_job], check=True, stdout=subprocess.PIPE)
+
+    logging.info("Creating output file for first run")
+    tools.create_dir(initial_output := cfg.case_root / "global_outputs" / f"prior_{(cfg.startdate).strftime('%Y%m%d')}",
+                        "Create prior output")
+    tools.create_dir(initial_output := cfg.case_root / "global_outputs" / f"opt1_{(cfg.startdate).strftime('%Y%m%d')}",
+                        "Create opt1 output")
+    tools.create_dir(initial_output := cfg.case_root / "global_outputs" / f"opt2_{(cfg.startdate).strftime('%Y%m%d')}",
+                        "Create opt2 output")
+
+    logging.info("Preparing ICON script for prior run")
+    OEM_folder = cfg.case_root / "global_inputs" / "OEM"
+    icon_ini_template = cfg.case_path / cfg.icon_runjob_filename
+    icon_ini_job = cfg.icon_work / (icon_ini_template.stem +
+                                    f'{cfg.startdate_sim.strftime("%Y%m%d")}_prior'
+                                    + icon_ini_template.suffix)
+    with open(icon_ini_template, 'r') as infile, open(icon_ini_job,
+                                                        'w') as outfile:
+        outfile.write(infile.read().format(
+            cfg=cfg,
+            ini_restart_string=cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            ini_restart_end_string=f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time) + timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
+            inifile_nc=cfg.icon_input_icbc / f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            tracers_xml=cfg.case_root / "global_inputs" / "XML" / "tracers_firstrun.xml",
+            emissionsgrid_nc=cfg.case_root / "global_inputs" / "inventories" / f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",                
+            vertical_profile_nc=OEM_folder / "vertical_profiles.nc",
+            hour_of_year_nc=OEM_folder / "hourofyear8784.nc",
+            lambda_nc=OEM_folder / f"lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_prior.nc",
+            lambda_regions_nc=OEM_folder / "lambdaregions.nc",
+            bg_lambda_nc=OEM_folder / "bg_lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_prior.nc",
+            bg_lambda_regions_nc=OEM_folder / "boundary_mask_bg.nc",
+            vprm_coeffs_nc=cfg.case_root / "global_inputs" / cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
+            latbc_boundary_grid_nc=cfg.case_root / "global_inputs" / "grid" / "lateral_boundary.grid.nc",
+            output_directory=initial_output,
+            restart_file=cfg.case_root / "global_outputs" / f"prior_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}" / f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            restart_init_time=cfg.CTDAS_restart_init_time,
+            output_init=24*60*60*cfg.CTDAS_ctdas_cycle + cfg.CTDAS_restart_init_time)
+            )
+
+    logging.info("Preparing ICON script for first optimization run")
+    OEM_folder = cfg.case_root / "global_inputs" / "OEM"
+    icon_ini_template = cfg.case_path / cfg.icon_runjob_filename
+    icon_ini_job = cfg.icon_work / (icon_ini_template.stem +
+                                    f'{cfg.startdate_sim.strftime("%Y%m%d")}_opt1'
+                                    + icon_ini_template.suffix)
+    with open(icon_ini_template, 'r') as infile, open(icon_ini_job,
+                                                        'w') as outfile:
+        outfile.write(infile.read().format(
+            cfg=cfg,
+            ini_restart_string=cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            ini_restart_end_string=f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time) + timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
+            inifile_nc=cfg.icon_input_icbc / f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            tracers_xml=cfg.case_root / "global_inputs" / "XML" / "tracers_firstrun.xml",
+            emissionsgrid_nc=cfg.case_root / "global_inputs" / "inventories" / f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",                
+            vertical_profile_nc=OEM_folder / "vertical_profiles.nc",
+            hour_of_year_nc=OEM_folder / "hourofyear8784.nc",
+            lambda_nc=OEM_folder / f"lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
+            lambda_regions_nc=OEM_folder / "lambdaregions.nc",
+            bg_lambda_nc=OEM_folder / "bg_lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
+            bg_lambda_regions_nc=OEM_folder / "boundary_mask_bg.nc",
+            vprm_coeffs_nc=cfg.case_root / "global_inputs" / cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
+            latbc_boundary_grid_nc=cfg.case_root / "global_inputs" / "grid" / "lateral_boundary.grid.nc",
+            output_directory=initial_output,
+            restart_file=cfg.case_root / "global_outputs" / f"opt1_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}" / f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            restart_init_time=cfg.CTDAS_restart_init_time,
+            output_init=24*60*60*cfg.CTDAS_ctdas_cycle + cfg.CTDAS_restart_init_time)
+            )
+
+    logging.info("Preparing ICON script for second optimization run")
+    OEM_folder = cfg.case_root / "global_inputs" / "OEM"
+    icon_ini_template = cfg.case_path / cfg.icon_runjob_filename
+    icon_ini_job = cfg.icon_work / (icon_ini_template.stem +
+                                    f'{cfg.startdate_sim.strftime("%Y%m%d")}_opt2'
+                                    + icon_ini_template.suffix)
+    with open(icon_ini_template, 'r') as infile, open(icon_ini_job,
+                                                        'w') as outfile:
+        outfile.write(infile.read().format(
+            cfg=cfg,
+            ini_restart_string=cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            ini_restart_end_string=f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time) + timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
+            inifile_nc=cfg.icon_input_icbc / f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            tracers_xml=cfg.case_root / "global_inputs" / "XML" / "tracers_firstrun.xml",
+            emissionsgrid_nc=cfg.case_root / "global_inputs" / "inventories" / f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",                
+            vertical_profile_nc=OEM_folder / "vertical_profiles.nc",
+            hour_of_year_nc=OEM_folder / "hourofyear8784.nc",
+            lambda_nc=OEM_folder / f"lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
+            lambda_regions_nc=OEM_folder / "lambdaregions.nc",
+            bg_lambda_nc=OEM_folder / "bg_lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
+            bg_lambda_regions_nc=OEM_folder / "boundary_mask_bg.nc",
+            vprm_coeffs_nc=cfg.case_root / "global_inputs" / cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
+            latbc_boundary_grid_nc=cfg.case_root / "global_inputs" / "grid" / "lateral_boundary.grid.nc",
+            output_directory=initial_output,
+            restart_file=cfg.case_root / "global_outputs" / f"opt2_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}" / f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            restart_init_time=cfg.CTDAS_restart_init_time,
+            output_init=24*60*60*cfg.CTDAS_ctdas_cycle + cfg.CTDAS_restart_init_time)
+            )
 
     logging.info("OK")
     shutil.copy(cfg.logfile, cfg.logfile_finish)

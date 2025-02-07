@@ -1,13 +1,45 @@
 # Configuration file for the 'icon-art-CTDAS' case with ICON
 
+# From the `icon-wcp` environment:
+# - spack install nco@4.9.0
+# - spack install icontools@c2sm-master%gcc
+# - spack install cdo
+
 workflow: icon
 constraint: gpu
 run_on: cpu
 compute_queue: normal
-ntasks_per_node: 12
+nodes: 2
+ntasks_per_node: 4
 startdate: 2018-01-01T00:00:00Z
 enddate: 2018-12-31T23:59:59Z
 restart_step: PT10D # = CTDAS cycle length
+
+####### Tracer options
+# The tracers XML file will be generated on-the-fly
+tracers:
+    TRCO2_A:
+        oem_cat: "A-CO2, B-CO2, C-CO2, D-CO2, E-CO2, F1-CO2, F2-CO2, F3-CO2, F4-CO2, G-CO2, H-CO2, I-CO2, J-CO2, K-CO2, L-CO2"
+        oem_vp:  "A-CO2, B-CO2, C-CO2, D-CO2, E-CO2, F1-CO2, F2-CO2, F3-CO2, F4-CO2, G-CO2, H-CO2, I-CO2, J-CO2, K-CO2, L-CO2"
+        oem_tp:  "GNFR_A-CO2, GNFR_B-CO2, GNFR_C-CO2, GNFR_D-CO2, GNFR_A-CO2, GNFR_F-CO2, GNFR_F-CO2, GNFR_F-CO2, GNFR_F-CO2, GNFR_G-CO2, GNFR_H-CO2, GNFR_I-CO2, GNFR_J-CO2, GNFR_L-CO2, L-CO2"
+    TRCO2_BG:
+        init_name: "CO2"
+    CO2_RA:
+        oem_ftype: "resp"
+    CO2_GPP:
+        oem_ftype: "gpp"
+    TRCO2_A-XXX:
+        bg: "TRCO2_BG"
+        ra: "CO2_RA"
+        gpp: "CO2_GPP"
+    biosource:
+        oem_cat: "co2fire, allcropsource, allwoodsource, lakeriveremis, cflx"
+        oem_vp:  "A-CO2,   A-CO2,         A-CO2,         A-CO2,         A-CO2"
+        oem_tp:  "GNFR_A-CO2,   GNFR_A-CO2,         GNFR_A-CO2,         GNFR_A-CO2,         GNFR_A-CO2"
+    biosink:
+        oem_cat: "biofuelcropsource, biofuelwoodsource, mflx"
+        oem_vp:  "A-CO2,             A-CO2,             A-CO2"
+        oem_tp:  "GNFR_A-CO2,             GNFR_A-CO2,             GNFR_A-CO2"
 
 ####### CTDAS options.
 # First of all, download https://git.wur.nl/ctdas/CTDAS/-/tree/ctdas-icon
@@ -26,70 +58,74 @@ CTDAS:
     nlag: 2
     tracer: co2
     regions: basegrid # choose: basegrid or parentgrid
-    nensembles: 180
+    nensembles: 186
     # nregions: # read from cells->regions file
     restart_init_time: 86400 # 1 day in seconds; using Michael Steiner's "overwriting" restart mechanism
+    ctdas_cycle: 10 # days
     nboundaries: 8
     lambdas: # The first 16 lambdas must be the respiration and uptake ones [even if not relevant, e.g., for a CH4 simulation], followed by the oem_cat categories in the xml file, in order of appearance, but excluding any 
         - 1,1,1,1,1,1,1,1 # Respiration (Evergreen Forest, Deciduous Forest, Mixed Forest, Shrubland, Savanna, Cropland, Grassland, Urban/Other)
         - 1,1,1,1,1,1,1,1 # Uptake (E, D, M, S, SV, C, G, U)
         - 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2 # Anthropogenic CO2 (ensemble tracer categories that are optimized)
     obs:
+        # Run the 'authentification.ipynb' notebook to get access to ICOS and/or NASA Earthdata (OCO2) data
         fetch_ICOS: True
-        # From https://cpauth.icos-cp.eu
-        ICOS_cookie_token: cpauthToken=WzE3MzM5NDQ3ODY3MTMsImVyaWsua29lbmVAZW1wYS5jaCIsIlNhbWwiXR6qePH9961Ih4LRBIu9/o+z/K7OSbvSf3EKUqpHA8orTrPjUMcuWrhmFbcVZeZPJ6uHY45go7BivHNShHkeF02yXrsC9MaYschekdvPvO4K9a4u+oqYi4M9J/s4Xv9LGsGTeHytuXhnfzdRtPKY9dykeW/bS6Gy4Rmou4+xJpf//kDajrNBy4Z0Z6Lrj1csQibe+cYjDObplLmDVs1NufUxyorCL6XbhaI2RLqaAvDWUqQ9A8kpbSJvW8Mdxit+6gDg+6gfnBrKFgL9Bs9VGkOjGKEmNUbn6XzBqPfMnt2NWnxsXyK1lXtLruTWRqsPcbK2hLvw7vj7iTUSDMpLQ1ew
-        ICOS_path: /scratch/snx3000/ekoene/ICOS/
+        ICOS_path: /capstor/scratch/cscs/ekoene/ICOS/
         fetch_OCO2: True
-        OCO2_path: /scratch/snx3000/ekoene/OCO2
+        OCO2_path: /capstor/scratch/cscs/ekoene/OCO2
     global_inputs:
         inventories:
-            - /users/ekoene/inventories/inventories/INV_20180101.nc
-            - /users/ekoene/inventories/inventories/INV_20180111.nc
-            - /users/ekoene/inventories/inventories/INV_20180121.nc
-            - /users/ekoene/inventories/inventories/INV_20180131.nc
-            - /users/ekoene/inventories/inventories/INV_20180210.nc
-            - /users/ekoene/inventories/inventories/INV_20180220.nc
-            - /users/ekoene/inventories/inventories/INV_20180302.nc
-            - /users/ekoene/inventories/inventories/INV_20180312.nc
-            - /users/ekoene/inventories/inventories/INV_20180322.nc
-            - /users/ekoene/inventories/inventories/INV_20180401.nc
-            - /users/ekoene/inventories/inventories/INV_20180411.nc
-            - /users/ekoene/inventories/inventories/INV_20180421.nc
-            - /users/ekoene/inventories/inventories/INV_20180501.nc
-            - /users/ekoene/inventories/inventories/INV_20180511.nc
-            - /users/ekoene/inventories/inventories/INV_20180521.nc
-            - /users/ekoene/inventories/inventories/INV_20180531.nc
-            - /users/ekoene/inventories/inventories/INV_20180610.nc
-            - /users/ekoene/inventories/inventories/INV_20180620.nc
-            - /users/ekoene/inventories/inventories/INV_20180630.nc
-            - /users/ekoene/inventories/inventories/INV_20180710.nc
-            - /users/ekoene/inventories/inventories/INV_20180720.nc
-            - /users/ekoene/inventories/inventories/INV_20180730.nc
-            - /users/ekoene/inventories/inventories/INV_20180809.nc
-            - /users/ekoene/inventories/inventories/INV_20180819.nc
-            - /users/ekoene/inventories/inventories/INV_20180829.nc
-            - /users/ekoene/inventories/inventories/INV_20180908.nc
-            - /users/ekoene/inventories/inventories/INV_20180918.nc
-            - /users/ekoene/inventories/inventories/INV_20180928.nc
-            - /users/ekoene/inventories/inventories/INV_20181008.nc
-            - /users/ekoene/inventories/inventories/INV_20181018.nc
-            - /users/ekoene/inventories/inventories/INV_20181028.nc
-            - /users/ekoene/inventories/inventories/INV_20181107.nc
-            - /users/ekoene/inventories/inventories/INV_20181117.nc
-            - /users/ekoene/inventories/inventories/INV_20181127.nc
-            - /users/ekoene/inventories/inventories/INV_20181207.nc
-            - /users/ekoene/inventories/inventories/INV_20181217.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180102.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180112.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180122.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180201.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180211.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180221.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180303.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180313.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180323.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180402.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180412.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180422.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180502.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180512.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180522.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180601.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180611.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180621.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180701.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180711.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180721.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180731.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180810.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180820.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180830.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180909.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180919.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20180929.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20181009.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20181019.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20181029.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20181108.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20181118.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20181128.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20181208.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20181218.nc
+            - /capstor/scratch/cscs/ekoene/inventories/INV_20181228.nc
         grid:
             - /users/ekoene/CTDAS_inputs/icon_europe_DOM01.parent.nc
             - /users/ekoene/CTDAS_inputs/icon_europe_DOM01.nc
-            - ./work/icon-art-CTDAS/global_inputs/ERA5/lateral_boundary.grid.nc # This is guaranteed to exist due to the ERA5/CAMS preprocessing
+            - ERA5/lateral_boundary.grid.nc # This is guaranteed to exist due to the ERA5/CAMS preprocessing
         extpar:
             - /users/ekoene/CTDAS_inputs/icon_extpar_EriksGrid.nc
         VPRM:
             - /users/ekoene/CTDAS_inputs/VPRM_indices_ICON_datestr.nc
-        XML:
-            - /users/ekoene/CTDAS_inputs/tracers_CO2_firstrun.xml
-            - /users/ekoene/CTDAS_inputs/tracers_CO2_restart.xml
+        OEM:
+            - /capstor/scratch/cscs/ekoene/inventories/icon_with_tno_emissions/vertical_profiles.nc
+            - /capstor/scratch/cscs/ekoene/inventories/icon_with_tno_emissions/hourofyear.nc
+            # - /users/ekoene/CTDAS_inputs/vertical_profiles_t.nc
+            # - /users/ekoene/CTDAS_inputs/hourofyear8784.nc
+
 
 # # CTDAS ------------------------------------------------------------------------
 # ctdas_restart = False
@@ -103,7 +139,6 @@ CTDAS:
 # ctdas_regionsfile = vprm_regions_synth_nc # <--- Create 
 # # Number of boundaries, and boundaries mask/regions file
 # ctdas_bg_params = 8
-# ctdas_boundary_mask_file = '/scratch/snx3000/ekoene/boundary_mask_bg.nc'
 # # Number of ensemble members (make this consistent with your XML file!)
 # ctdas_optimizer_nmembers = 180
 # # CTDAS path
@@ -128,7 +163,6 @@ CTDAS:
 # ctdas_oae_grid = "/scratch/snx3000/ekoene/inventories/INV_{}.nc"
 # ctdas_oae_grid_fname = '%Y%m%d'  # Specifies the naming scheme to use for the emission grids
 # # Spinup time length
-# ctdas_restart_init_time = 60 * 60 * 24  # 1 day in seconds
 # # Restart file for the first simulation
 # ctdas_first_restart_init = '/scratch/snx3000/ekoene/processing-chain/work/VPRM_EU_ERA5_22/2018010100_0_240/icon/output_INIT'
 # # Number of vertical levels
@@ -138,9 +172,15 @@ CTDAS:
 # ctdas_obsoperator_rc = os.path.join(ctdas_obsoperator_home, 'stilt_0.rc')
 # ctdas_regtype = 'olson19_oif30'
 
+cdo_nco_cmd: |
+    CLUSTER_NAME=todi uenv start icon-wcp --ignore-tty << 'EOF'
+    . /capstor/scratch/cscs/ekoene/tmp/spack-c2sm/setup-env.sh /user-environment/
+    spack load icontools cdo nco
+    
+cdo_nco_cmd_post: |
+    EOF
+
 eccodes_dir: ./input/eccodes_definitions
-iconremap_bin: ./ext/icontools/icontools/iconremap
-iconsub_bin: /scratch/snx3000/ekoene/spack-c2sm/spack/opt/spack/icontools-c2sm-master/gcc-9.3.0/zktezcs5cjwjsptd747zhipi53nd6phr/bin/iconsub
 art_input_folder: ./input/icon-art-oem/ART
 
 walltime:
@@ -172,13 +212,12 @@ input_files:
     radiation_grid_filename: /users/ekoene/CTDAS_inputs/icon_europe_DOM01.parent.nc
     dynamics_grid_filename: /users/ekoene/CTDAS_inputs/icon_europe_DOM01.nc
     extpar_filename: /users/ekoene/CTDAS_inputs/icon_extpar_EriksGrid.nc
-    cldopt_filename: ./input/icon-art-global/rad/ECHAM6_CldOptProps.nc
-    lrtm_filename: ./input/icon-art-global/rad/rrtmg_lw.nc
-    chemtracer_xml_filename: ./input/icon-art-global/config/tracers.xml
+    map_filename: ./cases/icon-art-CTDAS/map_file.ana
+    wrapper_filename: ./cases/icon-art-CTDAS/wrapper_icon.sh
 
-# icon:
-#     binary_file: ./ext/icon-art/bin/icon
-#     runjob_filename: icon_runjob.cfg
+icon:
+    executable: /capstor/scratch/cscs/ekoene/spack-c2sm/spack/opt/spack/linux-sles15-neoverse_v2/nvhpc-24.3/icon-develop-sytqk6o7h5y3imrsevsswc2inxaegbpx/bin/icon
+    runjob_filename: ICON/ICON_template.job
 #     # era5_inijob: icon_era5_inicond.sh
 #     # era5_nudgingjob: icon_era5_nudging.sh
 #     species_inijob: icon_species_inicond.sh

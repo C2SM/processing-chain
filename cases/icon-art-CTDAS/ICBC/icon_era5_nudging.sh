@@ -2,7 +2,7 @@
 
 cd {ERA5_folder}
 
-module load daint-mc NCO CDO
+{cfg.cdo_nco_cmd}
 
 # ---------------------------------
 # -- Pre-processing
@@ -60,3 +60,4 @@ rm era5_final.nc
 rm weights.nc
 rm triangular-grid.nc
 
+{cfg.cdo_nco_cmd_post}

@@ -2,7 +2,7 @@
 
 cd {ERA5_folder}
 
-module load daint-mc CDO NCO
+{cfg.cdo_nco_cmd}
 
 # Loop over ml and surf files
 for ml_file in {ml_files}; do
@@ -36,3 +36,5 @@ for surf_file in {surf_files}; do
         let y=$y+1
     done
 done
+
+{cfg.cdo_nco_cmd_post}
