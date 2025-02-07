@@ -319,10 +319,11 @@ def fetch_ICOS_data(query_type='any',
 
     for d in result.data()['dobj']:
         obj = Dobj(d).data
-        outfn = os.path.join(save_path, 'ICOS_obs_' + str(specie)[2:-2] + '_' + query_type + '_' + str(
-            Dobj(d).station['id']) + '_' + str(
-                Dobj(d).meta['specificInfo']['acquisition']
-                ['samplingHeight']) + '_' + start_date + '_' + end_date + '.nc')
+        outfn = os.path.join(
+            save_path, 'ICOS_obs_' + str(specie)[2:-2] + '_' + query_type +
+            '_' + str(Dobj(d).station['id']) + '_' +
+            str(Dobj(d).meta['specificInfo']['acquisition']['samplingHeight'])
+            + '_' + start_date + '_' + end_date + '.nc')
         # Skip if filename exists
         if os.path.isfile(outfn):
             continue
@@ -394,7 +395,6 @@ def process_ICOS_data(ICOS_obs_folder,
     ) / f"Extracted_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}_alldates_masl.nc"
     if os.path.isfile(output_filename):
         return
-
 
     # Future expected options (or retrieved from grid file); for now hardcoded
     lon_lims = [-8.3, 17.5]

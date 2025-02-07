@@ -17,6 +17,7 @@ from subprocess import run
 
 BASIC_PYTHON_JOB = False
 
+
 def main(cfg):
     """
     Prepare CTDAS inversion
@@ -298,8 +299,7 @@ def main(cfg):
                 f'#SBATCH --account={cfg.compute_account}',
                 '#SBATCH --time=00:10:00',
                 f'#SBATCH --partition={cfg.compute_queue}',
-                f'#SBATCH --constraint={cfg.constraint}', 
-                '#SBATCH --nodes=1',
+                f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
                 f'#SBATCH --output={cfg.logfile}',
                 '#SBATCH --open-mode=append',
                 f'#SBATCH --chdir={cfg.case_root / "global_inputs"}', ''
@@ -310,8 +310,7 @@ def main(cfg):
                 f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
                 '#SBATCH --time=00:10:00',
                 f'#SBATCH --partition={cfg.compute_queue}',
-                f'#SBATCH --constraint={cfg.constraint}', 
-                '#SBATCH --ntasks=1',
+                f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --ntasks=1',
                 f'#SBATCH --output={cfg.logfile}',
                 '#SBATCH --open-mode=append',
                 f'#SBATCH --chdir={cfg.case_root / "global_inputs"}', ''
@@ -320,8 +319,7 @@ def main(cfg):
             script_lines = [
                 '#!/usr/bin/env bash',
                 f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
-                '#SBATCH --nodes=1',
-                f'#SBATCH --time=00:10:00',
+                '#SBATCH --nodes=1', f'#SBATCH --time=00:10:00',
                 f'#SBATCH --output={cfg.logfile}',
                 '#SBATCH --open-mode=append',
                 f'#SBATCH --account={cfg.compute_account}',
@@ -329,7 +327,6 @@ def main(cfg):
                 f'#SBATCH --constraint={cfg.constraint}',
                 f'#SBATCH --chdir={cfg.case_root / "global_inputs"}', ''
             ]
-
 
         for attr in dir(cfg):
             if attr.startswith('CTDAS_global_inputs_'):
@@ -341,20 +338,25 @@ def main(cfg):
                     source = (p := Path(file))
                     destination = cat_folder / p.name
                     script_lines.append(f'rsync -av {source} {destination}')
-        with (script :=
-            cfg.case_root / "global_inputs" / 'copy_global_inputs.job').open('w') as f:
+        with (script := cfg.case_root / "global_inputs" /
+              'copy_global_inputs.job').open('w') as f:
             f.write('\n'.join(script_lines))
             f.flush()
             cfg.submit('global_inputs', script)
 
-        tools.create_dir(
-            xml_folder := cfg.case_root / "global_inputs" / "XML",
-            "XML")
-        TR_prior = generate_tracers_xml(cfg.tracers,cfg.CTDAS_nensembles, restart=False)
-        TR_restart=generate_tracers_xml(cfg.tracers,cfg.CTDAS_nensembles, restart=True)
-        with open(xml_folder / "tracers_firstrun.xml", "w", encoding="utf-8") as file:
+        tools.create_dir(xml_folder := cfg.case_root / "global_inputs" / "XML",
+                         "XML")
+        TR_prior = generate_tracers_xml(cfg.tracers,
+                                        cfg.CTDAS_nensembles,
+                                        restart=False)
+        TR_restart = generate_tracers_xml(cfg.tracers,
+                                          cfg.CTDAS_nensembles,
+                                          restart=True)
+        with open(xml_folder / "tracers_firstrun.xml", "w",
+                  encoding="utf-8") as file:
             file.write(TR_prior)
-        with open(xml_folder / "tracers_restart.xml", "w", encoding="utf-8") as file:
+        with open(xml_folder / "tracers_restart.xml", "w",
+                  encoding="utf-8") as file:
             file.write(TR_restart)
 
         # -- 8.2 Create the ensemble data for the first day
@@ -373,143 +375,191 @@ def main(cfg):
                                   nregs=nregs)
         else:
             raise NotImplementedError('Only basegrid is implemented for now')
-        create_boundary_regions(
-            cfg.input_files_dynamics_grid_filename,
-            OEM_folder / 'boundary_mask_bg.nc',
-            cfg.cdo_nco_cmd,
-            cfg.cdo_nco_cmd_post)
-        create_boundary_prior_all_ones(
-            OEM_folder / 'boundary_lambdas_bg.nc',
-            nensembles=cfg.CTDAS_nensembles)
+        create_boundary_regions(cfg.input_files_dynamics_grid_filename,
+                                OEM_folder / 'boundary_mask_bg.nc',
+                                cfg.cdo_nco_cmd, cfg.cdo_nco_cmd_post)
+        create_boundary_prior_all_ones(OEM_folder / 'boundary_lambdas_bg.nc',
+                                       nensembles=cfg.CTDAS_nensembles)
 
         # -- 8.3 Prepare the first one-day simulation
         logging.info("Creating output file for first run")
-        tools.create_dir(initial_output := cfg.case_root / "global_outputs" / f"opt2_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}",
-                         "Create initial conditions output file")
+        tools.create_dir(
+            initial_output := cfg.case_root / "global_outputs" /
+            f"opt2_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}",
+            "Create initial conditions output file")
 
         logging.info("Preparing ICON script for first run")
         icon_ini_template = cfg.case_path / cfg.icon_runjob_filename
-        icon_ini_job = cfg.icon_work / (icon_ini_template.stem +
-                                      f'{cfg.startdate_sim.strftime("%Y%m%d")}'
-                                      + icon_ini_template.suffix)
+        icon_ini_job = cfg.icon_work / (
+            icon_ini_template.stem + f'{cfg.startdate_sim.strftime("%Y%m%d")}'
+            + icon_ini_template.suffix)
         with open(icon_ini_template, 'r') as infile, open(icon_ini_job,
                                                           'w') as outfile:
             outfile.write(infile.read().format(
                 cfg=cfg,
-                ini_restart_string=cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                ini_restart_end_string=f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
-                inifile_nc=cfg.icon_input_icbc / f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
-                tracers_xml=cfg.case_root / "global_inputs" / "XML" / "tracers_firstrun.xml",
-                emissionsgrid_nc=cfg.case_root / "global_inputs" / "inventories" / f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",                
+                ini_restart_string=cfg.startdate_sim.strftime(
+                    '%Y-%m-%dT%H:%M:%SZ'),
+                ini_restart_end_string=
+                f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
+                inifile_nc=cfg.icon_input_icbc /
+                f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+                tracers_xml=cfg.case_root / "global_inputs" / "XML" /
+                "tracers_firstrun.xml",
+                emissionsgrid_nc=cfg.case_root / "global_inputs" /
+                "inventories" /
+                f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",
                 vertical_profile_nc=OEM_folder / "vertical_profiles.nc",
                 hour_of_year_nc=OEM_folder / "hourofyear8784.nc",
                 lambda_nc=OEM_folder / "prior_all_ones.nc",
                 lambda_regions_nc=OEM_folder / "lambdaregions.nc",
                 bg_lambda_nc=OEM_folder / "boundary_lambdas_bg.nc",
                 bg_lambda_regions_nc=OEM_folder / "boundary_mask_bg.nc",
-                vprm_coeffs_nc=cfg.case_root / "global_inputs" / cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
-                latbc_boundary_grid_nc=cfg.case_root / "global_inputs" / "grid" / "lateral_boundary.grid.nc",
+                vprm_coeffs_nc=cfg.case_root / "global_inputs" /
+                cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
+                latbc_boundary_grid_nc=cfg.case_root / "global_inputs" /
+                "grid" / "lateral_boundary.grid.nc",
                 output_directory=initial_output,
-                restart_file=cfg.case_root / "global_outputs" / f"opt2_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}" / f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+                restart_file=cfg.case_root / "global_outputs" /
+                f"opt2_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}"
+                /
+                f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
                 restart_init_time=cfg.CTDAS_restart_init_time,
-                output_init=cfg.CTDAS_restart_init_time)
-                )
-
+                output_init=cfg.CTDAS_restart_init_time))
 
     logging.info("Creating output file for first run")
-    tools.create_dir(initial_output := cfg.case_root / "global_outputs" / f"prior_{(cfg.startdate).strftime('%Y%m%d')}",
-                        "Create prior output")
-    tools.create_dir(initial_output := cfg.case_root / "global_outputs" / f"opt1_{(cfg.startdate).strftime('%Y%m%d')}",
-                        "Create opt1 output")
-    tools.create_dir(initial_output := cfg.case_root / "global_outputs" / f"opt2_{(cfg.startdate).strftime('%Y%m%d')}",
-                        "Create opt2 output")
+    tools.create_dir(
+        initial_output := cfg.case_root / "global_outputs" /
+        f"prior_{(cfg.startdate).strftime('%Y%m%d')}", "Create prior output")
+    tools.create_dir(
+        initial_output := cfg.case_root / "global_outputs" /
+        f"opt1_{(cfg.startdate).strftime('%Y%m%d')}", "Create opt1 output")
+    tools.create_dir(
+        initial_output := cfg.case_root / "global_outputs" /
+        f"opt2_{(cfg.startdate).strftime('%Y%m%d')}", "Create opt2 output")
 
     logging.info("Preparing ICON script for prior run")
     OEM_folder = cfg.case_root / "global_inputs" / "OEM"
     icon_ini_template = cfg.case_path / cfg.icon_runjob_filename
-    icon_ini_job = cfg.icon_work / (icon_ini_template.stem +
-                                    f'{cfg.startdate_sim.strftime("%Y%m%d")}_prior'
-                                    + icon_ini_template.suffix)
+    icon_ini_job = cfg.icon_work / (
+        icon_ini_template.stem +
+        f'{cfg.startdate_sim.strftime("%Y%m%d")}_prior' +
+        icon_ini_template.suffix)
     with open(icon_ini_template, 'r') as infile, open(icon_ini_job,
-                                                        'w') as outfile:
+                                                      'w') as outfile:
         outfile.write(infile.read().format(
             cfg=cfg,
-            ini_restart_string=cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%SZ'),
-            ini_restart_end_string=f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time) + timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
-            inifile_nc=cfg.icon_input_icbc / f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
-            tracers_xml=cfg.case_root / "global_inputs" / "XML" / "tracers_firstrun.xml",
-            emissionsgrid_nc=cfg.case_root / "global_inputs" / "inventories" / f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",                
+            ini_restart_string=cfg.startdate_sim.strftime(
+                '%Y-%m-%dT%H:%M:%SZ'),
+            ini_restart_end_string=
+            f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time) + timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
+            inifile_nc=cfg.icon_input_icbc /
+            f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            tracers_xml=cfg.case_root / "global_inputs" / "XML" /
+            "tracers_firstrun.xml",
+            emissionsgrid_nc=cfg.case_root / "global_inputs" / "inventories" /
+            f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",
             vertical_profile_nc=OEM_folder / "vertical_profiles.nc",
             hour_of_year_nc=OEM_folder / "hourofyear8784.nc",
-            lambda_nc=OEM_folder / f"lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_prior.nc",
+            lambda_nc=OEM_folder /
+            f"lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_prior.nc",
             lambda_regions_nc=OEM_folder / "lambdaregions.nc",
-            bg_lambda_nc=OEM_folder / "bg_lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_prior.nc",
+            bg_lambda_nc=OEM_folder /
+            "bg_lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_prior.nc",
             bg_lambda_regions_nc=OEM_folder / "boundary_mask_bg.nc",
-            vprm_coeffs_nc=cfg.case_root / "global_inputs" / cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
-            latbc_boundary_grid_nc=cfg.case_root / "global_inputs" / "grid" / "lateral_boundary.grid.nc",
+            vprm_coeffs_nc=cfg.case_root / "global_inputs" /
+            cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
+            latbc_boundary_grid_nc=cfg.case_root / "global_inputs" / "grid" /
+            "lateral_boundary.grid.nc",
             output_directory=initial_output,
-            restart_file=cfg.case_root / "global_outputs" / f"prior_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}" / f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            restart_file=cfg.case_root / "global_outputs" /
+            f"prior_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}"
+            /
+            f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
             restart_init_time=cfg.CTDAS_restart_init_time,
-            output_init=24*60*60*cfg.CTDAS_ctdas_cycle + cfg.CTDAS_restart_init_time)
-            )
+            output_init=24 * 60 * 60 * cfg.CTDAS_ctdas_cycle +
+            cfg.CTDAS_restart_init_time))
 
     logging.info("Preparing ICON script for first optimization run")
     OEM_folder = cfg.case_root / "global_inputs" / "OEM"
     icon_ini_template = cfg.case_path / cfg.icon_runjob_filename
-    icon_ini_job = cfg.icon_work / (icon_ini_template.stem +
-                                    f'{cfg.startdate_sim.strftime("%Y%m%d")}_opt1'
-                                    + icon_ini_template.suffix)
+    icon_ini_job = cfg.icon_work / (
+        icon_ini_template.stem + f'{cfg.startdate_sim.strftime("%Y%m%d")}_opt1'
+        + icon_ini_template.suffix)
     with open(icon_ini_template, 'r') as infile, open(icon_ini_job,
-                                                        'w') as outfile:
+                                                      'w') as outfile:
         outfile.write(infile.read().format(
             cfg=cfg,
-            ini_restart_string=cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%SZ'),
-            ini_restart_end_string=f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time) + timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
-            inifile_nc=cfg.icon_input_icbc / f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
-            tracers_xml=cfg.case_root / "global_inputs" / "XML" / "tracers_firstrun.xml",
-            emissionsgrid_nc=cfg.case_root / "global_inputs" / "inventories" / f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",                
+            ini_restart_string=cfg.startdate_sim.strftime(
+                '%Y-%m-%dT%H:%M:%SZ'),
+            ini_restart_end_string=
+            f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time) + timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
+            inifile_nc=cfg.icon_input_icbc /
+            f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            tracers_xml=cfg.case_root / "global_inputs" / "XML" /
+            "tracers_firstrun.xml",
+            emissionsgrid_nc=cfg.case_root / "global_inputs" / "inventories" /
+            f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",
             vertical_profile_nc=OEM_folder / "vertical_profiles.nc",
             hour_of_year_nc=OEM_folder / "hourofyear8784.nc",
-            lambda_nc=OEM_folder / f"lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
+            lambda_nc=OEM_folder /
+            f"lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
             lambda_regions_nc=OEM_folder / "lambdaregions.nc",
-            bg_lambda_nc=OEM_folder / "bg_lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
+            bg_lambda_nc=OEM_folder /
+            "bg_lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
             bg_lambda_regions_nc=OEM_folder / "boundary_mask_bg.nc",
-            vprm_coeffs_nc=cfg.case_root / "global_inputs" / cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
-            latbc_boundary_grid_nc=cfg.case_root / "global_inputs" / "grid" / "lateral_boundary.grid.nc",
+            vprm_coeffs_nc=cfg.case_root / "global_inputs" /
+            cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
+            latbc_boundary_grid_nc=cfg.case_root / "global_inputs" / "grid" /
+            "lateral_boundary.grid.nc",
             output_directory=initial_output,
-            restart_file=cfg.case_root / "global_outputs" / f"opt1_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}" / f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            restart_file=cfg.case_root / "global_outputs" /
+            f"opt1_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}"
+            /
+            f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
             restart_init_time=cfg.CTDAS_restart_init_time,
-            output_init=24*60*60*cfg.CTDAS_ctdas_cycle + cfg.CTDAS_restart_init_time)
-            )
+            output_init=24 * 60 * 60 * cfg.CTDAS_ctdas_cycle +
+            cfg.CTDAS_restart_init_time))
 
     logging.info("Preparing ICON script for second optimization run")
     OEM_folder = cfg.case_root / "global_inputs" / "OEM"
     icon_ini_template = cfg.case_path / cfg.icon_runjob_filename
-    icon_ini_job = cfg.icon_work / (icon_ini_template.stem +
-                                    f'{cfg.startdate_sim.strftime("%Y%m%d")}_opt2'
-                                    + icon_ini_template.suffix)
+    icon_ini_job = cfg.icon_work / (
+        icon_ini_template.stem + f'{cfg.startdate_sim.strftime("%Y%m%d")}_opt2'
+        + icon_ini_template.suffix)
     with open(icon_ini_template, 'r') as infile, open(icon_ini_job,
-                                                        'w') as outfile:
+                                                      'w') as outfile:
         outfile.write(infile.read().format(
             cfg=cfg,
-            ini_restart_string=cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%SZ'),
-            ini_restart_end_string=f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time) + timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
-            inifile_nc=cfg.icon_input_icbc / f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
-            tracers_xml=cfg.case_root / "global_inputs" / "XML" / "tracers_firstrun.xml",
-            emissionsgrid_nc=cfg.case_root / "global_inputs" / "inventories" / f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",                
+            ini_restart_string=cfg.startdate_sim.strftime(
+                '%Y-%m-%dT%H:%M:%SZ'),
+            ini_restart_end_string=
+            f"{(cfg.startdate_sim + timedelta(seconds=cfg.CTDAS_restart_init_time) + timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y-%m-%dT%H:%M:%SZ')}",
+            inifile_nc=cfg.icon_input_icbc /
+            f"era5_ini_{cfg.startdate_sim.strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            tracers_xml=cfg.case_root / "global_inputs" / "XML" /
+            "tracers_firstrun.xml",
+            emissionsgrid_nc=cfg.case_root / "global_inputs" / "inventories" /
+            f"INV_{(cfg.startdate_sim + timedelta(days=1)).strftime('%Y%m%d')}.nc",
             vertical_profile_nc=OEM_folder / "vertical_profiles.nc",
             hour_of_year_nc=OEM_folder / "hourofyear8784.nc",
-            lambda_nc=OEM_folder / f"lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
+            lambda_nc=OEM_folder /
+            f"lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
             lambda_regions_nc=OEM_folder / "lambdaregions.nc",
-            bg_lambda_nc=OEM_folder / "bg_lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
+            bg_lambda_nc=OEM_folder /
+            "bg_lambda_{cfg.startdate_sim.strftime('%Y%m%d')}_opt.nc",
             bg_lambda_regions_nc=OEM_folder / "boundary_mask_bg.nc",
-            vprm_coeffs_nc=cfg.case_root / "global_inputs" / cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
-            latbc_boundary_grid_nc=cfg.case_root / "global_inputs" / "grid" / "lateral_boundary.grid.nc",
+            vprm_coeffs_nc=cfg.case_root / "global_inputs" /
+            cfg.CTDAS_global_inputs_VPRM[0].split('/')[-1],
+            latbc_boundary_grid_nc=cfg.case_root / "global_inputs" / "grid" /
+            "lateral_boundary.grid.nc",
             output_directory=initial_output,
-            restart_file=cfg.case_root / "global_outputs" / f"opt2_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}" / f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
+            restart_file=cfg.case_root / "global_outputs" /
+            f"opt2_{(cfg.startdate - timedelta(days=cfg.CTDAS_ctdas_cycle)).strftime('%Y%m%d')}"
+            /
+            f"ICON-ART-OEM-INIT_{(cfg.startdate + timedelta(seconds=cfg.CTDAS_restart_init_time)).strftime('%Y-%m-%dT%H:%M:%S')}.nc",
             restart_init_time=cfg.CTDAS_restart_init_time,
-            output_init=24*60*60*cfg.CTDAS_ctdas_cycle + cfg.CTDAS_restart_init_time)
-            )
+            output_init=24 * 60 * 60 * cfg.CTDAS_ctdas_cycle +
+            cfg.CTDAS_restart_init_time))
 
     logging.info("OK")
     shutil.copy(cfg.logfile, cfg.logfile_finish)

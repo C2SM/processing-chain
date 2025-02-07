@@ -53,7 +53,8 @@ def create_prior_all_ones(output_path, nensembles, ncats, nregs):
     print(f"Prior all ones saved to {output_path}")
 
 
-def create_boundary_regions(grid_filename, output_path, cdo_nco_cmd, cdo_nco_cmd_post):
+def create_boundary_regions(grid_filename, output_path, cdo_nco_cmd,
+                            cdo_nco_cmd_post):
     """
     Create boundary region masks based on geographical quadrants and save to NetCDF.
     """
