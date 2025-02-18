@@ -21,7 +21,7 @@ eccodes_dir: /store/c2sm/amrs/kdnmez/eccodes_definitions
 iconremap_bin: iconremap
 iconsub_bin: iconsub
 latbc_filename: ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
-latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/*_lbc.nc
+latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ICON-ART-UNSTRUCTURED_DOM01_2023070*
 inidata_prefix: ICON-ART-UNSTRUCTURED_DOM01_
 inidata_nameformat: '<y><m><d>T<h>0000Z'
 inidata_filename_suffix: .nc
@@ -41,7 +41,7 @@ input_files:
     radiation_grid_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/switzerland/icon_switzerland_R19B9_DOM01.parent.nc
     dynamics_grid_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/switzerland/icon_switzerland_R19B9_DOM01.nc
     map_file_latbc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/map_file_ZH.latbc
-    lateral_boundary_grid: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/triangular-grid-lbc.nc
+    lateral_boundary_grid: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/lateral_boundary.grid.nc
     lrtm_filename: /store/c2sm/amrs/kdnmez/icon-nwp-new/data/rrtmg_lw.nc
     map_file_ana: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/map_file.ana
     chemtracer_xml_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/xml/updated_summer23.xml
