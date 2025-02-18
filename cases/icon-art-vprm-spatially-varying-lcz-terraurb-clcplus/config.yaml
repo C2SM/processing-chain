@@ -1,6 +1,6 @@
 # Configuration file for the 'icon-art-terraurb-test' case with ICON
 
-workflow: icon-art-vprm-noterraurb-clcplus
+workflow: icon-art-vprm-spatially-varying-lcz-terraurb-clcplus
 constraint: mc
 run_on: cpu
 compute_queue: debug
@@ -8,9 +8,9 @@ ntasks_per_node: 128
 startdate: 2023-07-01T00:00:00Z
 enddate: 2023-08-31T23:00:00Z
 restart_step: PT166H
-lterra_urb: .FALSE.
-lurbalb: .FALSE.
-lurbahf: .FALSE.
+lterra_urb: .TRUE.
+lurbalb: .TRUE.
+lurbahf: .TRUE.
 
 walltime:
     prepare_icon: '00:30:00'
@@ -58,7 +58,7 @@ input_files:
 
 
 icon:
-    binary_file: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/binaries/constant/icon
+    binary_file: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/binaries/spatially_varying/no_change_in_ahf_isa/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: debug
     walltime: '00:30:00'
