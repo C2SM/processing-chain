@@ -3,8 +3,8 @@
 workflow: icon-art-vprm-spatially-varying-terraurb-clcplus
 constraint: mc
 run_on: cpu
-compute_queue: normal
-ntasks_per_node: 36
+compute_queue: debug
+ntasks_per_node: 128
 startdate: 2022-07-01T00:00:00Z
 enddate: 2022-07-07T23:00:00Z
 restart_step: PT166H
@@ -13,9 +13,9 @@ lurbalb: .TRUE.
 lurbahf: .TRUE.
 
 walltime:
-    prepare_icon: '01:00:00'
-    oem: '01:00:00'
-    icon: '02:00:00'
+    prepare_icon: '00:30:00'
+    oem: '00:30:00'
+    icon: '00:30:00'
 
 
 eccodes_dir: /store/c2sm/amrs/kdnmez/eccodes_definitions
@@ -58,10 +58,10 @@ input_files:
 
 
 icon:
-    binary_file: /capstor/scratch/cscs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-5npdwifgufix73rub3rbaael3x4cfcen/bin/icon
+    binary_file: /capstor/scratch/cscs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-dwd-3.0-jlef3kbi2arbfjrmww23pktz4l2yw6cr/bin/icon
     runjob_filename: icon_runjob.cfg
-    compute_queue: normal
-    walltime: '00:10:00'
+    compute_queue: debug
+    walltime: '00:30:00'
     np_tot: 2
     np_io: 1
     np_restart: 0
