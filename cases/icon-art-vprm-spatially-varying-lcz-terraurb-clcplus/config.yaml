@@ -6,7 +6,7 @@ run_on: cpu
 compute_queue: debug
 ntasks_per_node: 128
 startdate: 2023-07-01T00:00:00Z
-enddate: 2023-08-31T23:00:00Z
+enddate: 2023-07-01T23:00:00Z
 restart_step: PT166H
 lterra_urb: .TRUE.
 lurbalb: .TRUE.
@@ -16,7 +16,6 @@ walltime:
     prepare_icon: '00:30:00'
     oem: '00:30:00'
     icon: '00:30:00'
-
 
 eccodes_dir: /store/c2sm/amrs/kdnmez/eccodes_definitions
 iconremap_bin: iconremap

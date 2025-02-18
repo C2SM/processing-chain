@@ -246,7 +246,7 @@ icon-art-terraurb-test:
       previous:
         - icon
 
-icon-art-vprm-noterraurb-clcplus:
+icon-art-vprm-spatially-varying-lcz-terraurb-clcplus:
   features:
   - restart
   jobs:
@@ -260,6 +260,19 @@ icon-art-vprm-noterraurb-clcplus:
       previous:
         - icon
 
+icon-art-vprm-spatially-varying-realistic-terraurb-clcplus:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
 
 icon-art-vprm-constant-terraurb-clcplus:
   features:
@@ -275,8 +288,7 @@ icon-art-vprm-constant-terraurb-clcplus:
       previous:
         - icon
 
-
-icon-art-vprm-spatially-varying-terraurb-clcplus:
+icon-art-vprm-constant-terraurb-corine:
   features:
   - restart
   jobs:
@@ -290,7 +302,7 @@ icon-art-vprm-spatially-varying-terraurb-clcplus:
       previous:
         - icon
 
-icon-art-vprm-noterraurb-corinecustom:
+icon-art-vprm-constant-terraurb-globcover:
   features:
   - restart
   jobs:
@@ -304,65 +316,7 @@ icon-art-vprm-noterraurb-corinecustom:
       previous:
         - icon
 
-
-icon-art-vprm-constant-terraurb-corinecustom:
-  features:
-  - restart
-  jobs:
-    - prepare_icon
-    - icon
-  dependencies:
-    icon:
-      current:
-        - prepare_icon
-        - copy_icbc
-      previous:
-        - icon
-
-
-icon-art-vprm-spatially-varying-terraurb-corinecustom:
-  features:
-  - restart
-  jobs:
-    - prepare_icon
-    - icon
-  dependencies:
-    icon:
-      current:
-        - prepare_icon
-        - copy_icbc
-      previous:
-        - icon
-
-icon-art-vprm-constant-terraurb-clcplus_oldEU:
-  features:
-  - restart
-  jobs:
-    - prepare_icon
-    - icon
-  dependencies:
-    icon:
-      current:
-        - prepare_icon
-        - copy_icbc
-      previous:
-        - icon
-
-icon-art-vprm-spatially-varying-terraurb-clcplus_oldEU:
-  features:
-  - restart
-  jobs:
-    - prepare_icon
-    - icon
-  dependencies:
-    icon:
-      current:
-        - prepare_icon
-        - copy_icbc
-      previous:
-        - icon
-
-icon-art-vprm-spatially-varying-terraurb-clcplus-swissbuildings3D:
+icon-art-vprm-noterraurb-clcplus:
   features:
   - restart
   jobs:
