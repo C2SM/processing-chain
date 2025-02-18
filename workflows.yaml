@@ -329,3 +329,17 @@ icon-art-vprm-noterraurb-clcplus:
         - copy_icbc
       previous:
         - icon
+
+icon_terraurb_temporary_test:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon

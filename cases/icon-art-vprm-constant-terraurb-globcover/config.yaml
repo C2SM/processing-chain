@@ -22,7 +22,7 @@ eccodes_dir: /store/c2sm/amrs/kdnmez/eccodes_definitions
 iconremap_bin: iconremap
 iconsub_bin: iconsub
 latbc_filename: ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
-latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_art_run/input/icbc_input/new_EU_runs/remapped_bc/*_lbc.nc
+latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/*_lbc.nc
 inidata_prefix: ICON-ART-UNSTRUCTURED_DOM01_
 inidata_nameformat: '<y><m><d>T<h>0000Z'
 inidata_filename_suffix: .nc
