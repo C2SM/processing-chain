@@ -12,7 +12,6 @@ You should have received a copy of the GNU General Public License along with thi
 program. If not, see <http://www.gnu.org/licenses/>."""
 #!/usr/bin/env python
 # da_initexit.py
-
 """
 .. module:: initexit
 .. moduleauthor:: Wouter Peters 
@@ -81,18 +80,11 @@ import da.tools.rc as rc
 from da.tools.general import create_dirs, to_datetime, advance_time
 
 needed_da_items = [
-    'time.start',
-    'time.finish',
-    'time.nlag',
-    'time.cycle',
-    'dir.da_run',
-    'da.resources.ncycles_per_job',
-    'da.resources.ntasks',
-    'da.resources.ntime',
-    'da.system',
-    'da.system.rc',
-    'da.obsoperator',
-    'da.optimizer.nmembers']
+    'time.start', 'time.finish', 'time.nlag', 'time.cycle', 'dir.da_run',
+    'da.resources.ncycles_per_job', 'da.resources.ntasks',
+    'da.resources.ntime', 'da.system', 'da.system.rc', 'da.obsoperator',
+    'da.optimizer.nmembers'
+]
 
 # only needed in an earlier implemented where each substep was a separate job
 # validprocesses = ['start','done','samplestate','advance','invert']
@@ -102,7 +94,7 @@ class CycleControl(dict):
     """
     This object controls the CTDAS system flow and functionality.
     """
-        
+
     def __init__(self, opts=[], args={{}}):
         """
         The CycleControl object is instantiated with a set of options and arguments.
@@ -126,10 +118,11 @@ class CycleControl(dict):
         self['da.crash.recover'] = '-r' in opts
         self['transition'] = '-t' in opts
         self['verbose'] = '-v' in opts
-        self.dasystem = None # to be filled later
-        self.restart_filelist = [] # List of files needed for restart, to be extended later
-        self.output_filelist = [] # List of files needed for output, to be extended later
-
+        self.dasystem = None  # to be filled later
+        self.restart_filelist = [
+        ]  # List of files needed for restart, to be extended later
+        self.output_filelist = [
+        ]  # List of files needed for output, to be extended later
 
     def load_rc(self, rcfilename):
         """ 
@@ -141,7 +134,6 @@ class CycleControl(dict):
             self[k] = v
 
         logging.info('DA Cycle rc-file (%s) loaded successfully' % rcfilename)
-        
 
     def validate_rc(self):
         """ 
@@ -154,18 +146,29 @@ class CycleControl(dict):
                 self[k] = True
             if v in ['False', 'false', 'f', 'F', 'n', 'no']:
                 self[k] = False
-            if 'date' in k : 
+            if 'date' in k:
                 self[k] = to_datetime(v)
-            if k in ['time.start', 'time.end', 'time.finish', 'da.restart.tstamp']:
+            if k in [
+                    'time.start', 'time.end', 'time.finish',
+                    'da.restart.tstamp'
+            ]:
                 self[k] = to_datetime(v)
         for key in needed_da_items:
             if key not in self:
                 msg = 'Missing a required value in rc-file : %s' % key
                 logging.error(msg)
-                logging.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ')
-                logging.error('Please note the update on Dec 02 2011 where rc-file names for DaSystem and ')
-                logging.error('are from now on specified in the main rc-file (see da/rc/da.rc for example)')
-                logging.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ')
+                logging.error(
+                    '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! '
+                )
+                logging.error(
+                    'Please note the update on Dec 02 2011 where rc-file names for DaSystem and '
+                )
+                logging.error(
+                    'are from now on specified in the main rc-file (see da/rc/da.rc for example)'
+                )
+                logging.error(
+                    '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! '
+                )
                 raise IOError(msg)
         logging.debug('DA Cycle settings have been validated succesfully')
 
@@ -175,14 +178,16 @@ class CycleControl(dict):
         """
 
         startdate = self['time.start']
-        finaldate = self['time.finish']                  
+        finaldate = self['time.finish']
 
         if finaldate <= startdate:
-            logging.error('The start date (%s) is not greater than the end date (%s), please revise' % (startdate.strftime('%Y%m%d'), finaldate.strftime('%Y%m%d'))) 
+            logging.error(
+                'The start date (%s) is not greater than the end date (%s), please revise'
+                % (startdate.strftime('%Y%m%d'), finaldate.strftime('%Y%m%d')))
             raise ValueError
-        cyclelength = self['time.cycle']                 # get time step
+        cyclelength = self['time.cycle']  # get time step
 
-# Determine end date
+        # Determine end date
 
         if cyclelength == 'infinite':
             enddate = finaldate
@@ -199,14 +204,18 @@ class CycleControl(dict):
         self['time.finish'] = finaldate
         self['cyclelength'] = dt
 
-        logging.info("===============================================================")
-        logging.info("DA Cycle start date is %s" % startdate.strftime('%Y-%m-%d %H:%M'))
-        logging.info("DA Cycle end date is %s" % enddate.strftime('%Y-%m-%d %H:%M'))
-        logging.info("DA Cycle final date is %s" % finaldate.strftime('%Y-%m-%d %H:%M'))  
+        logging.info(
+            "===============================================================")
+        logging.info("DA Cycle start date is %s" %
+                     startdate.strftime('%Y-%m-%d %H:%M'))
+        logging.info("DA Cycle end date is %s" %
+                     enddate.strftime('%Y-%m-%d %H:%M'))
+        logging.info("DA Cycle final date is %s" %
+                     finaldate.strftime('%Y-%m-%d %H:%M'))
         logging.info("DA Cycle cycle length is %s" % cyclelength)
         logging.info("DA Cycle restart is %s" % str(self['time.restart']))
-        logging.info("===============================================================")
-
+        logging.info(
+            "===============================================================")
 
     def set_sample_times(self, lag):
         """
@@ -214,7 +223,7 @@ class CycleControl(dict):
         the lag. Note that lag falls in the interval [0,nlag-1]
         """
 
-        # Start from cycle times 
+        # Start from cycle times
         self['time.sample.start'] = copy.deepcopy(self['time.start'])
         self['time.sample.end'] = copy.deepcopy(self['time.end'])
 
@@ -223,37 +232,38 @@ class CycleControl(dict):
         for l in range(lag):
             self.advance_sample_times()
 
-
     def advance_sample_times(self):
         """ 
         Advance sampling start and end time by one cycle interval
         """
 
-        days = self['cyclelength'].days                
+        days = self['cyclelength'].days
 
-        self['time.sample.start'] = advance_time(self['time.sample.start'], days)
+        self['time.sample.start'] = advance_time(self['time.sample.start'],
+                                                 days)
         self['time.sample.end'] = advance_time(self['time.sample.end'], days)
-    
 
     def advance_cycle_times(self):
         """ 
         Advance cycle start and end time by one cycle interval
         """
-              
-        days = self['cyclelength'].days                  
+
+        days = self['cyclelength'].days
 
         startdate = advance_time(self['time.start'], days)
         enddate = advance_time(self['time.end'], days)
 
         filtertime = startdate.strftime('%Y%m%d')
-        self['dir.output'] = os.path.join(self['dir.da_run'], 'output', filtertime)
+        self['dir.output'] = os.path.join(self['dir.da_run'], 'output',
+                                          filtertime)
 
         self['time.start'] = startdate
         self['time.end'] = enddate
 
-
     def write_random_seed(self):
-        filename = os.path.join(self['dir.restart'], 'randomseed_%s.pickle' % self['time.start'].strftime('%Y%m%d'))
+        filename = os.path.join(
+            self['dir.restart'],
+            'randomseed_%s.pickle' % self['time.start'].strftime('%Y%m%d'))
         f = open(filename, 'wb')
         seed = np.random.get_state()
         pickle.dump(seed, f, -1)
@@ -261,19 +271,21 @@ class CycleControl(dict):
 
         logging.info("Saved the random seed generator values to file")
 
-
     def read_random_seed(self, first=False):
         if first:
             filename = self.dasystem['random.seed.init']
-            logging.info("Initialised random seed from: %s"%filename)
-        else: 
-            filename = os.path.join(self['dir.restart'], 'randomseed_%s.pickle' % self['da.restart.tstamp'].strftime('%Y%m%d'))
-            logging.info("Retrieved the random seed generator values of last cycle from file")
+            logging.info("Initialised random seed from: %s" % filename)
+        else:
+            filename = os.path.join(
+                self['dir.restart'], 'randomseed_%s.pickle' %
+                self['da.restart.tstamp'].strftime('%Y%m%d'))
+            logging.info(
+                "Retrieved the random seed generator values of last cycle from file"
+            )
         f = open(filename, 'rb')
-        seed = pickle.load(f,encoding='latin1')
+        seed = pickle.load(f, encoding='latin1')
         np.random.set_state(seed)
         f.close()
-
 
     def setup(self):
         """ 
@@ -307,22 +319,26 @@ class CycleControl(dict):
 
             * parse_times()
             * WriteRc('jobfilename')
-        """        
+        """
         if self['transition']:
-            logging.info("Transition of filter from previous step with od meteo from 25 to 34 levels")
+            logging.info(
+                "Transition of filter from previous step with od meteo from 25 to 34 levels"
+            )
             self.setup_file_structure()
             strippedname = os.path.split(self['jobrcfilename'])[-1]
-            self['jobrcfilename'] = os.path.join(self['dir.exec'], strippedname)
+            self['jobrcfilename'] = os.path.join(self['dir.exec'],
+                                                 strippedname)
             self.read_random_seed(False)
 
         elif self['time.restart']:
             logging.info("Restarting filter from previous step")
             self.setup_file_structure()
             strippedname = os.path.split(self['jobrcfilename'])[-1]
-            self['jobrcfilename'] = os.path.join(self['dir.exec'], strippedname)
+            self['jobrcfilename'] = os.path.join(self['dir.exec'],
+                                                 strippedname)
             self.read_random_seed(False)
 
-        else: #assume that it is a fresh start, change this condition to more specific if crash recover added
+        else:  #assume that it is a fresh start, change this condition to more specific if crash recover added
             logging.info("First time step in filter sequence")
             self.setup_file_structure()
 
@@ -330,19 +346,39 @@ class CycleControl(dict):
             # First strip current leading path from filename
 
             strippedname = os.path.split(self['jobrcfilename'])[-1]
-            self['jobrcfilename'] = os.path.join(self['dir.exec'], strippedname)
+            self['jobrcfilename'] = os.path.join(self['dir.exec'],
+                                                 strippedname)
             if 'extendedregionsfile' in self.dasystem:
-                shutil.copy(os.path.join(self.dasystem['extendedregionsfile']),os.path.join(self['dir.exec'],'da','analysis','cteco2','copied_regions_extended.nc')) 
-                logging.info('Copied extended regions file to the analysis directory: %s'%os.path.join(self.dasystem['extendedregionsfile'])) 
-            else: 
-                shutil.copy(os.path.join(self['dir.exec'],'da','analysis','cteco2','olson_extended.nc'),os.path.join(self['dir.exec'],'da','analysis','cteco2','copied_regions_extended.nc')) 
-                logging.info('Copied extended regions within the analysis directory: %s'%os.path.join(self['dir.exec'],'da','analysis','cteco2','olson_extended.nc')) 
-            for filename in glob.glob(os.path.join(self['dir.exec'],'da','analysis','cteco2','*.pickle')):
-                logging.info('Deleting pickle file %s to make sure the correct regions are used'%os.path.split(filename)[1])
-                os.remove(filename) 
-            for filename in glob.glob(os.path.join(self['dir.exec'],'*.pickle')):
-                logging.info('Deleting pickle file %s to make sure the correct regions are used'%os.path.split(filename)[1])
-                os.remove(filename) 
+                shutil.copy(
+                    os.path.join(self.dasystem['extendedregionsfile']),
+                    os.path.join(self['dir.exec'], 'da', 'analysis', 'cteco2',
+                                 'copied_regions_extended.nc'))
+                logging.info(
+                    'Copied extended regions file to the analysis directory: %s'
+                    % os.path.join(self.dasystem['extendedregionsfile']))
+            else:
+                shutil.copy(
+                    os.path.join(self['dir.exec'], 'da', 'analysis', 'cteco2',
+                                 'olson_extended.nc'),
+                    os.path.join(self['dir.exec'], 'da', 'analysis', 'cteco2',
+                                 'copied_regions_extended.nc'))
+                logging.info(
+                    'Copied extended regions within the analysis directory: %s'
+                    % os.path.join(self['dir.exec'], 'da', 'analysis',
+                                   'cteco2', 'olson_extended.nc'))
+            for filename in glob.glob(
+                    os.path.join(self['dir.exec'], 'da', 'analysis', 'cteco2',
+                                 '*.pickle')):
+                logging.info(
+                    'Deleting pickle file %s to make sure the correct regions are used'
+                    % os.path.split(filename)[1])
+                os.remove(filename)
+            for filename in glob.glob(
+                    os.path.join(self['dir.exec'], '*.pickle')):
+                logging.info(
+                    'Deleting pickle file %s to make sure the correct regions are used'
+                    % os.path.split(filename)[1])
+                os.remove(filename)
             if 'random.seed.init' in self.dasystem:
                 self.read_random_seed(True)
 
@@ -372,13 +408,14 @@ class CycleControl(dict):
 
         """
 
-# Create the run directory for this DA job, including I/O structure
+        # Create the run directory for this DA job, including I/O structure
 
         filtertime = self['time.start'].strftime('%Y%m%d')
 
         self['dir.exec'] = os.path.join(self['dir.da_run'], 'exec')
         self['dir.input'] = os.path.join(self['dir.da_run'], 'input')
-        self['dir.output'] = os.path.join(self['dir.da_run'], 'output', filtertime)
+        self['dir.output'] = os.path.join(self['dir.da_run'], 'output',
+                                          filtertime)
         self['dir.analysis'] = os.path.join(self['dir.da_run'], 'analysis')
         self['dir.jobs'] = os.path.join(self['dir.da_run'], 'jobs')
         self['dir.restart'] = os.path.join(self['dir.da_run'], 'restart')
@@ -391,8 +428,8 @@ class CycleControl(dict):
         create_dirs(os.path.join(self['dir.jobs']))
         create_dirs(os.path.join(self['dir.restart']))
 
-        logging.info('Succesfully created the file structure for the assimilation job')
-
+        logging.info(
+            'Succesfully created the file structure for the assimilation job')
 
     def finalize(self):
         """
@@ -406,11 +443,13 @@ class CycleControl(dict):
             * Submit the next cycle
 
         """
-        self.write_random_seed()                              
-        self.write_new_rc_file()                              
-        
-        self.collect_restart_data()  # Collect restart data for next cycle into a clean restart/current folder
-        self.collect_output()  # Collect restart data for next cycle into a clean restart/current folder
+        self.write_random_seed()
+        self.write_new_rc_file()
+
+        self.collect_restart_data(
+        )  # Collect restart data for next cycle into a clean restart/current folder
+        self.collect_output(
+        )  # Collect restart data for next cycle into a clean restart/current folder
         self.submit_next_cycle()
 
     def collect_output(self):
@@ -425,20 +464,18 @@ class CycleControl(dict):
         targetdir = os.path.join(self['dir.output'])
         create_dirs(targetdir)
 
-        logging.info("Collecting the required output data") 
+        logging.info("Collecting the required output data")
         logging.debug("           to   directory: %s " % targetdir)
 
         for file in set(self.output_filelist):
-            if os.path.isdir(file): # skip dirs
+            if os.path.isdir(file):  # skip dirs
                 continue
-            if not os.path.exists(file): # skip dirs
+            if not os.path.exists(file):  # skip dirs
                 logging.warning("           [not found] .... %s " % file)
                 continue
 
             logging.debug("           [copy] .... %s " % file)
             shutil.copy(file, file.replace(os.path.split(file)[0], targetdir))
-
-
 
     def collect_restart_data(self):
         """ Collect files needed for the restart of this cycle in case of a crash, or for the continuation of the next cycle. 
@@ -474,17 +511,18 @@ class CycleControl(dict):
         logging.debug("           to   directory: %s " % targetdir)
 
         for file in set(self.restart_filelist):
-            if os.path.isdir(file): # skip dirs
+            if os.path.isdir(file):  # skip dirs
                 continue
-            if not os.path.exists(file): 
+            if not os.path.exists(file):
                 logging.warning("           [not found] .... %s " % file)
             else:
                 logging.debug("           [copy] .... %s " % file)
-                shutil.copy(file, file.replace(os.path.split(file)[0], targetdir))
-
+                shutil.copy(file,
+                            file.replace(os.path.split(file)[0], targetdir))
 
 
 #
+
     def write_new_rc_file(self):
         """ Write the rc-file for the next DA cycle. 
 
@@ -494,36 +532,36 @@ class CycleControl(dict):
             The resulting rc-file is written to the ``dir.exec`` so that it can be used when resubmitting the next cycle
             
         """
-        
+
         # We make a copy of the current dacycle object, and modify the start + end dates and restart value
 
         new_dacycle = copy.deepcopy(self)
         new_dacycle['da.restart.tstamp'] = self['time.start']
         new_dacycle.advance_cycle_times()
         new_dacycle['time.restart'] = True
-        
+
         # Create the name of the rc-file that will hold this new input, and write it
 
         #fname = os.path.join(self['dir.exec'], 'da_runtime.rc')  # current exec dir holds next rc file
-        
-        fname = os.path.join(self['dir.restart'], 'da_runtime_%s.rc' % new_dacycle['time.start'].strftime('%Y%m%d'))#advanced time
-        
+
+        fname = os.path.join(
+            self['dir.restart'], 'da_runtime_%s.rc' %
+            new_dacycle['time.start'].strftime('%Y%m%d'))  #advanced time
+
         rc.write(fname, new_dacycle)
         logging.debug('Wrote new da_runtime.rc (%s) to restart dir' % fname)
 
         # The rest is info needed for a system restart, so it modifies the current dacycle object (self)
 
-        self['da.restart.fname'] = fname    # needed for next job template
+        self['da.restart.fname'] = fname  # needed for next job template
         #self.restart_filelist.append(fname)  # not that needed since it is already written to the restart dir...
         #logging.debug('Added da_runtime.rc to the restart_filelist for later collection')
-
 
     def write_rc(self, fname):
         """ Write RC file after each process to reflect updated info """
 
         rc.write(fname, self)
         logging.debug('Wrote expanded rc-file (%s)' % fname)
-        
 
     def submit_next_cycle(self):
         """ 
@@ -535,45 +573,72 @@ class CycleControl(dict):
         If the end of the cycle series is reached, no new job is submitted.
 
         """
-        
 
         if self['time.end'] < self['time.finish']:
 
             # file ID and names
-            jobid = self['time.end'].strftime('%Y%m%d') 
+            jobid = self['time.end'].strftime('%Y%m%d')
             targetdir = os.path.join(self['dir.exec'])
             jobfile = os.path.join(targetdir, 'jb.%s.jb' % jobid)
             logfile = os.path.join(targetdir, 'jb.%s.log' % jobid)
             # Template and commands for job
-            jobparams = {{'jobname':"j.%s" % jobid, 'jobnodes':self['da.resources.ntasks'], 'jobtime': self['da.resources.ntime'], 'logfile': logfile, 'errfile': logfile}}
+            jobparams = {{
+                'jobname': "j.%s" % jobid,
+                'jobnodes': self['da.resources.ntasks'],
+                'jobtime': self['da.resources.ntime'],
+                'logfile': logfile,
+                'errfile': logfile
+            }}
             template = self.daplatform.get_job_template(jobparams)
-            execcommand = os.path.join(self['dir.da_submit'], sys.argv[0]) 
+            execcommand = os.path.join(self['dir.da_submit'], sys.argv[0])
             if '-t' in self.opts:
-                (self.opts).remove('-t') 
+                (self.opts).remove('-t')
 
             if 'icycle_in_job' not in os.environ:
-                logging.info('Environment variable icycle_in_job not found, resubmitting after this cycle')
-                os.environ['icycle_in_job'] = self['da.resources.ncycles_per_job']  # assume that if no cycle number is set, we should submit the next job by default
+                logging.info(
+                    'Environment variable icycle_in_job not found, resubmitting after this cycle'
+                )
+                os.environ['icycle_in_job'] = self[
+                    'da.resources.ncycles_per_job']  # assume that if no cycle number is set, we should submit the next job by default
             else:
-                logging.info('Environment variable icycle_in_job was found, processing cycle %s of %s in this job'%(os.environ['icycle_in_job'],self['da.resources.ncycles_per_job']) )
+                logging.info(
+                    'Environment variable icycle_in_job was found, processing cycle %s of %s in this job'
+                    % (os.environ['icycle_in_job'],
+                       self['da.resources.ncycles_per_job']))
 
             ncycles = int(self['da.resources.ncycles_per_job'])
-            for cycle in range(ncycles): 
-                nextjobid = '%s'% ( (self['time.end']+cycle*self['cyclelength']).strftime('%Y%m%d'),)
-                nextrestartfilename = self['da.restart.fname'].replace(jobid,nextjobid)
-                nextlogfilename = logfile.replace(jobid,nextjobid)
+            for cycle in range(ncycles):
+                nextjobid = '%s' % (
+                    (self['time.end'] +
+                     cycle * self['cyclelength']).strftime('%Y%m%d'), )
+                nextrestartfilename = self['da.restart.fname'].replace(
+                    jobid, nextjobid)
+                nextlogfilename = logfile.replace(jobid, nextjobid)
                 if self.daplatform.ID == 'WU capegrim':
-                    template += """\nexport icycle_in_job=%d\npython3 %s rc=%s %s >&%s &\n""" % (cycle+1,execcommand, nextrestartfilename, ''.join(self.opts), nextlogfilename,)
-                else: 
-                    template += """\nexport icycle_in_job=%d\npython3 %s rc=%s %s >&%s\n""" % (cycle+1,execcommand, nextrestartfilename, ''.join(self.opts), nextlogfilename,) 
+                    template += """\nexport icycle_in_job=%d\npython3 %s rc=%s %s >&%s &\n""" % (
+                        cycle + 1,
+                        execcommand,
+                        nextrestartfilename,
+                        ''.join(self.opts),
+                        nextlogfilename,
+                    )
+                else:
+                    template += """\nexport icycle_in_job=%d\npython3 %s rc=%s %s >&%s\n""" % (
+                        cycle + 1,
+                        execcommand,
+                        nextrestartfilename,
+                        ''.join(self.opts),
+                        nextlogfilename,
+                    )
 
-            # write and submit 
+            # write and submit
             self.daplatform.write_job(jobfile, template, jobid)
             if 'da.resources.ncycles_per_job' in self:
-                do_submit = (int(os.environ['icycle_in_job']) >= int(self['da.resources.ncycles_per_job']))
+                do_submit = (int(os.environ['icycle_in_job'])
+                             >= int(self['da.resources.ncycles_per_job']))
             else:
                 dosubmit = False
-          
+
             if do_submit:
                 jobid = self.daplatform.submit_job(jobfile, joblog=logfile)
 
@@ -584,11 +649,14 @@ class CycleControl(dict):
 def start_logger(level=logging.INFO):
     """ start the logging of messages to screen"""
 
-# start the logging basic configuration by setting up a log file
+    # start the logging basic configuration by setting up a log file
 
-    logging.basicConfig(level=level,
-                        format=' [%(levelname)-7s] (%(asctime)s) py-%(module)-20s : %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S')
+    logging.basicConfig(
+        level=level,
+        format=
+        ' [%(levelname)-7s] (%(asctime)s) py-%(module)-20s : %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S')
+
 
 def parse_options():
     """ 
@@ -606,30 +674,35 @@ def parse_options():
 
     """
 
-# Parse keywords, the only option accepted so far is the "-h" flag for help
+    # Parse keywords, the only option accepted so far is the "-h" flag for help
 
     opts = []
     args = []
-    try:                                
+    try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "-rvt")
-    except getopt.GetoptError as msg:           
+    except getopt.GetoptError as msg:
         logging.error('%s' % msg)
-        sys.exit(2)      
+        sys.exit(2)
 
     for options in opts:
         options = options[0].lower()
         if options == '-r':
-            logging.info('-r flag specified on command line: recovering from crash')
+            logging.info(
+                '-r flag specified on command line: recovering from crash')
         if options == '-t':
-            logging.info('-t flag specified on command line: transition with od from December 2005')    
+            logging.info(
+                '-t flag specified on command line: transition with od from December 2005'
+            )
         if options == '-v':
-            logging.info('-v flag specified on command line: extra verbose output')
+            logging.info(
+                '-v flag specified on command line: extra verbose output')
             logging.root.setLevel(logging.DEBUG)
 
-    if opts: 
+    if opts:
         optslist = [item[0] for item in opts]
     else:
         optslist = []
+
 
 # Parse arguments and return as dictionary
 
@@ -637,18 +710,19 @@ def parse_options():
     for item in args:
         #item=item.lower()
 
-# Catch arguments that are passed not in "key=value" format
+        # Catch arguments that are passed not in "key=value" format
 
         if '=' in item:
             key, arg = item.split('=')
         else:
-            logging.error('%s' % 'Argument passed without description (%s)' % item)
+            logging.error('%s' % 'Argument passed without description (%s)' %
+                          item)
             raise getopt.GetoptError(arg)
 
         arguments[key] = arg
 
-
     return optslist, arguments
+
 
 def validate_opts_args(opts, args):
     """ 
@@ -661,7 +735,7 @@ def validate_opts_args(opts, args):
         logging.error(msg)
         raise IOError(msg)
     elif not os.path.exists(args['rc']):
-        msg = "The specified rc-file (%s) does not exist " % args['rc'] 
+        msg = "The specified rc-file (%s) does not exist " % args['rc']
         logging.error(msg)
         raise IOError(msg)
 
@@ -678,4 +752,3 @@ def validate_opts_args(opts, args):
 
 if __name__ == "__main__":
     pass
-

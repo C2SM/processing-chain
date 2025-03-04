@@ -12,7 +12,6 @@ You should have received a copy of the GNU General Public License along with thi
 program. If not, see <http://www.gnu.org/licenses/>."""
 #!/usr/bin/env python
 # obs.py
-
 """
 .. module:: obs
 .. moduleauthor:: Wouter Peters 
@@ -37,6 +36,7 @@ from netCDF4 import Dataset
 import xarray as xr
 from multiprocessing import Pool
 import datetime
+
 sys.path.append(os.getcwd())
 sys.path.append('../../')
 
@@ -53,6 +53,7 @@ import da.tools.io4 as io
 import da.tools.rc as rc
 
 ################### Begin Class Observations ###################
+
 
 class ICOSObservations(object):
     """ 
@@ -73,7 +74,7 @@ class ICOSObservations(object):
     :class:`~da.baseclasses.observationoperator.ObservationOperator` object. The values returned after sampling 
     are finally added by :meth:`~da.baseclasses.obs.Observations.add_simulations`
 
-    """ 
+    """
 
     def __init__(self):
         """
@@ -111,10 +112,8 @@ class ICOSObservations(object):
 
         self.datalist = []
 
-
     def get_samples_type(self):
         return 'insitu'
-
 
     def add_observations(self):
         """ 
@@ -128,111 +127,110 @@ class ICOSObservations(object):
         # Step 1: Read list of available site files in package
         ######################################################
 
-
         mdm_dict = {{}}
 
-        mountain_stations = ['Jungfraujoch_5',
-                                'Monte Cimone_8',
-                                'Puy de Dome_10', 
-                                'Pic du Midi_28',
-                                'Zugspitze_3',
-                                'Hohenpeissenberg_50',
-                                'Hohenpeissenberg_93',
-                                'Hohenpeissenberg_131',
-                                'Schauinsland_12',
-                                'Plateau Rosa_10'] 
-        skip_stations = ['Malin Head_47', 
-                        'Hegyhatsal hatterszennyettseg-mero allomas_48', 
-                        'Hegyhatsal hatterszennyettseg-mero allomas_82', 
-                        'Birkenes_2', 
-                        'Hegyhatsal hatterszennyettseg-mero allomas_115', 
-                        'Hegyhatsal hatterszennyettseg-mero allomas_10',
-                        'Beromunster_12',
-                        'Beromunster_44',
-                        'Beromunster_72',
-                        'Beromunster_132',
-                        'Bilsdale_42',
-                        'Bilsdale_108',
-                        'Cabauw_27',
-                        'Cabauw_67',
-                        'Cabauw_127',
-                        'Gartow_30',
-                        'Gartow_60',
-                        'Gartow_132',
-                        'Gartow_216',
-                        'Hohenpeissenberg_50',
-                        'Hohenpeissenberg_93',
-                        'Hyltemossa_30',
-                        'Hyltemossa_70',
-                        'Ispra_40',
-                        'Ispra_60',
-                        'Karlsruhe_30',
-                        'Karlsruhe_60',
-                        'Karlsruhe_100',
-                        'Kresin u Pacova_10',
-                        'Kresin u Pacova_50',
-                        'Kresin u Pacova_125',
-                        'Lindenberg_2',
-                        'Lindenberg_10',
-                        'Lindenberg_40',
-                        'Observatoire de Haute Provence_10',
-                        'Observatoire de Haute Provence_50',
-                        "Observatoire perenne de l'environnement_10",
-                        "Observatoire perenne de l'environnement_50",
-                        'Ridge Hill_45',
-                        'Saclay_15',
-                        'Saclay_60',
-                        'Tacolneston_54',
-                        'Tacolneston_100',
-                        'Torfhaus_10',
-                        'Torfhaus_76',
-                        'Torfhaus_110',
-                        'Trainou_5',
-                        'Trainou_50',
-                        'Trainou_100',
-                        ]
+        mountain_stations = [
+            'Jungfraujoch_5', 'Monte Cimone_8', 'Puy de Dome_10',
+            'Pic du Midi_28', 'Zugspitze_3', 'Hohenpeissenberg_50',
+            'Hohenpeissenberg_93', 'Hohenpeissenberg_131', 'Schauinsland_12',
+            'Plateau Rosa_10'
+        ]
+        skip_stations = [
+            'Malin Head_47',
+            'Hegyhatsal hatterszennyettseg-mero allomas_48',
+            'Hegyhatsal hatterszennyettseg-mero allomas_82',
+            'Birkenes_2',
+            'Hegyhatsal hatterszennyettseg-mero allomas_115',
+            'Hegyhatsal hatterszennyettseg-mero allomas_10',
+            'Beromunster_12',
+            'Beromunster_44',
+            'Beromunster_72',
+            'Beromunster_132',
+            'Bilsdale_42',
+            'Bilsdale_108',
+            'Cabauw_27',
+            'Cabauw_67',
+            'Cabauw_127',
+            'Gartow_30',
+            'Gartow_60',
+            'Gartow_132',
+            'Gartow_216',
+            'Hohenpeissenberg_50',
+            'Hohenpeissenberg_93',
+            'Hyltemossa_30',
+            'Hyltemossa_70',
+            'Ispra_40',
+            'Ispra_60',
+            'Karlsruhe_30',
+            'Karlsruhe_60',
+            'Karlsruhe_100',
+            'Kresin u Pacova_10',
+            'Kresin u Pacova_50',
+            'Kresin u Pacova_125',
+            'Lindenberg_2',
+            'Lindenberg_10',
+            'Lindenberg_40',
+            'Observatoire de Haute Provence_10',
+            'Observatoire de Haute Provence_50',
+            "Observatoire perenne de l'environnement_10",
+            "Observatoire perenne de l'environnement_50",
+            'Ridge Hill_45',
+            'Saclay_15',
+            'Saclay_60',
+            'Tacolneston_54',
+            'Tacolneston_100',
+            'Torfhaus_10',
+            'Torfhaus_76',
+            'Torfhaus_110',
+            'Trainou_5',
+            'Trainou_50',
+            'Trainou_100',
+        ]
 
         os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE"
 
-##########################################################################################################
-# THE FOLLOWING COMMENTED BLOCK IS FOR READING-IN REAL DATA
-##########################################################################################################
-        c_offset = 2 # ppm
+        ##########################################################################################################
+        # THE FOLLOWING COMMENTED BLOCK IS FOR READING-IN REAL DATA
+        ##########################################################################################################
+        c_offset = 2  # ppm
 
-        mdm_dictionary = {{
-            "Beromunster_212": 6.2383423 + c_offset,
-            "Bilsdale_248": 3.8534036 + c_offset,
-            "Biscarrosse_47": 3.5997221 + c_offset,
-            "Cabauw_207": 6.6093283 + c_offset,
-            "Carnsore Point_14": 2.1894007 + c_offset,
-            "Ersa_40": 2.3997285 + c_offset,
-            "Gartow_341": 4.570544 + c_offset,
-            "Heidelberg_30": 8.660628 + c_offset,
-            "Hohenpeissenberg_131": 4.0553513 + c_offset,
-            "Hyltemossa_150": 3.485432 + c_offset,
-            "Ispra_100": 9.612817 + c_offset,
-            "Jungfraujoch_5": 1.0802848 + c_offset,
-            "Karlsruhe_200": 8.05013 + c_offset,
-            "Kresin u Pacova_250": 3.829324 + c_offset,
-            "La Muela_80": 3.2093291 + c_offset,
-            "Laegern-Hochwacht_32": 9.556924 + c_offset,
-            "Lindenberg_98": 5.4387555 + c_offset,
-            "Lutjewad_60": 5.651525 + c_offset,
-            "Monte Cimone_8": 1.7325112 + c_offset,
-            "Observatoire de Haute Provence_100": 4.146905 + c_offset,
-            "Observatoire perenne de l'environnement_120": 6.8854113 + c_offset,
-            "Pic du Midi_28": 1.2196398 + c_offset,
-            "Plateau Rosa_10": 1.3211231 + c_offset,
-            "Puy de Dome_10": 3.4529948 + c_offset,
-            "Ridge Hill_90": 5.0861707 + c_offset,
-            "Saclay_100": 6.8669567 + c_offset,
-            "Schauinsland_12": 3.7896755 + c_offset,
-            "Tacolneston_185": 4.6675706 + c_offset,
-            "Torfhaus_147": 4.622525 + c_offset,
-            "Trainou_180": 5.821612 + c_offset,
-            "Weybourne_10": 4.4674397 + c_offset,
-            "Zugspitze_3": 1.6796716 + c_offset
-        }} # Based on the simulated standard deviation of the signal (without background) over a full year.
+        mdm_dictionary = {
+            {
+                "Beromunster_212": 6.2383423 + c_offset,
+                "Bilsdale_248": 3.8534036 + c_offset,
+                "Biscarrosse_47": 3.5997221 + c_offset,
+                "Cabauw_207": 6.6093283 + c_offset,
+                "Carnsore Point_14": 2.1894007 + c_offset,
+                "Ersa_40": 2.3997285 + c_offset,
+                "Gartow_341": 4.570544 + c_offset,
+                "Heidelberg_30": 8.660628 + c_offset,
+                "Hohenpeissenberg_131": 4.0553513 + c_offset,
+                "Hyltemossa_150": 3.485432 + c_offset,
+                "Ispra_100": 9.612817 + c_offset,
+                "Jungfraujoch_5": 1.0802848 + c_offset,
+                "Karlsruhe_200": 8.05013 + c_offset,
+                "Kresin u Pacova_250": 3.829324 + c_offset,
+                "La Muela_80": 3.2093291 + c_offset,
+                "Laegern-Hochwacht_32": 9.556924 + c_offset,
+                "Lindenberg_98": 5.4387555 + c_offset,
+                "Lutjewad_60": 5.651525 + c_offset,
+                "Monte Cimone_8": 1.7325112 + c_offset,
+                "Observatoire de Haute Provence_100": 4.146905 + c_offset,
+                "Observatoire perenne de l'environnement_120":
+                6.8854113 + c_offset,
+                "Pic du Midi_28": 1.2196398 + c_offset,
+                "Plateau Rosa_10": 1.3211231 + c_offset,
+                "Puy de Dome_10": 3.4529948 + c_offset,
+                "Ridge Hill_90": 5.0861707 + c_offset,
+                "Saclay_100": 6.8669567 + c_offset,
+                "Schauinsland_12": 3.7896755 + c_offset,
+                "Tacolneston_185": 4.6675706 + c_offset,
+                "Torfhaus_147": 4.622525 + c_offset,
+                "Trainou_180": 5.821612 + c_offset,
+                "Weybourne_10": 4.4674397 + c_offset,
+                "Zugspitze_3": 1.6796716 + c_offset
+            }
+        }  # Based on the simulated standard deviation of the signal (without background) over a full year.
 
         u_id = 1
         for ncfile in os.listdir(self.obspack_dir):
@@ -241,31 +239,33 @@ class ICOSObservations(object):
             logging.info('Found file ', )
             infile = os.path.join(self.obspack_dir, ncfile)
             print("infile = ", infile)
-            
+
             f = xr.open_dataset(infile)
 
-            logging.info('Looking into the file %s...'%(infile))
+            logging.info('Looking into the file %s...' % (infile))
 
-            sites_names = np.array([unidecode(x) for x in f.Stations_names.values])
+            sites_names = np.array(
+                [unidecode(x) for x in f.Stations_names.values])
 
-            mountain_hours = ['0' + str(x) for x in np.arange(0,7)]
-            rest_hours = [str(x) for x in np.arange(12,17)]
+            mountain_hours = ['0' + str(x) for x in np.arange(0, 7)]
+            rest_hours = [str(x) for x in np.arange(12, 17)]
 
             st_ind = np.arange(len(sites_names))
-            
-            #def caculate_interval_mean_cnc(dates, conc, hr):
 
+            #def caculate_interval_mean_cnc(dates, conc, hr):
 
             for x in st_ind:
 
                 station_name = sites_names[x]
-                if station_name in skip_stations: continue # Skip stations outside of the domain!
-                
+                if station_name in skip_stations:
+                    continue  # Skip stations outside of the domain!
+
                 cnc = f.Concentration[x].values
-                
+
                 dates = f.Dates[x].values
                 flag = 1
-                mdm_value = mdm_dictionary[station_name] # ERIK: CHANGED FROM constant 10
+                mdm_value = mdm_dictionary[
+                    station_name]  # ERIK: CHANGED FROM constant 10
                 height = f.Stations_masl[x].values
                 lon = f.Lon[x].values
                 lat = f.Lat[x].values
@@ -274,43 +274,68 @@ class ICOSObservations(object):
 
                 # ERIK: What is the influence of using UTC here? 00 UTC is already 1 o clock in the Netherlands? BUT, simulation is not w.r.t. UTC (or is it?).
                 if station_name in mountain_stations:
-                    ind_dt = np.asarray([str(x)[11:13] in mountain_hours for x in f.Dates.values[x]]) #mask of hours taken for mountain sites  
-                    hr=0
+                    ind_dt = np.asarray([
+                        str(x)[11:13] in mountain_hours
+                        for x in f.Dates.values[x]
+                    ])  #mask of hours taken for mountain sites
+                    hr = 0
                 else:
-                    ind_dt = np.asarray([str(x)[11:13] in rest_hours for x in f.Dates.values[x]]) #mask of hours taken for the rest of the sites
-                    hr=12
+                    ind_dt = np.asarray([
+                        str(x)[11:13] in rest_hours for x in f.Dates.values[x]
+                    ])  #mask of hours taken for the rest of the sites
+                    hr = 12
                 data = cnc[ind_dt]
-                times = np.asarray([datetime.datetime.strptime(str(x)[:-13], "%Y-%m-%dT%H:%M") for x in dates[ind_dt]])
-                logging.info('Check dates: %s %s'%(self.enddate+timedelta(days=1), self.startdate+timedelta(days=1)))
-                mask_da_interval = np.logical_and(times<=(self.enddate+timedelta(days=1)), (self.startdate+timedelta(days=1))<=times)
+                times = np.asarray([
+                    datetime.datetime.strptime(str(x)[:-13], "%Y-%m-%dT%H:%M")
+                    for x in dates[ind_dt]
+                ])
+                logging.info('Check dates: %s %s' %
+                             (self.enddate + timedelta(days=1),
+                              self.startdate + timedelta(days=1)))
+                mask_da_interval = np.logical_and(
+                    times <= (self.enddate + timedelta(days=1)),
+                    (self.startdate + timedelta(days=1)) <= times)
                 times = times[mask_da_interval]
                 data = data[mask_da_interval]
-                if len(times)>0:
+                if len(times) > 0:
                     for iday in set([ii.day for ii in times]):
-                        ids = [iii for iii,dd in enumerate(times) if dd.day==iday]
-                        value = np.nanmean(np.array([c for i,c in enumerate(data) if times[i].day==iday]))
+                        ids = [
+                            iii for iii, dd in enumerate(times)
+                            if dd.day == iday
+                        ]
+                        value = np.nanmean(
+                            np.array([
+                                c for i, c in enumerate(data)
+                                if times[i].day == iday
+                            ]))
                         dict_date = times[ids[0]].replace(hour=hr)
                         if not np.isfinite(value): continue
-                        
-                        self.datalist.append(MoleFractionSample(u_id,dict_date,station_name,value,0.0,0.0,0.0,mdm_value,flag,height,lat,lon,station_name,species,strategy,0.0,station_name))     
 
-                        logging.info('For itime([day]T[hour]) (%iT%i) adding synthetic obs %i at station %s: %5.2e'%(dict_date.day,dict_date.hour,u_id,station_name,value))
+                        self.datalist.append(
+                            MoleFractionSample(u_id, dict_date, station_name,
+                                               value, 0.0, 0.0, 0.0, mdm_value,
+                                               flag, height, lat, lon,
+                                               station_name, species, strategy,
+                                               0.0, station_name))
+
+                        logging.info(
+                            'For itime([day]T[hour]) (%iT%i) adding synthetic obs %i at station %s: %5.2e'
+                            % (dict_date.day, dict_date.hour, u_id,
+                               station_name, value))
                         u_id += 1
-            
-               # add_station_data_to_sample(x)
-            
-        logging.info("Observations list now holds %d values" % len(self.datalist))
+
+            # add_station_data_to_sample(x)
+
+        logging.info("Observations list now holds %d values" %
+                     len(self.datalist))
 ##########################################################################################################
-
-
 
     def add_simulations(self, filename, silent=False):
         """ Add the simulation data to the Observations object. 
         """
 
-
         if not os.path.exists(filename):
-            msg = "Sample output filename for observations could not be found : %s" % filename 
+            msg = "Sample output filename for observations could not be found : %s" % filename
             logging.error(msg)
             logging.error("Did the sampling step succeed?")
             logging.error("...exiting")
@@ -320,7 +345,8 @@ class ICOSObservations(object):
         ids = ncf.get_variable('obs_num')
         simulated = ncf.get_variable('flask')
         ncf.close()
-        logging.info("Successfully read data from model sample file (%s)" % filename)
+        logging.info("Successfully read data from model sample file (%s)" %
+                     filename)
 
         obs_ids = self.getvalues('id').tolist()
         ids = list(map(int, ids))
@@ -335,56 +361,64 @@ class ICOSObservations(object):
                 missing_samples.append(idx)
 
         if not silent and missing_samples != []:
-            logging.warning('Model samples were found that did not match any ID in the observation list. Skipping them...')
-            msg = '%s'%missing_samples ; logging.warning(msg)
+            logging.warning(
+                'Model samples were found that did not match any ID in the observation list. Skipping them...'
+            )
+            msg = '%s' % missing_samples
+            logging.warning(msg)
 
-        logging.debug("Added %d simulated values to the Data list" % (len(ids) - len(missing_samples)))
-        logging.info("Added %d simulated values to the Data list" % (len(ids) - len(missing_samples)))
-
+        logging.debug("Added %d simulated values to the Data list" %
+                      (len(ids) - len(missing_samples)))
+        logging.info("Added %d simulated values to the Data list" %
+                     (len(ids) - len(missing_samples)))
 
     def add_model_data_mismatch(self, filename):
         """ 
             Get the model-data mismatch values for this cycle.
         """
-        self.rejection_threshold = 10.0 # 3-sigma cut-off
-        self.global_R_scaling = 1.0 # no scaling applied
+        self.rejection_threshold = 10.0  # 3-sigma cut-off
+        self.global_R_scaling = 1.0  # no scaling applied
 
         for obs in self.datalist:  # first loop over all available data points to set flags correctly
 
-            obs.may_localize = True #False
+            obs.may_localize = True  #False
             obs.may_reject = False
             obs.flag = 0
 
         logging.debug("Added Model Data Mismatch to all samples ")
 
-
-    def write_sample_coords(self,obsinputfile):
+    def write_sample_coords(self, obsinputfile):
         """ 
             Write the information needed by the observation operator to a file. Return the filename that was written for later use
         """
 
         if len(self.datalist) == 0:
-            logging.debug("No observations found for this time period, nothing written to obs file")
+            logging.debug(
+                "No observations found for this time period, nothing written to obs file"
+            )
         else:
             f = io.CT_CDF(obsinputfile, method='create')
-            logging.debug('Creating new observations file for ObservationOperator (%s)' % obsinputfile)
+            logging.debug(
+                'Creating new observations file for ObservationOperator (%s)' %
+                obsinputfile)
 
             dimid = f.add_dim('obs', len(self.datalist))
-#            dim200char = f.add_dim('string_of200chars', 200)
+            #            dim200char = f.add_dim('string_of200chars', 200)
             dim50char = f.add_dim('string_of50chars', 50)
             dim3char = f.add_dim('string_of3chars', 3)
             dimcalcomp = f.add_dim('calendar_components', 6)
 
             data = self.getvalues('id')
 
-            savedict = io.std_savedict.copy() 
+            savedict = io.std_savedict.copy()
             savedict['name'] = "obs_num"
             savedict['dtype'] = "int"
             savedict['long_name'] = "Unique_Dataset_observation_index_number"
             savedict['units'] = ""
             savedict['dims'] = dimid
             savedict['values'] = data.tolist()
-            savedict['comment'] = "Unique index number within this dataset ranging from 0 to UNLIMITED."
+            savedict[
+                'comment'] = "Unique index number within this dataset ranging from 0 to UNLIMITED."
             f.add_data(savedict)
 
             data = self.getvalues('evn')
@@ -412,16 +446,18 @@ class ICOSObservations(object):
             savedict['comment'] = "File name of data file."
             f.add_data(savedict)
 
-            data = [[d.year, d.month, d.day, d.hour, d.minute, d.second] for d in self.getvalues('xdate') ]
+            data = [[d.year, d.month, d.day, d.hour, d.minute, d.second]
+                    for d in self.getvalues('xdate')]
 
-            savedict = io.std_savedict.copy() 
+            savedict = io.std_savedict.copy()
             savedict['dtype'] = "int"
             savedict['name'] = "date_components"
             savedict['units'] = "integer components of UTC date/time"
             savedict['dims'] = dimid + dimcalcomp
             savedict['values'] = data
             savedict['missing_value'] = -999
-            savedict['comment'] = "Calendar date components as integers. Times and dates are UTC." 
+            savedict[
+                'comment'] = "Calendar date components as integers. Times and dates are UTC."
             savedict['order'] = "year, month, day, hour, minute, second"
             f.add_data(savedict)
 
@@ -438,7 +474,7 @@ class ICOSObservations(object):
 
             data = self.getvalues('lon')
 
-            savedict = io.std_savedict.copy() 
+            savedict = io.std_savedict.copy()
             savedict['dtype'] = "float"
             savedict['name'] = "longitude"
             savedict['units'] = "degrees_east"
@@ -449,7 +485,7 @@ class ICOSObservations(object):
 
             data = self.getvalues('height')
 
-            savedict = io.std_savedict.copy() 
+            savedict = io.std_savedict.copy()
             savedict['dtype'] = "float"
             savedict['name'] = "altitude"
             savedict['units'] = "meters_above_sea_level"
@@ -460,7 +496,7 @@ class ICOSObservations(object):
 
             data = self.getvalues('samplingstrategy')
 
-            savedict = io.std_savedict.copy() 
+            savedict = io.std_savedict.copy()
             savedict['dtype'] = "int"
             savedict['name'] = "sampling_strategy"
             savedict['units'] = "NA"
@@ -480,9 +516,9 @@ class ICOSObservations(object):
             savedict['values'] = data.tolist()
             savedict['comment'] = 'Observations used in optimization'
             f.add_data(savedict)
-    
+
             data = self.getvalues('mdm')
-    
+
             savedict = io.std_savedict.copy()
             savedict['dtype'] = "float"
             savedict['name'] = "modeldatamismatch"
@@ -490,15 +526,15 @@ class ICOSObservations(object):
             savedict['units'] = "[mol mol-1]"
             savedict['dims'] = dimid
             savedict['values'] = data.tolist()
-            savedict['comment'] = 'Standard deviation of mole fractions resulting from model-data mismatch'
+            savedict[
+                'comment'] = 'Standard deviation of mole fractions resulting from model-data mismatch'
             f.add_data(savedict)
             f.close()
 
             logging.debug("Successfully wrote data to obs file")
-            logging.info("Sample input file for obs operator now in place [%s]" % obsinputfile)
-
-        
-
+            logging.info(
+                "Sample input file for obs operator now in place [%s]" %
+                obsinputfile)
 
     def write_sample_auxiliary(self, auxoutputfile):
         """ 
@@ -509,7 +545,7 @@ class ICOSObservations(object):
     def getvalues(self, name, constructor=array):
 
         result = constructor([getattr(o, name) for o in self.datalist])
-        if isinstance(result, ndarray): 
+        if isinstance(result, ndarray):
             return result.squeeze()
         else:
             return result
@@ -519,6 +555,7 @@ class ICOSObservations(object):
 
 ################### Begin Class MoleFractionSample ###################
 
+
 class MoleFractionSample(object):
     """ 
         Holds the data that defines a mole fraction Sample in the data assimilation framework. Sor far, this includes all
@@ -527,32 +564,49 @@ class MoleFractionSample(object):
 
     """
 
-    def __init__(self, idx, xdate, code='XXX', obs=0.0, simulated=0.0, resid=0.0, hphr=0.0, mdm=0.0, flag=0, height=0.0, lat= -999., lon= -999., evn='0000', species='co2', samplingstrategy=1, sdev=0.0, fromfile='none.nc'):
-        self.code = code.strip()      # dataset identifier, i.e., co2_lef_tower_insitu_1_99
-        self.xdate = xdate             # Date of obs
-        self.obs = obs               # Value observed
-        self.simulated = simulated         # Value simulated by model
-        self.resid = resid             # Mole fraction residuals
-        self.hphr = hphr              # Mole fraction prior uncertainty from fluxes and (HPH) and model data mismatch (R)
-        self.mdm = mdm               # Model data mismatch
-        self.may_localize = True           # Whether sample may be localized in optimizer
-        self.may_reject = True              # Whether sample may be rejected if outside threshold
-        self.flag = flag              # Flag
-        self.height = height            # Sample height in masl
-        self.lat = lat               # Sample lat
-        self.lon = lon               # Sample lon
-        self.id = idx               # Obspack ID within distrution (integer), e.g., 82536
-        self.evn = evn               # Obspack Number within distrution (string), e.g., obspack_co2_1_PROTOTYPE_v0.9.2_2012-07-26_99_82536
-        self.sdev = sdev              # standard deviation of ensemble
-        self.masl = True              # Sample is in Meters Above Sea Level
-        self.mag = not self.masl     # Sample is in Meters Above Ground
+    def __init__(self,
+                 idx,
+                 xdate,
+                 code='XXX',
+                 obs=0.0,
+                 simulated=0.0,
+                 resid=0.0,
+                 hphr=0.0,
+                 mdm=0.0,
+                 flag=0,
+                 height=0.0,
+                 lat=-999.,
+                 lon=-999.,
+                 evn='0000',
+                 species='co2',
+                 samplingstrategy=1,
+                 sdev=0.0,
+                 fromfile='none.nc'):
+        self.code = code.strip(
+        )  # dataset identifier, i.e., co2_lef_tower_insitu_1_99
+        self.xdate = xdate  # Date of obs
+        self.obs = obs  # Value observed
+        self.simulated = simulated  # Value simulated by model
+        self.resid = resid  # Mole fraction residuals
+        self.hphr = hphr  # Mole fraction prior uncertainty from fluxes and (HPH) and model data mismatch (R)
+        self.mdm = mdm  # Model data mismatch
+        self.may_localize = True  # Whether sample may be localized in optimizer
+        self.may_reject = True  # Whether sample may be rejected if outside threshold
+        self.flag = flag  # Flag
+        self.height = height  # Sample height in masl
+        self.lat = lat  # Sample lat
+        self.lon = lon  # Sample lon
+        self.id = idx  # Obspack ID within distrution (integer), e.g., 82536
+        self.evn = evn  # Obspack Number within distrution (string), e.g., obspack_co2_1_PROTOTYPE_v0.9.2_2012-07-26_99_82536
+        self.sdev = sdev  # standard deviation of ensemble
+        self.masl = True  # Sample is in Meters Above Sea Level
+        self.mag = not self.masl  # Sample is in Meters Above Ground
         self.species = species.strip()
         self.samplingstrategy = samplingstrategy
-        self.fromfile = fromfile   # netcdf filename inside ObsPack distribution, to write back later
+        self.fromfile = fromfile  # netcdf filename inside ObsPack distribution, to write back later
+
 
 ################### End Class MoleFractionSample ###################
-
-
 
 
 ################### Begin Class TotalColumnSample ###################
@@ -566,55 +620,60 @@ class TotalColumnSample(object):
 
     def __init__(self, idx, codex, xdate, obs=0.0, simulated=0.0, lat=-999., lon=-999., mdm=None, prior=0.0, prior_profile=0.0, av_kernel=0.0, pressure=0.0, \
                 ##### freum vvvv
+
                 pressure_weighting_function=None,
                 ##### freum ^^^^
                 level_def = "pressure_boundary", psurf = float('nan'), resid=0.0, hphr=0.0, flag=0, species='co2', sdev=0.0, \
                 ##### freum vvvv
+
                 latc_0=None, latc_1=None, latc_2=None, latc_3=None, lonc_0=None, lonc_1=None, lonc_2=None, lonc_3=None \
                 ##### freum ^^^^
-                ):
-        self.id             = idx               # Sounding ID
-        self.code           = codex             # Retrieval ID
-        self.xdate          = xdate             # Date of obs
-        self.obs            = obs               # Value observed
-        self.simulated      = simulated         # Value simulated by model, fillvalue = -9999
-        self.lat            = lat               # Sample lat
-        self.lon            = lon               # Sample lon
-        ##### freum vvvv
-        self.latc_0         = latc_0            # Sample latitude corner
-        self.latc_1         = latc_1            # Sample latitude corner
-        self.latc_2         = latc_2            # Sample latitude corner
-        self.latc_3         = latc_3            # Sample latitude corner
-        self.lonc_0         = lonc_0            # Sample longitude corner
-        self.lonc_1         = lonc_1            # Sample longitude corner
-        self.lonc_2         = lonc_2            # Sample longitude corner
-        self.lonc_3         = lonc_3            # Sample longitude corner
-        ##### freum ^^^^
-        self.mdm            = mdm               # Model data mismatch
-        self.prior          = prior             # A priori column value used in retrieval
-        self.prior_profile  = prior_profile     # A priori profile used in retrieval
-        self.av_kernel      = av_kernel         # Averaging kernel
-        self.pressure       = pressure          # Pressure levels of retrieval
-        # freum vvvv
-        self.pressure_weighting_function       = pressure_weighting_function          # Pressure weighting function
-        # freum ^^^^
-        self.level_def      = level_def         # Are prior and averaging kernel defined as layer averages?
-        self.psurf          = psurf             # Surface pressure (only needed if level_def is "layer_average")
-        self.loc_L          = int(600) #int(0)            # freum 2021-07-13: insert this dummy value so the code runs with the current version of CTDAS. *Should* not affect results if localizetype == "CT2007" as in all my runs. However, replace this file with the standard observation file, obs_column_xco2.py
 
-        self.resid          = resid             # Mole fraction residuals
-        self.hphr           = hphr              # Mole fraction prior uncertainty from fluxes and (HPH) and model data mismatch (R)
-        self.may_localize   = True              # Whether sample may be localized in optimizer
-        self.may_reject     = True              # Whether sample may be rejected if outside threshold
-        self.flag           = flag              # Flag
-        self.sdev           = sdev              # standard deviation of ensemble
-        self.species        = species.strip()
+                ):
+        self.id = idx  # Sounding ID
+        self.code = codex  # Retrieval ID
+        self.xdate = xdate  # Date of obs
+        self.obs = obs  # Value observed
+        self.simulated = simulated  # Value simulated by model, fillvalue = -9999
+        self.lat = lat  # Sample lat
+        self.lon = lon  # Sample lon
+        ##### freum vvvv
+        self.latc_0 = latc_0  # Sample latitude corner
+        self.latc_1 = latc_1  # Sample latitude corner
+        self.latc_2 = latc_2  # Sample latitude corner
+        self.latc_3 = latc_3  # Sample latitude corner
+        self.lonc_0 = lonc_0  # Sample longitude corner
+        self.lonc_1 = lonc_1  # Sample longitude corner
+        self.lonc_2 = lonc_2  # Sample longitude corner
+        self.lonc_3 = lonc_3  # Sample longitude corner
+        ##### freum ^^^^
+        self.mdm = mdm  # Model data mismatch
+        self.prior = prior  # A priori column value used in retrieval
+        self.prior_profile = prior_profile  # A priori profile used in retrieval
+        self.av_kernel = av_kernel  # Averaging kernel
+        self.pressure = pressure  # Pressure levels of retrieval
+        # freum vvvv
+        self.pressure_weighting_function = pressure_weighting_function  # Pressure weighting function
+        # freum ^^^^
+        self.level_def = level_def  # Are prior and averaging kernel defined as layer averages?
+        self.psurf = psurf  # Surface pressure (only needed if level_def is "layer_average")
+        self.loc_L = int(
+            600
+        )  #int(0)            # freum 2021-07-13: insert this dummy value so the code runs with the current version of CTDAS. *Should* not affect results if localizetype == "CT2007" as in all my runs. However, replace this file with the standard observation file, obs_column_xco2.py
+
+        self.resid = resid  # Mole fraction residuals
+        self.hphr = hphr  # Mole fraction prior uncertainty from fluxes and (HPH) and model data mismatch (R)
+        self.may_localize = True  # Whether sample may be localized in optimizer
+        self.may_reject = True  # Whether sample may be rejected if outside threshold
+        self.flag = flag  # Flag
+        self.sdev = sdev  # standard deviation of ensemble
+        self.species = species.strip()
 
 
 ################### End Class TotalColumnSample ###################
 
-
 ################### Begin Class TotalColumnObservations ###################
+
 
 class TotalColumnObservations(Observations):
     """ An object that holds data + methods and attributes needed to manipulate column samples
@@ -623,17 +682,18 @@ class TotalColumnObservations(Observations):
     def setup(self, dacycle):
 
         self.startdate = dacycle['time.sample.start'] + timedelta(days=1)
-        self.enddate   = dacycle['time.sample.end']
+        self.enddate = dacycle['time.sample.end']
 
         # Path to the input data (daily files)
-        sat_files   = dacycle.dasystem['obs.column.ncfile'].split(',')
-        sat_dirs    = dacycle.dasystem['obs.column.input.dir'].split(',')
+        sat_files = dacycle.dasystem['obs.column.ncfile'].split(',')
+        sat_dirs = dacycle.dasystem['obs.column.input.dir'].split(',')
 
-        self.sat_dirs    = []
-        self.sat_files   = []
+        self.sat_dirs = []
+        self.sat_files = []
         for i in range(len(sat_dirs)):
             if not os.path.exists(sat_dirs[i].strip()):
-                msg = 'Could not find the required satellite input directory (%s) ' % sat_dirs[i]
+                msg = 'Could not find the required satellite input directory (%s) ' % sat_dirs[
+                    i]
                 logging.error(msg)
                 raise IOError(msg)
             else:
@@ -642,14 +702,20 @@ class TotalColumnObservations(Observations):
         del i
 
         # Get observation selection criteria (if present):
-        if 'obs.column.selection.variables' in dacycle.dasystem.keys() and 'obs.column.selection.criteria' in dacycle.dasystem.keys():
-            self.selection_vars     = dacycle.dasystem['obs.column.selection.variables'].split(',')
-            self.selection_criteria = dacycle.dasystem['obs.column.selection.criteria'].split(',')
-            logging.debug('Data selection criteria found: %s, %s' %(self.selection_vars, self.selection_criteria))
+        if 'obs.column.selection.variables' in dacycle.dasystem.keys(
+        ) and 'obs.column.selection.criteria' in dacycle.dasystem.keys():
+            self.selection_vars = dacycle.dasystem[
+                'obs.column.selection.variables'].split(',')
+            self.selection_criteria = dacycle.dasystem[
+                'obs.column.selection.criteria'].split(',')
+            logging.debug('Data selection criteria found: %s, %s' %
+                          (self.selection_vars, self.selection_criteria))
         else:
-            self.selection_vars     = []
+            self.selection_vars = []
             self.selection_criteria = []
-            logging.info('No data observation selection criteria found, using all observations in file.')
+            logging.info(
+                'No data observation selection criteria found, using all observations in file.'
+            )
 
         # Model data mismatch approach
         # self.mdm_calculation = dacycle.dasystem.get('mdm.calculation')
@@ -676,15 +742,13 @@ class TotalColumnObservations(Observations):
 
         # Switch to indicate whether simulated column samples are read from obsOperator output,
         # or whether the sampling is done within CTDAS (in obsOperator class)
-        self.sample_in_ctdas = dacycle.dasystem['sample.in.ctdas'] if 'sample.in.ctdas' in dacycle.dasystem.keys() else False
+        self.sample_in_ctdas = dacycle.dasystem[
+            'sample.in.ctdas'] if 'sample.in.ctdas' in dacycle.dasystem.keys(
+            ) else False
         logging.debug('sample.in.ctdas = %s' % self.sample_in_ctdas)
-
-
 
     def get_samples_type(self):
         return 'column'
-
-
 
     def add_observations(self):
         """ Reading of total column observations, and selection of observations that will be sampled and assimilated.
@@ -694,20 +758,26 @@ class TotalColumnObservations(Observations):
         # Read observations from daily input files
         for i in range(len(self.sat_dirs)):
 
-            logging.info('Reading observations from %s' %os.path.join(self.sat_dirs[i],self.sat_files[i]))
+            logging.info('Reading observations from %s' %
+                         os.path.join(self.sat_dirs[i], self.sat_files[i]))
 
             infile0 = os.path.join(self.sat_dirs[i], self.sat_files[i])
             ndays = 0
 
-            while self.startdate+dt.timedelta(days=ndays) <= self.enddate:
+            while self.startdate + dt.timedelta(days=ndays) <= self.enddate:
 
-                infile = infile0.replace("<YYYYMMDD>",(self.startdate+dt.timedelta(days=ndays)).strftime("%Y%m%d"))
-                logging.info('To be precise, reading observations from %s' % infile)
-
+                infile = infile0.replace(
+                    "<YYYYMMDD>",
+                    (self.startdate +
+                     dt.timedelta(days=ndays)).strftime("%Y%m%d"))
+                logging.info('To be precise, reading observations from %s' %
+                             infile)
 
                 if os.path.exists(infile):
 
-                    logging.info("Reading observations for %s" % (self.startdate+dt.timedelta(days=ndays)).strftime("%Y%m%d"))
+                    logging.info("Reading observations for %s" %
+                                 (self.startdate +
+                                  dt.timedelta(days=ndays)).strftime("%Y%m%d"))
                     len_init = len(self.datalist)
 
                     # get index of observations that satisfy selection criteria (based on variable names and values in system rc file, if present)
@@ -719,62 +789,80 @@ class TotalColumnObservations(Observations):
                         del j
                         criteria = []
                         for j in range(len(self.selection_vars)):
-                            criteria.append(eval('selvars[j]'+self.selection_criteria[j]))
+                            criteria.append(
+                                eval('selvars[j]' +
+                                     self.selection_criteria[j]))
                         del j
                         #criteria  = [eval('selvars[i]'+self.selection_criteria[i]) for i in range(len(self.selection_vars))]
-                        subselect = np.logical_and.reduce(criteria).nonzero()[0]
+                        subselect = np.logical_and.reduce(
+                            criteria).nonzero()[0]
                     else:
-                        subselect = np.arange(ncf.get_variable('sounding_id').size)
+                        subselect = np.arange(
+                            ncf.get_variable('sounding_id').size)
 
                     # retrieval attributes
-                    code      = ncf.get_attribute('retrieval_id')
+                    code = ncf.get_attribute('retrieval_id')
                     level_def = ncf.get_attribute('level_def')
 
                     # only read good quality observations
-                    ids           = ncf.get_variable('sounding_id').take(subselect, axis=0)
-                    lats          = ncf.get_variable('latitude').take(subselect, axis=0)
-                    lons          = ncf.get_variable('longitude').take(subselect, axis=0)
-                    obs           = ncf.get_variable('obs').take(subselect, axis=0)
-                    unc           = ncf.get_variable('uncertainty').take(subselect, axis=0)
-                    dates         = ncf.get_variable('date').take(subselect, axis=0)
-                    dates         = array([dt.datetime(*d) for d in dates])
-                    av_kernel     = ncf.get_variable('averaging_kernel').take(subselect, axis=0)
-                    prior_profile = ncf.get_variable('prior_profile').take(subselect, axis=0)
-                    pressure      = ncf.get_variable('pressure_levels').take(subselect, axis=0)
+                    ids = ncf.get_variable('sounding_id').take(subselect,
+                                                               axis=0)
+                    lats = ncf.get_variable('latitude').take(subselect, axis=0)
+                    lons = ncf.get_variable('longitude').take(subselect,
+                                                              axis=0)
+                    obs = ncf.get_variable('obs').take(subselect, axis=0)
+                    unc = ncf.get_variable('uncertainty').take(subselect,
+                                                               axis=0)
+                    dates = ncf.get_variable('date').take(subselect, axis=0)
+                    dates = array([dt.datetime(*d) for d in dates])
+                    av_kernel = ncf.get_variable('averaging_kernel').take(
+                        subselect, axis=0)
+                    prior_profile = ncf.get_variable('prior_profile').take(
+                        subselect, axis=0)
+                    pressure = ncf.get_variable('pressure_levels').take(
+                        subselect, axis=0)
 
-                    prior         = ncf.get_variable('prior').take(subselect, axis=0)
+                    prior = ncf.get_variable('prior').take(subselect, axis=0)
 
                     ##### freum vvvv
-                    pwf           = ncf.get_variable('pressure_weighting_function').take(subselect, axis=0)
+                    pwf = ncf.get_variable('pressure_weighting_function').take(
+                        subselect, axis=0)
 
                     # Additional variable surface pressure in case the profiles are defined as layer averages
                     if level_def == "layer_average":
-                        psurf = ncf.get_variable('surface_pressure').take(subselect, axis=0)
+                        psurf = ncf.get_variable('surface_pressure').take(
+                            subselect, axis=0)
                     else:
-                        psurf = [float('nan')]*len(ids)
+                        psurf = [float('nan')] * len(ids)
 
                     # Optional: footprint corners
-                    latc = dict(
-                        latc_0=[float('nan')]*len(ids),
-                        latc_1=[float('nan')]*len(ids),
-                        latc_2=[float('nan')]*len(ids),
-                        latc_3=[float('nan')]*len(ids))
-                    lonc = dict(
-                        lonc_0=[float('nan')]*len(ids),
-                        lonc_1=[float('nan')]*len(ids),
-                        lonc_2=[float('nan')]*len(ids),
-                        lonc_3=[float('nan')]*len(ids))
-                    # If  one footprint corner variable  is there, assume 
+                    latc = dict(latc_0=[float('nan')] * len(ids),
+                                latc_1=[float('nan')] * len(ids),
+                                latc_2=[float('nan')] * len(ids),
+                                latc_3=[float('nan')] * len(ids))
+                    lonc = dict(lonc_0=[float('nan')] * len(ids),
+                                lonc_1=[float('nan')] * len(ids),
+                                lonc_2=[float('nan')] * len(ids),
+                                lonc_3=[float('nan')] * len(ids))
+                    # If  one footprint corner variable  is there, assume
                     # all are there. That's the only case that makes sense
                     if 'latc_0' in list(ncf.variables.keys()):
-                        latc['latc_0']    = ncf.get_variable('latc_0').take(subselect, axis=0)
-                        latc['latc_1']    = ncf.get_variable('latc_1').take(subselect, axis=0)
-                        latc['latc_2']    = ncf.get_variable('latc_2').take(subselect, axis=0)
-                        latc['latc_3']    = ncf.get_variable('latc_3').take(subselect, axis=0)
-                        lonc['lonc_0']    = ncf.get_variable('lonc_0').take(subselect, axis=0)
-                        lonc['lonc_1']    = ncf.get_variable('lonc_1').take(subselect, axis=0)
-                        lonc['lonc_2']    = ncf.get_variable('lonc_2').take(subselect, axis=0)
-                        lonc['lonc_3']    = ncf.get_variable('lonc_3').take(subselect, axis=0)
+                        latc['latc_0'] = ncf.get_variable('latc_0').take(
+                            subselect, axis=0)
+                        latc['latc_1'] = ncf.get_variable('latc_1').take(
+                            subselect, axis=0)
+                        latc['latc_2'] = ncf.get_variable('latc_2').take(
+                            subselect, axis=0)
+                        latc['latc_3'] = ncf.get_variable('latc_3').take(
+                            subselect, axis=0)
+                        lonc['lonc_0'] = ncf.get_variable('lonc_0').take(
+                            subselect, axis=0)
+                        lonc['lonc_1'] = ncf.get_variable('lonc_1').take(
+                            subselect, axis=0)
+                        lonc['lonc_2'] = ncf.get_variable('lonc_2').take(
+                            subselect, axis=0)
+                        lonc['lonc_3'] = ncf.get_variable('lonc_3').take(
+                            subselect, axis=0)
                     ###### freum ^^^^
 
                     ncf.close()
@@ -792,18 +880,18 @@ class TotalColumnObservations(Observations):
                                                                     ##### freum ^^^^
                                                                     ))
 
-                    logging.debug("Added %d observations to the Data list" % (len(self.datalist)-len_init))
+                    logging.debug("Added %d observations to the Data list" %
+                                  (len(self.datalist) - len_init))
 
                 ndays += 1
 
         del i
 
         if len(self.datalist) > 0:
-            logging.info("Observations list now holds %d values" % len(self.datalist))
+            logging.info("Observations list now holds %d values" %
+                         len(self.datalist))
         else:
             logging.info("No observations found for sampling window")
-
-
 
     def add_model_data_mismatch(self, filename=None, advance=False):
         """ This function is empty: model data mismatch calculation is done during sampling in observation operator (TM5) to enhance computational efficiency
@@ -811,19 +899,19 @@ class TotalColumnObservations(Observations):
 
         """
         # obs_data = rc.read(self.obs_file)
-        self.rejection_threshold = 15 #int(obs_data['obs.rejection.threshold'])
+        self.rejection_threshold = 15  #int(obs_data['obs.rejection.threshold'])
 
         # At this point mdm is set to the measurement uncertainty only, added in the add_observations function.
         # Here this value is used to set the combined mdm by adding an estimate for the model uncertainty as a sum of squares.
-        if len(self.datalist) <= 1: return #== 0: return
+        if len(self.datalist) <= 1: return  #== 0: return
         for obs in self.datalist:
-            obs.mdm = ( obs.mdm*obs.mdm + 2**2 )**0.5  ## Here changed into 2 (2ppm) for CO2 : ERIK, CHANGE THIS TO WHAT I NEED!
+            obs.mdm = (
+                obs.mdm * obs.mdm + 2**2
+            )**0.5  ## Here changed into 2 (2ppm) for CO2 : ERIK, CHANGE THIS TO WHAT I NEED!
         del obs
 
-        meanmdm = np.average(np.array( [obs.mdm for obs in self.datalist] ))
-        logging.debug('Mean MDM = %s' %meanmdm)
-
-
+        meanmdm = np.average(np.array([obs.mdm for obs in self.datalist]))
+        logging.debug('Mean MDM = %s' % meanmdm)
 
     def add_simulations(self, filename, silent=False):
         """ Adds observed and model simulated column values to the mole fraction objects
@@ -832,7 +920,8 @@ class TotalColumnObservations(Observations):
         """
 
         if self.sample_in_ctdas:
-            logging.debug("CODE TO ADD SIMULATED SAMPLES TO DATALIST TO BE ADDED")
+            logging.debug(
+                "CODE TO ADD SIMULATED SAMPLES TO DATALIST TO BE ADDED")
 
         else:
             # read simulated samples from file
@@ -843,18 +932,20 @@ class TotalColumnObservations(Observations):
                 logging.error("...exiting")
                 raise IOError(msg)
 
-            ncf       = io.ct_read(filename, method='read')
-            ids       = ncf.get_variable('sounding_id')
+            ncf = io.ct_read(filename, method='read')
+            ids = ncf.get_variable('sounding_id')
             simulated = ncf.get_variable('column_modeled')
             ncf.close()
-            logging.info("Successfully read data from model sample file (%s)" % filename)
+            logging.info("Successfully read data from model sample file (%s)" %
+                         filename)
 
             obs_ids = self.getvalues('id').tolist()
 
             missing_samples = []
 
             # Match read simulated samples with observations in datalist
-            logging.info("Adding %i simulated samples to the data list..." % len(ids))
+            logging.info("Adding %i simulated samples to the data list..." %
+                         len(ids))
             for i in range(len(ids)):
                 # Assume samples are in same order in both datalist and file with simulated samples...
                 if ids[i] == obs_ids[i]:
@@ -870,25 +961,29 @@ class TotalColumnObservations(Observations):
                     else:
                         self.datalist[index].simulated = simulated[i]
                 else:
-                    logging.debug('added %s to missing_samples, obs id = %s' %(ids[i],obs_ids[i]))
+                    logging.debug('added %s to missing_samples, obs id = %s' %
+                                  (ids[i], obs_ids[i]))
                     missing_samples.append(ids[i])
             del i
 
             if not silent and missing_samples != []:
-                logging.warning('%i Model samples were found that did not match any ID in the observation list. Skipping them...' % len(missing_samples))
+                logging.warning(
+                    '%i Model samples were found that did not match any ID in the observation list. Skipping them...'
+                    % len(missing_samples))
 
             # if number of simulated samples < observations: remove observations without samples
             if len(simulated) < len(self.datalist):
                 test = len(self.datalist) - len(simulated)
-                logging.warning('%i Observations were not sampled, removing them from datalist...' % test)
+                logging.warning(
+                    '%i Observations were not sampled, removing them from datalist...'
+                    % test)
                 for index in reversed(list(range(len(self.datalist)))):
                     if self.datalist[index].simulated is None:
                         del self.datalist[index]
                 del index
 
-            logging.debug("%d simulated values were added to the data list" % (len(ids) - len(missing_samples)))
-
-
+            logging.debug("%d simulated values were added to the data list" %
+                          (len(ids) - len(missing_samples)))
 
     def write_sample_coords(self, obsinputfile):
         """
@@ -898,17 +993,21 @@ class TotalColumnObservations(Observations):
         if self.sample_in_ctdas:
             return
 
-        if len(self.datalist) <= 1: #== 0:
-            logging.info("No observations found for this time period, no obs file written")
+        if len(self.datalist) <= 1:  #== 0:
+            logging.info(
+                "No observations found for this time period, no obs file written"
+            )
             return
 
         # write data required by observation operator for sampling to file
         f = io.CT_CDF(obsinputfile, method='create')
-        logging.debug('Creating new observations file for ObservationOperator (%s)' % obsinputfile)
+        logging.debug(
+            'Creating new observations file for ObservationOperator (%s)' %
+            obsinputfile)
 
-        dimsoundings = f.add_dim('soundings', len(self.datalist))        
-        dimdate      = f.add_dim('epoch_dimension', 7)
-        dimchar      = f.add_dim('char', 20)
+        dimsoundings = f.add_dim('soundings', len(self.datalist))
+        dimdate = f.add_dim('epoch_dimension', 7)
+        dimchar = f.add_dim('char', 20)
         if len(self.datalist) == 1:
             dimlevels = f.add_dim('levels', len(self.getvalues('pressure')))
             # freum: inserted but commented Liesbeth's new code for layers for reference,
@@ -918,136 +1017,140 @@ class TotalColumnObservations(Observations):
             #     layers = True
             # else: layers = False
         else:
-            dimlevels = f.add_dim('levels', self.getvalues('pressure').shape[1])
+            dimlevels = f.add_dim('levels',
+                                  self.getvalues('pressure').shape[1])
             # if self.getvalues('av_kernel').shape[1] != self.getvalues('pressure').shape[1]:
             #     dimlayers = f.add_dim('layers', self.getvalues('pressure').shape[1] - 1)
             #     layers = True
             # else: layers = False
 
-        savedict           = io.std_savedict.copy()
-        savedict['dtype']  = "int64"
-        savedict['name']   = "sounding_id"
-        savedict['dims']   = dimsoundings
+        savedict = io.std_savedict.copy()
+        savedict['dtype'] = "int64"
+        savedict['name'] = "sounding_id"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('id').tolist()
         f.add_data(savedict)
 
-        data = [[d.year, d.month, d.day, d.hour, d.minute, d.second, d.microsecond] for d in self.getvalues('xdate') ]
-        savedict           = io.std_savedict.copy()
-        savedict['dtype']  = "int"
-        savedict['name']   = "date"
-        savedict['dims']   = dimsoundings + dimdate
+        data = [[
+            d.year, d.month, d.day, d.hour, d.minute, d.second, d.microsecond
+        ] for d in self.getvalues('xdate')]
+        savedict = io.std_savedict.copy()
+        savedict['dtype'] = "int"
+        savedict['name'] = "date"
+        savedict['dims'] = dimsoundings + dimdate
         savedict['values'] = data
         f.add_data(savedict)
 
-        savedict           = io.std_savedict.copy()
-        savedict['name']   = "latitude"
-        savedict['dims']   = dimsoundings
+        savedict = io.std_savedict.copy()
+        savedict['name'] = "latitude"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('lat').tolist()
         f.add_data(savedict)
 
-        savedict           = io.std_savedict.copy()
-        savedict['name']   = "longitude"
-        savedict['dims']   = dimsoundings
+        savedict = io.std_savedict.copy()
+        savedict['name'] = "longitude"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('lon').tolist()
         f.add_data(savedict)
 
         savedict = io.std_savedict.copy()
-        savedict['name']   = "prior"
-        savedict['dims']   = dimsoundings
+        savedict['name'] = "prior"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('prior').tolist()
         f.add_data(savedict)
 
         savedict = io.std_savedict.copy()
-        savedict['name']   = "prior_profile"
-        savedict['dims']   = dimsoundings + dimlevels
+        savedict['name'] = "prior_profile"
+        savedict['dims'] = dimsoundings + dimlevels
         savedict['values'] = self.getvalues('prior_profile').tolist()
         f.add_data(savedict)
 
         savedict = io.std_savedict.copy()
-        savedict['name']   = "averaging_kernel"
-        savedict['dims']   = dimsoundings + dimlevels
+        savedict['name'] = "averaging_kernel"
+        savedict['dims'] = dimsoundings + dimlevels
         savedict['values'] = self.getvalues('av_kernel').tolist()
         f.add_data(savedict)
 
         savedict = io.std_savedict.copy()
-        savedict['name']   = "pressure_levels"
-        savedict['dims']   = dimsoundings + dimlevels
+        savedict['name'] = "pressure_levels"
+        savedict['dims'] = dimsoundings + dimlevels
         savedict['values'] = self.getvalues('pressure').tolist()
         f.add_data(savedict)
 
         # freum vvvv
         savedict = io.std_savedict.copy()
-        savedict['name']   = "pressure_weighting_function"
-        savedict['dims']   = dimsoundings + dimlevels
-        savedict['values'] = self.getvalues('pressure_weighting_function').tolist()
+        savedict['name'] = "pressure_weighting_function"
+        savedict['dims'] = dimsoundings + dimlevels
+        savedict['values'] = self.getvalues(
+            'pressure_weighting_function').tolist()
         f.add_data(savedict)
-        
-        savedict           = io.std_savedict.copy()
-        savedict['name']   = "latc_0"
-        savedict['dims']   = dimsoundings
+
+        savedict = io.std_savedict.copy()
+        savedict['name'] = "latc_0"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('latc_0').tolist()
         f.add_data(savedict)
-        
-        savedict           = io.std_savedict.copy()
-        savedict['name']   = "latc_1"
-        savedict['dims']   = dimsoundings
+
+        savedict = io.std_savedict.copy()
+        savedict['name'] = "latc_1"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('latc_1').tolist()
         f.add_data(savedict)
-        
-        savedict           = io.std_savedict.copy()
-        savedict['name']   = "latc_2"
-        savedict['dims']   = dimsoundings
+
+        savedict = io.std_savedict.copy()
+        savedict['name'] = "latc_2"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('latc_2').tolist()
         f.add_data(savedict)
-        
-        savedict           = io.std_savedict.copy()
-        savedict['name']   = "latc_3"
-        savedict['dims']   = dimsoundings
+
+        savedict = io.std_savedict.copy()
+        savedict['name'] = "latc_3"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('latc_3').tolist()
         f.add_data(savedict)
-        
-        savedict           = io.std_savedict.copy()
-        savedict['name']   = "lonc_0"
-        savedict['dims']   = dimsoundings
+
+        savedict = io.std_savedict.copy()
+        savedict['name'] = "lonc_0"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('lonc_0').tolist()
         f.add_data(savedict)
 
-        savedict           = io.std_savedict.copy()
-        savedict['name']   = "lonc_1"
-        savedict['dims']   = dimsoundings
+        savedict = io.std_savedict.copy()
+        savedict['name'] = "lonc_1"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('lonc_1').tolist()
         f.add_data(savedict)
 
-        savedict           = io.std_savedict.copy()
-        savedict['name']   = "lonc_2"
-        savedict['dims']   = dimsoundings
+        savedict = io.std_savedict.copy()
+        savedict['name'] = "lonc_2"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('lonc_2').tolist()
         f.add_data(savedict)
 
-        savedict           = io.std_savedict.copy()
-        savedict['name']   = "lonc_3"
-        savedict['dims']   = dimsoundings
+        savedict = io.std_savedict.copy()
+        savedict['name'] = "lonc_3"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('lonc_3').tolist()
         f.add_data(savedict)
 
-        savedict           = io.std_savedict.copy()
-        savedict['name']   = "XCO2"
-        savedict['dims']   = dimsoundings
+        savedict = io.std_savedict.copy()
+        savedict['name'] = "XCO2"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('obs').tolist()
         f.add_data(savedict)
 
         # freum ^^^^
 
         savedict = io.std_savedict.copy()
-        savedict['dtype']  = "char"
-        savedict['name']   = "level_def"
-        savedict['dims']   = dimsoundings + dimchar
+        savedict['dtype'] = "char"
+        savedict['name'] = "level_def"
+        savedict['dims'] = dimsoundings + dimchar
         savedict['values'] = self.getvalues('level_def').tolist()
         f.add_data(savedict)
 
         savedict = io.std_savedict.copy()
-        savedict['name']   = "psurf"
-        savedict['dims']   = dimsoundings
+        savedict['name'] = "psurf"
+        savedict['dims'] = dimsoundings
         savedict['values'] = self.getvalues('psurf').tolist()
         f.add_data(savedict)
 
@@ -1055,7 +1158,6 @@ class TotalColumnObservations(Observations):
 
 
 ################### End Class TotalColumnObservations ###################
-
 
 if __name__ == "__main__":
     pass

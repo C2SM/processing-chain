@@ -31,21 +31,25 @@ def create_lambda_regions(input_grid, output_path, lambdas_ids):
 
     try:
         ds_cells.to_netcdf(output_path,
-                       encoding={
-                           'REG': {
-                               'dtype': 'int32'
-                           },
-                           'cell': {
-                               'dtype': 'int32'
-                           }
-                       })
+                           encoding={
+                               'REG': {
+                                   'dtype': 'int32'
+                               },
+                               'cell': {
+                                   'dtype': 'int32'
+                               }
+                           })
     except:
         print("File currently open. Please close the file and try again.")
     print(f"Lambda regions saved to {output_path}")
     return nregs, categories[-1]
 
 
-def create_prior_all_ones(output_path, nensembles, ncats, nregs, propagate_bg=False):
+def create_prior_all_ones(output_path,
+                          nensembles,
+                          ncats,
+                          nregs,
+                          propagate_bg=False):
     """
     Create a dataset of initial lambdas (all ones) for testing.
     """
@@ -55,10 +59,11 @@ def create_prior_all_ones(output_path, nensembles, ncats, nregs, propagate_bg=Fa
     data = xr.DataArray(arr, dims=['ens', 'reg', 'cat', 'tracer'])
     ds = xr.Dataset({'lambda': data})
     try:
-        ds.to_netcdf(output_path)  
+        ds.to_netcdf(output_path)
     except:
         print("File currently open. Please close the file and try again.")
     print(f"Prior all ones saved to {output_path}")
+
 
 def create_prior_all_zeros(output_path, nensembles, ncats, nregs):
     """
@@ -141,7 +146,10 @@ iconsub --nml NAMELIST_ICONSUB
     print(f"Boundary regions saved to {output_path}")
 
 
-def create_boundary_prior_all_ones(output_path, n_bg_ens, nensembles, propagate_bg=False):
+def create_boundary_prior_all_ones(output_path,
+                                   n_bg_ens,
+                                   nensembles,
+                                   propagate_bg=False):
     """
     Create boundary lambdas dataset and save to NetCDF.
     """
@@ -161,6 +169,7 @@ def create_boundary_prior_all_ones(output_path, n_bg_ens, nensembles, propagate_
     except:
         print("File currently open. Please close the file and try again.")
     print(f"Boundary lambdas saved to {output_path}")
+
 
 def create_boundary_prior_separate(output_path, n_bg_ens):
     """

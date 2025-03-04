@@ -19,6 +19,7 @@ program. If not, see <http://www.gnu.org/licenses/>."""
 import sys
 import os
 import logging
+
 sys.path.append(os.getcwd())
 
 #################################################################################################
@@ -29,11 +30,10 @@ from da.cyclecontrol.initexit_cteco2 import start_logger, validate_opts_args, pa
 from da.pipelines.pipeline_icon import ensemble_smoother_pipeline, header, footer, analysis_pipeline, archive_pipeline
 from da.dasystems.dasystem_baseclass import DaSystem
 from da.platform.pizdaint import PizDaintPlatform
-from da.statevectors.statevector_baseclass_icos_cities import StateVector 
-from da.observations.obs_class_ICOS_OCO2 import ICOSObservations, TotalColumnObservations # Here we set which observations we consider!
+from da.statevectors.statevector_baseclass_icos_cities import StateVector
+from da.observations.obs_class_ICOS_OCO2 import ICOSObservations, TotalColumnObservations  # Here we set which observations we consider!
 from da.obsoperators.obsoperator_ICOS_OCO2 import ObservationOperator  # Here we set the obs-operator, which should sample the same observations!
 from da.optimizers.optimizer_baseclass_icos_cities import Optimizer
-
 
 #################################################################################################
 # Parse and validate the command line options, start logging
@@ -44,27 +44,26 @@ opts, args = parse_options()
 opts, args = validate_opts_args(opts, args)
 
 #################################################################################################
-# Create the Cycle Control object for this job    
+# Create the Cycle Control object for this job
 #################################################################################################
 
 dacycle = CycleControl(opts, args)
 
-platform    = PizDaintPlatform()
-dasystem    = DaSystem(dacycle['da.system.rc'])
+platform = PizDaintPlatform()
+dasystem = DaSystem(dacycle['da.system.rc'])
 obsoperator = ObservationOperator(dacycle['da.obsoperator.rc'])
-samples     = [ICOSObservations(), TotalColumnObservations()]
+samples = [ICOSObservations(), TotalColumnObservations()]
 statevector = StateVector()
-optimizer   = Optimizer()
+optimizer = Optimizer()
 
 ##########################################################################################
 ################### ENTER THE PIPELINE WITH THE OBJECTS PASSED BY THE USER ###############
 ##########################################################################################
 
+logging.info(header + "Entering Pipeline " + footer)
 
-logging.info(header + "Entering Pipeline " + footer) 
-
-ensemble_smoother_pipeline(dacycle, platform, dasystem, samples, statevector, obsoperator,optimizer)
-
+ensemble_smoother_pipeline(dacycle, platform, dasystem, samples, statevector,
+                           obsoperator, optimizer)
 
 ##########################################################################################
 ################### All done, extra stuff can be added next, such as analysis
@@ -72,10 +71,8 @@ ensemble_smoother_pipeline(dacycle, platform, dasystem, samples, statevector, ob
 
 sys.exit(0)
 
-logging.info(header + "Starting analysis" + footer) 
+logging.info(header + "Starting analysis" + footer)
 
-analysis_pipeline(dacycle, platform, dasystem, samples, statevector )
+analysis_pipeline(dacycle, platform, dasystem, samples, statevector)
 
 sys.exit(0)
-
-

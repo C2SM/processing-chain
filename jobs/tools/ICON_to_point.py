@@ -198,7 +198,9 @@ def icon_to_point(longitude,
     """
 
     # Open multiple ICON datasets
-    icon_field = xr.open_mfdataset(icon_field_paths, combine='by_coords', chunks={'time': 50})
+    icon_field = xr.open_mfdataset(icon_field_paths,
+                                   combine='by_coords',
+                                   chunks={'time': 50})
 
     # Load the ICON grid
     icon_grid = xr.open_dataset(icon_grid_path)
@@ -216,16 +218,18 @@ def icon_to_point(longitude,
     horizontal_distances, icon_grid_indices = get_horizontal_distances(
         longitude, latitude, icon_grid, k=k)
 
-    horizontal_weights = 1 / horizontal_distances / (1 / horizontal_distances).sum(axis=1, keepdims=True)
+    horizontal_weights = 1 / horizontal_distances / (
+        1 / horizontal_distances).sum(axis=1, keepdims=True)
 
-    weights_horizontal = xr.DataArray(horizontal_weights, dims=["station", icon_cells])
+    weights_horizontal = xr.DataArray(horizontal_weights,
+                                      dims=["station", icon_cells])
     ind_X = xr.DataArray(icon_grid_indices, dims=["station", icon_cells])
     icon_subset = icon_field.isel({icon_cells: ind_X})
 
     # --- Vertical level selection & interpolation weights
     # Get 2 nearest vertical distances (for use in linear interpolation)
     if icon_field.time.size > 1:
-        model_topography = icon_subset.z_ifc[-1,-1]
+        model_topography = icon_subset.z_ifc[-1, -1]
         model_levels = icon_subset.z_mc[1]
     else:
         model_topography = icon_subset.z_ifc[-1]
@@ -267,6 +271,7 @@ def icon_to_point(longitude,
                                skipna=False)).isnull()
     )  # Remove out of bounds values where weights_vertical has NaNs
     return xr.merge([icon_out, ds])
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

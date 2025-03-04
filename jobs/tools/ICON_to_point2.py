@@ -2,17 +2,23 @@ from sklearn.neighbors import BallTree
 import numpy as np
 from math import radians
 
-def intp_icon_data(iloc, gridinfo, datainfo, latitudes, longitudes, asl, elev, station_name):
+
+def intp_icon_data(iloc, gridinfo, datainfo, latitudes, longitudes, asl, elev,
+                   station_name):
     nn_sel = np.zeros(gridinfo.nn, dtype=int)
     u = np.zeros(gridinfo.nn)
 
     R = 6373.0  # Earth's radius in km
 
-    if (radians(longitudes[iloc]) < np.nanmin(gridinfo.clon)) or (radians(longitudes[iloc]) > np.nanmax(gridinfo.clon)):
-        return np.nan * np.ones((gridinfo.nn)), np.full((gridinfo.nn), -1), np.full((gridinfo.nn), -1), nn_sel, u
+    if (radians(longitudes[iloc]) < np.nanmin(gridinfo.clon)) or (radians(
+            longitudes[iloc]) > np.nanmax(gridinfo.clon)):
+        return np.nan * np.ones((gridinfo.nn)), np.full(
+            (gridinfo.nn), -1), np.full((gridinfo.nn), -1), nn_sel, u
 
-    if (radians(latitudes[iloc]) < np.nanmin(gridinfo.clat)) or (radians(latitudes[iloc]) > np.nanmax(gridinfo.clat)):
-        return np.nan * np.ones((gridinfo.nn)), np.full((gridinfo.nn), -1), np.full((gridinfo.nn), -1), nn_sel, u
+    if (radians(latitudes[iloc]) < np.nanmin(gridinfo.clat)) or (radians(
+            latitudes[iloc]) > np.nanmax(gridinfo.clat)):
+        return np.nan * np.ones((gridinfo.nn)), np.full(
+            (gridinfo.nn), -1), np.full((gridinfo.nn), -1), nn_sel, u
 
     lat1, lon1 = radians(latitudes[iloc]), radians(longitudes[iloc])
 
@@ -46,7 +52,10 @@ def intp_icon_data(iloc, gridinfo, datainfo, latitudes, longitudes, asl, elev, s
 
     for nnidx in range(gridinfo.nn):
         if idx_below[nnidx] != idx_above[nnidx]:
-            vert_scaling_fact[nnidx] = (target_asl[nnidx] - datainfo.z_mc[idx_below[nnidx], nn_sel[0, nnidx]]) / (
-                datainfo.z_mc[idx_above[nnidx], nn_sel[0, nnidx]] - datainfo.z_mc[idx_below[nnidx], nn_sel[0, nnidx]])
+            vert_scaling_fact[nnidx] = (
+                target_asl[nnidx] -
+                datainfo.z_mc[idx_below[nnidx], nn_sel[0, nnidx]]) / (
+                    datainfo.z_mc[idx_above[nnidx], nn_sel[0, nnidx]] -
+                    datainfo.z_mc[idx_below[nnidx], nn_sel[0, nnidx]])
 
     return vert_scaling_fact, idx_below, idx_above, nn_sel.flatten(), u

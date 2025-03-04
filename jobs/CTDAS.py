@@ -9,10 +9,15 @@ from datetime import timedelta
 
 BASIC_PYTHON_JOB = False
 
+
 def submit_job(command):
     """Submit a job and return the job ID."""
     logging.info(f"Running: {command}")
-    result = subprocess.run(command, shell=True, capture_output=True, text=True, check=False)
+    result = subprocess.run(command,
+                            shell=True,
+                            capture_output=True,
+                            text=True,
+                            check=False)
     match = re.search(r"Submitted batch job (\d+)", result.stdout)
 
     if match:
@@ -21,6 +26,7 @@ def submit_job(command):
     logging.error("Failed to get job ID from sbatch output.")
     return None
 
+
 def wait_for_job(job_id):
     """Wait for a job to complete."""
     if not job_id:
@@ -28,23 +34,31 @@ def wait_for_job(job_id):
 
     logging.info(f"Waiting for job {job_id} to complete...")
     while True:
-        result = subprocess.run(f"sacct -j {job_id} --format=State --noheader", shell=True, capture_output=True, text=True)
+        result = subprocess.run(f"sacct -j {job_id} --format=State --noheader",
+                                shell=True,
+                                capture_output=True,
+                                text=True)
         state = result.stdout.strip()
 
         if state:
             logging.info(f"Job {job_id} state: {state}")
-            if any(s in state for s in ["COMPLETED", "FAILED", "CANCELLED", "TIMEOUT"]):
+            if any(s in state
+                   for s in ["COMPLETED", "FAILED", "CANCELLED", "TIMEOUT"]):
                 logging.info(f"Job {job_id} finished with state: {state}")
                 return False, state
-            if any(s in state for s in ["COMPLETED",]):
+            if any(s in state for s in [
+                    "COMPLETED",
+            ]):
                 logging.info(f"Job {job_id} finished with state: {state}")
                 return True, state
         time.sleep(10)
 
+
 def run_icon_case(cfg, suffix="", output_file=None, max_retries=5):
     """Run an ICON case job and wait for it to complete if output is not already present."""
     if output_file and output_file.exists():
-        logging.info(f"Skipping ICON case {suffix} as output exists: {output_file}")
+        logging.info(
+            f"Skipping ICON case {suffix} as output exists: {output_file}")
         return True
 
     icon_ini_template = cfg.case_path / cfg.icon_runjob_filename
@@ -65,12 +79,15 @@ def run_icon_case(cfg, suffix="", output_file=None, max_retries=5):
 
         if state in ["FAILED", "CANCELLED", "TIMEOUT"]:
             retries += 1
-            logging.warning(f"Job failed with state {state}. Retrying {retries}/{max_retries}...")
+            logging.warning(
+                f"Job failed with state {state}. Retrying {retries}/{max_retries}..."
+            )
         else:
             break
 
     logging.error("ICON job failed after maximum retries.")
     return False
+
 
 def start_ctdas(cfg):
     """Start CTDAS process."""
@@ -81,13 +98,13 @@ def start_ctdas(cfg):
         command = "cd $SCRATCH/ctdas_procchain/exec && sbatch ctdas_procchain.jb"
         subprocess.run(command, shell=True, check=True)
     except subprocess.CalledProcessError:
-        logging.info("CTDAS already exists -- we did NOT instantiate this CTDAS run")
+        logging.info(
+            "CTDAS already exists -- we did NOT instantiate this CTDAS run")
 
 
 def main(cfg):
     prepare_icon.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
-
     """
     Start CTDAS inversion
 
@@ -110,12 +127,14 @@ def main(cfg):
 
         logging.info("Run first ICON case")
         run_icon_case(cfg, output_file=output_file_1)
-        
+
         logging.info("Start CTDAS")
         start_ctdas(cfg)
 
         if cfg.CTDAS_runthrough:
-            run_icon_case(cfg, "_firstrun_runthrough", output_file=output_file_2)
+            run_icon_case(cfg,
+                          "_firstrun_runthrough",
+                          output_file=output_file_2)
 
     if cfg.CTDAS_runthrough:
         run_icon_case(cfg, "_runthrough", output_file=output_file_3)
