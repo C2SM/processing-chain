@@ -3,7 +3,7 @@ import xml.dom.minidom
 import numpy as np
 
 
-def generate_tracers_xml(data, nens=-1, restart=False):
+def generate_tracers_xml(data, nens=-1, n_bg_ens=-1, restart=False, runthrough=False, propagate_bg=False):
     """
     Generate an XML representation for chemtracers.
 
@@ -21,7 +21,7 @@ def generate_tracers_xml(data, nens=-1, restart=False):
                 },
                 "CO2_RA": {},
                 "CO2_GPP": {},
-                "TRCO2_A-XXX": {"start": 0, "count": 10, "bg": "TRCO2_BG", "ra": "CO2_RA", "gpp": "CO2_GPP"}
+                "TRCO2_A-XXX": {"bg": "TRCO2_BG", "ra": "CO2_RA", "gpp": "CO2_GPP"}
             }
 
     Returns:
@@ -77,30 +77,63 @@ def generate_tracers_xml(data, nens=-1, restart=False):
             if restart and not item_id.startswith("EM_"):
                 ET.SubElement(tracer_ra, "oem_restart",
                               type="char").text = "file"
-        if item_id.endswith("XXX"):
-            # Make a set of ensemble tracers
-            for i in np.arange(nens) + 1:
-                tracer_xxx = ET.SubElement(tracers,
-                                           "chemtracer",
-                                           id=f"TRCO2_A-{i:03}")
-                ET.SubElement(tracer_xxx, "transport",
-                              type="char").text = "stdaero"
-                ET.SubElement(tracer_xxx, "oem_type", type="char").text = "ens"
-                ET.SubElement(tracer_xxx, "c_solve",
-                              type="char").text = "passive"
-                ET.SubElement(tracer_xxx, "init_mode", type="int").text = "0"
-                if "bg" in item_data:
-                    ET.SubElement(tracer_xxx, "oem_bg_ens",
-                                  type="char").text = item_data["bg"]
-                if "ra" in item_data and "gpp" in item_data:
-                    ET.SubElement(
-                        tracer_xxx, "oem_vprm_bg_ens", type="char"
-                    ).text = f"{item_data['ra']}, {item_data['gpp']}"
-                if restart:
-                    ET.SubElement(tracer_xxx, "oem_restart",
-                                  type="char").text = "file"
-                ET.SubElement(tracer_xxx, "unit", type="char").text = "none"
-
+        if not runthrough:
+            if item_id.endswith("XXX"):
+                # Make a set of ensemble tracers
+                for i in np.arange(nens) + 1:
+                    tracer_xxx = ET.SubElement(tracers,
+                                            "chemtracer",
+                                            id=f"{item_id[:-4]}-{i:03}")
+                    ET.SubElement(tracer_xxx, "transport",
+                                type="char").text = "stdaero"
+                    ET.SubElement(tracer_xxx, "oem_type", type="char").text = "ens"
+                    ET.SubElement(tracer_xxx, "c_solve",
+                                type="char").text = "passive"
+                    ET.SubElement(tracer_xxx, "init_mode", type="int").text = "0"
+                    if "bg" in item_data:
+                        ET.SubElement(tracer_xxx, "oem_bg_ens",
+                                    type="char").text = item_data["bg"]
+                    if "ra" in item_data and "gpp" in item_data:
+                        ET.SubElement(
+                            tracer_xxx, "oem_vprm_bg_ens", type="char"
+                        ).text = f"{item_data['ra']}, {item_data['gpp']}"
+                    if restart:
+                        ET.SubElement(tracer_xxx, "oem_restart",
+                                    type="char").text = "file"
+                    ET.SubElement(tracer_xxx, "unit", type="char").text = "none"
+                if propagate_bg:
+                    tracer_xxx = ET.SubElement(tracers,
+                                            "chemtracer",
+                                            id=f"{item_id[:-4]}-{nens+1:03}")
+                    ET.SubElement(tracer_xxx, "transport",
+                                type="char").text = "stdaero"
+                    ET.SubElement(tracer_xxx, "oem_type", type="char").text = "ens"
+                    ET.SubElement(tracer_xxx, "c_solve",
+                                type="char").text = "passive"
+                    ET.SubElement(tracer_xxx, "init_mode", type="int").text = "0"
+                    if "bg" in item_data:
+                        ET.SubElement(tracer_xxx, "oem_bg_ens",
+                                    type="char").text = item_data["bg"]
+                    if restart:
+                        ET.SubElement(tracer_xxx, "oem_restart",
+                                    type="char").text = "file"
+                    ET.SubElement(tracer_xxx, "unit", type="char").text = "none"
+        else:
+            if item_id.endswith("XXX"):
+                for i in np.arange(n_bg_ens) + 1:
+                    tracer_bg_xxx = ET.SubElement(tracers, "chemtracer", id=f"{item_id[:-4]}-{i:03}")
+                    ET.SubElement(tracer_bg_xxx, "transport",
+                                type="char").text = "stdaero"
+                    ET.SubElement(tracer_bg_xxx, "oem_type", type="char").text = "ens"
+                    ET.SubElement(tracer_bg_xxx, "c_solve",
+                                type="char").text = "passive"
+                    ET.SubElement(tracer_bg_xxx, "init_mode", type="int").text = "0"
+                    if "bg" in item_data:
+                        ET.SubElement(tracer_bg_xxx, "oem_bg_ens",
+                                    type="char").text = item_data["bg"]
+                    if restart:
+                        ET.SubElement(tracer_bg_xxx, "oem_restart", type="char").text = "file"
+                    ET.SubElement(tracer_bg_xxx, "unit", type="char").text = "none"
     # Convert to string
     xml_declaration = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE tracers SYSTEM \"tracers.dtd\">\n"
     xml_string = ET.tostring(tracers, encoding="unicode")

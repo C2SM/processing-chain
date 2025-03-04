@@ -327,7 +327,6 @@ def fetch_ICOS_data(query_type='any',
         # Skip if filename exists
         if os.path.isfile(outfn):
             continue
-
         shape = np.shape(obj)
 
         lon = Dobj(d).lon
@@ -369,10 +368,6 @@ def fetch_ICOS_data(query_type='any',
         ds.attrs['Longitude'] = Dobj(d).lon
         ds.attrs['Latitude'] = Dobj(d).lat
         ds.attrs['Name of the tracer'] = meta[0]
-        name = 'ICOS_obs_' + str(specie)[2:-2] + '_' + query_type + '_' + str(
-            Dobj(d).station['id']) + '_' + str(
-                Dobj(d).meta['specificInfo']['acquisition']
-                ['samplingHeight']) + '_' + start_date + '_' + end_date + '.nc'
         ds.to_netcdf(outfn)
 
 
@@ -745,6 +740,7 @@ def fetch_OCO2_data(starttime,
 
 
 def process_OCO2_data(OCO2_obs_folder,
+                      ICON_grid_file,
                       start_date='01-01-2022',
                       end_date='31-12-2022',
                       output_folder='~/'):
@@ -753,10 +749,10 @@ def process_OCO2_data(OCO2_obs_folder,
     Parameters
     ----------
     OCO2_obs_folder str    e.g., /scratch/snx/[user]/OCO2_data/year
+    ICON_grid_file  str    e.g., /scratch/snx/[user]/ICON_grid.nc
     start_date      DateTime
     end_date        DateTime
     output_folder   str    e.g., /scratch/snx/[user]/ICOS_data/year/
-
     """
 
     # # Process files
@@ -777,6 +773,56 @@ def process_OCO2_data(OCO2_obs_folder,
 
         # Open file
         s5p_data = xr.open_dataset(file[0])
+
+        # Limit to extent of ICON grid
+        ICON_grid = xr.open_dataset(ICON_grid_file)
+        offset = 1.2 # 1.2 degrees offset to ensure no data is beyond the grid bounds
+        try: 
+            s5p_data = s5p_data.where(
+                (s5p_data.longitude >= np.rad2deg(ICON_grid.clon.min().values) + offset) &
+                (s5p_data.longitude <= np.rad2deg(ICON_grid.clon.max().values) - offset) &
+                (s5p_data.latitude  >= np.rad2deg(ICON_grid.clat.min().values) + offset) &
+                (s5p_data.latitude  <= np.rad2deg(ICON_grid.clat.max().values) - offset),
+                drop=True).where(s5p_data.xco2_quality_flag == 0, drop=True)
+            # s5p_data = s5p_data.where((s5p_data.longitude > -8.6) &  (s5p_data.longitude < 17.9) & (s5p_data.latitude > 40.6) & (s5p_data.latitude < 59), drop=True)
+            print("The new limits are....")
+            print(f"{s5p_data.longitude.min().values} {s5p_data.longitude.max().values}")
+            print(f"{s5p_data.latitude.min().values} {s5p_data.latitude.max().values}")
+            print("Filtered on")
+            print(f"{np.rad2deg(ICON_grid.clon.min()).values} {np.rad2deg(ICON_grid.clon.max()).values}")
+            print(f"{np.rad2deg(ICON_grid.clat.min()).values} {np.rad2deg(ICON_grid.clat.max()).values}")
+        except:
+            print(f"No observations remain after filtering {file} to ICON grid limits")
+            s5p_out = xr.Dataset(
+                {
+                    "latitude": (["soundings"], np.array([], dtype=np.float32)),
+                    "longitude": (["soundings"], np.array([], dtype=np.float32)),
+                    "date": (["soundings", "epoch_dimension"], np.empty((0, 7), dtype=np.float32)),
+                    "obs": (["soundings"], np.array([], dtype=np.float32)),
+                    "quality_flag": (["soundings"], np.array([], dtype=np.int32)),
+                    "averaging_kernel": (["soundings", "layers"], np.empty((0, 20), dtype=np.float32)),
+                    "pressure_levels": (["soundings", "layers"], np.empty((0, 20), dtype=np.float32)),
+                    "pressure_weighting_function": (["soundings", "layers"], np.empty((0, 20), dtype=np.float32)),
+                    "prior_profile": (["soundings", "layers"], np.empty((0, 20), dtype=np.float32)),
+                    "prior": (["soundings"], np.array([], dtype=np.float32)),
+                    "uncertainty": (["soundings"], np.array([], dtype=np.float32)),
+                    "surface_pressure": (["soundings"], np.array([], dtype=np.float32)),
+                },
+                coords={
+                    "soundings": np.array([], dtype=np.int32),
+                    "layers": np.arange(20),
+                    "epoch_dimension": np.arange(7),
+                },
+                attrs={
+                    'creation_date': str(datetime.now()),
+                    'author': 'Processing Chain',
+                    'level_def': 'pressure_boundaries',
+                    'retrieval_id': file[0].name if file else 'unknown',
+                },
+            )
+            s5p_out.to_netcdf(output_folder / f"OCO2_{day.strftime('%Y%m%d')}_ctdas.nc")
+            continue
+            
         s5p_out = s5p_data[[
             "latitude", "longitude", "date", "xco2", "xco2_quality_flag",
             "xco2_averaging_kernel", "pressure_levels", "pressure_levels",
@@ -794,10 +840,11 @@ def process_OCO2_data(OCO2_obs_folder,
             "xco2_apriori": "prior",
             "xco2_uncertainty": "uncertainty"
         })
-        s5p_out["pressure_levels"] = s5p_out.pressure_levels[:, ::-1]
+        s5p_out["pressure_levels"][:] = s5p_out.pressure_levels[:, ::-1].values
         s5p_out[
-            "pressure_weighting_function"] = s5p_out.pressure_weighting_function[:, ::
-                                                                                 -1]
+            "pressure_weighting_function"][:] = s5p_out.pressure_weighting_function[:, ::
+                                                                                 -1].values
+        s5p_out["prior_profile"][:] = s5p_out.prior_profile[:, ::-1].values
         s5p_out["surface_pressure"] = s5p_out.pressure_levels[:, 0]
         s5p_out.attrs.update({
             'creation_date': str(datetime.now()),

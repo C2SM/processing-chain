@@ -290,7 +290,11 @@ class Config():
                 for item in value:
                     item_type = "Path" if type(
                         item).__name__ == "PosixPath" else type(item).__name__
-                    print(f"  - {item:<{max_col_width-4}} {item_type}")
+                    if item_type == "dict":
+                        for sub_key, sub_value in item.items():
+                            print(f"  - {sub_key:<{max_col_width-4}} {sub_value}")
+                    else:
+                        print(f"  - {item:<{max_col_width-4}} {item_type}")
             elif isinstance(value, dict):
                 # If the value is a dictionary, format it as before
                 print(f"{key:<{max_col_width}} dict")

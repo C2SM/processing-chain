@@ -29,7 +29,8 @@ def create_lambda_regions(input_grid, output_path, lambdas_ids):
                           },
                           attrs={'author': 'Processing Chain'})
 
-    ds_cells.to_netcdf(output_path,
+    try:
+        ds_cells.to_netcdf(output_path,
                        encoding={
                            'REG': {
                                'dtype': 'int32'
@@ -38,22 +39,42 @@ def create_lambda_regions(input_grid, output_path, lambdas_ids):
                                'dtype': 'int32'
                            }
                        })
+    except:
+        print("File currently open. Please close the file and try again.")
     print(f"Lambda regions saved to {output_path}")
     return nregs, categories[-1]
 
 
-def create_prior_all_ones(output_path, nensembles, ncats, nregs):
+def create_prior_all_ones(output_path, nensembles, ncats, nregs, propagate_bg=False):
     """
     Create a dataset of initial lambdas (all ones) for testing.
     """
+    nensembles = nensembles + 1 if propagate_bg else nensembles
     arr = np.ones((nensembles, nregs, ncats, 1), dtype=np.float32)
+    arr[-1, :, :, :] = 0 if propagate_bg else 1
     data = xr.DataArray(arr, dims=['ens', 'reg', 'cat', 'tracer'])
     ds = xr.Dataset({'lambda': data})
-    ds.to_netcdf(output_path)
+    try:
+        ds.to_netcdf(output_path)  
+    except:
+        print("File currently open. Please close the file and try again.")
     print(f"Prior all ones saved to {output_path}")
 
+def create_prior_all_zeros(output_path, nensembles, ncats, nregs):
+    """
+    Create a dataset of initial lambdas (all zeros) for testing.
+    """
+    arr = np.zeros((nensembles, nregs, ncats, 1), dtype=np.float32)
+    data = xr.DataArray(arr, dims=['ens', 'reg', 'cat', 'tracer'])
+    ds = xr.Dataset({'lambda': data})
+    try:
+        ds.to_netcdf(output_path)
+    except:
+        print("File currently open. Please close the file and try again.")
+    print(f"Prior all zeros saved to {output_path}")
 
-def create_boundary_regions(grid_filename, output_path, cdo_nco_cmd,
+
+def create_boundary_regions(grid_filename, output_path, n_bg_ens, cdo_nco_cmd,
                             cdo_nco_cmd_post):
     """
     Create boundary region masks based on geographical quadrants and save to NetCDF.
@@ -81,20 +102,25 @@ iconsub --nml NAMELIST_ICONSUB
 
     ds_grid = xr.open_dataset('outgrid.grid.nc')
     clon, clat = np.rad2deg(ds_grid['clon']), np.rad2deg(ds_grid['clat'])
+
+    # Compute the central reference point
     mid_lon, mid_lat = np.nanquantile(clon, 0.5), np.nanquantile(clat, 0.5)
 
-    boundary_regions = np.zeros((len(clon), 8), dtype=np.int32)
+    # Center coordinates relative to the midpoint
     clon_cent, clat_cent = clon - mid_lon, clat - mid_lat
 
-    for i, (lon, lat) in enumerate(zip(clon_cent, clat_cent)):
-        if lon > 0 and lat > 0:
-            boundary_regions[i][6 if lon > lat else 7] = 1
-        elif lon < 0 and lat < 0:
-            boundary_regions[i][2 if lon > lat else 3] = 1
-        elif lon > 0 and lat < 0:
-            boundary_regions[i][4 if lon > abs(lat) else 5] = 1
-        elif lon < 0 and lat > 0:
-            boundary_regions[i][0 if abs(lon) > lat else 1] = 1
+    # Compute angles of all points relative to the center
+    angles = np.arctan2(clat_cent, clon_cent)  # Range: [-π, π]
+
+    # Set number of regions
+    sector_size = (2 * np.pi) / n_bg_ens  # Each sector covers an angle range
+
+    # Assign each point to a region (0 to N-1)
+    region_indices = (angles // sector_size).astype(int)  # Range: [-π, π]
+
+    # One-hot encode the region assignments
+    boundary_regions = np.zeros((len(clon), n_bg_ens), dtype=np.int32)
+    boundary_regions[np.arange(len(clon)), region_indices] = 1
 
     ds_boundary = xr.Dataset(data_vars={
         'boundaryregion': (['cell', 'reg'], boundary_regions),
@@ -102,32 +128,59 @@ iconsub --nml NAMELIST_ICONSUB
     },
                              coords={
                                  'cell': (['cell'], np.arange(len(clon))),
-                                 'reg': (['reg'], np.arange(8))
+                                 'reg': (['reg'], np.arange(n_bg_ens))
                              },
                              attrs={
                                  'author': 'Erik Koene',
                                  'email': 'erik.koene@empa.ch'
                              })
-    ds_boundary.to_netcdf(output_path)
+    try:
+        ds_boundary.to_netcdf(output_path)
+    except:
+        print("File currently open. Please close the file and try again.")
     print(f"Boundary regions saved to {output_path}")
 
 
-def create_boundary_prior_all_ones(output_path, nensembles):
+def create_boundary_prior_all_ones(output_path, n_bg_ens, nensembles, propagate_bg=False):
     """
     Create boundary lambdas dataset and save to NetCDF.
     """
-    lambdas = np.ones((nensembles, 8), dtype=np.float32)
+    nensembles = nensembles + 1 if propagate_bg else nensembles
+    lambdas = np.ones((nensembles, n_bg_ens), dtype=np.float32)
     ds_lambdas = xr.Dataset(data_vars={'lambda': (['ens', 'reg'], lambdas)},
                             coords={
                                 'ens': (['ens'], np.arange(nensembles)),
-                                'reg': (['reg'], np.arange(8))
+                                'reg': (['reg'], np.arange(n_bg_ens))
                             },
                             attrs={
                                 'author': 'Erik Koene',
                                 'email': 'erik.koene@empa.ch'
                             })
-    ds_lambdas.to_netcdf(output_path)
+    try:
+        ds_lambdas.to_netcdf(output_path)
+    except:
+        print("File currently open. Please close the file and try again.")
     print(f"Boundary lambdas saved to {output_path}")
+
+def create_boundary_prior_separate(output_path, n_bg_ens):
+    """
+    Create boundary lambdas dataset and save to NetCDF.
+    """
+    lambdas = np.identity(n_bg_ens, dtype=np.float32)
+    ds_lambdas = xr.Dataset(data_vars={'lambda': (['ens', 'reg'], lambdas)},
+                            coords={
+                                'ens': (['ens'], np.arange(n_bg_ens)),
+                                'reg': (['reg'], np.arange(n_bg_ens))
+                            },
+                            attrs={
+                                'author': 'Erik Koene',
+                                'email': 'erik.koene@empa.ch'
+                            })
+    try:
+        ds_lambdas.to_netcdf(output_path)
+    except:
+        print("File currently open. Please close the file and try again.")
+    print(f"Boundary-separated lambdas saved to {output_path}")
 
 
 # Example usage

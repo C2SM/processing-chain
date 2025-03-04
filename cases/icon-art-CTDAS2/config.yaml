@@ -11,8 +11,8 @@ run_on: cpu
 compute_queue: normal
 nodes: 2
 ntasks_per_node: 4
-startdate: 2018-01-01T00:00:00Z
-enddate: 2018-12-31T23:59:59Z
+startdate: 2021-01-01T00:00:00Z
+enddate: 2021-12-31T23:59:59Z
 restart_step: PT10D # = CTDAS cycle length
 
 ####### Tracer options
@@ -21,7 +21,7 @@ tracers:
     TRCO2_A:
         oem_cat: "A-CO2, B-CO2, C-CO2, D-CO2, E-CO2, F1-CO2, F2-CO2, F3-CO2, F4-CO2, G-CO2, H-CO2, I-CO2, J-CO2, K-CO2, L-CO2"
         oem_vp:  "A-CO2, B-CO2, C-CO2, D-CO2, E-CO2, F1-CO2, F2-CO2, F3-CO2, F4-CO2, G-CO2, H-CO2, I-CO2, J-CO2, K-CO2, L-CO2"
-        oem_tp:  "A-CO2, B-CO2, C-CO2, D-CO2, E-CO2, F1-CO2, F2-CO2, F3-CO2, F4-CO2, G-CO2, H-CO2, I-CO2, J-CO2, K-CO2, L-CO2"
+        oem_tp:  "GNFR_A-CO2, GNFR_B-CO2, GNFR_C-CO2, GNFR_D-CO2, GNFR_A-CO2, GNFR_F-CO2, GNFR_F-CO2, GNFR_F-CO2, GNFR_F-CO2, GNFR_G-CO2, GNFR_H-CO2, GNFR_I-CO2, GNFR_J-CO2, GNFR_L-CO2, GNFR_L-CO2"
     TRCO2_BG:
         init_name: "CO2"
     CO2_RA:
@@ -33,17 +33,17 @@ tracers:
         ra: "CO2_RA"
         gpp: "CO2_GPP"
     biosource:
-        oem_cat: "GFAS1, GFAS2, GFAS3, GFAS4, GFAS5, GFAS6, GFAS7, GFAS8, GFAS9, GFAS10, allcropsource, allwoodsource, lakeriveremis, cflx"
-        oem_vp:  "L-CO2, L-CO2, L-CO2, L-CO2, L-CO2, L-CO2, L-CO2, L-CO2, L-CO2, L-CO2,   L-CO2,         L-CO2,         L-CO2,         L-CO2"
-        oem_tp:  "GFAS1, GFAS2, GFAS3, GFAS4, GFAS5, GFAS6, GFAS7, GFAS8, GFAS9, GFAS10,  L-CO2,         L-CO2,         L-CO2,         L-CO2"
+        oem_cat: "co2fire, allcropsource, allwoodsource, lakeriveremis, cflx"
+        oem_vp:  "A-CO2,   A-CO2,         A-CO2,         A-CO2,         A-CO2"
+        oem_tp:  "GNFR_A-CO2,   GNFR_A-CO2,         GNFR_A-CO2,         GNFR_A-CO2,         GNFR_A-CO2"
     biosink:
         oem_cat: "biofuelcropsource, biofuelwoodsource, mflx"
-        oem_vp:  "L-CO2,             L-CO2,             L-CO2"
-        oem_tp:  "L-CO2,             L-CO2,             L-CO2"
+        oem_vp:  "A-CO2,             A-CO2,             A-CO2"
+        oem_tp:  "GNFR_A-CO2,             GNFR_A-CO2,             GNFR_A-CO2"
     EM_TRCO2_A:
         oem_cat: "A-CO2, B-CO2, C-CO2, D-CO2, E-CO2, F1-CO2, F2-CO2, F3-CO2, F4-CO2, G-CO2, H-CO2, I-CO2, J-CO2, K-CO2, L-CO2"
         oem_vp:  "A-CO2, B-CO2, C-CO2, D-CO2, E-CO2, F1-CO2, F2-CO2, F3-CO2, F4-CO2, G-CO2, H-CO2, I-CO2, J-CO2, K-CO2, L-CO2"
-        oem_tp:  "A-CO2, B-CO2, C-CO2, D-CO2, E-CO2, F1-CO2, F2-CO2, F3-CO2, F4-CO2, G-CO2, H-CO2, I-CO2, J-CO2, K-CO2, L-CO2"
+        oem_tp:  "GNFR_A-CO2, GNFR_B-CO2, GNFR_C-CO2, GNFR_D-CO2, GNFR_A-CO2, GNFR_F-CO2, GNFR_F-CO2, GNFR_F-CO2, GNFR_F-CO2, GNFR_G-CO2, GNFR_H-CO2, GNFR_I-CO2, GNFR_J-CO2, GNFR_L-CO2, GNFR_L-CO2"
     EM_CO2_RA:
         oem_ftype: "resp"
     EM_CO2_GPP:
@@ -63,7 +63,6 @@ tracers:
 # - rc-cteco2 file [which, ultimately, is how we pass general input like folder names etc to CTDAS]
 # - rc-job file [which, ultimately, is the setup for CTDAS like lag times, etc.]
 CTDAS:
-    runthrough: True # If true, this runs through the year without any optimization. Useful for getting the BG and other fields
     nlag: 2
     tracer: co2
     regions: basegrid # choose: basegrid or parentgrid
@@ -73,66 +72,16 @@ CTDAS:
     ctdas_cycle: 10 # days
     ctdas_nlag: 2
     nboundaries: 8
-    propagate_bg: True # If true, an additional ensemble member is created which just holds the background tracer
     lambdas: # The first 16 lambdas must be the respiration and uptake ones [even if not relevant, e.g., for a CH4 simulation], followed by the oem_cat categories in the xml file, in order of appearance, but excluding any 
         - 1,1,1,1,1,1,1,1 # Respiration (Evergreen Forest, Deciduous Forest, Mixed Forest, Shrubland, Savanna, Cropland, Grassland, Urban/Other)
         - 1,1,1,1,1,1,1,1 # Uptake (E, D, M, S, SV, C, G, U)
         - 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2 # Anthropogenic CO2 (ensemble tracer categories that are optimized)
     obs:
         # Run the 'authentification.ipynb' notebook to get access to ICOS and/or NASA Earthdata (OCO2) data
-        ICOS:
-            fetch: False
-            path: /capstor/scratch/cscs/ekoene/ICOS/
-            c_offset:  2 # ppm
-            mdm:
-                - Beromunster_212: 6.2383423 + c_offset
-                - Bilsdale_248: 3.8534036 + c_offset
-                - Biscarrosse_47: 3.5997221 + c_offset
-                - Cabauw_207: 6.6093283 + c_offset
-                - Carnsore Point_14: 2.1894007 + c_offset
-                - Ersa_40: 2.3997285 + c_offset
-                - Gartow_341: 4.570544 + c_offset
-                - Heidelberg_30: 8.660628 + c_offset
-                - Hohenpeissenberg_131: 4.0553513 + c_offset
-                - Hyltemossa_150: 3.485432 + c_offset
-                - Ispra_100: 9.612817 + c_offset
-                - Jungfraujoch_13: 1.0802848 + c_offset
-                - Karlsruhe_200: 8.05013 + c_offset
-                - Kresin u Pacova_250: 3.829324 + c_offset
-                - Heathfield_100: 4.6675706 + c_offset # <--- CHECK
-                - La Muela_80: 3.2093291 + c_offset
-                - Laegern-Hochwacht_32: 9.556924 + c_offset
-                - Lindenberg_98: 5.4387555 + c_offset
-                - Lutjewad_60: 5.651525 + c_offset
-                - Monte Cimone_8: 1.7325112 + c_offset
-                - Observatoire de Haute Provence_100: 4.146905 + c_offset
-                - Observatoire perenne de l'environnement_120: 6.8854113 + c_offset
-                - Pic du Midi_28: 1.2196398 + c_offset
-                - Plateau Rosa_10: 1.3211231 + c_offset
-                - Puy de Dome_10: 3.4529948 + c_offset
-                - Ridge Hill_90: 5.0861707 + c_offset
-                - Saclay_100: 6.8669567 + c_offset
-                - Schauinsland_12: 3.7896755 + c_offset
-                - Tacolneston_185: 4.6675706 + c_offset
-                - Torfhaus_147: 4.622525 + c_offset
-                - Trainou_180: 5.821612 + c_offset
-                - Weybourne_10: 4.4674397 + c_offset
-                - Zugspitze_3: 1.6796716 + c_offset
-            mountain_stations: 
-                - Jungfraujoch_13
-                - Monte Cimone_8
-                - Puy de Dome_10
-                - Pic du Midi_28
-                - Zugspitze_3
-                - Hohenpeissenberg_50
-                - Hohenpeissenberg_93
-                - Hohenpeissenberg_131
-                - Schauinsland_12
-                - Plateau Rosa_10
-        OCO2:
-            fetch: True
-            path: /capstor/scratch/cscs/ekoene/OCO2
-        localization: 400 # km -- currently applies to ICOS and OCO2 observations equally
+        fetch_ICOS: True
+        ICOS_path: /capstor/scratch/cscs/ekoene/ICOS/
+        fetch_OCO2: True
+        OCO2_path: /capstor/scratch/cscs/ekoene/OCO2
     global_inputs:
         inventories:
             - /capstor/scratch/cscs/ekoene/inventories/INV_20180102.nc
@@ -181,47 +130,25 @@ CTDAS:
         VPRM:
             - /users/ekoene/CTDAS_inputs/VPRM_indices_ICON_datestr.nc
         OEM:
-            - /capstor/scratch/cscs/ekoene/inventories/icon_with_tno_emissions/vertical_profiles.nc
+            - /capstor/scratch/cscs/ekoene/inventories/icon_with_tno_emissions/vertical_profiles.nc # It /should/ be these
             - /capstor/scratch/cscs/ekoene/inventories/icon_with_tno_emissions/hourofyear.nc
+            - /users/ekoene/CTDAS_inputs/vertical_profiles_t.nc # ... but these old files are still used
+            - /users/ekoene/CTDAS_inputs/hourofyear8784.nc
     ctdas_path: /users/ekoene/ctdas-icon
     ctdas_patch:
         templates: 
             - ctdas_patch/template.py 
             - ctdas_patch/template.rc # ADD THESE!
             - ctdas_patch/template.jb # ADD THESE!
-        da/cyclecontrol: ctdas_patch/initexit_cteco2.py
         da/statevectors: ctdas_patch/statevector_baseclass_icos_cities.py
         da/observations: ctdas_patch/obs_class_ICOS_OCO2.py
         da/obsoperators: ctdas_patch/obsoperator_ICOS_OCO2.py
         da/optimizers: ctdas_patch/optimizer_baseclass_icos_cities.py
-        da/pipelines: ctdas_patch/pipeline_icon.py
         da/rc/cteco2: ctdas_patch/carbontracker_icon_oco2.rc
         da/tools/icon:
             - ctdas_patch/utilities.py
             - ctdas_patch/icon_helper.py
             - ctdas_patch/icon_sampler.py
-    covariancematrix_definition: |
-            Corr = np.array([[1,   0], # VPRM has a 100% error
-                             [0, 0.5]]) # Anthropogenic has a 50% error
-            specific_length_bio = 300
-            specific_length_anth = 200
-            exp_factors_anth = np.exp(-distances / specific_length_anth)
-            exp_factors_bio = np.exp(-distances / specific_length_bio)
-
-            for ix, _ in enumerate(distances):
-                for ic in range(Corr.shape[0]):
-                    for ik in range(Corr.shape[1]):
-                        idx = ix * categories + ic
-                        exp_factor = exp_factors_anth[ix] if ic == 1 or ik == 1 else exp_factors_bio[ix]
-                        covariancematrix[idx, ik:-n_bg_params:categories] = exp_factor * Corr[ic, ik]
-
-            #set variances for the 8 background elements
-            if n_bg_params>0:
-                for iii in np.arange(n_bg_params):
-                    covariancematrix[-n_bg_params + iii                    , -n_bg_params + iii] = 0.015 * 0.015  # 0.015 * 400 = 6 ppm stdev
-                    covariancematrix[-n_bg_params + (iii + 1) % n_bg_params, -n_bg_params + iii] = 0.015 * 0.015 * 0.25 # Neighbouring entries
-                    covariancematrix[-n_bg_params + (iii - 1) % n_bg_params, -n_bg_params + iii] = 0.015 * 0.015 * 0.25 # Neighbouring entries
-
 
 
 # # CTDAS ------------------------------------------------------------------------

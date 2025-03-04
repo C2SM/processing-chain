@@ -1,7 +1,7 @@
 #!/bin/bash -l
 #SBATCH --uenv="icon-wcp/v1:rc4"
 #SBATCH --job-name="{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.forecasttime}"
-#SBATCH --time=00:50:00
+#SBATCH --time=00:40:00
 #SBATCH --account={cfg.compute_account}
 #SBATCH --nodes={cfg.nodes}
 #SBATCH --ntasks-per-node={cfg.ntasks_per_node}
@@ -372,6 +372,15 @@ cat > NAMELIST_NWP << EOF
 /
 EOF
 
-
+handle_error(){{
+    set +e
+    # Check for invalid pointer error at the end of icon-art
+    if grep -q "free(): invalid pointer" {cfg.logfile} && grep -q "clean-up finished" {cfg.logfile}; then
+        exit 0
+    else
+        exit 1
+    fi
+    set -e
+}}
 cp {cfg.icon_executable} icon
-srun /capstor/scratch/cscs/ekoene/icon-kit/run/run_wrapper/alps_mch_gpu.sh ./icon
+srun ../input/wrapper_icon.sh ./icon || handle_error

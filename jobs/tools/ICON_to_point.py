@@ -1,11 +1,10 @@
 import numpy as np
 import xarray as xr
 from sklearn.neighbors import BallTree
-from scipy import argmin
 import argparse
 
 
-def get_horizontal_distances(longitude, latitude, icon_grid_path, k=5):
+def get_horizontal_distances(longitude, latitude, icon_grid, k=5):
     """
     Get horizontal distances between points and their k nearest
     neighbours on the ICON grid using a quick BallTree algorithm
@@ -18,8 +17,8 @@ def get_horizontal_distances(longitude, latitude, icon_grid_path, k=5):
     latitude : list or 1D np.array 
         e.g., [52] or np.array([52,53,54])
 
-    icon_grid_path : str
-        Contains the path to the ICON grid
+    icon_grid : str
+        Contains the xarray ICON grid object
 
     k : int, default is 5
         Sets the number of nearest neighbours desired
@@ -35,7 +34,6 @@ def get_horizontal_distances(longitude, latitude, icon_grid_path, k=5):
         nearest neighbours
     """
     # Get ICON grid specifics
-    icon_grid = xr.open_dataset(icon_grid_path)
     clon = icon_grid.clon.values
     clat = icon_grid.clat.values
 
@@ -50,12 +48,7 @@ def get_horizontal_distances(longitude, latitude, icon_grid_path, k=5):
                                       k=k,
                                       return_distance=True)
 
-    if np.any(distances == 0):
-        print(
-            'The longitude/latitude coincides identically with an ICON cell, which is an issue for the inverse distance weighting.'
-        )
-        print('I will slightly modify this value to avoid errors.')
-        distances[distances == 0] = 1e-12
+    distances[distances == 0] = 1e-12  # Avoid division by zero
 
     if np.any(distances is np.nan):
         raise ValueError(
@@ -88,9 +81,11 @@ def get_nearest_vertical_distances(model_topography, model_levels,
 
     base_height_msl : list or 1D np.array
         e.g., [20,] or np.array([72,180,40])
+        This is the elevation over the mean sea level for the base of the station
 
     inlet_height_agl : list or 1D np.array
         e.g., [15,] or np.array([15, 21, 42])
+        This is the height of the station over the ground
 
     interpolation_strategy : list of strings
         e.g., ['ground',] or ['ground','mountain','ground']
@@ -119,7 +114,7 @@ def get_nearest_vertical_distances(model_topography, model_levels,
         model_topography.isel({
             "station": i
         }).values / 2 + inlet_height_agl[i]
-        # if strategy=='middle'
+        # if strategy[i]=='middle'
         for (i, strategy) in enumerate(interpolation_strategy)
     ]
     target_altitude = xr.DataArray(target_altitude, dims=['station', 'ncells'])
@@ -144,7 +139,7 @@ def icon_to_point(longitude,
                   latitude,
                   inlet_height_agl,
                   base_height_msl,
-                  icon_field_path,
+                  icon_field_paths,
                   icon_grid_path,
                   interpolation_strategy,
                   k=5,
@@ -172,8 +167,10 @@ def icon_to_point(longitude,
             (e.g., for Jungfraujoch: base_height_msl=3850, 
                                      inlet_height_agl=5)
 
-    icon_field_path : str
-        Contains the path to the unstructured ICON output
+    icon_field_paths : str
+        Contains the path to the unstructured ICON output. 
+        As this uses `xr.open_mfadataset` it can be a list of paths or
+        a 'glob' string (e.g., 'path/to/icon_output/*.nc')
 
     icon_grid_path : str
         Contains the path to the ICON grid
@@ -200,32 +197,39 @@ def icon_to_point(longitude,
         values
     """
 
-    # Load dataset
-    icon_field = xr.open_dataset(icon_field_path)
-    # Get dimension names
-    icon_heights = icon_field.z_mc.dims[
-        0]  # Dimension name (something like "heights_5")
-    icon_cells = icon_field.z_mc.dims[
-        1]  # Dimension name (something like "ncells")
-    icon_field[icon_cells] = icon_field[
-        icon_cells]  # Explicitly assign 'ncells'
+    # Open multiple ICON datasets
+    icon_field = xr.open_mfdataset(icon_field_paths, combine='by_coords', chunks={'time': 50})
+
+    # Load the ICON grid
+    icon_grid = xr.open_dataset(icon_grid_path)
+
+    # Dimensions
+    if icon_field.time.size > 1:
+        icon_heights = icon_field.z_mc.dims[1]
+        icon_cells = icon_field.z_mc.dims[2]
+    else:
+        icon_heights = icon_field.z_mc.dims[0]
+        icon_cells = icon_field.z_mc.dims[1]
 
     # --- Horizontal grid selection & interpolation weights
     # Get k nearest horizontal distances (for use in inverse distance weighing)
     horizontal_distances, icon_grid_indices = get_horizontal_distances(
-        longitude, latitude, icon_grid_path, k=k)
+        longitude, latitude, icon_grid, k=k)
 
-    horizontal_interp = 1 / horizontal_distances / (
-        1 / horizontal_distances).sum(axis=1, keepdims=True)
-    weights_horizontal = xr.DataArray(horizontal_interp,
-                                      dims=["station", icon_cells])
+    horizontal_weights = 1 / horizontal_distances / (1 / horizontal_distances).sum(axis=1, keepdims=True)
+
+    weights_horizontal = xr.DataArray(horizontal_weights, dims=["station", icon_cells])
     ind_X = xr.DataArray(icon_grid_indices, dims=["station", icon_cells])
     icon_subset = icon_field.isel({icon_cells: ind_X})
 
     # --- Vertical level selection & interpolation weights
     # Get 2 nearest vertical distances (for use in linear interpolation)
-    model_topography = icon_subset.z_ifc[-1]
-    model_levels = icon_subset.z_mc
+    if icon_field.time.size > 1:
+        model_topography = icon_subset.z_ifc[-1,-1]
+        model_levels = icon_subset.z_mc[1]
+    else:
+        model_topography = icon_subset.z_ifc[-1]
+        model_levels = icon_subset.z_mc
     vertical_distances, icon_level_indices = get_nearest_vertical_distances(
         model_topography, model_levels, inlet_height_agl, base_height_msl,
         interpolation_strategy)
@@ -263,7 +267,6 @@ def icon_to_point(longitude,
                                skipna=False)).isnull()
     )  # Remove out of bounds values where weights_vertical has NaNs
     return xr.merge([icon_out, ds])
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
