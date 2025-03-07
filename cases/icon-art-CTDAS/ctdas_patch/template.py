@@ -29,7 +29,7 @@ sys.path.append(os.getcwd())
 from da.cyclecontrol.initexit_cteco2 import start_logger, validate_opts_args, parse_options, CycleControl
 from da.pipelines.pipeline_icon import ensemble_smoother_pipeline, header, footer, analysis_pipeline, archive_pipeline
 from da.dasystems.dasystem_baseclass import DaSystem
-from da.platform.pizdaint import PizDaintPlatform
+from da.platform.santis import SantisPlatform
 from da.statevectors.statevector_baseclass_icos_cities import StateVector
 from da.observations.obs_class_ICOS_OCO2 import ICOSObservations, TotalColumnObservations  # Here we set which observations we consider!
 from da.obsoperators.obsoperator_ICOS_OCO2 import ObservationOperator  # Here we set the obs-operator, which should sample the same observations!
@@ -49,7 +49,7 @@ opts, args = validate_opts_args(opts, args)
 
 dacycle = CycleControl(opts, args)
 
-platform = PizDaintPlatform()
+platform = SantisPlatform()
 dasystem = DaSystem(dacycle['da.system.rc'])
 obsoperator = ObservationOperator(dacycle['da.system.rc'])
 samples = [ICOSObservations(), TotalColumnObservations()]

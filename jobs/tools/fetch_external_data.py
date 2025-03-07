@@ -789,20 +789,6 @@ def process_OCO2_data(OCO2_obs_folder,
                  <= np.rad2deg(ICON_grid.clat.max().values) - offset),
                 drop=True).where(s5p_data.xco2_quality_flag == 0, drop=True)
             # s5p_data = s5p_data.where((s5p_data.longitude > -8.6) &  (s5p_data.longitude < 17.9) & (s5p_data.latitude > 40.6) & (s5p_data.latitude < 59), drop=True)
-            print("The new limits are....")
-            print(
-                f"{s5p_data.longitude.min().values} {s5p_data.longitude.max().values}"
-            )
-            print(
-                f"{s5p_data.latitude.min().values} {s5p_data.latitude.max().values}"
-            )
-            print("Filtered on")
-            print(
-                f"{np.rad2deg(ICON_grid.clon.min()).values} {np.rad2deg(ICON_grid.clon.max()).values}"
-            )
-            print(
-                f"{np.rad2deg(ICON_grid.clat.min()).values} {np.rad2deg(ICON_grid.clat.max()).values}"
-            )
         except:
             print(
                 f"No observations remain after filtering {file} to ICON grid limits"

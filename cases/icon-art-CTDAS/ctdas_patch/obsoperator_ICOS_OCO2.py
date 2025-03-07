@@ -446,7 +446,7 @@ class ObservationOperator(object):
             f"Running ICON sampler with starttime {{starttime}} and endtime {{endtime}} and obsdir {{obs_dir}} and nneighb {{nneighb}} and meta {{meta}} and outfile {{outfile}}"
         )
         ICON_sampler(infolder,
-                     "ICON-ART-UNSTR",
+                     self.settings["output_prefix"],
                      "{cfg.input_files_scratch_dynamics_grid_filename}",
                      starttime,
                      endtime,
@@ -470,7 +470,7 @@ class ObservationOperator(object):
         obs_times = np.array(f1.get_variable('time'))
 
         # wet --> dry mmr
-        for iiens in np.arange(TR_A_ENS.shape[0]):
+        for iiens in np.arange(self.forecast_nmembers):
             TR_A_ENS[iiens, ...] = TR_A_ENS[iiens, ...] / (1. - qv[...])
 
         #LOOP OVER OBS:
@@ -591,7 +591,7 @@ class ObservationOperator(object):
                 "--run_dir %s" % run_dir,
                 "--iconout_prefix %s" % self.settings["output_prefix"],
                 "--icon_grid %s" % self.settings["icon_grid_path"],
-                "--nmembers %d" % int(self.dacycle["da.optimizer.nmembers"]),
+                "--nmembers %d" % int(self.forecast_nmembers),
                 "--tracer_optim %s" % self.settings["tracer_optim"],
                 "--outfile_prefix %s" % out_file,
                 "--footprint_samples_dim %d" %

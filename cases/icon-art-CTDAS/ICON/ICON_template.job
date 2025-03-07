@@ -13,11 +13,11 @@
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
-dtime=120  # Ensure dtime is defined
-dt_rad=$(( 4 * dtime ))
-dt_conv=$(( 1 * dtime ))
-dt_sso=$(( 2 * dtime ))
-dt_gwd=$(( 2 * dtime ))
+dtime=120  # Simulation time step in seconds
+dt_rad=$(( 4 * dtime )) # Radiation time step in seconds
+dt_conv=$(( 1 * dtime )) # Convection time step in seconds
+dt_sso=$(( 2 * dtime )) # SSO time step in seconds
+dt_gwd=$(( 2 * dtime )) # gravity wave drag time step in seconds
 
 # ----------------------------------------------------------------------------
 # create ICON master namelist

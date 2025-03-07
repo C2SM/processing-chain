@@ -63,7 +63,7 @@ tracers:
 # - rc-cteco2 file [which, ultimately, is how we pass general input like folder names etc to CTDAS]
 # - rc-job file [which, ultimately, is the setup for CTDAS like lag times, etc.]
 CTDAS:
-    runthrough: True # If true, this runs through the year without any optimization. Useful for getting the BG and other fields
+    runthrough: True # If true, this makes the 'CTDAS' job run (1) CTDAS but also (2) a simulation for the full year without the ensemble members but with n_boundaries BG tracers
     nlag: 2
     tracer: co2
     regions: basegrid # choose: basegrid or parentgrid
@@ -84,48 +84,46 @@ CTDAS:
             fetch: False
             path: /capstor/scratch/cscs/ekoene/ICOS/
             c_offset:  2 # ppm
-            mdm:
-                - Beromunster_212: 6.2383423 + c_offset
-                - Bilsdale_248: 3.8534036 + c_offset
-                - Biscarrosse_47: 3.5997221 + c_offset
-                - Cabauw_207: 6.6093283 + c_offset
-                - Carnsore Point_14: 2.1894007 + c_offset
-                - Ersa_40: 2.3997285 + c_offset
-                - Gartow_341: 4.570544 + c_offset
-                - Heidelberg_30: 8.660628 + c_offset
-                - Hohenpeissenberg_131: 4.0553513 + c_offset
-                - Hyltemossa_150: 3.485432 + c_offset
-                - Ispra_100: 9.612817 + c_offset
-                - Jungfraujoch_13: 1.0802848 + c_offset
-                - Karlsruhe_200: 8.05013 + c_offset
-                - Kresin u Pacova_250: 3.829324 + c_offset
-                - Heathfield_100: 4.6675706 + c_offset # <--- CHECK
-                - La Muela_80: 3.2093291 + c_offset
-                - Laegern-Hochwacht_32: 9.556924 + c_offset
-                - Lindenberg_98: 5.4387555 + c_offset
-                - Lutjewad_60: 5.651525 + c_offset
-                - Monte Cimone_8: 1.7325112 + c_offset
-                - Observatoire de Haute Provence_100: 4.146905 + c_offset
-                - Observatoire perenne de l'environnement_120: 6.8854113 + c_offset
-                - Pic du Midi_28: 1.2196398 + c_offset
-                - Plateau Rosa_10: 1.3211231 + c_offset
-                - Puy de Dome_10: 3.4529948 + c_offset
-                - Ridge Hill_90: 5.0861707 + c_offset
-                - Saclay_100: 6.8669567 + c_offset
-                - Schauinsland_12: 3.7896755 + c_offset
-                - Tacolneston_185: 4.6675706 + c_offset
-                - Torfhaus_147: 4.622525 + c_offset
-                - Trainou_180: 5.821612 + c_offset
-                - Weybourne_10: 4.4674397 + c_offset
-                - Zugspitze_3: 1.6796716 + c_offset
+            mdm: # Based on the 'runthrough' simulation
+                - Beromunster_212: 5.246687084978375 + c_offset
+                - Bilsdale_248: 3.7267864090697658 + c_offset
+                - Biscarrosse_47: 4.44391367284266 + c_offset
+                - Cabauw_207: 4.556938758005444 + c_offset
+                - Carnsore Point_14: 3.9379375857221026 + c_offset
+                - Ersa_40: 5.097001363286457 + c_offset
+                - Gartow_341: 4.34505600864283 + c_offset
+                - Heidelberg_30: 7.653180633677891 + c_offset
+                - Hohenpeissenberg_131: 4.500672670985617 + c_offset
+                - Hyltemossa_150: 4.451277813256869 + c_offset
+                - Ispra_100: 7.200474834686076 + c_offset
+                - Jungfraujoch_13: 2.0936499868978484 + c_offset
+                - Karlsruhe_200: 6.269164507580145 + c_offset
+                - Kresin u Pacova_250: 4.779867829743723 + c_offset
+                - Heathfield_100: 5.16261949284921 + c_offset
+                - La Muela_80: 3.9377850799858414 + c_offset
+                - Laegern-Hochwacht_32: 7.6073774299042185 + c_offset
+                - Lindenberg_98: 4.975832792946022 + c_offset
+                - Lutjewad_60: 4.7013604883358715 + c_offset
+                - Monte Cimone_8: 3.010641066355188 + c_offset
+                - Observatoire de Haute Provence_100: 4.222056466810487 + c_offset
+                - Observatoire perenne de l'environnement_120: 5.5236885807122915 + c_offset
+                - Pic du Midi_28: 2.0843713258172123 + c_offset
+                - Plateau Rosa_10: 1.9979033074650259 + c_offset
+                - Puy de Dome_10: 4.330821043481535 + c_offset
+                - Ridge Hill_90: 4.100794768506457 + c_offset
+                - Saclay_100: 6.1904467326367945 + c_offset
+                - Schauinsland_12: 4.018460150933421 + c_offset
+                - Tacolneston_185: 4.8551091246134215 + c_offset
+                - Torfhaus_147: 4.4048914639305385 + c_offset
+                - Trainou_180: 5.605470151137809 + c_offset
+                - Weybourne_10: 5.239988261278576 + c_offset
+                - Zugspitze_3: 2.5079204353773696 + c_offset
             mountain_stations: 
                 - Jungfraujoch_13
                 - Monte Cimone_8
                 - Puy de Dome_10
                 - Pic du Midi_28
                 - Zugspitze_3
-                - Hohenpeissenberg_50
-                - Hohenpeissenberg_93
                 - Hohenpeissenberg_131
                 - Schauinsland_12
                 - Plateau Rosa_10
@@ -187,24 +185,25 @@ CTDAS:
     ctdas_patch:
         templates: 
             - ctdas_patch/template.py 
-            - ctdas_patch/template.rc # ADD THESE!
-            - ctdas_patch/template.jb # ADD THESE!
+            - ctdas_patch/template.rc
+            - ctdas_patch/template.jb
         da/cyclecontrol: ctdas_patch/initexit_cteco2.py
         da/statevectors: ctdas_patch/statevector_baseclass_icos_cities.py
         da/observations: ctdas_patch/obs_class_ICOS_OCO2.py
         da/obsoperators: ctdas_patch/obsoperator_ICOS_OCO2.py
         da/optimizers: ctdas_patch/optimizer_baseclass_icos_cities.py
         da/pipelines: ctdas_patch/pipeline_icon.py
+        da/platform: ctdas_patch/santis.py
         da/rc/cteco2: ctdas_patch/carbontracker_icon_oco2.rc
         da/tools/icon:
             - ctdas_patch/utilities.py
             - ctdas_patch/icon_helper.py
             - ctdas_patch/icon_sampler.py
     covariancematrix_definition: |
-            Corr = np.array([[1,   0], # VPRM has a 100% error
-                             [0, 0.5]]) # Anthropogenic has a 50% error
-            specific_length_bio = 300
-            specific_length_anth = 200
+            Corr = np.array([[1,   0], # VPRM has a 100% error (remember, lambda VPRM=1 as set above)
+                             [0, 0.5]]) # Anthropogenic has a 50% error (remember, lambda Anth=2 as set above)
+            specific_length_bio = 300 # km
+            specific_length_anth = 200 # km
             exp_factors_anth = np.exp(-distances / specific_length_anth)
             exp_factors_bio = np.exp(-distances / specific_length_bio)
 
@@ -221,53 +220,7 @@ CTDAS:
                     covariancematrix[-n_bg_params + iii                    , -n_bg_params + iii] = 0.015 * 0.015  # 0.015 * 400 = 6 ppm stdev
                     covariancematrix[-n_bg_params + (iii + 1) % n_bg_params, -n_bg_params + iii] = 0.015 * 0.015 * 0.25 # Neighbouring entries
                     covariancematrix[-n_bg_params + (iii - 1) % n_bg_params, -n_bg_params + iii] = 0.015 * 0.015 * 0.25 # Neighbouring entries
-
-
-
-# # CTDAS ------------------------------------------------------------------------
-# ctdas_restart = False
-# ctdas_BG_run = False
-# # CTDAS cycle length in days
-# ctdas_cycle = int(restart_cycle_window / 60 / 60 / 24)
-# ctdas_nlag = 2
-# ctdas_tracer = 'co2'
-# # CTDAS number of regions and cells->regions file
-# ctdas_nreg_params = 21184
-# ctdas_regionsfile = vprm_regions_synth_nc # <--- Create 
-# # Number of boundaries, and boundaries mask/regions file
-# ctdas_bg_params = 8
-# # Number of ensemble members (make this consistent with your XML file!)
-# ctdas_optimizer_nmembers = 180
-# # CTDAS path
-# ctdas_dir = '/scratch/snx3000/ekoene/ctdas-icon/exec'
-# # Distance file from region to region (shape: [N_reg x N_reg]), for statevector localization
-# ctdas_sv_distances = '/scratch/snx3000/ekoene/CTDAS_cells2cells.nc'
-# # Distance file from region to stations (shape: [N_reg x N_obs]), for observation localization
-# ctdas_op_loc_coeffs = '/scratch/snx3000/ekoene/cells2stations.nc'
-# # Directory containing a file with all the observations
-# ctdas_datadir = '/scratch/snx3000/ekoene/ICOS_extracted/2018/'
-# # CTDAS localization setting
-# ctdas_system_localization = 'spatial'
-# # CTDAS statevector length for one window
-# ctdas_nparameters = 2 * ctdas_nreg_params + 8  # 2 (A , VPRM) * ctdas_nreg_params + ctdas_bg_params
-# # Extraction template
-# ctdas_extract_template = '/scratch/snx3000/ekoene/processing-chain/cases/VPRM_EU_ERA5_22/extract_template_icos_EU'
-# # ICON runscript template
-# ctdas_ICON_template = '/scratch/snx3000/ekoene/processing-chain/cases/VPRM_EU_ERA5_22/runscript_template_restart_icos_EU'
-# # Full path to SBATCH template that can submit extraction scripts
-# ctdas_sbatch_extract_template = '/scratch/snx3000/ekoene/processing-chain/cases/VPRM_EU_ERA5_22/sbatch_extract_template'
-# # Full path to possibly time-varying emissionsgrid (if not time-varying, supply a filename without {}!)
-# ctdas_oae_grid = "/scratch/snx3000/ekoene/inventories/INV_{}.nc"
-# ctdas_oae_grid_fname = '%Y%m%d'  # Specifies the naming scheme to use for the emission grids
-# # Spinup time length
-# # Restart file for the first simulation
-# ctdas_first_restart_init = '/scratch/snx3000/ekoene/processing-chain/work/VPRM_EU_ERA5_22/2018010100_0_240/icon/output_INIT'
-# # Number of vertical levels
-# nvlev = 60
-# # NOT NEEDED FOR ANYTHING, EXCEPT TO MAKE CTDAS RUN
-# ctdas_obsoperator_home = '/scratch/snx3000/msteiner/ctdas_test/exec/da/rc/stilt'
-# ctdas_obsoperator_rc = os.path.join(ctdas_obsoperator_home, 'stilt_0.rc')
-# ctdas_regtype = 'olson19_oif30'
+    job_time: 10:00:00
 
 cdo_nco_cmd: |
     uenv start icon-wcp --ignore-tty << 'EOF'

@@ -65,7 +65,7 @@ da.resources.ntasks : 1
 ! any form appropriate for your system. Typically, HPC queueing systems allow you a certain number of hours of usage before 
 ! your job is killed, and you are expected to finalize and submit a next job before that time. Valid entries are strings.
 
-da.resources.ntime  : 24:00:00
+da.resources.ntime  : {cfg.CTDAS_job_time}
 
 ! The resource settings above will cause the creation of a job file in which 2 cycles will be run, and 30 threads 
 ! are asked for a duration of 4 hours

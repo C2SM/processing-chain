@@ -23,13 +23,11 @@ obs.input.dir      : {cfg.case_root / "global_inputs" / "ICOS"}
 obspack.input.dir  : {cfg.case_root / "global_inputs" / "ICOS"}
 
 ! OCO2 stuff
-obs.column.input.dir        : {cfg.case_root / "global_inputs" / "OCO2"}
+obs.column.input.dir       : {cfg.case_root / "global_inputs" / "OCO2"}
 obs.column.ncfile          : OCO2_<YYYYMMDD>_ctdas.nc
-obs.column.selection.variables   : quality_flag
-obs.column.selection.criteria    : == 0
-mdm.calculation     : 0.015
-sigma_scale     : 0.5
-output_prefix : ICON-ART-UNSTR
-icon_grid_path : {cfg.input_files_scratch_dynamics_grid_filename}
-tracer_optim : TRCO2_A
+mdm.calculation            : 0.015
+sigma_scale                : 0.5
+output_prefix              : ICON-ART-UNSTR
+icon_grid_path             : {cfg.input_files_scratch_dynamics_grid_filename}
+tracer_optim               : TRCO2_A
 obs.column.footprint_samples_dim : 1
