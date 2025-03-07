@@ -3,11 +3,11 @@
 workflow: icon-art-vprm-spatially-varying-realistic-terraurb-clcplus
 constraint: mc
 run_on: cpu
-compute_queue: debug
+compute_queue: normal
 ntasks_per_node: 128
 startdate: 2023-07-01T00:00:00Z
 enddate: 2023-08-31T23:00:00Z
-restart_step: PT166H
+restart_step: PT1462H
 lterra_urb: .TRUE.
 lurbalb: .TRUE.
 lurbahf: .TRUE.
@@ -15,25 +15,25 @@ lurbahf: .TRUE.
 walltime:
     prepare_icon: '00:30:00'
     oem: '00:30:00'
-    icon: '00:30:00'
+    icon: '23:30:00'
 
 
 eccodes_dir: /store/c2sm/amrs/kdnmez/eccodes_definitions
 iconremap_bin: iconremap
 iconsub_bin: iconsub
-latbc_filename: ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
-latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/*_lbc.nc
-inidata_prefix: ICON-ART-UNSTRUCTURED_DOM01_
+latbc_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
+latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01*
+inidata_prefix: ncks_ICON-ART-UNSTRUCTURED_DOM01_
 inidata_nameformat: '<y><m><d>T<h>0000Z'
 inidata_filename_suffix: .nc
-inicond_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ICON-ART-UNSTRUCTURED_DOM01_20230701T000000Z.nc
+inicond_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T000000Z.nc
 output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
 filename_format: <output_filename>_DOM<physdom>_<datetime2>
 lateral_boundary_grid_order: lateral_boundary
 art_input_folder: /store/c2sm/amrs/kdnmez/icon-nwp-new/externals/art
 art_scratch_copy_folder: /capstor/scratch/cscs/kdnmez/UrbaNature/icon_terra_urb_run/input
 art_scratch_input_folder: /capstor/scratch/cscs/kdnmez/UrbaNature/icon_terra_urb_run/input/art
-dwdfg_filename: ICON-ART-UNSTRUCTURED_DOM01_20230701T000000Z.nc
+dwdfg_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T000000Z.nc
 
 icontools_runjobs:
     - copy_icbc.cfg
@@ -60,9 +60,9 @@ input_files:
 icon:
     binary_file: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/binaries/spatially_varying/no_change_in_ahf_isa/icon
     runjob_filename: icon_runjob.cfg
-    compute_queue: debug
-    walltime: '00:30:00'
-    np_tot: 2
+    compute_queue: normal
+    walltime: '23:30:00'
+    np_tot: 1
     np_io: 1
     np_restart: 0
     np_prefetch: 1

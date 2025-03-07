@@ -1,13 +1,13 @@
 # Configuration file for the 'icon-art-terraurb-test' case with ICON
 
-workflow: icon-art-vprm-noterraurb-clcplus
+workflow: icon-art-vprm-bep-tree
 constraint: mc
 run_on: cpu
-compute_queue: normal
+compute_queue: debug
 ntasks_per_node: 128
 startdate: 2023-07-01T00:00:00Z
-enddate: 2023-08-31T23:00:00Z
-restart_step: PT1462H
+enddate: 2023-07-01T03:00:00Z
+restart_step: PT02H
 lterra_urb: .FALSE.
 lurbalb: .FALSE.
 lurbahf: .FALSE.
@@ -15,14 +15,14 @@ lurbahf: .FALSE.
 walltime:
     prepare_icon: '00:30:00'
     oem: '00:30:00'
-    icon: '23:30:00'
+    icon: '00:30:00'
 
 
 eccodes_dir: /store/c2sm/amrs/kdnmez/eccodes_definitions
 iconremap_bin: iconremap
 iconsub_bin: iconsub
 latbc_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
-latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01*
+latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T0*
 inidata_prefix: ncks_ICON-ART-UNSTRUCTURED_DOM01_
 inidata_nameformat: '<y><m><d>T<h>0000Z'
 inidata_filename_suffix: .nc
@@ -58,10 +58,10 @@ input_files:
 
 
 icon:
-    binary_file: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/binaries/constant/icon
+    binary_file: /capstor/scratch/cscs/kdnmez/BEP-Tree/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-dwd-3.0-ypruvit76hfguurevcgxf33rmbtsn4ji/bin/icon
     runjob_filename: icon_runjob.cfg
-    compute_queue: normal
-    walltime: '23:30:00'
+    compute_queue: debug
+    walltime: '00:30:00'
     np_tot: 1
     np_io: 1
     np_restart: 0
