@@ -12,7 +12,6 @@ You should have received a copy of the GNU General Public License along with thi
 program. If not, see <http://www.gnu.org/licenses/>."""
 #!/usr/bin/env python
 # cartesius.py
-
 """
 Author : peters 
 
@@ -26,28 +25,30 @@ import subprocess
 
 from da.platform.platform_baseclass import Platform
 
-std_joboptions ={{'jobname':'test', 
-                 'jobaccount':'{cfg.compute_account}', 
-                 'jobtype':'serial', 
-                 'jobshell':'/bin/sh',
-                 'jobtime':'10:00:00', 
-                 'jobinput':'/dev/null', 
-                 'jobnodes':'1', 
-                 'jobconstraint':'{cfg.constraint}', 
-                 'jobtasks':'', 
-                 'modulenetcdf':'netcdf/4.1.2', 
-                 'networkMPI':'',
-                 'jobqueue': '{cfg.compute_queue}', 
-                 'ntaskspercore': '1', 
-                 'ntaskspernode': '36', 
-                 'cpuspertask': '1'}}
+std_joboptions = {{
+    'jobname': 'test',
+    'jobaccount': '{cfg.compute_account}',
+    'jobtype': 'serial',
+    'jobshell': '/bin/sh',
+    'jobtime': '10:00:00',
+    'jobinput': '/dev/null',
+    'jobnodes': '1',
+    'jobconstraint': '{cfg.constraint}',
+    'jobtasks': '',
+    'modulenetcdf': 'netcdf/4.1.2',
+    'networkMPI': '',
+    'jobqueue': '{cfg.compute_queue}',
+    'ntaskspercore': '1',
+    'ntaskspernode': '36',
+    'cpuspertask': '1'
+}}
 
 
 class SantisPlatform(Platform):
-    def __init__(self):
-        self.ID = 'Santis'    # the identifier gives the platform name
-        self.version = '1.0'     # the platform version used
 
+    def __init__(self):
+        self.ID = 'Santis'  # the identifier gives the platform name
+        self.version = '1.0'  # the platform version used
 
     def give_blocking_flag(self):
         """
@@ -87,7 +88,7 @@ class SantisPlatform(Platform):
         An extra option ``block`` has been added that allows the job template to be configured to block the current
         job until the submitted job in this template has been completed fully.
         """
-        
+
         template = """#!/bin/bash \n""" + \
                    """## \n""" + \
                    """## This is a set of dummy names, to be replaced by values from the dictionary \n""" + \
@@ -119,31 +120,33 @@ class SantisPlatform(Platform):
 
         return template
 
-
     def submit_job(self, jobfile, joblog=None, block=False):
         """ This method submits a jobfile to the queue, and returns the queue ID """
-
 
         #cmd     = ["llsubmit","-s",jobfile]
         #msg = "A new task will be started (%s)"%cmd  ; logging.info(msg)
 
         if block:
-            cmd = ["salloc",'-n',std_joboptions['jobnodes'],'-',std_joboptions['jobtime'], jobfile]
+            cmd = [
+                "salloc", '-n', std_joboptions['jobnodes'], '-',
+                std_joboptions['jobtime'], jobfile
+            ]
             logging.info("A new task will be started (%s)" % cmd)
-            output = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+            output = subprocess.Popen(cmd,
+                                      stdout=subprocess.PIPE).communicate()[0]
             logging.info(output)
             print(('output', output))
-            jobid = output.split()[-1]             
+            jobid = output.split()[-1]
             print(('jobid', jobid))
         else:
             cmd = ["sbatch", jobfile]
             logging.info("A new job will be submitted (%s)" % cmd)
-            output = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]  ; logging.info(output)
+            output = subprocess.Popen(cmd,
+                                      stdout=subprocess.PIPE).communicate()[0]
+            logging.info(output)
             jobid = output.split()[-1]
-            
+
         return jobid
-
-
 
 
 if __name__ == "__main__":

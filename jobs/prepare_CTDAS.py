@@ -492,7 +492,8 @@ def main(cfg):
 
         meta_dict = {
             d.replace("XXX", "ENS"): {
-                "ensemble": cfg.CTDAS_nensembles + (1 if cfg.CTDAS_propagate_bg else 0)
+                "ensemble":
+                cfg.CTDAS_nensembles + (1 if cfg.CTDAS_propagate_bg else 0)
             } if "XXX" in d else {}
             for d in cfg.tracers if not d.startswith("EM")
         }
