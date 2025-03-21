@@ -652,12 +652,13 @@ def wait_for_job(job_id):
 
         # Extract all job states from the output
         states = [s.strip() for s in result.stdout.split("\n") if s.strip()]
-        logging.info(f"Job {job_id} finished with states: {states}")
 
         if states:
             if all(s == "COMPLETED" for s in states):
+                logging.info(f"Job {job_id} finished with states: {states}")
                 return True, "COMPLETED"
             elif any(s in ["FAILED", "CANCELLED", "TIMEOUT"] for s in states):
+                logging.info(f"Job {job_id} finished with states: {states}")
                 return False, "FAILED"
 
         time.sleep(10)
