@@ -93,9 +93,11 @@ def start_ctdas(cfg):
     """Start CTDAS process."""
     logging.info("Starting CTDAS")
     try:
-        command = f"cd {cfg.CTDAS_ctdas_path} && ./start_ctdas.sh $SCRATCH ctdas_procchain"
+        command = f"cd {cfg.CTDAS_ctdas_path} && ./start_ctdas.sh $SCRATCH {cfg.CTDAS_project_name}"
+        logging.info(f"Running: {command}")
         subprocess.run(command, shell=True, check=True)
-        command = "cd $SCRATCH/ctdas_procchain/exec && sbatch ctdas_procchain.jb"
+        command = f"cd $SCRATCH/{cfg.CTDAS_project_name}/exec && sbatch {cfg.CTDAS_project_name}.jb"
+        logging.info(f"Running: {command}")
         subprocess.run(command, shell=True, check=True)
     except subprocess.CalledProcessError:
         logging.info(

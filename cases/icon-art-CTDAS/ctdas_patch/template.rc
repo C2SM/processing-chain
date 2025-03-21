@@ -41,7 +41,7 @@ time.cycle          : {cfg.CTDAS_ctdas_cycle}
 
 ! The number of cycles of lag to use for a smoother version of CTDAS. CarbonTracker CO2 typically uses 5 weeks of lag. Valid entries are integers > 0
 
-time.nlag           : {cfg.CTDAS_ctdas_nlag}
+time.nlag           : {cfg.CTDAS_nlag}
 
 ! The directory under which the code, input, and output will be stored. This is the base directory for a run. The word
 ! '/' will be replaced through the start_ctdas.sh script by a user-specified folder name. DO NOT REPLACE

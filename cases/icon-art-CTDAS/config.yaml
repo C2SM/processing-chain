@@ -63,6 +63,8 @@ tracers:
 # - rc-cteco2 file [which, ultimately, is how we pass general input like folder names etc to CTDAS]
 # - rc-job file [which, ultimately, is the setup for CTDAS like lag times, etc.]
 CTDAS:
+    project_name: ctdas_ICOS_OCO2
+    job_time: '10:00:00'
     runthrough: True # If true, this makes the 'CTDAS' job run (1) CTDAS but also (2) a simulation for the full year without the ensemble members but with n_boundaries BG tracers
     nlag: 2
     tracer: co2
@@ -220,7 +222,6 @@ CTDAS:
                     covariancematrix[-n_bg_params + iii                    , -n_bg_params + iii] = 0.015 * 0.015  # 0.015 * 400 = 6 ppm stdev
                     covariancematrix[-n_bg_params + (iii + 1) % n_bg_params, -n_bg_params + iii] = 0.015 * 0.015 * 0.25 # Neighbouring entries
                     covariancematrix[-n_bg_params + (iii - 1) % n_bg_params, -n_bg_params + iii] = 0.015 * 0.015 * 0.25 # Neighbouring entries
-    job_time: 10:00:00
 
 cdo_nco_cmd: |
     uenv start icon-wcp --ignore-tty << 'EOF'
@@ -236,7 +237,7 @@ art_input_folder: ./input/icon-art-oem/ART
 walltime:
     prepare_icon: '00:15:00'
     prepare_art_global: '00:10:00'
-    icon: '00:05:00'
+    icon: '03:00:00'
     prepare_CTDAS: '00:00:00'
 
 meteo:
@@ -267,13 +268,3 @@ input_files:
 icon:
     executable: /capstor/scratch/cscs/ekoene/tmp/spack-c2sm/spack/opt/spack/linux-sles15-neoverse_v2/nvhpc-24.3/icon-develop-sytqk6o7h5y3imrsevsswc2inxaegbpx/bin/icon
     runjob_filename: ICON/ICON_template.job
-#     # era5_inijob: icon_era5_inicond.sh
-#     # era5_nudgingjob: icon_era5_nudging.sh
-#     species_inijob: icon_species_inicond.sh
-#     species_nudgingjob: icon_species_nudging.sh
-#     output_writing_step: 6
-#     compute_queue: normal
-#     np_tot: 32
-#     np_io: 3
-#     np_restart: 1
-#     np_prefetch: 1

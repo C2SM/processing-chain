@@ -273,10 +273,6 @@ class ObservationOperator(object):
                 '_%s_opt2.job' % (self.dacycle['time.sample.stamp'][0:8]))
             self.outfolder = os.path.join('{cfg.case_root / "global_outputs"}',
                                           f"opt2_{{job_timestr}}")
-            finalfile = os.path.join(
-                self.outfolder,
-                f"ICON-ART-OEM-INIT_{{(time + dt.timedelta(seconds={cfg.CTDAS_restart_init_time}) + dt.timedelta(days={cfg.CTDAS_ctdas_cycle})).strftime('%Y-%m-%dT%H:%M:%S')}}.000.nc"
-            )
         else:
             if lag == 0:
                 runscript = os.path.join(
@@ -286,10 +282,6 @@ class ObservationOperator(object):
                 self.outfolder = os.path.join(
                     '{cfg.case_root / "global_outputs"}',
                     f"opt1_{{job_timestr}}")
-                finalfile = os.path.join(
-                    self.outfolder,
-                    f"ICON-ART-OEM-INIT_{{(time + dt.timedelta(seconds={cfg.CTDAS_restart_init_time}) + dt.timedelta(days={cfg.CTDAS_ctdas_cycle})).strftime('%Y-%m-%dT%H:%M:%S')}}.000.nc"
-                )
             else:
                 runscript = os.path.join(
                     self.simulationdir, folder_timestr, 'icon', 'run',
@@ -298,15 +290,10 @@ class ObservationOperator(object):
                 self.outfolder = os.path.join(
                     '{cfg.case_root / "global_outputs"}',
                     f"prior_{{job_timestr}}")
-                finalfile = os.path.join(
-                    self.outfolder,
-                    f"ICON-ART-OEM-INIT_{{(time + dt.timedelta(seconds={cfg.CTDAS_restart_init_time}) + dt.timedelta(days={cfg.CTDAS_ctdas_cycle})).strftime('%Y-%m-%dT%H:%M:%S')}}.000.nc"
-                )
 
-        while not (os.path.exists(finalfile)):
-            logging.info('runscript name: %s' % (runscript))
-            start_icon(runscript)
-            logging.info('ICON done!')
+        logging.info('runscript name: %s' % (runscript))
+        start_icon(runscript)
+        logging.info('ICON done!')
 
     def sample(self, samples, statevector, lag):
         for j, sample in enumerate(samples):
@@ -653,35 +640,34 @@ class RandomizerObservationOperator(ObservationOperator):
 
 
 def wait_for_job(job_id):
-    """Wait for a job to complete."""
+    """Wait for a job to complete and check if all states are COMPLETED."""
     if not job_id:
-        return False
+        return False, "UNKNOWN"
 
     while True:
         result = subprocess.run(
-            f"sacct -j {{job_id}} --format=State --noheader",
+            f"sacct -j {job_id} --format=State --noheader",
             shell=True,
             capture_output=True,
-            text=True)
-        state = result.stdout.strip()
+            text=True
+        )
 
-        if state:
-            if any(s in state
-                   for s in ["COMPLETED", "FAILED", "CANCELLED", "TIMEOUT"]):
-                logging.info(f"Job {{job_id}} finished with state: {{state}}")
-                return state == "COMPLETED", state
+        # Extract all job states from the output
+        states = [s.strip() for s in result.stdout.split("\n") if s.strip()]
+        logging.info(f"Job {job_id} finished with states: {states}")
+
+        if states:
+            if all(s == "COMPLETED" for s in states):
+                return True, "COMPLETED"
+            elif any(s in ["FAILED", "CANCELLED", "TIMEOUT"] for s in states):
+                return False, "FAILED"
 
         time.sleep(10)
 
-
 def submit_job(command):
     """Submit a job and return the job ID."""
-    logging.info(f"Running: {{command}}")
-    result = subprocess.run(command,
-                            shell=True,
-                            capture_output=True,
-                            text=True,
-                            check=False)
+    logging.info(f"Submitting job: {command}")
+    result = subprocess.run(command, shell=True, capture_output=True, text=True, check=False)
     match = re.search(r"Submitted batch job (\d+)", result.stdout)
 
     if match:
@@ -690,31 +676,31 @@ def submit_job(command):
     logging.error("Failed to get job ID from sbatch output.")
     return None
 
-
 def start_icon(runscript, max_retries=3):
+    """Start an ICON job, retrying if it fails."""
     retries = 0
-    while retries <= max_retries:
-        command = f"uenv run icon-wcp -- sbatch {{runscript}} --wait"
-        logging.info(f"Running ICON case job with {{command}}")
-        job_id = submit_job(command)
-        logging.info(f"Running job ID {{job_id}}")
 
+    while retries < max_retries:
+        command = f"uenv run icon-wcp -- sbatch {runscript} --wait"
+        logging.info(f"Starting ICON case job: {command}")
+        job_id = submit_job(command)
+
+        if not job_id:
+            logging.error("Failed to submit job.")
+            return False  # Failed to even submit
+
+        logging.info(f"Running job ID {job_id}")
         completed, state = wait_for_job(job_id)
 
         if completed:
-            return True
+            return True  # Job finished successfully
 
-        if state in ["FAILED", "CANCELLED", "TIMEOUT"]:
-            retries += 1
-            logging.warning(
-                f"Job failed with state {{state}}. Retrying {{retries}}/{{max_retries}}..."
-            )
-        else:
-            break
+        # Job failed, retry if under max_retries
+        retries += 1
+        logging.warning(f"Job failed with state {state}. Retrying {retries}/{max_retries}...")
 
-    logging.error("ICON job failed after maximum retries.")
-    return False
-
+    logging.error(f"Job failed after {max_retries} retries.")
+    return False  # Exhausted all retries
 
 if __name__ == "__main__":
     pass

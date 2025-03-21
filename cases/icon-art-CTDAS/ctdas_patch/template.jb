@@ -13,4 +13,4 @@
 
 export icycle_in_job=1
 
-python3 $SCRATCH/ctdas_procchain/exec/ctdas_procchain.py -v rc=$SCRATCH/ctdas_procchain/exec/ctdas_procchain.rc  >& $SCRATCH/ctdas_procchain/exec/ctdas_procchain.log
+python3 $SCRATCH/{cfg.CTDAS_project_name}/exec/{cfg.CTDAS_project_name}.py -v rc=$SCRATCH/{cfg.CTDAS_project_name}/exec/{cfg.CTDAS_project_name}.rc  >& $SCRATCH/{cfg.CTDAS_project_name}/exec/{cfg.CTDAS_project_name}.log

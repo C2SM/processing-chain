@@ -1,7 +1,7 @@
 #!/bin/bash -l
 #SBATCH --uenv="icon-wcp/v1:rc4"
 #SBATCH --job-name="{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.forecasttime}"
-#SBATCH --time=00:50:00
+#SBATCH --time={cfg.walltime_icon}
 #SBATCH --account={cfg.compute_account}
 #SBATCH --nodes={cfg.nodes}
 #SBATCH --ntasks-per-node={cfg.ntasks_per_node}
