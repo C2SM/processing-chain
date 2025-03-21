@@ -645,12 +645,10 @@ def wait_for_job(job_id):
         return False, "UNKNOWN"
 
     while True:
-        result = subprocess.run(
-            f"sacct -j {job_id} --format=State --noheader",
-            shell=True,
-            capture_output=True,
-            text=True
-        )
+        result = subprocess.run(f"sacct -j {job_id} --format=State --noheader",
+                                shell=True,
+                                capture_output=True,
+                                text=True)
 
         # Extract all job states from the output
         states = [s.strip() for s in result.stdout.split("\n") if s.strip()]
@@ -664,10 +662,15 @@ def wait_for_job(job_id):
 
         time.sleep(10)
 
+
 def submit_job(command):
     """Submit a job and return the job ID."""
     logging.info(f"Submitting job: {command}")
-    result = subprocess.run(command, shell=True, capture_output=True, text=True, check=False)
+    result = subprocess.run(command,
+                            shell=True,
+                            capture_output=True,
+                            text=True,
+                            check=False)
     match = re.search(r"Submitted batch job (\d+)", result.stdout)
 
     if match:
@@ -675,6 +678,7 @@ def submit_job(command):
 
     logging.error("Failed to get job ID from sbatch output.")
     return None
+
 
 def start_icon(runscript, max_retries=3):
     """Start an ICON job, retrying if it fails."""
@@ -697,10 +701,13 @@ def start_icon(runscript, max_retries=3):
 
         # Job failed, retry if under max_retries
         retries += 1
-        logging.warning(f"Job failed with state {state}. Retrying {retries}/{max_retries}...")
+        logging.warning(
+            f"Job failed with state {state}. Retrying {retries}/{max_retries}..."
+        )
 
     logging.error(f"Job failed after {max_retries} retries.")
     return False  # Exhausted all retries
+
 
 if __name__ == "__main__":
     pass
