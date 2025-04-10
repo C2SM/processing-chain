@@ -15,7 +15,7 @@ lurbahf: .TRUE.
 walltime:
     prepare_icon: '00:30:00'
     oem: '00:30:00'
-    icon: '23:30:00'
+    icon: '08:00:00'
 
 
 eccodes_dir: /store/c2sm/amrs/kdnmez/eccodes_definitions
@@ -61,8 +61,8 @@ icon:
     binary_file: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/binaries/spatially_varying/no_change_in_ahf_isa/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
-    walltime: '23:30:00'
-    np_tot: 1
+    walltime: '08:00:00'
+    np_tot: 5
     np_io: 1
     np_restart: 0
     np_prefetch: 1
