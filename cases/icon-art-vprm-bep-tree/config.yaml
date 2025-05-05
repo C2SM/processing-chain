@@ -3,7 +3,7 @@
 workflow: icon-art-vprm-bep-tree
 constraint: mc
 run_on: cpu
-compute_queue: debug
+compute_queue: normal
 ntasks_per_node: 128
 startdate: 2023-07-01T00:00:00Z
 enddate: 2023-07-01T03:00:00Z
@@ -13,24 +13,24 @@ lurbalb: .FALSE.
 lurbahf: .FALSE.
 
 walltime:
-    prepare_icon: '00:30:00'
-    oem: '00:30:00'
-    icon: '00:30:00'
+    prepare_icon: '01:00:00'
+    oem: '01:00:00'
+    icon: '01:00:00'
 
 
-eccodes_dir: /store/c2sm/amrs/kdnmez/eccodes_definitions
+eccodes_dir: /capstor/store/cscs/c2sm/amrs/kdnmez/eccodes_definitions
 iconremap_bin: iconremap
 iconsub_bin: iconsub
 latbc_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
-latbc_copy_path: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T0*
+latbc_copy_path: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T0*
 inidata_prefix: ncks_ICON-ART-UNSTRUCTURED_DOM01_
 inidata_nameformat: '<y><m><d>T<h>0000Z'
 inidata_filename_suffix: .nc
-inicond_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T000000Z.nc
+inicond_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T000000Z.nc
 output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
 filename_format: <output_filename>_DOM<physdom>_<datetime2>
 lateral_boundary_grid_order: lateral_boundary
-art_input_folder: /store/c2sm/amrs/kdnmez/icon-nwp-new/externals/art
+art_input_folder: /capstor/store/cscs/c2sm/amrs/kdnmez/icon-nwp-new/externals/art
 art_scratch_copy_folder: /capstor/scratch/cscs/kdnmez/UrbaNature/icon_terra_urb_run/input
 art_scratch_input_folder: /capstor/scratch/cscs/kdnmez/UrbaNature/icon_terra_urb_run/input/art
 dwdfg_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T000000Z.nc
@@ -39,29 +39,28 @@ icontools_runjobs:
     - copy_icbc.cfg
 
 input_files:
-    radiation_grid_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/switzerland/icon_switzerland_R19B9_DOM01.parent.nc
-    dynamics_grid_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/switzerland/icon_switzerland_R19B9_DOM01.nc
-    map_file_latbc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/map_file_ZH.latbc
-    lateral_boundary_grid: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/lateral_boundary.grid.nc
-    lrtm_filename: /store/c2sm/amrs/kdnmez/icon-nwp-new/data/rrtmg_lw.nc
-    map_file_ana: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/map_file.ana
-    chemtracer_xml_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/xml/updated_summer23.xml
-    oem_gridded_emissions_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/oae/oem_gridded_emissions.nc
-    oem_vertical_profiles_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/oae/vertical_profiles.nc
-    oem_hourofday_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/oae/hourofday.nc
-    oem_dayofweek_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/oae/dayofweek.nc
-    oem_monthofyear_nc: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/oae/monthofyear.nc
-    extpar_filename: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/extpar/extpar_output_switzerland_clcplus_UrbaNature_modify_extpar.nc
-    vegetation_indices: /store/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/vprm/VPRM_indices_ICON_terra_urb_2023_switzerland.nc
+    radiation_grid_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/switzerland/icon_switzerland_R19B9_DOM01.parent.nc
+    dynamics_grid_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/switzerland/icon_switzerland_R19B9_DOM01.nc
+    map_file_latbc: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/map_file_ZH.latbc
+    lateral_boundary_grid: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/lateral_boundary.grid.nc
+    lrtm_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/icon-nwp-new/data/rrtmg_lw.nc
+    map_file_ana: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/grid_input/map_file.ana
+    chemtracer_xml_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/xml/updated_summer23.xml
+    oem_gridded_emissions_nc: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/oae/oem_gridded_emissions.nc
+    oem_vertical_profiles_nc: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/oae/vertical_profiles.nc
+    oem_hourofday_nc: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/oae/hourofday.nc
+    oem_dayofweek_nc: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/oae/dayofweek.nc
+    oem_monthofyear_nc: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/oae/monthofyear.nc
+    extpar_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/extpar/extpar_output_switzerland_clcplus_UrbaNature_modify_extpar.nc
+    vegetation_indices: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/vprm/VPRM_indices_ICON_terra_urb_2023_switzerland.nc
 
 # the right extpar data to use for clcplus is: spatially_varying_extpar_final_output_CLCplus_UrbaNature.nc both for spatially varying and constant cases.
 
-
 icon:
-    binary_file: /capstor/scratch/cscs/kdnmez/BEP-Tree/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-dwd-3.0-ypruvit76hfguurevcgxf33rmbtsn4ji/bin/icon
+    binary_file: /capstor/store/cscs/c2sm/amrs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-dwd-3.0-4otiemol7yp2y3urtqpghh6w2axnvhai/bin/icon
     runjob_filename: icon_runjob.cfg
-    compute_queue: debug
-    walltime: '00:30:00'
+    compute_queue: normal
+    walltime: '01:00:00'
     np_tot: 1
     np_io: 1
     np_restart: 0

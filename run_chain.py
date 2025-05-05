@@ -183,14 +183,15 @@ def run_chunk(cfg, force, resume):
         for job_name in cfg.jobs:
             print(f'    └── Process "{job_name}" for chunk "{cfg.chunk_id}"')
             try:
+                print("1")
                 # Change the log file
                 cfg.logfile = cfg.log_working_dir / job_name
                 cfg.logfile_finish = cfg.log_finished_dir / job_name
-
+                print("11")
                 # Launch the job
                 to_call = getattr(jobs, job_name)
                 to_call.main(cfg)
-
+                print("111")
                 shutil.copy(cfg.logfile, cfg.logfile_finish)
 
                 exitcode = 0
@@ -199,20 +200,21 @@ def run_chunk(cfg, force, resume):
                 subject = "ERROR or TIMEOUT in job '%s' for chunk '%s'" % (
                     job_name, cfg.chunk_id)
                 logging.exception(subject)
-                if cfg.user_mail:
-                    message = tools.prepare_message(cfg.log_working_dir /
-                                                    job_name)
-                    logging.info('Sending log file to %s' % cfg.user_mail)
-                    tools.send_mail(cfg.user_mail, subject, message)
+                #if cfg.user_mail:
+                #    message = tools.prepare_message(cfg.log_working_dir /
+                #                                    job_name)
+                #    logging.info('Sending log file to %s' % cfg.user_mail)
+                #    tools.send_mail(cfg.user_mail, subject, message)
 
             if exitcode != 0 or not (cfg.log_finished_dir / job_name).exists():
+                print("2")
                 subject = "ERROR or TIMEOUT in job '%s' for chunk '%s'" % (
                     job_name, cfg.chunk_id)
-                if cfg.user_mail:
-                    message = tools.prepare_message(cfg.log_working_dir /
-                                                    job_name)
-                    logging.info('Sending log file to %s' % cfg.user_mail)
-                    tools.send_mail(cfg.user_mail, subject, message)
+                #if cfg.user_mail:
+                #    message = tools.prepare_message(cfg.log_working_dir /
+                #                                    job_name)
+                #    logging.info('Sending log file to %s' % cfg.user_mail)
+                #    tools.send_mail(cfg.user_mail, subject, message)
                 raise RuntimeError(subject)
 
 
