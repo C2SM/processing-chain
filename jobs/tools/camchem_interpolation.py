@@ -323,48 +323,56 @@ def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date):
 
 ##################################
 
-def log_intpl_timeslice(pres_m, pres, var_data):
-    pres_m_flipped = np.flip(pres_m,axis=0)
-    pres_flipped = np.flip(pres,axis=0)
-    var_data_flipped = np.flip(var_data,axis=0)
 
-    # -- Find meteo levels lying above given chem level 
+def log_intpl_timeslice(pres_m, pres, var_data):
+    pres_m_flipped = np.flip(pres_m, axis=0)
+    pres_flipped = np.flip(pres, axis=0)
+    var_data_flipped = np.flip(var_data, axis=0)
+
+    # -- Find meteo levels lying above given chem level
     # -- (that is, meteo levels with lower pressure than given chem level)
-    above_target = pres_flipped[:,np.newaxis] <= pres_m_flipped
+    above_target = pres_flipped[:, np.newaxis] <= pres_m_flipped
 
     # -- Calculate number of levels below given chem level
     # -- (that is, number of meteo levels with higher pressire than given chem level)
-    lev_count = (pres_flipped[:,np.newaxis]>=pres_m_flipped).sum(axis=0)
+    lev_count = (pres_flipped[:, np.newaxis] >= pres_m_flipped).sum(axis=0)
 
     # -- Find indices of first meteo levels lying above given chem level
     # -- The index is set to -1 if no meteo levels are found
-    first_above_target = np.where(lev_count == len(pres_flipped), -1, np.argmax(above_target, axis=0))
+    first_above_target = np.where(lev_count == len(pres_flipped), -1,
+                                  np.argmax(above_target, axis=0))
 
     # -- Select indices of 2 closest neighbouring levels for given chem level
-    vertical_indices = np.stack([first_above_target, first_above_target-1], axis=0)
+    vertical_indices = np.stack([first_above_target, first_above_target - 1],
+                                axis=0)
 
     # --  Set both indices to highest/lower chem level if given chem level is above/below all meteo levels
-    vertical_indices[:,first_above_target==0] = 0
-    vertical_indices[:,first_above_target==-1] = len(pres_flipped)-1 
+    vertical_indices[:, first_above_target == 0] = 0
+    vertical_indices[:, first_above_target == -1] = len(pres_flipped) - 1
 
     # -- Select pressure values of 2 closest neighbouring levels
-    pk_below = np.take_along_axis((pres_flipped), vertical_indices[1], axis=0) # this is the pressure of the lower level (higher pressure)
-    pk_up = np.take_along_axis((pres_flipped), vertical_indices[0], axis=0) # this is the pressure of the upper level (lower pressure) 
+    pk_below = np.take_along_axis(
+        (pres_flipped), vertical_indices[1],
+        axis=0)  # this is the pressure of the lower level (higher pressure)
+    pk_up = np.take_along_axis(
+        (pres_flipped), vertical_indices[0],
+        axis=0)  # this is the pressure of the upper level (lower pressure)
 
     # -- Compute interpolation weights
-    alpha = (np.log(pres_m_flipped/pk_up))/(np.log(pk_below/pk_up)) 
-    weights = np.stack([alpha, 1-alpha], axis=0) 
+    alpha = (np.log(pres_m_flipped / pk_up)) / (np.log(pk_below / pk_up))
+    weights = np.stack([alpha, 1 - alpha], axis=0)
 
     # -- Weights for chem levels lying above/below all meteo levels
-    weights[:,first_above_target==0] = 0.5 
-    weights[:,first_above_target==-1] = 0.5
+    weights[:, first_above_target == 0] = 0.5
+    weights[:, first_above_target == -1] = 0.5
 
     # Interpolate
     var_data_intpl_flipped = np.take_along_axis(var_data_flipped, vertical_indices[1], axis=0) * weights[0] + \
                 np.take_along_axis(var_data_flipped, vertical_indices[0], axis=0) * weights[1]
 
-    var_data_intpl = np.flip(var_data_intpl_flipped,axis=0)   
+    var_data_intpl = np.flip(var_data_intpl_flipped, axis=0)
     return var_data_intpl
+
 
 def hybrid_pressure_interpolation(in_ds, out_ds, var_name, time_indices):
     """Perform vertical interpolation of 'var_name'. 
@@ -372,19 +380,21 @@ def hybrid_pressure_interpolation(in_ds, out_ds, var_name, time_indices):
     """
     # Pressure on vertical levels of meteo data
     pres_m = out_ds['pres_m'][:]
-    # Pressure on vertical levels of chemistry data 
+    # Pressure on vertical levels of chemistry data
     pres = out_ds['pres'][:]
-    var_data = in_ds[var_name][np.s_[time_indices,:]]
+    var_data = in_ds[var_name][np.s_[time_indices, :]]
 
-    var_arr = np.zeros((out_ds.dimensions['time'].size, 
-                        out_ds.dimensions['lev_m'].size, 
-                        out_ds.dimensions['lat'].size, 
-                        out_ds.dimensions['lon'].size))
+    var_arr = np.zeros(
+        (out_ds.dimensions['time'].size, out_ds.dimensions['lev_m'].size,
+         out_ds.dimensions['lat'].size, out_ds.dimensions['lon'].size))
 
     for dt in range(len(out_ds['time'][:])):
-        var_arr[dt,:,:,:] = log_intpl_timeslice(pres_m[dt,:,:,:], pres[dt,:,:,:], var_data[dt,:,:,:])
+        var_arr[dt, :, :, :] = log_intpl_timeslice(pres_m[dt, :, :, :],
+                                                   pres[dt, :, :, :],
+                                                   var_data[dt, :, :, :])
 
     return var_arr
+
 
 def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
                end_chunk, ref_date):
