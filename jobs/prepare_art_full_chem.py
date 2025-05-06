@@ -111,7 +111,8 @@ def main(cfg):
             'soot_insol_acc': 0.1
         },
         'so4_a2': {
-            'so4_mixed_ait': 0.9 * MW_SO4 / MW_NH4HSO4,  # Sulfat aerosol in CAM-Chem has composition NH4HSO4
+            'so4_mixed_ait': 0.9 * MW_SO4 /
+            MW_NH4HSO4,  # Sulfat aerosol in CAM-Chem has composition NH4HSO4
             'so4_sol_ait': 0.1 * MW_SO4 / MW_NH4HSO4,
             'nh4_mixed_ait': 0.9 * MW_NH4 / MW_NH4HSO4,
             'nh4_sol_ait': 0.1 * MW_NH4 / MW_NH4HSO4
@@ -160,7 +161,7 @@ def main(cfg):
         },
         #'NH4': {
         #    'nh4_mixed_acc':
-        #    0.9 * 0.9 * 0.9,  # Ammonium aerosol 90%-->Aitken/Accumulation, 
+        #    0.9 * 0.9 * 0.9,  # Ammonium aerosol 90%-->Aitken/Accumulation,
         #    'nh4_sol_acc':
         #    0.9 * 0.9 * 0.1,  # 10%-->Coarse, 90%-->Accumulation, 10%-->Aitken
         #    'nh4_mixed_ait': 0.9 * 0.1 * 0.9,
@@ -384,23 +385,29 @@ def main(cfg):
         ds_chem = xr.open_dataset(chem_file)
 
         if 'GEOP_ML' not in ds_meteo.variables:
-            logging.warning(f"'GEOP_ML' missing in {meteo_file}. Attempting to copy from 00:00 UTC file.")
+            logging.warning(
+                f"'GEOP_ML' missing in {meteo_file}. Attempting to copy from 00:00 UTC file."
+            )
             zero_hour = time.replace(hour=0, minute=0, second=0)
             zero_hour_file = os.path.join(
                 cfg.icon_input_icbc,
-                zero_hour.strftime(cfg.meteo_prefix + cfg.meteo_nameformat) + '_lbc.nc')
+                zero_hour.strftime(cfg.meteo_prefix + cfg.meteo_nameformat) +
+                '_lbc.nc')
 
             try:
                 ds_zero_hour = xr.open_dataset(zero_hour_file)
                 if 'GEOP_ML' in ds_zero_hour.variables:
                     ds_meteo['GEOP_ML'] = ds_zero_hour['GEOP_ML']
-                    logging.info(f"Copied 'GEOP_ML' from {zero_hour_file} to {meteo_file}.")
+                    logging.info(
+                        f"Copied 'GEOP_ML' from {zero_hour_file} to {meteo_file}."
+                    )
                 else:
                     logging.error(f"'GEOP_ML' not found in {zero_hour_file}.")
             except FileNotFoundError:
                 logging.error(f"00:00 UTC file {zero_hour_file} not found.")
             except Exception as e:
-                logging.error(f"Failed to process 00:00 UTC file {zero_hour_file}: {e}")
+                logging.error(
+                    f"Failed to process 00:00 UTC file {zero_hour_file}: {e}")
 
         ds_merged = xr.merge([ds_meteo, ds_chem], compat="override")
         ds_merged.to_netcdf(merged_file)
