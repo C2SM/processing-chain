@@ -3,6 +3,7 @@
 
 import os
 import logging
+import numpy as np
 import xarray as xr
 from . import tools, prepare_icon
 import shutil
@@ -90,15 +91,16 @@ def main(cfg):
     MW_CL = 35.453
     MW_NA = 23.0
     MW_NACL = 58.453
+    MW_NH4 = 18.04
 
     aero_mode_dict = {
         'pom_a4': {
-            'poa_mixed_ait': 0.9,  # 90%-->mixed, 10%-->sol/insol 
-            'poa_insol_ait': 0.1
+            'pom_mixed_ait': 0.9,  # 90%-->mixed, 10%-->sol/insol 
+            'pom_insol_ait': 0.1
         },
         'pom_a1': {
-            'poa_mixed_acc': 0.9,
-            'poa_insol_acc': 0.1
+            'pom_mixed_acc': 0.9,
+            'pom_insol_acc': 0.1
         },
         'bc_a4': {
             'soot_mixed_ait': 0.9,
@@ -109,24 +111,29 @@ def main(cfg):
             'soot_insol_acc': 0.1
         },
         'so4_a2': {
-            'so4_mixed_ait': 0.9 * MW_SO4 /
-            MW_NH4HSO4,  # Sulfat aerosol in CAM-Chem has composition NH4HSO4
-            'so4_sol_ait': 0.1 * MW_SO4 / MW_NH4HSO4
+            'so4_mixed_ait': 0.9 * MW_SO4 / MW_NH4HSO4,  # Sulfat aerosol in CAM-Chem has composition NH4HSO4
+            'so4_sol_ait': 0.1 * MW_SO4 / MW_NH4HSO4,
+            'nh4_mixed_ait': 0.9 * MW_NH4 / MW_NH4HSO4,
+            'nh4_sol_ait': 0.1 * MW_NH4 / MW_NH4HSO4
         },
         'so4_a1': {
             'so4_mixed_acc': 0.9 * MW_SO4 / MW_NH4HSO4,
-            'so4_sol_acc': 0.1 * MW_SO4 / MW_NH4HSO4
+            'so4_sol_acc': 0.1 * MW_SO4 / MW_NH4HSO4,
+            'nh4_mixed_acc': 0.9 * MW_NH4 / MW_NH4HSO4,
+            'nh4_sol_acc': 0.1 * MW_NH4 / MW_NH4HSO4
         },
         'so4_a3': {
             'so4_mixed_coa': 0.9 * MW_SO4 / MW_NH4HSO4,
-            'so4_sol_coa': 0.1 * MW_SO4 / MW_NH4HSO4
+            'so4_sol_coa': 0.1 * MW_SO4 / MW_NH4HSO4,
+            'nh4_mixed_coa': 0.9 * MW_NH4 / MW_NH4HSO4,
+            'nh4_sol_coa': 0.1 * MW_NH4 / MW_NH4HSO4
         },
-        'ncl_a2': {
-            'na_mixed_ait': 0.9 * MW_NA / MW_NACL,
-            'na_sol_ait': 0.1 * MW_NA / MW_NACL,
-            'cl_mixed_ait': 0.9 * MW_CL / MW_NACL,
-            'cl_sol_ait': 0.1 * MW_CL / MW_NACL
-        },
+        #'ncl_a2': {
+        #    'na_mixed_ait': 0.9 * MW_NA / MW_NACL,
+        #    'na_sol_ait': 0.1 * MW_NA / MW_NACL,
+        #    'cl_mixed_ait': 0.9 * MW_CL / MW_NACL,
+        #    'cl_sol_ait': 0.1 * MW_CL / MW_NACL
+        #},
         'ncl_a1': {
             'na_mixed_acc': 0.9 * MW_NA / MW_NACL,
             'na_sol_acc': 0.1 * MW_NA / MW_NACL,
@@ -151,16 +158,16 @@ def main(cfg):
             'dust_mixed_coa': 0.9,
             'dust_insol_coa': 0.1
         },
-        'NH4': {
-            'nh4_mixed_acc':
-            0.9 * 0.9 * 0.9,  # Ammonium aerosol 90%-->Aitken/Accumulation, 
-            'nh4_sol_acc':
-            0.9 * 0.9 * 0.1,  # 10%-->Coarse, 90%-->Accumulation, 10%-->Aitken
-            'nh4_mixed_ait': 0.9 * 0.1 * 0.9,
-            'nh4_sol_ait': 0.9 * 0.1 * 0.1,
-            'nh4_mixed_coa': 0.1 * 0.9,
-            'nh4_sol_coa': 0.1 * 0.1
-        }
+        #'NH4': {
+        #    'nh4_mixed_acc':
+        #    0.9 * 0.9 * 0.9,  # Ammonium aerosol 90%-->Aitken/Accumulation, 
+        #    'nh4_sol_acc':
+        #    0.9 * 0.9 * 0.1,  # 10%-->Coarse, 90%-->Accumulation, 10%-->Aitken
+        #    'nh4_mixed_ait': 0.9 * 0.1 * 0.9,
+        #    'nh4_sol_ait': 0.9 * 0.1 * 0.1,
+        #    'nh4_mixed_coa': 0.1 * 0.9,
+        #    'nh4_sol_coa': 0.1 * 0.1
+        #}
     }
 
     # -- Define chemical tracers and molar weights for VMR --> MMR
@@ -347,6 +354,12 @@ def main(cfg):
                     + cfg.inidata_filename_suffix)
                 ds_meteo = xr.open_dataset(meteo_file)
                 ds_chem = xr.open_dataset(chem_file)
+                # Replace "PS" from CAM-Chem by ERA5 value
+                ds_chem["PS"] = np.exp(ds_meteo["LNPS"])
+                ds_chem["PS"] = ds_chem["PS"].squeeze(dim="lev_2")
+                #if 'Q' not in ds_chem:
+                ds_chem['Q'] = ds_meteo['QV']
+                logging.info(f"Added PS and Q to file {merged_file}")
                 ds_merged = xr.merge([ds_meteo, ds_chem], compat="override")
                 ds_merged.to_netcdf(merged_file)
                 # Rename file to get original file name
@@ -369,17 +382,37 @@ def main(cfg):
             cfg.lbcdata_filename_suffix)
         ds_meteo = xr.open_dataset(meteo_file)
         ds_chem = xr.open_dataset(chem_file)
+
+        if 'GEOP_ML' not in ds_meteo.variables:
+            logging.warning(f"'GEOP_ML' missing in {meteo_file}. Attempting to copy from 00:00 UTC file.")
+            zero_hour = time.replace(hour=0, minute=0, second=0)
+            zero_hour_file = os.path.join(
+                cfg.icon_input_icbc,
+                zero_hour.strftime(cfg.meteo_prefix + cfg.meteo_nameformat) + '_lbc.nc')
+
+            try:
+                ds_zero_hour = xr.open_dataset(zero_hour_file)
+                if 'GEOP_ML' in ds_zero_hour.variables:
+                    ds_meteo['GEOP_ML'] = ds_zero_hour['GEOP_ML']
+                    logging.info(f"Copied 'GEOP_ML' from {zero_hour_file} to {meteo_file}.")
+                else:
+                    logging.error(f"'GEOP_ML' not found in {zero_hour_file}.")
+            except FileNotFoundError:
+                logging.error(f"00:00 UTC file {zero_hour_file} not found.")
+            except Exception as e:
+                logging.error(f"Failed to process 00:00 UTC file {zero_hour_file}: {e}")
+
         ds_merged = xr.merge([ds_meteo, ds_chem], compat="override")
         ds_merged.to_netcdf(merged_file)
         tools.remove_file(meteo_file)
         tools.remove_file(chem_file)
         logging.info("Added MECCA tracers to file {}".format(merged_file))
 
-    ## -----------------------------------
-    ## -- Add Q (copy of QV) to IC file --
-    ## -----------------------------------
+    ## ------------------------------------------------------
+    ## -- Add Q (copy of QV) and PS=(exp(LNPS)) to IC file --
+    ## ------------------------------------------------------
 
-    logging.info('Add Q (copy of QV) to initial file')
+    logging.info('Add Q (copy of QV) and PS (exp(LNPS)) to initial file')
     ic_file = os.path.join(
         cfg.icon_input_icbc,
         cfg.startdate_sim.strftime(cfg.inidata_prefix +
@@ -393,10 +426,23 @@ def main(cfg):
                                        cfg.inidata_filename_suffix))
         ds = xr.open_dataset(ic_file)
         merging = False
+        if "PS" not in ds:
+            merging = True
+            ds["PS"] = np.exp(ds["LNPS"])
+            ds_chem["PS"] = ds_chem["PS"].squeeze(dim="lev_2")
+            for var in ds.data_vars:
+                ds[var].encoding = {}
+                logging.info(f"Added PS to file {ic_file}")
+            logging.info(f"Added PS to file {ic_file}")
         if 'Q' not in ds:
             merging = True
             ds['Q'] = ds['QV']
+            # -- Bug fix for:
+            # "Variable has conflicting _FillValue (nan) and missing_value (-9e+33)"
+            for var in ds.data_vars:
+                ds[var].encoding = {}
             logging.info(f"Added Q to file {ic_file}")
+        # add surface pressure compatible with ERA5 data
         if merging:
             ds.to_netcdf(merged_file)
             tools.rename_file(merged_file, ic_file)
