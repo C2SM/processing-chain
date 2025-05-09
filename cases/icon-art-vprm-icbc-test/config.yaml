@@ -3,11 +3,11 @@
 workflow: icon-art-vprm-icbc-test
 constraint: mc
 run_on: cpu
-compute_queue: normal
+compute_queue: debug
 ntasks_per_node: 128
-startdate: 2023-07-26T00:00:00Z
-enddate: 2023-07-26T19:00:00Z
-restart_step: PT18H
+startdate: 2023-07-26T12:00:00Z
+enddate: 2023-07-26T17:00:00Z
+restart_step: PT04H
 lterra_urb: .TRUE.
 lurbalb: .TRUE.
 lurbahf: .TRUE.
@@ -15,25 +15,25 @@ lurbahf: .TRUE.
 walltime:
     prepare_icon: '00:30:00'
     oem: '00:30:00'
-    icon: '01:00:00'
+    icon: '00:30:00'
 
 
 eccodes_dir: /capstor/store/cscs/c2sm/amrs/kdnmez/eccodes_definitions
 iconremap_bin: iconremap
 iconsub_bin: iconsub
 latbc_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
-latbc_copy_path: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_2023072*
+latbc_copy_path: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230726*
 inidata_prefix: ncks_ICON-ART-UNSTRUCTURED_DOM01_
 inidata_nameformat: '<y><m><d>T<h>0000Z'
 inidata_filename_suffix: .nc
-inicond_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230726T000000Z.nc
+inicond_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc_input/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230726T120000Z.nc
 output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
 filename_format: <output_filename>_DOM<physdom>_<datetime2>
 lateral_boundary_grid_order: lateral_boundary
 art_input_folder: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc-error-test/art
 art_scratch_copy_folder: /capstor/scratch/cscs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc-error-test
 art_scratch_input_folder: /capstor/scratch/cscs/kdnmez/UrbaNature/icon_terra_urb_run/input/icbc-error-test/art
-dwdfg_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_20230726T000000Z.nc
+dwdfg_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_20230726T120000Z.nc
 
 icontools_runjobs:
     - copy_icbc.cfg
@@ -58,10 +58,10 @@ input_files:
 
 
 icon:
-    binary_file: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_terra_urb_run/input/binaries/constant/icon
+    binary_file: /capstor/store/cscs/c2sm/amrs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-dwd-3.0-yz24yagkmcpsceppzcjebqynoqpelmar/bin/icon
     runjob_filename: icon_runjob.cfg
-    compute_queue: normal
-    walltime: '01:00:00'
+    compute_queue: debug
+    walltime: '00:30:00'
     np_tot: 2
     np_io: 1
     np_restart: 0
