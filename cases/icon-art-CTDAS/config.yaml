@@ -1,6 +1,7 @@
 # Configuration file for the 'icon-art-CTDAS' case with ICON
 
 # From the `icon-wcp` environment:
+# git clone --depth 1 --recurse-submodules --shallow-submodules -b jasperfix git@github.com:efmkoene/spack-c2sm.git
 # - spack install nco@4.9.0
 # - spack install icontools@c2sm-master%gcc
 # - spack install cdo
@@ -10,7 +11,7 @@ constraint: gpu
 run_on: cpu
 compute_queue: normal
 nodes: 2
-ntasks_per_node: 4
+ntasks_per_node: 5
 startdate: 2018-01-01T00:00:00Z
 enddate: 2018-12-31T23:59:59Z
 restart_step: PT10D # = CTDAS cycle length
