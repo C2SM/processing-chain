@@ -84,7 +84,7 @@ CTDAS:
     obs:
         # Run the 'authentification.ipynb' notebook to get access to ICOS and/or NASA Earthdata (OCO2) data
         ICOS:
-            fetch: False
+            fetch: True
             path: /capstor/scratch/cscs/ekoene/ICOS/
             c_offset:  2 # ppm
             mdm: # Based on the 'runthrough' simulation
