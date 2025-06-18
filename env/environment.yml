@@ -4,8 +4,6 @@ channels:
   - defaults
 dependencies:
   - python=3.11
-  - cdo
-  - nco
   - numpy
   - cartopy
   - matplotlib
@@ -14,8 +12,16 @@ dependencies:
   - netcdf4
   - pyyaml
   - cdsapi
+  - nco
   - scikit-learn
   - f90nml
   - sphinx
   - sphinx_rtd_theme
   - sphinx-copybutton
+  - pip
+  - pip:
+    - icoscp
+    - requests
+    - urllib3
+    - certifi
+    - unidecode

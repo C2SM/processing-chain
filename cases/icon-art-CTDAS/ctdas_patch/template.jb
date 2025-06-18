@@ -1,0 +1,16 @@
+#!/bin/bash 
+## 
+## This is a set of dummy names, to be replaced by values from the dictionary 
+## Please make your own platform specific ctdas-icon with your own keys and place it in a subfolder of the da package.
+ ## 
+#SBATCH --job-name=CTDAS-cycle-1 
+#SBATCH --partition=normal
+#SBATCH --nodes=1 
+#SBATCH --time=10:00:00
+#SBATCH --account={cfg.compute_account}
+#SBATCH --ntasks-per-core=1 
+#SBATCH --ntasks-per-node=36
+
+export icycle_in_job=1
+
+python3 $SCRATCH/{cfg.CTDAS_project_name}/exec/{cfg.CTDAS_project_name}.py -v rc=$SCRATCH/{cfg.CTDAS_project_name}/exec/{cfg.CTDAS_project_name}.rc  >& $SCRATCH/{cfg.CTDAS_project_name}/exec/{cfg.CTDAS_project_name}.log

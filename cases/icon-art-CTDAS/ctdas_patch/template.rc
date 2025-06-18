@@ -1,0 +1,90 @@
+! CarbonTracker Data Assimilation Shell (CTDAS) Copyright (C) 2017 Wouter Peters. 
+! Users are recommended to contact the developers (wouter.peters@wur.nl) to receive
+! updates of the code. See also: http://www.carbontracker.eu. 
+!
+! This program is free software: you can redistribute it and/or modify it under the
+! terms of the GNU General Public License as published by the Free Software Foundation, 
+! version 3. This program is distributed in the hope that it will be useful, but 
+! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+! FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
+!
+! You should have received a copy of the GNU General Public License along with this 
+! program. If not, see <http://www.gnu.org/licenses/>. 
+
+! author: Wouter Peters 
+!
+! This is a blueprint for an rc-file used in CTDAS. Feel free to modify it, and please go to the main webpage for further documentation.
+!
+! Note that rc-files have the convention that commented lines start with an exclamation mark (!), while special lines start with a hashtag (#).
+!
+! When running the script start_ctdas.sh, this /.rc file will be copied to your run directory, and some items will be replaced for you.
+! The result will be a nearly ready-to-go rc-file for your assimilation job. The entries and their meaning are explained by the comments below.
+!
+!
+! HISTORY:
+!
+! Created on August 20th, 2013 by Wouter Peters
+!
+!
+! The time for which to start and end the data assimilation experiment in format YYYY-MM-DD HH:MM:SS
+
+time.start          : {cfg.startdate.strftime('%Y-%m-%d %H:%M:%S')}
+time.finish         : {cfg.enddate.strftime('%Y-%m-%d %H:%M:%S')}
+
+! Whether to restart the CTDAS system from a previous cycle, or to start the sequence fresh. Valid entries are T/F/True/False/TRUE/FALSE
+
+time.restart        : False
+
+! The length of a cycle is given in days, such that the integer 7 denotes the typically used weekly cycle. Valid entries are integers > 1
+
+time.cycle          : {cfg.CTDAS_ctdas_cycle}
+
+! The number of cycles of lag to use for a smoother version of CTDAS. CarbonTracker CO2 typically uses 5 weeks of lag. Valid entries are integers > 0
+
+time.nlag           : {cfg.CTDAS_nlag}
+
+! The directory under which the code, input, and output will be stored. This is the base directory for a run. The word
+! '/' will be replaced through the start_ctdas.sh script by a user-specified folder name. DO NOT REPLACE
+
+dir.da_run          : template
+
+! The resources used to complete the data assimilation experiment. This depends on your computing platform.
+! The number of cycles per job denotes how many cycles should be completed before starting a new process or job, this
+! allows you to complete many cycles before resubmitting a job to the queue and having to wait again for resources.
+! Valid entries are integers > 0
+
+da.resources.ncycles_per_job : 1
+
+! The ntasks specifies the number of threads to use for the MPI part of the code, if relevant. Note that the CTDAS code
+! itself is not parallelized and the python code underlying CTDAS does not use multiple processors. The chosen observation
+! operator though might use many processors, like TM5. Valid entries are integers > 0
+
+da.resources.ntasks : 1
+
+! This specifies the amount of wall-clock time to request for each job. Its value depends on your computing platform and might take
+! any form appropriate for your system. Typically, HPC queueing systems allow you a certain number of hours of usage before 
+! your job is killed, and you are expected to finalize and submit a next job before that time. Valid entries are strings.
+
+da.resources.ntime  : {cfg.CTDAS_job_time}
+
+! The resource settings above will cause the creation of a job file in which 2 cycles will be run, and 30 threads 
+! are asked for a duration of 4 hours
+!
+! Info on the DA system used, this depends on your application of CTDAS and might refer to for instance CO2, or CH4 optimizations.
+!
+
+da.system           : CarbonTracker
+
+! The specific settings for your system are read from a separate rc-file, which points to the data directories, observations, etc
+
+! The directory where the ICON-simulation is located:
+statevector.bg_params      : {cfg.CTDAS_nboundaries}
+statevector.number_regions : {nregs}
+statevector.tracer         : co2
+da.system.rc               : da/rc/cteco2/carbontracker_icon_oco2.rc
+da.optimizer.nmembers      : {cfg.CTDAS_nensembles}
+da.system.localization     : spatial
+da.obsoperator             : RandomizerObservationOperator
+icon_grid_path             : {cfg.input_files_scratch_dynamics_grid_filename}
+
+

@@ -152,6 +152,8 @@ class Config():
                 self.machine = 'daint'
             elif hostname.startswith('eu-'):
                 self.machine = 'euler'
+            elif hostname.startswith("santis-"):
+                self.machine = 'santis'
             else:
                 raise ValueError(f"Unsupported hostname: {hostname}")
             print(f"You are on the {self.machine} machine.")
@@ -288,7 +290,13 @@ class Config():
                 for item in value:
                     item_type = "Path" if type(
                         item).__name__ == "PosixPath" else type(item).__name__
-                    print(f"  - {item:<{max_col_width-4}} {item_type}")
+                    if item_type == "dict":
+                        for sub_key, sub_value in item.items():
+                            print(
+                                f"  - {sub_key:<{max_col_width-4}} {sub_value}"
+                            )
+                    else:
+                        print(f"  - {item:<{max_col_width-4}} {item_type}")
             elif isinstance(value, dict):
                 # If the value is a dictionary, format it as before
                 print(f"{key:<{max_col_width}} dict")
@@ -472,6 +480,22 @@ class Config():
                 f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
                 '',
             ]
+        elif self.machine == 'santis':
+            script_lines = [
+                '#!/usr/bin/env bash',
+                f'#SBATCH --job-name={job_name}',
+                '#SBATCH --nodes=1',
+                f'#SBATCH --time={walltime}',
+                f'#SBATCH --output={self.logfile}',
+                '#SBATCH --open-mode=append',
+                f'#SBATCH --account={self.compute_account}',
+                f'#SBATCH --partition={self.compute_queue}',
+                f'#SBATCH --constraint={self.constraint}',
+                '',
+                f'cd {self.chain_src_dir}',
+                f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
+                '',
+            ]
 
         job_path = self.chain_root / 'job_scripts'
         job_path.mkdir(parents=True, exist_ok=True)
@@ -495,7 +519,7 @@ class Config():
             job_file = self.case_root / 'submit.wait.slurm'
             log_file = self.case_root / 'wait.log'
             dep_str = ':'.join(map(str, dep_ids))
-            if self.machine == 'daint':
+            if self.machine == 'daint' or self.machine == "santis":
                 script_lines = [
                     '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
                     '#SBATCH --nodes=1', '#SBATCH --time=00:01:00',
@@ -596,11 +620,15 @@ class Config():
         # Get job info for all jobs
         self.slurm_info = {}
         for job_name in self.jobs:
-            for job_id in self.job_ids['previous'][job_name]:
-                self.slurm_info[job_name] = []
-                self.slurm_info[job_name].append(
-                    self.get_job_info(job_id, slurm_keys=info_keys,
-                                      parse=True))
+            if job_name == "prepare_CTDAS":
+                continue
+            else:
+                for job_id in self.job_ids['previous'][job_name]:
+                    self.slurm_info[job_name] = []
+                    self.slurm_info[job_name].append(
+                        self.get_job_info(job_id,
+                                          slurm_keys=info_keys,
+                                          parse=True))
 
     def print_previous_slurm_summary(self):
         # Width of printed slurm piece of information
@@ -634,19 +662,25 @@ class Config():
             f.write(table_header)
             f.write('\n')
             for job_name in self.jobs:
-                for info in self.slurm_info[job_name]:
-                    f.write(line_format.format(**info))
-                    f.write('\n')
+                if job_name == "prepare_CTDAS":
+                    continue
+                else:
+                    for info in self.slurm_info[job_name]:
+                        f.write(line_format.format(**info))
+                        f.write('\n')
             f.write('\n')
 
     def check_previous_chunk_success(self):
         status = 0
         failed_jobs = []
         for job_name, info_list in self.slurm_info.items():
-            for info in info_list:
-                if info['State'] != 'COMPLETED':
-                    failed_jobs.append(job_name)
-                    status += 1
+            if job_name == "prepare_CTDAS":
+                continue
+            else:
+                for info in info_list:
+                    if info['State'] != 'COMPLETED':
+                        failed_jobs.append(job_name)
+                        status += 1
 
         if status > 0:
             raise RuntimeError(f"The following job(s) failed: {failed_jobs}")
