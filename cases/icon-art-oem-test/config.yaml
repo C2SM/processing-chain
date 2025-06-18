@@ -2,7 +2,7 @@
 
 workflow: icon-art-oem
 constraint: gpu
-run_on: gpu
+run_on: cpu
 compute_queue: normal
 ntasks_per_node: 12
 restart_step: PT6H
@@ -10,8 +10,8 @@ startdate: 2018-01-01T00:00:00Z
 enddate: 2018-01-01T12:00:00Z
 
 eccodes_dir: ./input/eccodes_definitions
-iconremap_bin: /scratch/snx3000/ekoene/spack-c2sm/spack/opt/spack/icontools-c2sm-master/gcc-9.3.0/zktezcs5cjwjsptd747zhipi53nd6phr/bin/iconremap
-iconsub_bin: /scratch/snx3000/ekoene/spack-c2sm/spack/opt/spack/icontools-c2sm-master/gcc-9.3.0/zktezcs5cjwjsptd747zhipi53nd6phr/bin/iconsub
+iconremap_bin: ./ext/icontools/icontools/iconremap
+iconsub_bin: ./ext/icontools/icontools/iconsub
 latbc_filename: ifs_<y><m><d><h>_lbc.nc
 inidata_prefix: ifs_init_
 inidata_nameformat: '%Y%m%d%H'
@@ -69,11 +69,11 @@ input_files:
     oem_monthofyear_nc: ./input/icon-art-oem/OEM/monthofyear.nc
 
 icon:
-    binary_file: /scratch/snx3000/msteiner/icon-kit/gpu/bin/icon
+    binary_file: ./ext/icon-art/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
     walltime: '00:10:00'
-    np_tot: 6
+    np_tot: 8
     np_io: 1
     np_restart: 1
     np_prefetch: 1
