@@ -558,6 +558,7 @@ class TotalColumnSample(object):
 
 
 
+
                 pressure_weighting_function=None,
                 ##### freum ^^^^
                 level_def = "pressure_boundary", psurf = float('nan'), resid=0.0, hphr=0.0, flag=0, species='co2', sdev=0.0, \
@@ -566,8 +567,10 @@ class TotalColumnSample(object):
 
 
 
+
                 latc_0=None, latc_1=None, latc_2=None, latc_3=None, lonc_0=None, lonc_1=None, lonc_2=None, lonc_3=None \
                 ##### freum ^^^^
+
 
 
 
