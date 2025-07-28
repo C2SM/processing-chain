@@ -149,15 +149,16 @@ class Config():
 
     def set_machine(self):
         try:
-            hostname = socket.gethostname()
-            if hostname.startswith('daint') or hostname.startswith('nid'):
-                self.machine = 'daint'
-            elif hostname.startswith('eu-'):
-                self.machine = 'euler'
-            elif hostname.startswith('eiger'):
-                self.machine = 'eiger'
-            else:
-                raise ValueError(f"Unsupported hostname: {hostname}")
+            self.machine = 'eiger'
+            #hostname = socket.gethostname()
+            #if hostname.startswith('daint'):# or hostname.startswith('nid'):
+            #    self.machine = 'daint'
+            #elif hostname.startswith('eu-'):
+            #    self.machine = 'euler'
+            #elif hostname.startswith('eiger'):
+            #    self.machine = 'eiger'
+            #else:
+            #    raise ValueError(f"Unsupported hostname: {hostname}")
             print(f"You are on the {self.machine} machine.")
         except Exception as e:
             print(f"Error occurred: {e}")
@@ -484,7 +485,7 @@ class Config():
                 f'#SBATCH --time={walltime}',
                 f'#SBATCH --output={self.logfile}',
                 '#SBATCH --open-mode=append',
-                f'#SBATCH --account={self.compute_account}',
+                f'#SBATCH --account=em05',
                 f'#SBATCH --partition={self.compute_queue}',
                 f'#SBATCH --constraint={self.constraint}',
                 '',
@@ -541,7 +542,7 @@ class Config():
                     '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
                     '#SBATCH --nodes=1', '#SBATCH --time=00:01:00',
                     f'#SBATCH --output={log_file}',
-                    f'#SBATCH --account={self.compute_account}',
+                    f'#SBATCH --account=em05',
                     f'#SBATCH --partition={self.compute_queue}',
                     f'#SBATCH --constraint={self.constraint}',
                     f'#SBATCH --dependency=afterany:{dep_str}', '',
