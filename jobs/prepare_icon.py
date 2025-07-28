@@ -82,7 +82,7 @@ def main(cfg):
     script_lines = [
         '#!/usr/bin/env bash',
         f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
-        f'#SBATCH --account={cfg.compute_account}', '#SBATCH --time=00:10:00',
+        f'#SBATCH --account=em05', '#SBATCH --time=00:10:00',
         f'#SBATCH --partition={cfg.compute_queue}',
         f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
         f'#SBATCH --output={cfg.logfile}', '#SBATCH --open-mode=append',

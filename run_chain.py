@@ -183,21 +183,22 @@ def run_chunk(cfg, force, resume):
         for job_name in cfg.jobs:
             print(f'    └── Process "{job_name}" for chunk "{cfg.chunk_id}"')
             try:
-                exitcode = 0
+                #exitcode = 0
                 print("1")
                 # Change the log file
-                #cfg.logfile = cfg.log_working_dir / job_name
-                #cfg.logfile_finish = cfg.log_finished_dir / job_name
+                cfg.logfile = cfg.log_working_dir / job_name
+                cfg.logfile_finish = cfg.log_finished_dir / job_name
                 print("11")
                 # Launch the job
-                #to_call = getattr(jobs, job_name)
-                #to_call.main(cfg)
+                to_call = getattr(jobs, job_name)
+                to_call.main(cfg)
                 print("111")
-                #shutil.copy(cfg.logfile, cfg.logfile_finish)
+                shutil.copy(cfg.logfile, cfg.logfile_finish)
                 print(">>> bb")
 
-                #exitcode = 0
+                exitcode = 0
             except Exception:
+                #exitcode = 0
                 exitcode = 1
                 subject = "ERROR or TIMEOUT in job '%s' for chunk '%s'" % (
                     job_name, cfg.chunk_id)
@@ -210,14 +211,14 @@ def run_chunk(cfg, force, resume):
 
             if exitcode != 0 or not (cfg.log_finished_dir / job_name).exists():
                 print("2")
-            #    subject = "ERROR or TIMEOUT in job '%s' for chunk '%s'" % (
-            #        job_name, cfg.chunk_id)
+                subject = "ERROR or TIMEOUT in job '%s' for chunk '%s'" % (
+                    job_name, cfg.chunk_id)
                 #if cfg.user_mail:
                 #    message = tools.prepare_message(cfg.log_working_dir /
                 #                                    job_name)
                 #    logging.info('Sending log file to %s' % cfg.user_mail)
                 #    tools.send_mail(cfg.user_mail, subject, message)
-            #    raise RuntimeError(subject)
+                raise RuntimeError(subject)
 
 
 def restart_runs(cfg, force, resume):

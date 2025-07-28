@@ -3,7 +3,7 @@
 workflow: icon-art-vprm-bep-tree
 constraint: mc
 run_on: cpu
-compute_queue: normal
+compute_queue: debug
 ntasks_per_node: 128
 startdate: 2023-07-01T00:00:00Z
 enddate: 2023-07-01T03:00:00Z
@@ -13,9 +13,9 @@ lurbalb: .FALSE.
 lurbahf: .FALSE.
 
 walltime:
-    prepare_icon: '01:00:00'
+    prepare_icon: '00:30:00'
     oem: '00:30:00'
-    icon: '01:00:00'
+    icon: '00:30:00'
 
 
 eccodes_dir: /capstor/store/cscs/c2sm/amrs/kdnmez/eccodes_definitions
@@ -59,8 +59,8 @@ input_files:
 icon:
     binary_file: /capstor/store/cscs/c2sm/amrs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-dwd-3.0-yz24yagkmcpsceppzcjebqynoqpelmar/bin/icon
     runjob_filename: icon_runjob.cfg
-    compute_queue: normal
-    walltime: '01:00:00'
+    compute_queue: debug
+    walltime: '00:30:00'
     np_tot: 1
     np_io: 1
     np_restart: 0
