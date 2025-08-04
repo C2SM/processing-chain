@@ -541,8 +541,7 @@ class Config():
                 script_lines = [
                     '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
                     '#SBATCH --nodes=1', '#SBATCH --time=00:01:00',
-                    f'#SBATCH --output={log_file}',
-                    f'#SBATCH --account=em05',
+                    f'#SBATCH --output={log_file}', f'#SBATCH --account=em05',
                     f'#SBATCH --partition={self.compute_queue}',
                     f'#SBATCH --constraint={self.constraint}',
                     f'#SBATCH --dependency=afterany:{dep_str}', '',
