@@ -371,3 +371,17 @@ icon-art-vprm-icbc-test:
         - copy_icbc
       previous:
         - icon
+
+icon-bep-tree-test:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
