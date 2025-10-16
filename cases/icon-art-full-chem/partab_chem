@@ -1,0 +1,507 @@
+&parameter
+name	= ALKNIT
+out_name	= ALKNO3_full
+units = "mol mol-1"
+/
+&parameter
+name       = BCARY
+out_name      = BCARY_full
+units = "mol mol-1"
+/
+&parameter
+name       = BENZENE
+out_name      = BENZENE_full
+units = "mol mol-1"
+/
+&parameter
+name       = BIGALD
+out_name      = C5H6O2_full
+units = "mol mol-1"
+/
+&parameter
+name       = BIGALD1
+out_name      = BIGALD1_full
+units = "mol mol-1"
+/
+&parameter
+name       = BIGALD2
+out_name      = BIGALD2_full
+units = "mol mol-1"
+/
+&parameter
+name       = BIGALD3
+out_name      = BIGALD3_full
+units = "mol mol-1"
+/
+&parameter
+name       = BIGALD4
+out_name      = BIGALD4_full
+units = "mol mol-1"
+/
+&parameter    
+ name      = BIGALK   
+ out_name     = C5H12_full     
+ units = "mol mol-1"
+/
+&parameter    
+ name      = BIGENE    
+ out_name     = C4H8_full       
+ units = "mol mol-1"
+/
+&parameter
+name       = C2H2
+out_name      = C2H2_full
+units = "mol mol-1"
+/
+&parameter
+name       = C2H4
+out_name      = C2H4_full
+units = "mol mol-1"
+/
+&parameter
+name       = C2H5OH
+out_name      = C2H5OH_full
+units = "mol mol-1"
+/
+&parameter    
+ name      = C2H6      
+ out_name     = C2H6_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = C3H6      
+ out_name     = C3H6_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = C3H8      
+ out_name     = C3H8_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      =  CH2O     
+ out_name     = HCHO_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = CH3CHO      
+ out_name     = CH3CHO_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      =   CH3COCH3   
+ out_name     = CH3COCH3_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      =  CH3COCHO     
+ out_name     = MGLYOX_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      =  CH3COOH     
+ out_name     = CH3CO2H_full       
+ units = "mol mol-1"
+/
+&parameter
+ name      = CH3OH
+ out_name     = CH3OH_full
+ units = "mol mol-1"
+/
+&parameter    
+ name      = CH3OOH      
+ out_name     = CH3OOH_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = CH4      
+ out_name     = CH4_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = CO      
+ out_name     = CO_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = CRESOL      
+ out_name     = CRESOL_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = DMS      
+ out_name     = DMS_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = GLYOXAL      
+ out_name     = GLYOX_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = H2O      
+ out_name     = H2O_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = H2O2      
+ out_name     = H2O2_full       
+ units = "mol mol-1"
+/
+&parameter
+ name      = HCOOH
+ out_name     = HCOOH_full
+ units = "mol mol-1"
+/
+&parameter    
+ name      = HNO3      
+ out_name     = HNO3_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = HO2      
+ out_name     = HO2_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      =  HO2NO2     
+ out_name     = HNO4_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      =  HONITR
+ out_name     = LHONITR_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = HYAC      
+ out_name     = ACETOL_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      =   ISOP    
+ out_name     = C5H8_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = ISOPNITA       
+ out_name     = LISOPBDNO3_full        
+ units = "mol mol-1"
+/
+&parameter
+ name      = ISOPNITB
+ out_name     = LISOPACNO3_full
+ units = "mol mol-1"
+/
+&parameter    
+ name      = MACR      
+ out_name     = MACR_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = MEK      
+ out_name     = MEK_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = MPAN      
+ out_name     = MPAN_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = MTERP      
+ out_name     = LTERP_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = MVK      
+ out_name     = MVK_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = N2O      
+ out_name     = N2O_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = N2O5      
+ out_name     = N2O5_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = NH3      
+ out_name     = NH3_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = NO2      
+ out_name     = NO2_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = NO3      
+ out_name     = NO3_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = NO      
+ out_name     = NO_full      
+ units = "mol mol-1"
+/
+&parameter
+ name      = NOA
+ out_name     = NOA_full
+ units = "mol mol-1"
+/
+&parameter    
+ name      = O3      
+ out_name     = O3_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = OH      
+ out_name     = OH_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = ONITR      
+ out_name     = LONITR_full       
+ units = "mol mol-1"
+/
+&parameter    
+ name      = PAN      
+ out_name     = PAN_full       
+ units = "mol mol-1"
+/
+&parameter
+ name      = PBZNIT
+ out_name     = PBZNIT_full
+ units = "mol mol-1"
+/
+&parameter
+ name      = PHENOL
+ out_name     = PHENOL_full
+ units = "mol mol-1"
+/
+&parameter    
+ name      = SO2      
+ out_name     = SO2_full       
+ units = "mol mol-1"
+/
+&parameter
+ name      = TERPNIT
+ out_name     = BPINANO3_full
+ units = "mol mol-1"
+/
+&parameter    
+ name      = TOLUENE      
+ out_name     = TOLUENE_full       
+ units = "mol mol-1"
+/
+&parameter
+ name      = XYLENES
+ out_name     = LXYL_full
+ units = "mol mol-1"
+/
+&parameter
+ name      = poa_mixed_ait
+ out_name     = poa_mixed_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = poa_insol_ait
+ out_name     = poa_insol_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = poa_mixed_acc
+ out_name     = poa_mixed_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = poa_insol_acc
+ out_name     = poa_insol_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = soot_mixed_ait
+ out_name     = soot_mixed_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = soot_insol_ait
+ out_name     = soot_insol_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = soot_mixed_acc
+ out_name     = soot_mixed_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = soot_insol_acc
+ out_name     = soot_insol_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = so4_mixed_ait
+ out_name     = so4_mixed_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = so4_sol_ait
+ out_name     = so4_sol_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = nh4_mixed_ait
+ out_name     = nh4_mixed_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = nh4_sol_ait
+ out_name     = nh4_sol_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = so4_mixed_acc
+ out_name     = so4_mixed_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = so4_sol_acc
+ out_name     = so4_sol_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = nh4_mixed_acc
+ out_name     = nh4_mixed_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = nh4_sol_acc
+ out_name     = nh4_sol_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = so4_mixed_coa
+ out_name     = so4_mixed_coa
+ units = "kg kg-1"
+/
+&parameter
+ name      = so4_sol_coa
+ out_name     = so4_sol_coa
+ units = "kg kg-1"
+/
+&parameter
+ name      = nh4_mixed_coa
+ out_name     = nh4_mixed_coa
+ units = "kg kg-1"
+/
+&parameter
+ name      = nh4_sol_coa
+ out_name     = nh4_sol_coa
+ units = "kg kg-1"
+/
+&parameter
+ name      = na_mixed_ait
+ out_name     = na_mixed_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = na_sol_ait
+ out_name     = na_sol_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = cl_mixed_ait
+ out_name     = cl_mixed_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = cl_sol_ait
+ out_name     = cl_sol_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = na_mixed_acc
+ out_name     = na_mixed_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = na_sol_acc
+ out_name     = na_sol_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = cl_mixed_acc
+ out_name     = cl_mixed_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = cl_sol_acc
+ out_name     = cl_sol_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = na_mixed_coa
+ out_name     = na_mixed_coa
+ units = "kg kg-1"
+/
+&parameter
+ name      = na_sol_coa
+ out_name     = na_sol_coa
+ units = "kg kg-1"
+/
+&parameter
+ name      = cl_mixed_coa
+ out_name     = cl_mixed_coa
+ units = "kg kg-1"
+/
+&parameter
+ name      = cl_sol_coa
+ out_name     = cl_sol_coa
+ units = "kg kg-1"
+/
+&parameter
+ name      = dust_mixed_ait
+ out_name     = dust_mixed_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = dust_insol_ait
+ out_name     = dust_insol_ait
+ units = "kg kg-1"
+/
+&parameter
+ name      = dust_mixed_acc
+ out_name     = dust_mixed_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = dust_insol_acc
+ out_name     = dust_insol_acc
+ units = "kg kg-1"
+/
+&parameter
+ name      = dust_mixed_coa
+ out_name     = dust_mixed_coa
+ units = "kg kg-1"
+/
+&parameter
+ name      = dust_insol_coa
+ out_name     = dust_insol_coa
+ units = "kg kg-1"
+/
+&parameter
+ name      = PS
+ out_name     = PS
+ units = "Pa"
+ long_name = "Surface pressure"
+/
+&parameter
+ name      = Q
+ out_name     = Q
+ units = "kg kg-1"
+ long_name = "Specific humidity" 
+/

@@ -1,0 +1,83 @@
+# Configuration file for the 'icon-art-full-chem-test' case with ICON
+
+workflow: icon-art-full-chem
+constraint: mc
+run_on: cpu
+compute_queue: normal
+compute_account: s1317
+ntasks_per_node: 128
+restart_step: PT03H
+startdate: 2019-01-01T00:00:00Z
+enddate: 2019-01-01T09:00:00Z
+
+eccodes_dir: /capstor/store/cscs/empa/em05/ckeller/spack-c2sm/spack/opt/spack/linux-sles15-zen2/gcc-12.3.0/eccodes-2.25.0-hrevcu72qaiav7csmdhgth323uozzutd/share/eccodes/definitions
+latbc_filename: LBC_<y><m><d><h>.nc
+inidata_prefix: IC_
+inidata_nameformat: '%Y%m%d%H'
+inidata_filename_suffix: .nc
+lbcdata_prefix: LBC_
+lbcdata_nameformat: '%Y%m%d%H'
+lbcdata_filename_suffix: .nc
+output_filename: icon-full-chem-test
+filename_format: <output_filename>_<ddhhmmss>
+lateral_boundary_grid_order: lateral_boundary
+art_input_folder: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/art
+
+walltime:
+    prepare_icon: '00:20:00'
+    prepare_art_full_chem: '00:30:00'
+    icon: '01:00:00'
+
+meteo:
+    dir: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/meteo
+    prefix: era5_
+    nameformat: '%Y%m%d%H'
+    suffix: .grb
+    inc: 3
+
+chem:
+    dir: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/chem
+    prefix: camchem_
+    nameformat: '%Y%m%d%H'
+    suffix: .nc
+    inc: 3
+    icbc_filename: camchem-20190101-20190201.nc
+    ref_date: '2000-03-01 00:00:00'
+
+
+input_files:
+    radiation_grid_filename: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/grid/base_grid.nc
+    dynamics_grid_filename: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/grid/icon_R03B07_DOM01.nc
+    map_file_latbc: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/grid/map_file.latbc
+    lateral_boundary_grid: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/grid/lateral_boundary_DOM01.grid.nc
+    extpar_filename: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/grid/extpar_DOM01.nc
+    cldopt_filename: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/rad/rrtm_cldopt.nc
+    lrtm_filename: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/rad/rrtmg_lw.nc
+    map_file_ana: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/mapping/map_file.ana
+    meccatracer_xml_filename: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/xml/mecca_tracers.xml
+    oem_vertical_profiles_nc: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/oem/vertical_profiles.nc
+    oem_gridded_emissions_nc: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/oem/oem_gridded_emissions.nc
+    oem_hourofday_nc: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/oem/hourofday.nc
+    oem_dayofweek_nc: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/oem/dayofweek.nc
+    oem_monthofyear_nc: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/oem/monthofyear.nc
+    aerodyn_tracers: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/aerodyn/tracers_aerosol.xml
+    aerodyn_modes: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/aerodyn/modes.xml
+    aerodyn_coag: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/aerodyn/coagulate.xml
+    aerodyn_emiss: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/aerodyn/emiss.xml
+    aerodyn_diag: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/aerodyn/diag.xml
+
+icon:
+    binary_file: /capstor/store/cscs/userlab/s1317/ckeller/ICON-ART/Running_model/proc_chain_data/input/test-proc-chain-full-chem/bin/icon
+    runjob_filename: icon_runjob.cfg
+    era5_icjob: icon_era5_ic.sh
+    era5_lbcjob: icon_era5_lbc.sh
+    chem_icjob: icon_camchem_ic.sh
+    chem_lbcjob: icon_camchem_lbc.sh
+    compute_queue: normal
+    walltime: '01:00:00'
+    np_tot: 8
+    np_io: 3
+    np_restart: 1
+    np_prefetch: 1
+    timestep: 120.
+
