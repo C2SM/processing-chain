@@ -71,6 +71,8 @@ class Config():
         # Specific settings based on the node type ('gpu' or 'mc')
         if self.machine == 'daint':
             self.set_node_info()
+        elif self.machine == 'eiger':
+            self.set_node_info()
 
     def load_config_file(self):
         """Load configuration settings from a YAML file and set them as attributes.
@@ -152,6 +154,8 @@ class Config():
                 self.machine = 'daint'
             elif hostname.startswith('eu-'):
                 self.machine = 'euler'
+            elif hostname.startswith('eiger'):
+                self.machine = 'eiger'
             else:
                 raise ValueError(f"Unsupported hostname: {hostname}")
             print(f"You are on the {self.machine} machine.")
@@ -191,7 +195,7 @@ class Config():
                                    'export MPICH_G2G_PIPELINE=256\n'
                                    'export CRAY_CUDA_MPS=1\n')
         elif self.constraint == 'mc':
-            self.ntasks_per_node = 36
+            self.ntasks_per_node = 128
             self.mpich_cuda = ''
         else:
             raise ValueError(
@@ -472,6 +476,22 @@ class Config():
                 f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
                 '',
             ]
+        elif self.machine == 'eiger':
+            script_lines = [
+                '#!/usr/bin/env bash',
+                f'#SBATCH --job-name={job_name}',
+                '#SBATCH --nodes=1',
+                f'#SBATCH --time={walltime}',
+                f'#SBATCH --output={self.logfile}',
+                '#SBATCH --open-mode=append',
+                f'#SBATCH --account={self.compute_account}',
+                f'#SBATCH --partition={self.compute_queue}',
+                f'#SBATCH --constraint={self.constraint}',
+                '',
+                f'cd {self.chain_src_dir}',
+                f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
+                '',
+            ]
 
         job_path = self.chain_root / 'job_scripts'
         job_path.mkdir(parents=True, exist_ok=True)
@@ -511,6 +531,17 @@ class Config():
                     '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
                     '#SBATCH --ntasks=1', '#SBATCH --time=00:01:00',
                     f'#SBATCH --output={log_file}',
+                    f'#SBATCH --partition={self.compute_queue}',
+                    f'#SBATCH --constraint={self.constraint}',
+                    f'#SBATCH --dependency=afterany:{dep_str}', '',
+                    '# Do nothing', 'exit 0'
+                ]
+            elif self.machine == 'eiger':
+                script_lines = [
+                    '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
+                    '#SBATCH --nodes=1', '#SBATCH --time=00:01:00',
+                    f'#SBATCH --output={log_file}',
+                    f'#SBATCH --account={self.compute_account}',
                     f'#SBATCH --partition={self.compute_queue}',
                     f'#SBATCH --constraint={self.constraint}',
                     f'#SBATCH --dependency=afterany:{dep_str}', '',
