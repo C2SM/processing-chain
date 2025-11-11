@@ -4,22 +4,44 @@ import os
 from os.path import join
 from netCDF4 import Dataset
 from .nc_operations import VariableCreator, VariableCopier, DimensionCopier
-from datetime import datetime
 from .. import tools
-
-#######################################################################
-## Script for roducing IC and LBC on regular grid from CAM-Chem output.
-##
-## Author: Corina Keller (Empa).
-#######################################################################
 
 
 def process_ic(file_path_in, file_path_out, ic_datetime, aero_dict, prefix):
     """
-    Copy chem and aerosol fields for specified dates (no unit transformation).
-    Splitting of aerosols into modes.
+    Generate initial condition (IC) NetCDF files from CAM-Chem output.
+
+    This function copies chemical and aerosol fields for a specified datetime 
+    from an input CAM-Chem NetCDF file. Aerosol fields can be split into 
+    different modes. 
+    No unit transformation is performed.
+
+    Parameters
+    ----------
+    file_path_in : str
+        Path to the input directory containing CAM-Chem NetCDF files.
+    file_path_out : str
+        Path to the output directory where IC files will be saved.
+    ic_datetime : datetime.datetime
+        Datetime for the IC to process.
+    aero_dict : dict
+        Dictionary specifying how aerosol variables should be split into modes 
+        and their corresponding fractions. 
+        Format: `{aerosol_var_name: {mode_name: split_fraction, ...}, ...}`.
+    prefix : str
+        Filename prefix for input and output NetCDF files.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    - Input files are expected to follow the naming convention: `{prefix}%Y%m%d%H.nc`.
+    - Output files are saved as `{prefix}%Y%m%d%H_ic.nc`.
+    - Variables not present in `aero_dict` are copied directly.
+    - Aerosol variables are split according to the fractions defined in `aero_dict`.
     """
-    #ic_datetime = datetime.strptime(ic_date, '%Y-%m-%d %H:%M:%S')
 
     in_template = prefix + '%Y%m%d%H.nc'
     outname_template = prefix + '%Y%m%d%H_ic.nc'
@@ -81,17 +103,58 @@ def process_ic(file_path_in, file_path_out, ic_datetime, aero_dict, prefix):
 
 def process_lbc(file_path_in, file_path_out, start_time, end_time, inc, prefix,
                 suffix, nameformat, var_mw_dict, aero_dict):
-    """ 
-    Unit transformation [mol/mol] --> [kg/kg] for chem fields.
-    Splitting, renaming and unit transformation [kg/kg] --> [ug/kg] for aerosols.
     """
-    # Files in the input folder
-    #files = [f for f in os.listdir(file_path) if f.startswith('camchem_') and f.endswith('.nc')]
-    #for file in files:
+    Generate lateral boundary condition (LBC) NetCDF files from CAM-Chem output.
+
+    This function processes CAM-Chem NetCDF files and produces LBC files with 
+    appropriate unit transformations. 
+    Chemical fields are converted from [mol/mol] to [kg/kg], while aerosol fields 
+    are split into modes and converted from [kg/kg] to [μg/kg]. 
+
+    Parameters
+    ----------
+    file_path_in : str
+        Path to the input directory containing CAM-Chem NetCDF files.
+    file_path_out : str
+        Path to the output directory where LBC files will be saved.
+    start_time : datetime.datetime
+        Start datetime for the LBC processing range.
+    end_time : datetime.datetime
+        End datetime for the LBC processing range.
+    inc : int
+        Time increment in hours between consecutive files to process.
+    prefix : str
+        Filename prefix used for both input and output files.
+    suffix : str
+        Filename suffix used for both input and output files (e.g., '.nc').
+    nameformat : str
+        Datetime format string used in the filenames (e.g., '%Y%m%d%H').
+    var_mw_dict : dict
+        Dictionary mapping chemical variable names to their molecular weights 
+        for unit conversion. Format: `{var_name: molecular_weight, ...}`.
+    aero_dict : dict
+        Dictionary specifying how aerosol variables should be split into modes 
+        and their corresponding fractions. 
+        Format: `{aerosol_var_name: {mode_name: split_fraction, ...}, ...}`.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    - Input files are iterated over using specified increments between `start_time` 
+      and `end_time`.
+    - Chemical fields are converted from [mol/mol] to [kg/kg] using the molecular 
+      weight of air (28.96 g/mol) and the variable-specific molecular weight.
+    - Aerosol fields are split into modes and converted from [kg/kg] to [μg/kg].
+    - Essential variables like coordinates and pressure are copied directly
+    - Output files are saved with `_lbc` appended to the original filename.
+    """
+
     for time in tools.iter_hours(start_time, end_time, inc):
 
         # -- Extract datetime information from the filename
-        #datetime_str = file.split('_')[1].split('.')[0]
         in_file = os.path.join(file_path_in,
                                time.strftime(prefix + nameformat + suffix))
         with Dataset(in_file, 'r') as ds:

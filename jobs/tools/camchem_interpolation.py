@@ -19,8 +19,27 @@ from datetime import datetime, timedelta, timezone
 
 
 def time_intpl(file_path, prefix):
-    """ Interpolation of chemistry fields with respect to time variable.
+    
     """
+    Interpolate chemistry fields with respect to time between consecutive NetCDF files.
+
+    This function generates new NetCDF files at intermediate times between existing
+    CAM-Chem output files. Takes the arithmetic mean of chemical and surface pressure 
+    fields and creates interpolated 'time' and 'datesec' variables.
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the directory containing the input NetCDF files.
+    prefix : str
+        Filename prefix for identifying the input NetCDF files to interpolate.
+
+    Returns
+    -------
+    None
+
+    """
+        
     files = sorted([f for f in os.listdir(file_path) if f.startswith(prefix)])
 
     for i in range(len(files) - 1):
@@ -160,15 +179,25 @@ def date_from_days_since_ref(days_since_ref, ref_date):
 
 def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date):
     """
-    - Extract a time slice from the input NetCDF file.
-    - Adjust longitude from [0, 360) to (-180, 180].
+    Extract a single time slice from a NetCDF file and adjust longitudes.
 
-    Parameters:
-    - in_file (str): Path to the input NetCDF file containing data for each time step.
-    - out_file_template (str): Template for the output NetCDF file name with strftime placeholder.
-    - spec_intpl (list): List with species to be copied from in_file.
+    Copies selected species and metadata from an input NetCDF file into a new
+    NetCDF file for each time step. 
+    Longitudes are adjusted from [0, 360) to [-180, 180).
 
-    Returns:
+    Parameters
+    ----------
+    in_file : str
+        Path to the input NetCDF file.
+    out_file_template : str
+        Template string for the output filename.
+    spec_intpl : list of str
+        List of chemical species to extract from the input file.
+    ref_date : str
+        Reference date (YYYY-MM-DD HH:MM:SS) used to convert time variables.
+
+    Returns
+    -------
     None
     """
 
@@ -325,6 +354,26 @@ def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date):
 
 
 def log_intpl_timeslice(pres_m, pres, var_data):
+    """
+    Perform vertical interpolation of chemical data using log-pressure weighting.
+
+    For each chemistry level, the two nearest meteorological levels are identified
+    and a logarithmic interpolation is applied.
+
+    Parameters
+    ----------
+    pres_m : ndarray
+        Pressure on meteorological levels (Pa).
+    pres : ndarray
+        Pressure on chemical levels (Pa).
+    var_data : ndarray
+        Chemical field data to interpolate.
+
+    Returns
+    -------
+    ndarray
+        Interpolated chemical field on meteorological levels.
+    """
     pres_m_flipped = np.flip(pres_m, axis=0)
     pres_flipped = np.flip(pres, axis=0)
     var_data_flipped = np.flip(var_data, axis=0)
@@ -375,8 +424,24 @@ def log_intpl_timeslice(pres_m, pres, var_data):
 
 
 def hybrid_pressure_interpolation(in_ds, out_ds, var_name, time_indices):
-    """Perform vertical interpolation of 'var_name'. 
-    The interpolation is linear with the log pressure.
+    """
+    Interpolate chemical variable vertically using log-pressure interpolation.
+
+    Parameters
+    ----------
+    in_ds : netCDF4.Dataset
+        Input dataset containing the chemical variable.
+    out_ds : netCDF4.Dataset
+        Output dataset with meteorological levels.
+    var_name : str
+        Name of the chemical variable to interpolate.
+    time_indices : list of int
+        Time indices to process in the datasets.
+
+    Returns
+    -------
+    ndarray
+        Array of vertically interpolated variable on meteorological levels.
     """
     # Pressure on vertical levels of meteo data
     pres_m = out_ds['pres_m'][:]
@@ -398,19 +463,33 @@ def hybrid_pressure_interpolation(in_ds, out_ds, var_name, time_indices):
 
 def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
                end_chunk, ref_date):
-    """Perform vertical interpolation of atmospheric chemical fields using meteorological data.
-    
-    Parameters:
-    - chem_filename (str): Path to the netCDF file containing atmospheric chemical data.
-    - meteo_filename (str): Path to the netCDF file containing meteorological data.
-    - out_filename (str): Path to the output netCDF file for interpolated data.
-    - species (list): List of chemical species names to be interpolated.
-    - start_chunk (datetime object): Start of simulation time.
-    - end_chunk (datetime object): End of simulation time.
+    """
+    Perform vertical interpolation of chemical fields using meteorological data.
 
-    Returns:
+    This function interpolates chemical species from their CAM-Chem vertical levels
+    onto the hybrid sigma-pressure levels of the meteorological dataset.
+
+    Parameters
+    ----------
+    chem_filename : str
+        Path to the NetCDF file containing chemical data.
+    meteo_filename : str
+        Path to the NetCDF file containing meteorological data.
+    out_filename : str
+        Path for the output NetCDF file with interpolated results.
+    spec : list of str
+        List of chemical species to interpolate.
+    start_chunk : datetime.datetime
+        Start of the simulation time window to process.
+    end_chunk : datetime.datetime
+        End of the simulation time window to process.
+    ref_date : str
+        Reference date (YYYY-MM-DD HH:MM:SS) used to convert time variables.
+
+    Returns
+    -------
     None
-
+    
     """
 
     with Dataset(chem_filename, 'r') as c_ds, Dataset(meteo_filename,
