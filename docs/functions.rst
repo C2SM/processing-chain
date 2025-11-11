@@ -112,6 +112,9 @@ a look into ``jobs/tools`` directly.
 * :func:`jobs.tools.vprmsplit.main`
 * :func:`jobs.tools.write_cosmo_input_ghg.main`
 * :func:`jobs.tools.write_int2lm_input_art.main`
+* :func:`jobs.tools.camchem_ic_lbc_reggrid.process_ic`
+* :func:`jobs.tools.camchem_ic_lbc_reggrid.process_lbc`
+
 
 
 -------------------------------------------
@@ -153,3 +156,11 @@ a look into ``jobs/tools`` directly.
 -------------------------------------------
 
 .. autofunction:: jobs.tools.write_int2lm_input_art.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.camchem_ic_lbc_reggrid.process_ic
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.camchem_ic_lbc_reggrid.process_lbc
