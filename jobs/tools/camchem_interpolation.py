@@ -19,7 +19,6 @@ from datetime import datetime, timedelta, timezone
 
 
 def time_intpl(file_path, prefix):
-    
     """
     Interpolate chemistry fields with respect to time between consecutive NetCDF files.
 
@@ -39,7 +38,7 @@ def time_intpl(file_path, prefix):
     None
 
     """
-        
+
     files = sorted([f for f in os.listdir(file_path) if f.startswith(prefix)])
 
     for i in range(len(files) - 1):
