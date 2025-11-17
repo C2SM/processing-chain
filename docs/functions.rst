@@ -114,6 +114,9 @@ a look into ``jobs/tools`` directly.
 * :func:`jobs.tools.write_int2lm_input_art.main`
 * :func:`jobs.tools.camchem_ic_lbc_reggrid.process_ic`
 * :func:`jobs.tools.camchem_ic_lbc_reggrid.process_lbc`
+* :func:`jobs.tools.camchem_interpolation.time_intpl`
+* :func:`jobs.tools.camchem_interpolation.vert_intpl`
+* :func:`jobs.tools.camchem_interpolation.extract_timeslice`
 
 
 
@@ -164,3 +167,15 @@ a look into ``jobs/tools`` directly.
 -------------------------------------------
 
 .. autofunction:: jobs.tools.camchem_ic_lbc_reggrid.process_lbc
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.camchem_interpolation.time_intpl
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.camchem_interpolation.vert_intpl
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.camchem_interpolation.extract_timeslice
