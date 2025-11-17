@@ -104,6 +104,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.prepare_art_full_chem.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_art_full_chem.main()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#tools">Tools</a><ul>
@@ -171,6 +172,7 @@
 <li><p><a class="reference internal" href="#jobs.prepare_icon.main" title="jobs.prepare_icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.reduce_output.main" title="jobs.reduce_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.verify_chain.main" title="jobs.verify_chain.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.prepare_art_full_chem.main" title="jobs.prepare_art_full_chem.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.prepare_art_full_chem.main()</span></code></a></p></li>
 </ul>
 <hr class="docutils" />
 <dl class="py function">
@@ -521,6 +523,44 @@ following variables should be added to the <code class="docutils literal notrans
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>cfg</strong> (<em>Config</em>) – Object holding all user-configuration parameters as attributes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.prepare_art_full_chem.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.prepare_art_full_chem.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/prepare_art_full_chem.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.prepare_art_full_chem.main" title="Link to this definition"></a></dt>
+<dd><p>Prepare all meteorological and chemistry initial and boundary conditions
+(IC/BC) required for an ICON-ART full-chemistry simulation.</p>
+<dl class="simple">
+<dt>The workflow includes:</dt><dd><ul class="simple">
+<li><p>Initializing configuration and logging.</p></li>
+<li><p>Generating meteorological IC/LBC from ERA5 using template bash scripts.</p></li>
+<li><p>Processing CAM-Chem fields (vertical interpolation, temporal slicing,
+temporal interpolation).</p></li>
+<li><p>Generating chemical IC/LBC from CAM-Chem using template bash scripts.</p></li>
+<li><p>Merging meteorological and chemistry fields into final ICON IC/LBC files.</p></li>
+<li><p>Ensuring required variables (e.g., PS, Q) are present and consistent.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Chemical tracers, molar weights, aerosol species, and aerosol–mode partitioning
+are <strong>hardcoded</strong> in this script.
+To add/remove species or alter aerosol mode partitioning, this script must
+be modified accordingly.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg</strong> (<em>Config</em>) – Object holding all user-configuration parameters as attributes.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>All outputs are written as NetCDF files in the configured IC/BC directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>

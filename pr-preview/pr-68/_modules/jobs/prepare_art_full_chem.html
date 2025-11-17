@@ -1,0 +1,646 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jobs.prepare_art_full_chem &mdash; Processing Chain v3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=09616d5f" />
+
+  
+    <link rel="shortcut icon" href="../../_static/processing-chain-favicon.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=a6b2a995"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=a5fa425f"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #5d6d7e" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../features.html">Feature Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environment.html">Conda Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#install-miniconda">1. Install Miniconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../howtorun.html">How to Run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#starting-the-chain">Starting the Chain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#what-it-does">What it Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#test-cases">Test Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howtorun.html#directory-structure">Directory Structure</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code-structure.html">Code Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config.html">Configuration File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#configuration-variables">Configuration Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../config.html#variables-to-set-in-config-yaml">Variables to Set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../namelists.html">Namelist and Runscript Templates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../namelists.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../namelists.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Jobs &amp; Workflows</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html#adding-new-jobs">Adding New Jobs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../functions.html">Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_art_full_chem.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_art_full_chem.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../functions.html#tools">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.cams4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.check_model.check_model"><code class="docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.comp_nc.datasets_equal"><code class="docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.ctnoaa4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.mozart2int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.reduce_output_start_end.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.string2char.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_ic"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_ic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_lbc"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_lbc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.camchem_interpolation.time_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.time_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.camchem_interpolation.vert_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.vert_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.camchem_interpolation.extract_timeslice"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.extract_timeslice()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #5d6d7e" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Processing Chain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">jobs.prepare_art_full_chem</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for jobs.prepare_art_full_chem</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">tools</span><span class="p">,</span> <span class="n">prepare_icon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.tools.camchem_interpolation</span><span class="w"> </span><span class="kn">import</span> <span class="n">vert_intpl</span><span class="p">,</span> <span class="n">time_intpl</span><span class="p">,</span> <span class="n">extract_timeslice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.tools.camchem_ic_lbc_reggrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_lbc</span><span class="p">,</span> <span class="n">process_ic</span>
+
+<span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../functions.html#jobs.prepare_art_full_chem.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepare all meteorological and chemistry initial and boundary conditions</span>
+<span class="sd">    (IC/BC) required for an ICON-ART full-chemistry simulation.</span>
+
+<span class="sd">    The workflow includes:</span>
+<span class="sd">      - Initializing configuration and logging.</span>
+<span class="sd">      - Generating meteorological IC/LBC from ERA5 using template bash scripts.</span>
+<span class="sd">      - Processing CAM-Chem fields (vertical interpolation, temporal slicing,</span>
+<span class="sd">        temporal interpolation).</span>
+<span class="sd">      - Generating chemical IC/LBC from CAM-Chem using template bash scripts.</span>
+<span class="sd">      - Merging meteorological and chemistry fields into final ICON IC/LBC files.</span>
+<span class="sd">      - Ensuring required variables (e.g., PS, Q) are present and consistent.</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    Chemical tracers, molar weights, aerosol species, and aerosol–mode partitioning</span>
+<span class="sd">    are **hardcoded** in this script.  </span>
+<span class="sd">    To add/remove species or alter aerosol mode partitioning, this script must</span>
+<span class="sd">    be modified accordingly.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        All outputs are written as NetCDF files in the configured IC/BC directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prepare_icon</span><span class="o">.</span><span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">change_logfile</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Prepare ICON-ART for full chemistry simulation.&quot;</span><span class="p">)</span>
+
+    <span class="c1">## ---------------------------</span>
+    <span class="c1">## -- Meteorological fields --</span>
+    <span class="c1">## ---------------------------</span>
+
+    <span class="c1"># -- Copy partab_meteo in workdir</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">case_path</span><span class="p">,</span> <span class="s1">&#39;partab_meteo&#39;</span><span class="p">),</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;partab_meteo&#39;</span><span class="p">))</span>
+
+    <span class="c1"># -- Create initial conditions on ICON grid</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">lrestart</span> <span class="o">==</span> <span class="s1">&#39;.FALSE.&#39;</span><span class="p">:</span>
+
+        <span class="c1"># -- Copy ERA5 processing script in workdir</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">case_path</span><span class="p">,</span> <span class="s1">&#39;icon_era5_ic.sh&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+            <span class="n">to_write</span> <span class="o">=</span> <span class="n">inf</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;icon_era5_ic.sh&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+            <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">to_write</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">))</span>
+
+        <span class="c1"># -- Run ERA5 processing script</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span>
+             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;icon_era5_ic.sh&#39;</span><span class="p">)],</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+    <span class="c1"># -- Create lateral boundary conditions on ICON grid</span>
+
+    <span class="c1"># -- Collect file list</span>
+    <span class="n">datafile_list_meteo</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">tools</span><span class="o">.</span><span class="n">iter_hours</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim</span><span class="p">,</span>
+                                 <span class="n">cfg</span><span class="o">.</span><span class="n">meteo_inc</span><span class="p">):</span>
+        <span class="n">meteo_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">meteo_dir</span><span class="p">,</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">meteo_prefix</span> <span class="o">+</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">meteo_nameformat</span><span class="p">))</span>
+        <span class="n">datafile_list_meteo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">meteo_file</span><span class="p">)</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">meteo_suffix</span><span class="p">)</span>
+    <span class="n">datafile_list_meteo</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">datafile_list_meteo</span><span class="p">])</span>
+
+    <span class="c1"># -- Copy ERA5 processing script in workdir</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">case_path</span><span class="p">,</span> <span class="s1">&#39;icon_era5_lbc.sh&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+        <span class="n">to_write</span> <span class="o">=</span> <span class="n">inf</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;icon_era5_lbc.sh&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="n">to_write</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span> <span class="n">datafile_list_meteo</span><span class="o">=</span><span class="n">datafile_list_meteo</span><span class="p">))</span>
+
+    <span class="c1"># -- Run ERA5 processing script</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;icon_era5_lbc.sh&#39;</span><span class="p">)],</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+    <span class="c1">## ----------------------</span>
+    <span class="c1">## -- Chemistry fields --</span>
+    <span class="c1">## ----------------------</span>
+
+    <span class="c1"># -- Define CAM-Chem (CESM2.1) fields for interpolation</span>
+
+    <span class="c1"># -- Define aerosol tracers and split of aerosols into modes</span>
+    <span class="n">MW_NH4HSO4</span> <span class="o">=</span> <span class="mf">115.11</span>
+    <span class="n">MW_SO4</span> <span class="o">=</span> <span class="mf">96.06</span>
+    <span class="n">MW_CL</span> <span class="o">=</span> <span class="mf">35.453</span>
+    <span class="n">MW_NA</span> <span class="o">=</span> <span class="mf">23.0</span>
+    <span class="n">MW_NACL</span> <span class="o">=</span> <span class="mf">58.453</span>
+    <span class="n">MW_NH4</span> <span class="o">=</span> <span class="mf">18.04</span>
+
+    <span class="n">aero_mode_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;pom_a4&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;pom_mixed_ait&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>  <span class="c1"># 90%--&gt;mixed, 10%--&gt;sol/insol </span>
+            <span class="s1">&#39;pom_insol_ait&#39;</span><span class="p">:</span> <span class="mf">0.1</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;pom_a1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;pom_mixed_acc&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+            <span class="s1">&#39;pom_insol_acc&#39;</span><span class="p">:</span> <span class="mf">0.1</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;bc_a4&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;soot_mixed_ait&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+            <span class="s1">&#39;soot_insol_ait&#39;</span><span class="p">:</span> <span class="mf">0.1</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;bc_a1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;soot_mixed_acc&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+            <span class="s1">&#39;soot_insol_acc&#39;</span><span class="p">:</span> <span class="mf">0.1</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;so4_a2&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;so4_mixed_ait&#39;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">MW_SO4</span> <span class="o">/</span>
+            <span class="n">MW_NH4HSO4</span><span class="p">,</span>  <span class="c1"># Sulfat aerosol in CAM-Chem has composition NH4HSO4</span>
+            <span class="s1">&#39;so4_sol_ait&#39;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">MW_SO4</span> <span class="o">/</span> <span class="n">MW_NH4HSO4</span><span class="p">,</span>
+            <span class="s1">&#39;nh4_mixed_ait&#39;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">MW_NH4</span> <span class="o">/</span> <span class="n">MW_NH4HSO4</span><span class="p">,</span>
+            <span class="s1">&#39;nh4_sol_ait&#39;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">MW_NH4</span> <span class="o">/</span> <span class="n">MW_NH4HSO4</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;so4_a1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;so4_mixed_acc&#39;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">MW_SO4</span> <span class="o">/</span> <span class="n">MW_NH4HSO4</span><span class="p">,</span>
+            <span class="s1">&#39;so4_sol_acc&#39;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">MW_SO4</span> <span class="o">/</span> <span class="n">MW_NH4HSO4</span><span class="p">,</span>
+            <span class="s1">&#39;nh4_mixed_acc&#39;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">MW_NH4</span> <span class="o">/</span> <span class="n">MW_NH4HSO4</span><span class="p">,</span>
+            <span class="s1">&#39;nh4_sol_acc&#39;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">MW_NH4</span> <span class="o">/</span> <span class="n">MW_NH4HSO4</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;so4_a3&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;so4_mixed_coa&#39;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">MW_SO4</span> <span class="o">/</span> <span class="n">MW_NH4HSO4</span><span class="p">,</span>
+            <span class="s1">&#39;so4_sol_coa&#39;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">MW_SO4</span> <span class="o">/</span> <span class="n">MW_NH4HSO4</span><span class="p">,</span>
+            <span class="s1">&#39;nh4_mixed_coa&#39;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">MW_NH4</span> <span class="o">/</span> <span class="n">MW_NH4HSO4</span><span class="p">,</span>
+            <span class="s1">&#39;nh4_sol_coa&#39;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">MW_NH4</span> <span class="o">/</span> <span class="n">MW_NH4HSO4</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;ncl_a1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;na_mixed_acc&#39;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">MW_NA</span> <span class="o">/</span> <span class="n">MW_NACL</span><span class="p">,</span>
+            <span class="s1">&#39;na_sol_acc&#39;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">MW_NA</span> <span class="o">/</span> <span class="n">MW_NACL</span><span class="p">,</span>
+            <span class="s1">&#39;cl_mixed_acc&#39;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">MW_CL</span> <span class="o">/</span> <span class="n">MW_NACL</span><span class="p">,</span>
+            <span class="s1">&#39;cl_sol_acc&#39;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">MW_CL</span> <span class="o">/</span> <span class="n">MW_NACL</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;ncl_a3&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;na_mixed_coa&#39;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">MW_NA</span> <span class="o">/</span> <span class="n">MW_NACL</span><span class="p">,</span>
+            <span class="s1">&#39;na_sol_coa&#39;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">MW_NA</span> <span class="o">/</span> <span class="n">MW_NACL</span><span class="p">,</span>
+            <span class="s1">&#39;cl_mixed_coa&#39;</span><span class="p">:</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">MW_CL</span> <span class="o">/</span> <span class="n">MW_NACL</span><span class="p">,</span>
+            <span class="s1">&#39;cl_sol_coa&#39;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">MW_CL</span> <span class="o">/</span> <span class="n">MW_NACL</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;dst_a2&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;dust_mixed_ait&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+            <span class="s1">&#39;dust_insol_ait&#39;</span><span class="p">:</span> <span class="mf">0.1</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;dst_a1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;dust_mixed_acc&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+            <span class="s1">&#39;dust_insol_acc&#39;</span><span class="p">:</span> <span class="mf">0.1</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;dst_a3&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;dust_mixed_coa&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+            <span class="s1">&#39;dust_insol_coa&#39;</span><span class="p">:</span> <span class="mf">0.1</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="c1"># -- Define chemical tracers and molar weights for VMR --&gt; MMR</span>
+    <span class="n">chem_mw_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;ALKNIT&#39;</span><span class="p">:</span> <span class="mf">133.1460</span><span class="p">,</span>
+        <span class="s1">&#39;BENZENE&#39;</span><span class="p">:</span> <span class="mf">78.1121</span><span class="p">,</span>
+        <span class="s1">&#39;BIGALD&#39;</span><span class="p">:</span> <span class="mf">98.1001</span><span class="p">,</span>
+        <span class="s1">&#39;BIGALD1&#39;</span><span class="p">:</span> <span class="mf">84.0735</span><span class="p">,</span>
+        <span class="s1">&#39;BIGALD2&#39;</span><span class="p">:</span> <span class="mf">98.1001</span><span class="p">,</span>
+        <span class="s1">&#39;BIGALD3&#39;</span><span class="p">:</span> <span class="mf">98.1001</span><span class="p">,</span>
+        <span class="s1">&#39;BIGALD4&#39;</span><span class="p">:</span> <span class="mf">112.1268</span><span class="p">,</span>
+        <span class="s1">&#39;BIGALK&#39;</span><span class="p">:</span> <span class="mf">72.1490</span><span class="p">,</span>
+        <span class="s1">&#39;BIGENE&#39;</span><span class="p">:</span> <span class="mf">56.1065</span><span class="p">,</span>
+        <span class="s1">&#39;C2H2&#39;</span><span class="p">:</span> <span class="mf">26.0374</span><span class="p">,</span>
+        <span class="s1">&#39;C2H4&#39;</span><span class="p">:</span> <span class="mf">28.0532</span><span class="p">,</span>
+        <span class="s1">&#39;C2H5OH&#39;</span><span class="p">:</span> <span class="mf">46.0685</span><span class="p">,</span>
+        <span class="s1">&#39;C2H6&#39;</span><span class="p">:</span> <span class="mf">30.0691</span><span class="p">,</span>
+        <span class="s1">&#39;C3H6&#39;</span><span class="p">:</span> <span class="mf">42.0799</span><span class="p">,</span>
+        <span class="s1">&#39;C3H8&#39;</span><span class="p">:</span> <span class="mf">44.0957</span><span class="p">,</span>
+        <span class="s1">&#39;CH2O&#39;</span><span class="p">:</span> <span class="mf">30.0260</span><span class="p">,</span>
+        <span class="s1">&#39;CH3CHO&#39;</span><span class="p">:</span> <span class="mf">44.0526</span><span class="p">,</span>
+        <span class="s1">&#39;CH3COCH3&#39;</span><span class="p">:</span> <span class="mf">58.0793</span><span class="p">,</span>
+        <span class="s1">&#39;CH3COCHO&#39;</span><span class="p">:</span> <span class="mf">72.0628</span><span class="p">,</span>
+        <span class="s1">&#39;CH3COOH&#39;</span><span class="p">:</span> <span class="mf">60.0520</span><span class="p">,</span>
+        <span class="s1">&#39;CH3OH&#39;</span><span class="p">:</span> <span class="mf">32.0419</span><span class="p">,</span>
+        <span class="s1">&#39;CH3OOH&#39;</span><span class="p">:</span> <span class="mf">48.0413</span><span class="p">,</span>
+        <span class="s1">&#39;CH4&#39;</span><span class="p">:</span> <span class="mf">16.0425</span><span class="p">,</span>
+        <span class="s1">&#39;CO&#39;</span><span class="p">:</span> <span class="mf">28.0101</span><span class="p">,</span>
+        <span class="s1">&#39;CRESOL&#39;</span><span class="p">:</span> <span class="mf">108.1381</span><span class="p">,</span>
+        <span class="s1">&#39;DMS&#39;</span><span class="p">:</span> <span class="mf">62.1340</span><span class="p">,</span>
+        <span class="s1">&#39;GLYOXAL&#39;</span><span class="p">:</span> <span class="mf">26.0374</span><span class="p">,</span>
+        <span class="s1">&#39;H2O&#39;</span><span class="p">:</span> <span class="mf">18.0153</span><span class="p">,</span>
+        <span class="s1">&#39;H2O2&#39;</span><span class="p">:</span> <span class="mf">34.0147</span><span class="p">,</span>
+        <span class="s1">&#39;HCOOH&#39;</span><span class="p">:</span> <span class="mf">46.0254</span><span class="p">,</span>
+        <span class="s1">&#39;HNO3&#39;</span><span class="p">:</span> <span class="mf">63.0128</span><span class="p">,</span>
+        <span class="s1">&#39;HO2&#39;</span><span class="p">:</span> <span class="mf">33.0068</span><span class="p">,</span>
+        <span class="s1">&#39;HO2NO2&#39;</span><span class="p">:</span> <span class="mf">79.0123</span><span class="p">,</span>
+        <span class="s1">&#39;HONITR&#39;</span><span class="p">:</span> <span class="mf">135.1188</span><span class="p">,</span>
+        <span class="s1">&#39;HYAC&#39;</span><span class="p">:</span> <span class="mf">74.0787</span><span class="p">,</span>
+        <span class="s1">&#39;ISOP&#39;</span><span class="p">:</span> <span class="mf">68.1172</span><span class="p">,</span>
+        <span class="s1">&#39;ISOPNITA&#39;</span><span class="p">:</span> <span class="mf">147.1295</span><span class="p">,</span>
+        <span class="s1">&#39;ISOPNITB&#39;</span><span class="p">:</span> <span class="mf">147.1295</span><span class="p">,</span>
+        <span class="s1">&#39;MACR&#39;</span><span class="p">:</span> <span class="mf">70.0900</span><span class="p">,</span>
+        <span class="s1">&#39;MEK&#39;</span><span class="p">:</span> <span class="mf">72.1059</span><span class="p">,</span>
+        <span class="s1">&#39;MPAN&#39;</span><span class="p">:</span> <span class="mf">147.0864</span><span class="p">,</span>
+        <span class="s1">&#39;MVK&#39;</span><span class="p">:</span> <span class="mf">70.0900</span><span class="p">,</span>
+        <span class="s1">&#39;N2O&#39;</span><span class="p">:</span> <span class="mf">44.0129</span><span class="p">,</span>
+        <span class="s1">&#39;N2O5&#39;</span><span class="p">:</span> <span class="mf">108.0105</span><span class="p">,</span>
+        <span class="s1">&#39;NH3&#39;</span><span class="p">:</span> <span class="mf">17.0306</span><span class="p">,</span>
+        <span class="s1">&#39;NO&#39;</span><span class="p">:</span> <span class="mf">30.0061</span><span class="p">,</span>
+        <span class="s1">&#39;NO2&#39;</span><span class="p">:</span> <span class="mf">46.0056</span><span class="p">,</span>
+        <span class="s1">&#39;NO3&#39;</span><span class="p">:</span> <span class="mf">62.0050</span><span class="p">,</span>
+        <span class="s1">&#39;NOA&#39;</span><span class="p">:</span> <span class="mf">119.0762</span><span class="p">,</span>
+        <span class="s1">&#39;O3&#39;</span><span class="p">:</span> <span class="mf">47.9982</span><span class="p">,</span>
+        <span class="s1">&#39;OH&#39;</span><span class="p">:</span> <span class="mf">17.0073</span><span class="p">,</span>
+        <span class="s1">&#39;ONITR&#39;</span><span class="p">:</span> <span class="mf">133.1029</span><span class="p">,</span>
+        <span class="s1">&#39;PAN&#39;</span><span class="p">:</span> <span class="mf">121.0491</span><span class="p">,</span>
+        <span class="s1">&#39;PBZNIT&#39;</span><span class="p">:</span> <span class="mf">183.1186</span><span class="p">,</span>
+        <span class="s1">&#39;PHENOL&#39;</span><span class="p">:</span> <span class="mf">94.1115</span><span class="p">,</span>
+        <span class="s1">&#39;SO2&#39;</span><span class="p">:</span> <span class="mf">64.0648</span><span class="p">,</span>
+        <span class="s1">&#39;TERPNIT&#39;</span><span class="p">:</span> <span class="mf">215.2467</span><span class="p">,</span>
+        <span class="s1">&#39;TOLUENE&#39;</span><span class="p">:</span> <span class="mf">92.1387</span><span class="p">,</span>
+        <span class="s1">&#39;XYLENES&#39;</span><span class="p">:</span> <span class="mf">106.1653</span>
+    <span class="p">}</span>
+
+    <span class="n">camchem_spec</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">aero_mode_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">chem_mw_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="n">chem_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chem_dir</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_icbc_filename</span><span class="p">)</span>
+    <span class="n">meteo_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">meteo_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">meteo_nameformat</span><span class="p">)</span> <span class="o">+</span>
+        <span class="s1">&#39;_lbc&#39;</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_filename_suffix</span><span class="p">)</span>
+    <span class="n">tmp_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;camchem_temp.nc&#39;</span><span class="p">)</span>
+
+    <span class="c1"># -- Vertically interpolate CAM-Chem fields</span>
+    <span class="n">vert_intpl</span><span class="p">(</span><span class="n">chem_filename</span><span class="p">,</span> <span class="n">meteo_filename</span><span class="p">,</span> <span class="n">tmp_filename</span><span class="p">,</span> <span class="n">camchem_spec</span><span class="p">,</span>
+               <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_ref_date</span><span class="p">)</span>
+
+    <span class="c1"># -- Create temporary folder for time slices of chem data</span>
+    <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;chem_data_tmp&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">rmdir</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
+
+    <span class="c1"># -- Extract one NetCDF file per time step</span>
+    <span class="n">out_template</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">tmp_dir</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_nameformat</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_suffix</span><span class="p">)</span>
+
+    <span class="n">extract_timeslice</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">,</span> <span class="n">out_template</span><span class="p">,</span> <span class="n">camchem_spec</span><span class="p">,</span>
+                      <span class="n">cfg</span><span class="o">.</span><span class="n">chem_ref_date</span><span class="p">)</span>
+
+    <span class="c1"># -- Remove tmp file with vertically interpolated fields</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+
+    <span class="c1"># -- Linear interpolation with respect to time</span>
+    <span class="n">time_intpl</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_prefix</span><span class="p">)</span>
+
+    <span class="c1"># -- Prepare data for initial conditions</span>
+    <span class="n">process_ic</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="p">,</span> <span class="n">aero_mode_dict</span><span class="p">,</span>
+               <span class="n">cfg</span><span class="o">.</span><span class="n">chem_prefix</span><span class="p">)</span>
+
+    <span class="c1"># -- Prepare data for lateral boundary conditions</span>
+    <span class="n">process_lbc</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="p">,</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_inc</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_prefix</span><span class="p">,</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">chem_suffix</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_nameformat</span><span class="p">,</span> <span class="n">chem_mw_dict</span><span class="p">,</span>
+                <span class="n">aero_mode_dict</span><span class="p">)</span>
+
+    <span class="c1"># -- Remove tmp folder with chem data</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
+
+    <span class="c1"># -- Copy partab_chem in workdir</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">case_path</span><span class="p">,</span> <span class="s1">&#39;partab_chem&#39;</span><span class="p">),</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;partab_chem&#39;</span><span class="p">))</span>
+
+    <span class="c1"># -- Create initial conditions on ICON grid</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">lrestart</span> <span class="o">==</span> <span class="s1">&#39;.FALSE.&#39;</span><span class="p">:</span>
+        <span class="c1"># -- Copy CAM-Chem processing script in workdir</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">case_path</span><span class="p">,</span> <span class="s1">&#39;icon_camchem_ic.sh&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+            <span class="n">to_write</span> <span class="o">=</span> <span class="n">inf</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;icon_camchem_ic.sh&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+            <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">to_write</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">))</span>
+
+        <span class="c1"># -- Run CAM-Chem processing script</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span>
+             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;icon_camchem_ic.sh&#39;</span><span class="p">)],</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+    <span class="c1"># -- Create lateral boundary conditions on ICON grid</span>
+
+    <span class="c1"># -- Collect file list</span>
+    <span class="n">datafile_list_chem</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">tools</span><span class="o">.</span><span class="n">iter_hours</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim</span><span class="p">,</span>
+                                 <span class="n">cfg</span><span class="o">.</span><span class="n">meteo_inc</span><span class="p">):</span>
+        <span class="n">chem_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">chem_prefix</span> <span class="o">+</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chem_nameformat</span><span class="p">))</span>
+        <span class="n">datafile_list_chem</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chem_file</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_lbc&#39;</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_suffix</span><span class="p">)</span>
+    <span class="n">datafile_list_chem</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">datafile_list_chem</span><span class="p">])</span>
+
+    <span class="c1"># -- Copy CAM-Chem processing script in workdir</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">case_path</span><span class="p">,</span> <span class="s1">&#39;icon_camchem_lbc.sh&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+        <span class="n">to_write</span> <span class="o">=</span> <span class="n">inf</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;icon_camchem_lbc.sh&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
+        <span class="n">outf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="n">to_write</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span> <span class="n">datafile_list_chem</span><span class="o">=</span><span class="n">datafile_list_chem</span><span class="p">))</span>
+
+    <span class="c1"># -- Run CAM-Chem processing script</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span>
+         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s1">&#39;icon_camchem_lbc.sh&#39;</span><span class="p">)],</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+    <span class="c1"># -- Create symbolic link to LBC file at experiment start</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">lrestart</span> <span class="o">==</span> <span class="s1">&#39;.TRUE.&#39;</span><span class="p">:</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">symlink_file</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_file</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_file_scratch</span><span class="p">)</span>
+
+    <span class="c1">## ----------------------------------------------</span>
+    <span class="c1">## -- Merging IC/LBC for meteo and chem fields --</span>
+    <span class="c1">## ----------------------------------------------</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Merging IC and LBC&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">tools</span><span class="o">.</span><span class="n">iter_hours</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim</span><span class="p">,</span>
+                                 <span class="n">cfg</span><span class="o">.</span><span class="n">meteo_inc</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">time</span> <span class="o">==</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="p">:</span>
+            <span class="c1"># -- Merge IC</span>
+            <span class="n">meteo_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">meteo_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">meteo_nameformat</span><span class="p">)</span> <span class="o">+</span>
+                <span class="s1">&#39;_ic.nc&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">meteo_file</span><span class="p">):</span>
+                <span class="n">chem_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chem_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_nameformat</span><span class="p">)</span> <span class="o">+</span>
+                    <span class="s1">&#39;_ic_icon.nc&#39;</span><span class="p">)</span>
+                <span class="n">merged_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">inidata_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_nameformat</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_filename_suffix</span><span class="p">)</span>
+                <span class="n">ds_meteo</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">meteo_file</span><span class="p">)</span>
+                <span class="n">ds_chem</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">chem_file</span><span class="p">)</span>
+                <span class="c1"># Replace &quot;PS&quot; from CAM-Chem by ERA5 value</span>
+                <span class="n">ds_chem</span><span class="p">[</span><span class="s2">&quot;PS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ds_meteo</span><span class="p">[</span><span class="s2">&quot;LNPS&quot;</span><span class="p">])</span>
+                <span class="n">ds_chem</span><span class="p">[</span><span class="s2">&quot;PS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds_chem</span><span class="p">[</span><span class="s2">&quot;PS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s2">&quot;lev_2&quot;</span><span class="p">)</span>
+                <span class="c1">#if &#39;Q&#39; not in ds_chem:</span>
+                <span class="n">ds_chem</span><span class="p">[</span><span class="s1">&#39;Q&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds_meteo</span><span class="p">[</span><span class="s1">&#39;QV&#39;</span><span class="p">]</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added PS and Q to file </span><span class="si">{</span><span class="n">merged_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">ds_merged</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">ds_meteo</span><span class="p">,</span> <span class="n">ds_chem</span><span class="p">],</span> <span class="n">compat</span><span class="o">=</span><span class="s2">&quot;override&quot;</span><span class="p">)</span>
+                <span class="n">ds_merged</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">merged_file</span><span class="p">)</span>
+                <span class="c1"># Rename file to get original file name</span>
+                <span class="n">tools</span><span class="o">.</span><span class="n">remove_file</span><span class="p">(</span><span class="n">meteo_file</span><span class="p">)</span>
+                <span class="n">tools</span><span class="o">.</span><span class="n">remove_file</span><span class="p">(</span><span class="n">chem_file</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Added MECCA tracers to file </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">merged_file</span><span class="p">))</span>
+
+        <span class="c1"># -- Merge LBC</span>
+        <span class="n">meteo_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">meteo_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">meteo_nameformat</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_lbc.nc&#39;</span><span class="p">)</span>
+        <span class="n">chem_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">chem_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">chem_nameformat</span><span class="p">)</span> <span class="o">+</span>
+            <span class="s1">&#39;_lbc_icon.nc&#39;</span><span class="p">)</span>
+        <span class="n">merged_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_nameformat</span><span class="p">)</span> <span class="o">+</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_filename_suffix</span><span class="p">)</span>
+        <span class="n">ds_meteo</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">meteo_file</span><span class="p">)</span>
+        <span class="n">ds_chem</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">chem_file</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;GEOP_ML&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ds_meteo</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;GEOP_ML&#39; missing in </span><span class="si">{</span><span class="n">meteo_file</span><span class="si">}</span><span class="s2">. Attempting to copy from 00:00 UTC file.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">zero_hour</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">zero_hour_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span>
+                <span class="n">zero_hour</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">meteo_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">meteo_nameformat</span><span class="p">)</span> <span class="o">+</span>
+                <span class="s1">&#39;_lbc.nc&#39;</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ds_zero_hour</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">zero_hour_file</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;GEOP_ML&#39;</span> <span class="ow">in</span> <span class="n">ds_zero_hour</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+                    <span class="n">ds_meteo</span><span class="p">[</span><span class="s1">&#39;GEOP_ML&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds_zero_hour</span><span class="p">[</span><span class="s1">&#39;GEOP_ML&#39;</span><span class="p">]</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Copied &#39;GEOP_ML&#39; from </span><span class="si">{</span><span class="n">zero_hour_file</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">meteo_file</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;GEOP_ML&#39; not found in </span><span class="si">{</span><span class="n">zero_hour_file</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;00:00 UTC file </span><span class="si">{</span><span class="n">zero_hour_file</span><span class="si">}</span><span class="s2"> not found.&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Failed to process 00:00 UTC file </span><span class="si">{</span><span class="n">zero_hour_file</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">ds_merged</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">ds_meteo</span><span class="p">,</span> <span class="n">ds_chem</span><span class="p">],</span> <span class="n">compat</span><span class="o">=</span><span class="s2">&quot;override&quot;</span><span class="p">)</span>
+        <span class="n">ds_merged</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">merged_file</span><span class="p">)</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">remove_file</span><span class="p">(</span><span class="n">meteo_file</span><span class="p">)</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">remove_file</span><span class="p">(</span><span class="n">chem_file</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Added MECCA tracers to file </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">merged_file</span><span class="p">))</span>
+
+    <span class="c1">## ------------------------------------------------------</span>
+    <span class="c1">## -- Add Q (copy of QV) and PS=(exp(LNPS)) to IC file --</span>
+    <span class="c1">## ------------------------------------------------------</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Add Q (copy of QV) and PS (exp(LNPS)) to initial file&#39;</span><span class="p">)</span>
+    <span class="n">ic_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">inidata_prefix</span> <span class="o">+</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_nameformat</span> <span class="o">+</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_filename_suffix</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ic_file</span><span class="p">):</span>
+        <span class="n">merged_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">inidata_prefix</span> <span class="o">+</span>
+                                       <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_nameformat</span> <span class="o">+</span> <span class="s1">&#39;_merged&#39;</span> <span class="o">+</span>
+                                       <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_filename_suffix</span><span class="p">))</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">ic_file</span><span class="p">)</span>
+        <span class="n">merging</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="s2">&quot;PS&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
+            <span class="n">merging</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;PS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;LNPS&quot;</span><span class="p">])</span>
+            <span class="n">ds_chem</span><span class="p">[</span><span class="s2">&quot;PS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds_chem</span><span class="p">[</span><span class="s2">&quot;PS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s2">&quot;lev_2&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+                <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added PS to file </span><span class="si">{</span><span class="n">ic_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added PS to file </span><span class="si">{</span><span class="n">ic_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;Q&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
+            <span class="n">merging</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;Q&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;QV&#39;</span><span class="p">]</span>
+            <span class="c1"># -- Bug fix for:</span>
+            <span class="c1"># &quot;Variable has conflicting _FillValue (nan) and missing_value (-9e+33)&quot;</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+                <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added Q to file </span><span class="si">{</span><span class="n">ic_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># add surface pressure compatible with ERA5 data</span>
+        <span class="k">if</span> <span class="n">merging</span><span class="p">:</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">merged_file</span><span class="p">)</span>
+            <span class="n">tools</span><span class="o">.</span><span class="n">rename_file</span><span class="p">(</span><span class="n">merged_file</span><span class="p">,</span> <span class="n">ic_file</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018-2024, C2SM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
