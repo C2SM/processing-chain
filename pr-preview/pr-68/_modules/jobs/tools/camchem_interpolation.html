@@ -1,0 +1,870 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jobs.tools.camchem_interpolation &mdash; Processing Chain v3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=09616d5f" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/processing-chain-favicon.ico"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=a6b2a995"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=a5fa425f"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #5d6d7e" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html">Feature Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment.html">Conda Environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../environment.html#install-miniconda">1. Install Miniconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../howtorun.html">How to Run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../howtorun.html#starting-the-chain">Starting the Chain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howtorun.html#what-it-does">What it Does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howtorun.html#test-cases">Test Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../howtorun.html#directory-structure">Directory Structure</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code-structure.html">Code Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuration File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../config.html#configuration-variables">Configuration Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../config.html#variables-to-set-in-config-yaml">Variables to Set in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../namelists.html">Namelist and Runscript Templates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../namelists.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../namelists.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Jobs &amp; Workflows</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../jobs.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../jobs.html#adding-new-jobs">Adding New Jobs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../functions.html">Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.biofluxes.main"><code class="docutils literal notranslate"><span class="pre">jobs.biofluxes.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.obs_nudging.main"><code class="docutils literal notranslate"><span class="pre">jobs.obs_nudging.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.octe.main"><code class="docutils literal notranslate"><span class="pre">jobs.octe.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.oem.main"><code class="docutils literal notranslate"><span class="pre">jobs.oem.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.online_vprm.main"><code class="docutils literal notranslate"><span class="pre">jobs.online_vprm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.photo_rate.main"><code class="docutils literal notranslate"><span class="pre">jobs.photo_rate.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.post_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.post_int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.post_int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.prepare_cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../functions.html#tools">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.cams4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.cams4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.check_model.check_model"><code class="docutils literal notranslate"><span class="pre">jobs.tools.check_model.check_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.comp_nc.datasets_equal"><code class="docutils literal notranslate"><span class="pre">jobs.tools.comp_nc.datasets_equal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.ctnoaa4int2cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.ctnoaa4int2cosmo.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.mozart2int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.mozart2int2lm.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.reduce_output_start_end.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.reduce_output_start_end.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.string2char.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.string2char.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_ic"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_ic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_lbc"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_lbc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.camchem_interpolation.time_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.time_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.camchem_interpolation.vert_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.vert_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../functions.html#jobs.tools.camchem_interpolation.extract_timeslice"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.extract_timeslice()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #5d6d7e" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Processing Chain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">jobs.tools.camchem_interpolation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for jobs.tools.camchem_interpolation</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netCDF4</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">join</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.nc_operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">VariableCreator</span><span class="p">,</span> <span class="n">VariableCopier</span><span class="p">,</span> <span class="n">DimensionCopier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
+
+<span class="c1">##########################################################################################</span>
+<span class="c1">## - Vertical interpolation of chemistry fields from CAM-Chem (CESM2.1) output.</span>
+<span class="c1">## - Extraction of one NetCDF file per time step.</span>
+<span class="c1">## - Interpolation of chemistry fields with respect to time variable.</span>
+<span class="c1">##</span>
+<span class="c1">## Based on &#39;mozart2int2m.py&#39;, with additions by Louise Aubet and Corina Keller (Empa).</span>
+<span class="c1">##########################################################################################</span>
+
+
+<div class="viewcode-block" id="time_intpl">
+<a class="viewcode-back" href="../../../functions.html#jobs.tools.camchem_interpolation.time_intpl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">time_intpl</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interpolate chemistry fields with respect to time between consecutive NetCDF files.</span>
+
+<span class="sd">    This function generates new NetCDF files at intermediate times between existing</span>
+<span class="sd">    CAM-Chem output files. Takes the arithmetic mean of chemical and surface pressure </span>
+<span class="sd">    fields and creates interpolated &#39;time&#39; and &#39;datesec&#39; variables.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file_path : str</span>
+<span class="sd">        Path to the directory containing the input NetCDF files.</span>
+<span class="sd">    prefix : str</span>
+<span class="sd">        Filename prefix for identifying the input NetCDF files to interpolate.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)])</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+
+        <span class="n">in_filename1</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">files</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">in_filename2</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">files</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">date_str1</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">date_str2</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Time difference between two files</span>
+        <span class="n">date1</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str1</span><span class="p">,</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
+        <span class="n">date2</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str2</span><span class="p">,</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
+        <span class="n">time_difference</span> <span class="o">=</span> <span class="p">(</span><span class="n">date2</span> <span class="o">-</span> <span class="n">date1</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span>
+
+        <span class="c1"># Date of the new file</span>
+        <span class="n">delta_t</span> <span class="o">=</span> <span class="n">time_difference</span> <span class="o">/</span> <span class="mf">2.</span>
+        <span class="n">interp_date</span> <span class="o">=</span> <span class="n">date1</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">delta_t</span><span class="p">)</span>
+
+        <span class="n">outname_template</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H.nc&#39;</span><span class="p">)</span>
+        <span class="n">out_name</span> <span class="o">=</span> <span class="n">interp_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">outname_template</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">in_filename1</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds1</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">in_filename2</span><span class="p">,</span>
+                                                        <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_name</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">out_name</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">out_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_ds</span><span class="p">:</span>
+                <span class="c1"># -- Copy global attributes</span>
+                <span class="n">out_ds</span><span class="o">.</span><span class="n">setncatts</span><span class="p">(</span><span class="n">ds1</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+                <span class="c1"># -- Copy dimensions and variables</span>
+                <span class="n">dimpairs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">dim_name</span><span class="p">,</span> <span class="n">dim_name</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">dim_name</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">ds1</span><span class="o">.</span><span class="n">dimensions</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+                <span class="n">dim_copier</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">DimensionCopier</span><span class="p">(</span><span class="n">src_name</span><span class="p">,</span> <span class="n">dst_name</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">src_name</span><span class="p">,</span> <span class="n">dst_name</span> <span class="ow">in</span> <span class="n">dimpairs</span>
+                <span class="p">]</span>
+                <span class="n">var_to_copy</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="s1">&#39;lev_s&#39;</span><span class="p">,</span> <span class="s1">&#39;lev_m&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;hyam&#39;</span><span class="p">,</span> <span class="s1">&#39;hybm&#39;</span><span class="p">,</span> <span class="s1">&#39;hyai&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;hybi&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span>
+                <span class="p">]</span>
+                <span class="n">dict_var</span> <span class="o">=</span> <span class="p">[{</span>
+                    <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="n">var</span><span class="p">,</span>
+                    <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="n">var</span>
+                <span class="p">}</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">var_to_copy</span><span class="p">]</span>
+                <span class="n">var_copier</span> <span class="o">=</span> <span class="p">[</span><span class="n">VariableCopier</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">dict_var</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">dim_copier</span> <span class="o">+</span> <span class="n">var_copier</span><span class="p">:</span>
+                    <span class="n">op</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">ds1</span><span class="p">,</span> <span class="n">out_ds</span><span class="p">)</span>
+
+                <span class="c1"># -- Create time and date variables</span>
+                <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span>
+                    <span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;f8&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">)</span>
+                    <span class="p">},</span>
+                    <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s1">&#39;axis&#39;</span><span class="p">:</span>
+                        <span class="s1">&#39;T&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;calendar&#39;</span><span class="p">:</span>
+                        <span class="s1">&#39;proleptic_gregorian&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;long_name&#39;</span><span class="p">:</span>
+                        <span class="s1">&#39;simulation_time&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span>
+                        <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;units&#39;</span><span class="p">:</span>
+                        <span class="n">interp_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;hours since %Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+                    <span class="p">},</span>
+                    <span class="n">var_vals</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span>
+
+                <span class="n">datesec</span> <span class="o">=</span> <span class="n">ds1</span><span class="p">[</span><span class="s1">&#39;datesec&#39;</span><span class="p">][:]</span> <span class="o">+</span> <span class="n">delta_t</span> <span class="o">*</span> <span class="mi">3600</span>
+                <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span><span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;datesec&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;f8&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">)</span>
+                <span class="p">},</span>
+                                 <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                                     <span class="s1">&#39;long_name&#39;</span><span class="p">:</span>
+                                     <span class="s1">&#39;current seconds of current date&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;s&#39;</span>
+                                 <span class="p">},</span>
+                                 <span class="n">var_vals</span><span class="o">=</span><span class="n">datesec</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span>
+
+                <span class="c1"># -- Interpolate surface pressure</span>
+                <span class="n">mean_pres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">ds1</span><span class="p">[</span><span class="s1">&#39;PS&#39;</span><span class="p">][:],</span> <span class="n">ds2</span><span class="p">[</span><span class="s1">&#39;PS&#39;</span><span class="p">][:]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span><span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;PS&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;f8&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">)</span>
+                <span class="p">},</span>
+                                 <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                                     <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;surface pressure&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;Pa&#39;</span>
+                                 <span class="p">},</span>
+                                 <span class="n">var_vals</span><span class="o">=</span><span class="n">mean_pres</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span>
+
+                <span class="c1"># -- Interpolate chemical fields</span>
+                <span class="n">var_to_copy</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;datesec&#39;</span><span class="p">,</span> <span class="s1">&#39;PS&#39;</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">ds1</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">var_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">var_to_copy</span><span class="p">:</span>
+                        <span class="n">mean_field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                            <span class="p">[</span><span class="n">ds1</span><span class="p">[</span><span class="n">var_name</span><span class="p">][:],</span> <span class="n">ds2</span><span class="p">[</span><span class="n">var_name</span><span class="p">][:]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span><span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                            <span class="s1">&#39;varname&#39;</span><span class="p">:</span>
+                            <span class="n">var_name</span><span class="p">,</span>
+                            <span class="s1">&#39;datatype&#39;</span><span class="p">:</span>
+                            <span class="s1">&#39;f8&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lev_m&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">)</span>
+                        <span class="p">},</span>
+                                         <span class="n">var_attrs</span><span class="o">=</span><span class="n">var</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span>
+                                         <span class="n">var_vals</span><span class="o">=</span><span class="n">mean_field</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span></div>
+
+
+
+<span class="c1">##################################</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">date_from_days_since_ref</span><span class="p">(</span><span class="n">days_since_ref</span><span class="p">,</span> <span class="n">ref_date</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a float counting days since a reference date to a datetime object.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - days_since_ref: float, the number of days since the reference date.</span>
+<span class="sd">    - ref_date: str, the reference date in the format &#39;yyyy-mm-dd hh:mm:ss&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - datetime object corresponding to the given number of days since the reference date.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">timestamp_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">ref_date</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+    <span class="n">timestamp_time</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days_since_ref</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">timestamp_date</span><span class="p">,</span>
+                            <span class="n">datetime</span><span class="o">.</span><span class="n">min</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">+</span> <span class="n">timestamp_time</span>
+
+
+<span class="c1">##################################</span>
+
+
+<div class="viewcode-block" id="extract_timeslice">
+<a class="viewcode-back" href="../../../functions.html#jobs.tools.camchem_interpolation.extract_timeslice">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_timeslice</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">out_file_template</span><span class="p">,</span> <span class="n">spec_intpl</span><span class="p">,</span> <span class="n">ref_date</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract a single time slice from a NetCDF file and adjust longitudes.</span>
+
+<span class="sd">    Copies selected species and metadata from an input NetCDF file into a new</span>
+<span class="sd">    NetCDF file for each time step. </span>
+<span class="sd">    Longitudes are adjusted from [0, 360) to [-180, 180).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_file : str</span>
+<span class="sd">        Path to the input NetCDF file.</span>
+<span class="sd">    out_file_template : str</span>
+<span class="sd">        Template string for the output filename.</span>
+<span class="sd">    spec_intpl : list of str</span>
+<span class="sd">        List of chemical species to extract from the input file.</span>
+<span class="sd">    ref_date : str</span>
+<span class="sd">        Reference date (YYYY-MM-DD HH:MM:SS) used to convert time variables.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># -- Create list of DimensionCopier objects for copying dimensions.</span>
+    <span class="n">dimpairs</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;lev_m&#39;</span><span class="p">,</span> <span class="s1">&#39;lev_m&#39;</span><span class="p">),</span>
+                <span class="p">(</span><span class="s1">&#39;lev_s&#39;</span><span class="p">,</span> <span class="s1">&#39;lev_s&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;nhym&#39;</span><span class="p">,</span> <span class="s1">&#39;nhym&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;nhyi&#39;</span><span class="p">,</span> <span class="s1">&#39;nhyi&#39;</span><span class="p">)]</span>
+
+    <span class="n">dim_copier</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">DimensionCopier</span><span class="p">(</span><span class="n">src_name</span><span class="p">,</span> <span class="n">dst_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">src_name</span><span class="p">,</span> <span class="n">dst_name</span> <span class="ow">in</span> <span class="n">dimpairs</span>
+    <span class="p">]</span>
+
+    <span class="c1"># -- Create list of VariableCopier objects for copying variables for each time step.</span>
+    <span class="n">varpairs_to_copy</span> <span class="o">=</span> <span class="p">[(</span><span class="n">spc</span><span class="p">,</span> <span class="n">spc</span><span class="p">)</span> <span class="k">for</span> <span class="n">spc</span> <span class="ow">in</span> <span class="n">spec_intpl</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">time_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Dataset</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+
+        <span class="c1"># -- Specify the slices of the variable values to be copied.</span>
+        <span class="n">sliced_variable_options</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lev_m&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">)</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;var_val_indices&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">time_index</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="p">}</span>
+
+        <span class="n">var_opts</span> <span class="o">=</span> <span class="p">[{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="n">src</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="n">dst</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">sliced_variable_options</span>
+        <span class="p">}</span> <span class="k">for</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span> <span class="ow">in</span> <span class="n">varpairs_to_copy</span><span class="p">]</span>
+
+        <span class="n">var_opts</span> <span class="o">+=</span> <span class="p">[{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;lat&#39;</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;lon&#39;</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;PS&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;PS&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">)</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;var_val_indices&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">time_index</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;hyam&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;hyam&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;nhym&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;hybm&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;hybm&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;nhym&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;lev_m&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;lev_m&#39;</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;lev_s&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;lev_s&#39;</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;hyai&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;hyai&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;nhyi&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;hybi&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;hybi&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;nhyi&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}]</span>
+
+        <span class="n">var_copier</span> <span class="o">=</span> <span class="p">[</span><span class="n">VariableCopier</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">var_opts</span><span class="p">]</span>
+
+        <span class="c1"># -- Extract data for given time step.</span>
+        <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">ds</span><span class="p">:</span>
+            <span class="n">days_since_ref</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="n">time_index</span><span class="p">])</span>
+            <span class="n">timestamp</span> <span class="o">=</span> <span class="n">date_from_days_since_ref</span><span class="p">(</span><span class="n">days_since_ref</span><span class="p">,</span> <span class="n">ref_date</span><span class="p">)</span>
+            <span class="n">out_path</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">out_file_template</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_ds</span><span class="p">:</span>
+                <span class="c1"># -- Copy global attributes</span>
+                <span class="n">out_ds</span><span class="o">.</span><span class="n">setncatts</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+                <span class="c1"># -- Create new time dimension.</span>
+                <span class="n">out_ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="n">dimname</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="c1"># -- Create time variable.</span>
+                <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span>
+                    <span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;f8&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">)</span>
+                    <span class="p">},</span>
+                    <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s1">&#39;axis&#39;</span><span class="p">:</span>
+                        <span class="s1">&#39;T&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;calendar&#39;</span><span class="p">:</span>
+                        <span class="s1">&#39;proleptic_gregorian&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;long_name&#39;</span><span class="p">:</span>
+                        <span class="s1">&#39;simulation_time&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span>
+                        <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;units&#39;</span><span class="p">:</span>
+                        <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;hours since %Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+                    <span class="p">},</span>
+                    <span class="n">var_vals</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span>
+
+                <span class="c1"># -- Create date variable.</span>
+                <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span>
+                    <span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">)</span>
+                    <span class="p">},</span>
+                    <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;current date as 8 digit&#39;</span>
+                                      <span class="s1">&#39; integer (YYYYMMDD)&#39;</span><span class="p">)</span>
+                    <span class="p">},</span>
+                    <span class="n">var_vals</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span>
+                        <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)))</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span>
+
+                <span class="c1"># -- Create datesec variable.</span>
+                <span class="n">sec_from_midnight</span> <span class="o">=</span> <span class="p">((</span><span class="n">timestamp</span> <span class="o">-</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">microsecond</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+                <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span><span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;datesec&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">)</span>
+                <span class="p">},</span>
+                                 <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                                     <span class="s1">&#39;long_name&#39;</span><span class="p">:</span>
+                                     <span class="p">(</span><span class="s1">&#39;seconds to complete&#39;</span><span class="p">,</span> <span class="s1">&#39;current date&#39;</span><span class="p">),</span>
+                                     <span class="s1">&#39;units&#39;</span><span class="p">:</span>
+                                     <span class="s1">&#39;s&#39;</span>
+                                 <span class="p">},</span>
+                                 <span class="n">var_vals</span><span class="o">=</span><span class="n">sec_from_midnight</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span>
+
+                <span class="c1"># -- Write specified dimensions and variables to output.</span>
+                <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">dim_copier</span> <span class="o">+</span> <span class="n">var_copier</span><span class="p">:</span>
+                    <span class="n">op</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">out_ds</span><span class="p">)</span>
+
+                <span class="c1"># -- Transform longitude: [0,360) -&gt; [-180,180).</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">out_ds</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])):</span>
+                    <span class="k">if</span> <span class="n">out_ds</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">180</span><span class="p">:</span>
+                        <span class="n">out_ds</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">360</span></div>
+
+
+
+<span class="c1">##################################</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">log_intpl_timeslice</span><span class="p">(</span><span class="n">pres_m</span><span class="p">,</span> <span class="n">pres</span><span class="p">,</span> <span class="n">var_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform vertical interpolation of chemical data using log-pressure weighting.</span>
+
+<span class="sd">    For each chemistry level, the two nearest meteorological levels are identified</span>
+<span class="sd">    and a logarithmic interpolation is applied.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pres_m : ndarray</span>
+<span class="sd">        Pressure on meteorological levels (Pa).</span>
+<span class="sd">    pres : ndarray</span>
+<span class="sd">        Pressure on chemical levels (Pa).</span>
+<span class="sd">    var_data : ndarray</span>
+<span class="sd">        Chemical field data to interpolate.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        Interpolated chemical field on meteorological levels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pres_m_flipped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">pres_m</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">pres_flipped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">pres</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">var_data_flipped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">var_data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># -- Find meteo levels lying above given chem level</span>
+    <span class="c1"># -- (that is, meteo levels with lower pressure than given chem level)</span>
+    <span class="n">above_target</span> <span class="o">=</span> <span class="n">pres_flipped</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">pres_m_flipped</span>
+
+    <span class="c1"># -- Calculate number of levels below given chem level</span>
+    <span class="c1"># -- (that is, number of meteo levels with higher pressire than given chem level)</span>
+    <span class="n">lev_count</span> <span class="o">=</span> <span class="p">(</span><span class="n">pres_flipped</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">pres_m_flipped</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># -- Find indices of first meteo levels lying above given chem level</span>
+    <span class="c1"># -- The index is set to -1 if no meteo levels are found</span>
+    <span class="n">first_above_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lev_count</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">pres_flipped</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                                  <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">above_target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="c1"># -- Select indices of 2 closest neighbouring levels for given chem level</span>
+    <span class="n">vertical_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">first_above_target</span><span class="p">,</span> <span class="n">first_above_target</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># --  Set both indices to highest/lower chem level if given chem level is above/below all meteo levels</span>
+    <span class="n">vertical_indices</span><span class="p">[:,</span> <span class="n">first_above_target</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">vertical_indices</span><span class="p">[:,</span> <span class="n">first_above_target</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pres_flipped</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="c1"># -- Select pressure values of 2 closest neighbouring levels</span>
+    <span class="n">pk_below</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">pres_flipped</span><span class="p">),</span> <span class="n">vertical_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># this is the pressure of the lower level (higher pressure)</span>
+    <span class="n">pk_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">pres_flipped</span><span class="p">),</span> <span class="n">vertical_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># this is the pressure of the upper level (lower pressure)</span>
+
+    <span class="c1"># -- Compute interpolation weights</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pres_m_flipped</span> <span class="o">/</span> <span class="n">pk_up</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pk_below</span> <span class="o">/</span> <span class="n">pk_up</span><span class="p">))</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">alpha</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># -- Weights for chem levels lying above/below all meteo levels</span>
+    <span class="n">weights</span><span class="p">[:,</span> <span class="n">first_above_target</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">weights</span><span class="p">[:,</span> <span class="n">first_above_target</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+    <span class="c1"># Interpolate</span>
+    <span class="n">var_data_intpl_flipped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">var_data_flipped</span><span class="p">,</span> <span class="n">vertical_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">var_data_flipped</span><span class="p">,</span> <span class="n">vertical_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">var_data_intpl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">var_data_intpl_flipped</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">var_data_intpl</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">hybrid_pressure_interpolation</span><span class="p">(</span><span class="n">in_ds</span><span class="p">,</span> <span class="n">out_ds</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">time_indices</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interpolate chemical variable vertically using log-pressure interpolation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_ds : netCDF4.Dataset</span>
+<span class="sd">        Input dataset containing the chemical variable.</span>
+<span class="sd">    out_ds : netCDF4.Dataset</span>
+<span class="sd">        Output dataset with meteorological levels.</span>
+<span class="sd">    var_name : str</span>
+<span class="sd">        Name of the chemical variable to interpolate.</span>
+<span class="sd">    time_indices : list of int</span>
+<span class="sd">        Time indices to process in the datasets.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        Array of vertically interpolated variable on meteorological levels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Pressure on vertical levels of meteo data</span>
+    <span class="n">pres_m</span> <span class="o">=</span> <span class="n">out_ds</span><span class="p">[</span><span class="s1">&#39;pres_m&#39;</span><span class="p">][:]</span>
+    <span class="c1"># Pressure on vertical levels of chemistry data</span>
+    <span class="n">pres</span> <span class="o">=</span> <span class="n">out_ds</span><span class="p">[</span><span class="s1">&#39;pres&#39;</span><span class="p">][:]</span>
+    <span class="n">var_data</span> <span class="o">=</span> <span class="n">in_ds</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">time_indices</span><span class="p">,</span> <span class="p">:]]</span>
+
+    <span class="n">var_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">out_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">out_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;lev_m&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+         <span class="n">out_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">out_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">out_ds</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][:])):</span>
+        <span class="n">var_arr</span><span class="p">[</span><span class="n">dt</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">log_intpl_timeslice</span><span class="p">(</span><span class="n">pres_m</span><span class="p">[</span><span class="n">dt</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:],</span>
+                                                   <span class="n">pres</span><span class="p">[</span><span class="n">dt</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:],</span>
+                                                   <span class="n">var_data</span><span class="p">[</span><span class="n">dt</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:])</span>
+
+    <span class="k">return</span> <span class="n">var_arr</span>
+
+
+<div class="viewcode-block" id="vert_intpl">
+<a class="viewcode-back" href="../../../functions.html#jobs.tools.camchem_interpolation.vert_intpl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">vert_intpl</span><span class="p">(</span><span class="n">chem_filename</span><span class="p">,</span> <span class="n">meteo_filename</span><span class="p">,</span> <span class="n">out_filename</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">start_chunk</span><span class="p">,</span>
+               <span class="n">end_chunk</span><span class="p">,</span> <span class="n">ref_date</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform vertical interpolation of chemical fields using meteorological data.</span>
+
+<span class="sd">    This function interpolates chemical species from their CAM-Chem vertical levels</span>
+<span class="sd">    onto the hybrid sigma-pressure levels of the meteorological dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    chem_filename : str</span>
+<span class="sd">        Path to the NetCDF file containing chemical data.</span>
+<span class="sd">    meteo_filename : str</span>
+<span class="sd">        Path to the NetCDF file containing meteorological data.</span>
+<span class="sd">    out_filename : str</span>
+<span class="sd">        Path for the output NetCDF file with interpolated results.</span>
+<span class="sd">    spec : list of str</span>
+<span class="sd">        List of chemical species to interpolate.</span>
+<span class="sd">    start_chunk : datetime.datetime</span>
+<span class="sd">        Start of the simulation time window to process.</span>
+<span class="sd">    end_chunk : datetime.datetime</span>
+<span class="sd">        End of the simulation time window to process.</span>
+<span class="sd">    ref_date : str</span>
+<span class="sd">        Reference date (YYYY-MM-DD HH:MM:SS) used to convert time variables.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">chem_filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">c_ds</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">meteo_filename</span><span class="p">,</span>
+                                                      <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">m_ds</span><span class="p">:</span>
+
+        <span class="c1"># -- Extract indices for times between simulation start and end</span>
+        <span class="n">time_index_lst</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">time_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="n">days_since_ref_now</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">c_ds</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="n">time_index</span><span class="p">])</span>
+            <span class="n">timestamp_now</span> <span class="o">=</span> <span class="n">date_from_days_since_ref</span><span class="p">(</span><span class="n">days_since_ref_now</span><span class="p">,</span>
+                                                     <span class="n">ref_date</span><span class="p">)</span>
+            <span class="n">timestamp_now</span> <span class="o">=</span> <span class="n">timestamp_now</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">start_chunk</span> <span class="o">&lt;=</span> <span class="n">timestamp_now</span> <span class="o">&lt;=</span> <span class="n">end_chunk</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">time_index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">time_index_lst</span><span class="p">:</span>
+                    <span class="n">time_index_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_index</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">time_index</span> <span class="o">!=</span> <span class="n">c_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">days_since_ref_next</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">c_ds</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="n">time_index</span> <span class="o">+</span>
+                                                                   <span class="mi">1</span><span class="p">])</span>
+                <span class="n">timestamp_next</span> <span class="o">=</span> <span class="n">date_from_days_since_ref</span><span class="p">(</span>
+                    <span class="n">days_since_ref_next</span><span class="p">,</span> <span class="n">ref_date</span><span class="p">)</span>
+                <span class="n">timestamp_next</span> <span class="o">=</span> <span class="n">timestamp_next</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+
+                <span class="c1"># Time difference of two time steps</span>
+                <span class="n">time_difference</span> <span class="o">=</span> <span class="p">(</span><span class="n">timestamp_next</span> <span class="o">-</span>
+                                   <span class="n">timestamp_now</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span>
+
+                <span class="c1"># Date between two time steps</span>
+                <span class="n">delta_t</span> <span class="o">=</span> <span class="n">time_difference</span> <span class="o">/</span> <span class="mf">2.</span>
+                <span class="n">timestamp_interp</span> <span class="o">=</span> <span class="n">timestamp_now</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">delta_t</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">start_chunk</span> <span class="o">&lt;=</span> <span class="n">timestamp_interp</span> <span class="o">&lt;=</span> <span class="n">end_chunk</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">time_index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">time_index_lst</span><span class="p">:</span>
+                        <span class="n">time_index_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_index</span><span class="p">)</span>
+                    <span class="n">time_index_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">out_filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_ds</span><span class="p">:</span>
+            <span class="c1"># -- Set global attributes</span>
+            <span class="n">out_ds</span><span class="o">.</span><span class="n">setncatts</span><span class="p">(</span><span class="n">c_ds</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+            <span class="c1"># -- Create new dimensions</span>
+            <span class="n">out_ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;lev_m&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">m_ds</span><span class="p">[</span><span class="s1">&#39;lev&#39;</span><span class="p">][:]))</span>
+            <span class="n">out_ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;lev_s&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">out_ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">time_index_lst</span><span class="p">))</span>
+
+            <span class="c1"># -- Copy dimensions</span>
+            <span class="n">dimpairs_c</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;lev&#39;</span><span class="p">,</span> <span class="s1">&#39;lev&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">),</span>
+                          <span class="p">(</span><span class="s1">&#39;ilev&#39;</span><span class="p">,</span> <span class="s1">&#39;ilev&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;nbnd&#39;</span><span class="p">,</span> <span class="s1">&#39;nbnd&#39;</span><span class="p">)]</span>
+            <span class="n">dim_copier_c</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">DimensionCopier</span><span class="p">(</span><span class="n">src_name</span><span class="p">,</span> <span class="n">dst_name</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">src_name</span><span class="p">,</span> <span class="n">dst_name</span> <span class="ow">in</span> <span class="n">dimpairs_c</span>
+            <span class="p">]</span>
+            <span class="n">dimpairs_m</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;nhym&#39;</span><span class="p">,</span> <span class="s1">&#39;nhym&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;nhyi&#39;</span><span class="p">,</span> <span class="s1">&#39;nhyi&#39;</span><span class="p">)]</span>
+            <span class="n">dim_copier_m</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">DimensionCopier</span><span class="p">(</span><span class="n">src_name</span><span class="p">,</span> <span class="n">dst_name</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">src_name</span><span class="p">,</span> <span class="n">dst_name</span> <span class="ow">in</span> <span class="n">dimpairs_m</span>
+            <span class="p">]</span>
+
+            <span class="c1"># -- Copy variables</span>
+            <span class="n">copy_from_chem</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+            <span class="n">dict_c</span> <span class="o">=</span> <span class="p">[{</span>
+                <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="n">var</span><span class="p">,</span>
+                <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="n">var</span>
+            <span class="p">}</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">copy_from_chem</span><span class="p">]</span>
+
+            <span class="n">dict_c</span> <span class="o">+=</span> <span class="p">[{</span>
+                <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="s1">&#39;PS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="s1">&#39;PS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">)</span>
+                <span class="p">},</span>
+                <span class="s1">&#39;var_val_indices&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">time_index_lst</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="p">}]</span>
+
+            <span class="n">sliced_variable_options</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;var_args&#39;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+                <span class="p">},</span>
+                <span class="s1">&#39;var_val_indices&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">time_index_lst</span><span class="p">]</span>
+            <span class="p">}</span>
+            <span class="n">dict_c</span> <span class="o">+=</span> <span class="p">[{</span>
+                <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="n">src</span><span class="p">,</span>
+                <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="n">dst</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">sliced_variable_options</span>
+            <span class="p">}</span> <span class="k">for</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;time&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span>
+                                          <span class="s1">&#39;date&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;datesec&#39;</span><span class="p">,</span> <span class="s1">&#39;datesec&#39;</span><span class="p">)]]</span>
+
+            <span class="n">var_copier_c</span> <span class="o">=</span> <span class="p">[</span><span class="n">VariableCopier</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">dict_c</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">dim_copier_c</span> <span class="o">+</span> <span class="n">var_copier_c</span><span class="p">:</span>
+                <span class="n">op</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">c_ds</span><span class="p">,</span> <span class="n">out_ds</span><span class="p">)</span>
+
+            <span class="n">copy_from_meteo</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;hyam&#39;</span><span class="p">,</span> <span class="s1">&#39;hybm&#39;</span><span class="p">,</span> <span class="s1">&#39;hyai&#39;</span><span class="p">,</span> <span class="s1">&#39;hybi&#39;</span><span class="p">]</span>
+            <span class="n">dict_m</span> <span class="o">=</span> <span class="p">[{</span>
+                <span class="s1">&#39;src_names&#39;</span><span class="p">:</span> <span class="n">var</span><span class="p">,</span>
+                <span class="s1">&#39;dst_name&#39;</span><span class="p">:</span> <span class="n">var</span>
+            <span class="p">}</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">copy_from_meteo</span><span class="p">]</span>
+
+            <span class="n">var_copier_m</span> <span class="o">=</span> <span class="p">[</span><span class="n">VariableCopier</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">dict_m</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">dim_copier_m</span> <span class="o">+</span> <span class="n">var_copier_m</span><span class="p">:</span>
+                <span class="n">op</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">m_ds</span><span class="p">,</span> <span class="n">out_ds</span><span class="p">)</span>
+
+            <span class="c1"># -- Create vertical levels and pressure arrays for vertial interpolation</span>
+
+            <span class="c1"># Vertical levels from meteo data</span>
+            <span class="n">hybrid_levels</span> <span class="o">=</span> <span class="n">m_ds</span><span class="p">[</span><span class="s1">&#39;hyam&#39;</span><span class="p">][:]</span> <span class="o">*</span> <span class="mf">1e-2</span> <span class="o">+</span> <span class="n">m_ds</span><span class="p">[</span><span class="s1">&#39;hybm&#39;</span><span class="p">][:]</span> <span class="o">*</span> <span class="mf">1e3</span>
+            <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span><span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;lev_m&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;f8&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;lev_m&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="p">},</span>
+                             <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;hybrid sigma levels&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span>
+                             <span class="p">},</span>
+                             <span class="n">var_vals</span><span class="o">=</span><span class="n">hybrid_levels</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span>
+
+            <span class="c1"># Surface level</span>
+            <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span><span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;lev_s&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;f8&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;lev_s&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="p">},</span>
+                             <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;surface level&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span>
+                             <span class="p">},</span>
+                             <span class="n">var_vals</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span>
+
+            <span class="c1"># Pressure array for chem data</span>
+            <span class="n">pres_c_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_index_lst</span><span class="p">),</span> <span class="n">c_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;lev&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+                 <span class="n">c_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">c_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">ilev</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c_ds</span><span class="p">[</span><span class="s1">&#39;ilev&#39;</span><span class="p">][:])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">pres_c_col</span> <span class="o">=</span> <span class="n">c_ds</span><span class="p">[</span><span class="s1">&#39;hyam&#39;</span><span class="p">][</span><span class="n">ilev</span><span class="p">]</span> <span class="o">*</span> <span class="n">c_ds</span><span class="p">[</span><span class="s1">&#39;P0&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">c_ds</span><span class="p">[</span><span class="s1">&#39;hybm&#39;</span><span class="p">][</span>
+                    <span class="n">ilev</span><span class="p">]</span> <span class="o">*</span> <span class="n">c_ds</span><span class="p">[</span><span class="s1">&#39;PS&#39;</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">time_index_lst</span><span class="p">,</span> <span class="p">:]]</span>
+                <span class="n">pres_c_arr</span><span class="p">[:,</span> <span class="n">ilev</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pres_c_col</span>
+
+            <span class="c1"># Pressure on vertical levels of chem data</span>
+            <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span><span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;pres&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;f8&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lev&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">)</span>
+            <span class="p">},</span>
+                             <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span>
+                                 <span class="s1">&#39;pressure on vertical levels of chem data&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;Pa&#39;</span>
+                             <span class="p">},</span>
+                             <span class="n">var_vals</span><span class="o">=</span><span class="n">pres_c_arr</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span>
+
+            <span class="c1"># Pressure array for meteo data</span>
+            <span class="n">pres_m_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_index_lst</span><span class="p">),</span> <span class="n">m_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;lev&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+                 <span class="n">c_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">c_ds</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">ilev</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m_ds</span><span class="p">[</span><span class="s1">&#39;lev&#39;</span><span class="p">][:])):</span>
+                <span class="n">pres_m_col</span> <span class="o">=</span> <span class="n">m_ds</span><span class="p">[</span><span class="s1">&#39;hyam&#39;</span><span class="p">][</span><span class="n">ilev</span><span class="p">]</span> <span class="o">+</span> <span class="n">m_ds</span><span class="p">[</span><span class="s1">&#39;hybm&#39;</span><span class="p">][</span><span class="n">ilev</span><span class="p">]</span> <span class="o">*</span> <span class="n">c_ds</span><span class="p">[</span>
+                    <span class="s1">&#39;PS&#39;</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">time_index_lst</span><span class="p">,</span> <span class="p">:]]</span>
+                <span class="n">pres_m_arr</span><span class="p">[:,</span> <span class="n">ilev</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pres_m_col</span>
+
+            <span class="c1"># Pressure on vertical levels of meteo data</span>
+            <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span><span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="s1">&#39;pres_m&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;f8&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lev_m&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">)</span>
+            <span class="p">},</span>
+                             <span class="n">var_attrs</span><span class="o">=</span><span class="p">{</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span>
+                                 <span class="s1">&#39;pressure on vertical levels of meteo data&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;Pa&#39;</span>
+                             <span class="p">},</span>
+                             <span class="n">var_vals</span><span class="o">=</span><span class="n">pres_m_arr</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span>
+
+            <span class="c1"># -- Interpolate fields</span>
+            <span class="k">for</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">hybrid_pressure_interpolation</span><span class="p">(</span><span class="n">c_ds</span><span class="p">,</span> <span class="n">out_ds</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span>
+                                                    <span class="n">time_index_lst</span><span class="p">)</span>
+                <span class="p">(</span><span class="n">VariableCreator</span><span class="p">(</span><span class="n">var_args</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="n">var_name</span><span class="p">,</span>
+                    <span class="s1">&#39;datatype&#39;</span><span class="p">:</span> <span class="s1">&#39;f8&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;dimensions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lev_m&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">)</span>
+                <span class="p">},</span>
+                                 <span class="n">var_attrs</span><span class="o">=</span><span class="n">c_ds</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span>
+                                 <span class="n">var_vals</span><span class="o">=</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">apply_to</span><span class="p">(</span><span class="n">out_ds</span><span class="p">))</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018-2024, C2SM.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

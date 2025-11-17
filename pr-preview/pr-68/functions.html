@@ -119,6 +119,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.tools.camchem_ic_lbc_reggrid.process_ic"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_ic()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.tools.camchem_ic_lbc_reggrid.process_lbc"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_lbc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.camchem_interpolation.time_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.time_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.camchem_interpolation.vert_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.vert_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.tools.camchem_interpolation.extract_timeslice"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.extract_timeslice()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -541,6 +544,9 @@ a look into <code class="docutils literal notranslate"><span class="pre">jobs/to
 <li><p><a class="reference internal" href="namelists.html#jobs.tools.write_int2lm_input_art.main" title="jobs.tools.write_int2lm_input_art.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.tools.camchem_ic_lbc_reggrid.process_ic" title="jobs.tools.camchem_ic_lbc_reggrid.process_ic"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_ic()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.tools.camchem_ic_lbc_reggrid.process_lbc" title="jobs.tools.camchem_ic_lbc_reggrid.process_lbc"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_lbc()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.camchem_interpolation.time_intpl" title="jobs.tools.camchem_interpolation.time_intpl"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.time_intpl()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.camchem_interpolation.vert_intpl" title="jobs.tools.camchem_interpolation.vert_intpl"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.vert_intpl()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.tools.camchem_interpolation.extract_timeslice" title="jobs.tools.camchem_interpolation.extract_timeslice"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.extract_timeslice()</span></code></a></p></li>
 </ul>
 <hr class="docutils" />
 <dl class="py function">
@@ -842,6 +848,75 @@ weight of air (28.96 g/mol) and the variable-specific molecular weight.</p></li>
 <li><p>Essential variables like coordinates and pressure are copied directly</p></li>
 <li><p>Output files are saved with <cite>_lbc</cite> appended to the original filename.</p></li>
 </ul>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.tools.camchem_interpolation.time_intpl">
+<span class="sig-prename descclassname"><span class="pre">jobs.tools.camchem_interpolation.</span></span><span class="sig-name descname"><span class="pre">time_intpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/tools/camchem_interpolation.html#time_intpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.tools.camchem_interpolation.time_intpl" title="Link to this definition"></a></dt>
+<dd><p>Interpolate chemistry fields with respect to time between consecutive NetCDF files.</p>
+<p>This function generates new NetCDF files at intermediate times between existing
+CAM-Chem output files. Takes the arithmetic mean of chemical and surface pressure
+fields and creates interpolated ‘time’ and ‘datesec’ variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – Path to the directory containing the input NetCDF files.</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – Filename prefix for identifying the input NetCDF files to interpolate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.tools.camchem_interpolation.vert_intpl">
+<span class="sig-prename descclassname"><span class="pre">jobs.tools.camchem_interpolation.</span></span><span class="sig-name descname"><span class="pre">vert_intpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chem_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meteo_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_chunk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_chunk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/tools/camchem_interpolation.html#vert_intpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.tools.camchem_interpolation.vert_intpl" title="Link to this definition"></a></dt>
+<dd><p>Perform vertical interpolation of chemical fields using meteorological data.</p>
+<p>This function interpolates chemical species from their CAM-Chem vertical levels
+onto the hybrid sigma-pressure levels of the meteorological dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chem_filename</strong> (<em>str</em>) – Path to the NetCDF file containing chemical data.</p></li>
+<li><p><strong>meteo_filename</strong> (<em>str</em>) – Path to the NetCDF file containing meteorological data.</p></li>
+<li><p><strong>out_filename</strong> (<em>str</em>) – Path for the output NetCDF file with interpolated results.</p></li>
+<li><p><strong>spec</strong> (<em>list</em><em> of </em><em>str</em>) – List of chemical species to interpolate.</p></li>
+<li><p><strong>start_chunk</strong> (<em>datetime.datetime</em>) – Start of the simulation time window to process.</p></li>
+<li><p><strong>end_chunk</strong> (<em>datetime.datetime</em>) – End of the simulation time window to process.</p></li>
+<li><p><strong>ref_date</strong> (<em>str</em>) – Reference date (YYYY-MM-DD HH:MM:SS) used to convert time variables.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.tools.camchem_interpolation.extract_timeslice">
+<span class="sig-prename descclassname"><span class="pre">jobs.tools.camchem_interpolation.</span></span><span class="sig-name descname"><span class="pre">extract_timeslice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file_template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec_intpl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/tools/camchem_interpolation.html#extract_timeslice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.tools.camchem_interpolation.extract_timeslice" title="Link to this definition"></a></dt>
+<dd><p>Extract a single time slice from a NetCDF file and adjust longitudes.</p>
+<p>Copies selected species and metadata from an input NetCDF file into a new
+NetCDF file for each time step.
+Longitudes are adjusted from [0, 360) to [-180, 180).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_file</strong> (<em>str</em>) – Path to the input NetCDF file.</p></li>
+<li><p><strong>out_file_template</strong> (<em>str</em>) – Template string for the output filename.</p></li>
+<li><p><strong>spec_intpl</strong> (<em>list</em><em> of </em><em>str</em>) – List of chemical species to extract from the input file.</p></li>
+<li><p><strong>ref_date</strong> (<em>str</em>) – Reference date (YYYY-MM-DD HH:MM:SS) used to convert time variables.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
