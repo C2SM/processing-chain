@@ -21,6 +21,7 @@ Jobs
 * :func:`jobs.prepare_icon.main`
 * :func:`jobs.reduce_output.main`
 * :func:`jobs.verify_chain.main`
+* :func:`jobs.prepare_art_full_chem.main`
 
 -------------------------------------------
 
@@ -93,6 +94,10 @@ Jobs
 -------------------------------------------
 
 .. autofunction:: jobs.verify_chain.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.prepare_art_full_chem.main
 
 
 Tools
