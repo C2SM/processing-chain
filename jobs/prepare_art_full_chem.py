@@ -17,12 +17,34 @@ BASIC_PYTHON_JOB = True
 
 def main(cfg):
     """
-    Prepare ICON-ART simulations with full chemistry.
+    Prepare all meteorological and chemistry initial and boundary conditions
+    (IC/BC) required for an ICON-ART full-chemistry simulation.
+
+    The workflow includes:
+      - Initializing configuration and logging.
+      - Generating meteorological IC/LBC from ERA5 using template bash scripts.
+      - Processing CAM-Chem fields (vertical interpolation, temporal slicing,
+        temporal interpolation).
+      - Generating chemical IC/LBC from CAM-Chem using template bash scripts.
+      - Merging meteorological and chemistry fields into final ICON IC/LBC files.
+      - Ensuring required variables (e.g., PS, Q) are present and consistent.
+
+    Note
+    ----
+    Chemical tracers, molar weights, aerosol species, and aerosol–mode partitioning
+    are **hardcoded** in this script.  
+    To add/remove species or alter aerosol mode partitioning, this script must
+    be modified accordingly.
 
     Parameters
     ----------
     cfg : Config
         Object holding all user-configuration parameters as attributes.
+
+    Returns
+    -------
+    None
+        All outputs are written as NetCDF files in the configured IC/BC directory.
     """
     prepare_icon.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
