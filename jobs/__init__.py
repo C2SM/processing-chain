@@ -22,3 +22,4 @@ from . import prepare_cosmo
 from . import prepare_icon
 from . import reduce_output
 from . import verify_chain
+from . import prepare_art_full_chem

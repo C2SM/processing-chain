@@ -21,6 +21,7 @@ Jobs
 * :func:`jobs.prepare_icon.main`
 * :func:`jobs.reduce_output.main`
 * :func:`jobs.verify_chain.main`
+* :func:`jobs.prepare_art_full_chem.main`
 
 -------------------------------------------
 
@@ -94,6 +95,10 @@ Jobs
 
 .. autofunction:: jobs.verify_chain.main
 
+-------------------------------------------
+
+.. autofunction:: jobs.prepare_art_full_chem.main
+
 
 Tools
 -----
@@ -112,6 +117,12 @@ a look into ``jobs/tools`` directly.
 * :func:`jobs.tools.vprmsplit.main`
 * :func:`jobs.tools.write_cosmo_input_ghg.main`
 * :func:`jobs.tools.write_int2lm_input_art.main`
+* :func:`jobs.tools.camchem_ic_lbc_reggrid.process_ic`
+* :func:`jobs.tools.camchem_ic_lbc_reggrid.process_lbc`
+* :func:`jobs.tools.camchem_interpolation.time_intpl`
+* :func:`jobs.tools.camchem_interpolation.vert_intpl`
+* :func:`jobs.tools.camchem_interpolation.extract_timeslice`
+
 
 
 -------------------------------------------
@@ -153,3 +164,23 @@ a look into ``jobs/tools`` directly.
 -------------------------------------------
 
 .. autofunction:: jobs.tools.write_int2lm_input_art.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.camchem_ic_lbc_reggrid.process_ic
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.camchem_ic_lbc_reggrid.process_lbc
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.camchem_interpolation.time_intpl
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.camchem_interpolation.vert_intpl
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.camchem_interpolation.extract_timeslice
