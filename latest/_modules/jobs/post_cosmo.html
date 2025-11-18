@@ -1,27 +1,25 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>jobs.post_cosmo &mdash; Processing Chain v3.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=09616d5f" />
 
   
     <link rel="shortcut icon" href="../../_static/processing-chain-favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=de725823"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
-        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../_static/copybutton.js?v=a5fa425f"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=a6b2a995"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=a5fa425f"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -39,9 +37,6 @@
             
               <img src="../../_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                v3.1
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -107,6 +102,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.prepare_art_full_chem.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_art_full_chem.main()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../functions.html#tools">Tools</a><ul>
@@ -120,6 +116,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_ic"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_ic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_lbc"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_lbc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.camchem_interpolation.time_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.time_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.camchem_interpolation.vert_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.vert_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.tools.camchem_interpolation.extract_timeslice"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.extract_timeslice()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -152,16 +153,16 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tools</span><span class="p">,</span> <span class="n">prepare_cosmo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">tools</span><span class="p">,</span> <span class="n">prepare_cosmo</span>
 
 <span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">True</span>
 
 
-<span class="k">def</span> <span class="nf">logfile_header_template</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">logfile_header_template</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a template for the logfile-header&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=====================================================</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;============== POST PROCESSING </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -169,7 +170,7 @@
             <span class="s2">&quot;=====================================================</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">runscript_header_template</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">runscript_header_template</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a template for the runscript-header (#SBATCH-directives)&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
         <span class="s2">&quot;#SBATCH --job-name=post_cosmo&quot;</span><span class="p">,</span> <span class="s2">&quot;#SBATCH --partition=xfer&quot;</span><span class="p">,</span>
@@ -180,7 +181,7 @@
     <span class="p">])</span>
 
 
-<span class="k">def</span> <span class="nf">runscript_commands_template</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">runscript_commands_template</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a template for the commands in the runscript.</span>
 
 <span class="sd">    To ensure the bash-commands have the intended behaviour, make sure to strip</span>
@@ -197,7 +198,9 @@
     <span class="p">])</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../functions.html#jobs.post_cosmo.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../functions.html#jobs.post_cosmo.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy the output of a **COSMO**-run to a user-defined position.</span>
 
 <span class="sd">    Write a runscript to copy all files (**COSMO** settings &amp; output,</span>
@@ -274,6 +277,7 @@
 
     <span class="c1"># Submit job</span>
     <span class="n">cfg</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="s1">&#39;post_cosmo&#39;</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

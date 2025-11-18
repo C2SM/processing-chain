@@ -1,28 +1,26 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Conda Environment &mdash; Processing Chain v3.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=09616d5f" />
 
   
     <link rel="shortcut icon" href="_static/processing-chain-favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=de725823"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
-        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="_static/copybutton.js?v=a5fa425f"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a6b2a995"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=a5fa425f"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -42,9 +40,6 @@
             
               <img src="_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                v3.1
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -110,6 +105,7 @@
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.prepare_art_full_chem.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_art_full_chem.main()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html#tools">Tools</a><ul>
@@ -123,6 +119,11 @@
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_ic"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_ic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_lbc"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_lbc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_interpolation.time_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.time_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_interpolation.vert_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.vert_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_interpolation.extract_timeslice"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.extract_timeslice()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -152,10 +153,10 @@
            <div itemprop="articleBody">
              
   <section id="conda-environment">
-<span id="environment-section"></span><h1>Conda Environment<a class="headerlink" href="#conda-environment" title="Permalink to this heading"></a></h1>
+<span id="environment-section"></span><h1>Conda Environment<a class="headerlink" href="#conda-environment" title="Link to this heading"></a></h1>
 <p>The following steps allow you to create and use your own virtual environment to run the Processing Chain. We recommend using a conda environment for the usage of the provided scripts. Please follow the instructions for the installation. The following steps only need to be performed once.</p>
 <section id="install-miniconda">
-<h2>1. Install Miniconda<a class="headerlink" href="#install-miniconda" title="Permalink to this heading"></a></h2>
+<h2>1. Install Miniconda<a class="headerlink" href="#install-miniconda" title="Link to this heading"></a></h2>
 <p>Install Miniconda as user-specific Miniconda, e.g., in your <code class="docutils literal notranslate"><span class="pre">$HOME</span></code> directory, which is the default location.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -169,7 +170,7 @@ bash<span class="w"> </span>Miniconda3-latest-Linux-x86_64.sh
 <p>Further details on Miniconda can be found on the <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">Miniconda documentation page</a>.</p>
 </section>
 <section id="create-the-conda-environment">
-<h2>2. Create the Conda Environment<a class="headerlink" href="#create-the-conda-environment" title="Permalink to this heading"></a></h2>
+<h2>2. Create the Conda Environment<a class="headerlink" href="#create-the-conda-environment" title="Link to this heading"></a></h2>
 <p>Create a conda environment <code class="docutils literal notranslate"><span class="pre">proc-chain</span></code> and install the requirements:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>--prefix<span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain<span class="w"> </span>-f<span class="w"> </span>env/environment.yml
 </pre></div>
@@ -188,7 +189,7 @@ bash<span class="w"> </span>Miniconda3-latest-Linux-x86_64.sh
 </div>
 </section>
 <section id="store-user-specific-data">
-<h2>3. Store user-specific data<a class="headerlink" href="#store-user-specific-data" title="Permalink to this heading"></a></h2>
+<h2>3. Store user-specific data<a class="headerlink" href="#store-user-specific-data" title="Link to this heading"></a></h2>
 <p>To register your email address and standard project account, store them in these files within your home directory:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span>&lt;your_account_id&gt;<span class="w"> </span>&gt;<span class="w"> </span>~/.acct
 <span class="nb">echo</span><span class="w"> </span>&lt;your_email_address&gt;<span class="w"> </span>&gt;<span class="w"> </span>~/.forward

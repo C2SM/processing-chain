@@ -1,28 +1,26 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>How to Run &mdash; Processing Chain v3.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=09616d5f" />
 
   
     <link rel="shortcut icon" href="_static/processing-chain-favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=de725823"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
-        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="_static/copybutton.js?v=a5fa425f"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a6b2a995"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=a5fa425f"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -42,9 +40,6 @@
             
               <img src="_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                v3.1
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -110,6 +105,7 @@
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.prepare_art_full_chem.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_art_full_chem.main()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html#tools">Tools</a><ul>
@@ -123,6 +119,11 @@
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_ic"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_ic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_lbc"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_lbc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_interpolation.time_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.time_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_interpolation.vert_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.vert_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_interpolation.extract_timeslice"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.extract_timeslice()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -152,14 +153,14 @@
            <div itemprop="articleBody">
              
   <section id="how-to-run">
-<span id="howtorun-section"></span><h1>How to Run<a class="headerlink" href="#how-to-run" title="Permalink to this heading"></a></h1>
+<span id="howtorun-section"></span><h1>How to Run<a class="headerlink" href="#how-to-run" title="Link to this heading"></a></h1>
 <p>The Python file <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code> in the root directory is the main script of the
 Processing Chain.
 It reads the user’s input from the command line and from the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> file of the
 respective case.
 Then it will start the Processing Chain.</p>
 <section id="starting-the-chain">
-<h2>Starting the Chain<a class="headerlink" href="#starting-the-chain" title="Permalink to this heading"></a></h2>
+<h2>Starting the Chain<a class="headerlink" href="#starting-the-chain" title="Link to this heading"></a></h2>
 <p>The chain has to be run with the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./run_chain.py<span class="w"> </span>&lt;casename&gt;
 </pre></div>
@@ -219,7 +220,7 @@ may cause errors or unexpected behavior.</p>
 </ul>
 </section>
 <section id="what-it-does">
-<h2>What it Does<a class="headerlink" href="#what-it-does" title="Permalink to this heading"></a></h2>
+<h2>What it Does<a class="headerlink" href="#what-it-does" title="Link to this heading"></a></h2>
 <p>The script <code class="docutils literal notranslate"><span class="pre">run_chain.py</span></code> reads the command line arguments and the config file
 from the specified case.
 It then calls the function <a class="reference internal" href="#run_chain.restart_runs" title="run_chain.restart_runs"><code class="xref py py-func docutils literal notranslate"><span class="pre">run_chain.restart_runs()</span></code></a>, which divides the
@@ -230,7 +231,7 @@ specified <a class="reference internal" href="jobs.html#jobs-section"><span clas
 taking job dependencies into account.</p>
 </section>
 <section id="test-cases">
-<h2>Test Cases<a class="headerlink" href="#test-cases" title="Permalink to this heading"></a></h2>
+<h2>Test Cases<a class="headerlink" href="#test-cases" title="Link to this heading"></a></h2>
 <p>The following test cases are available:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code></p></li>
@@ -252,7 +253,7 @@ correctly. A corresponding Jenkins plan is launched on a weekly basis and
 when triggered within a GitHub pull request.</p>
 </section>
 <section id="directory-structure">
-<h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Permalink to this heading"></a></h2>
+<h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Link to this heading"></a></h2>
 <p>The directory structure generated by the Processing Chain for a <code class="docutils literal notranslate"><span class="pre">cosmo-ghg</span></code>
 run looks like this:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cfg.work_root/cfg.casename/
@@ -388,7 +389,7 @@ directories and files (showing four levels of directories deep):</p>
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="run_chain.run_chunk">
-<span class="sig-prename descclassname"><span class="pre">run_chain.</span></span><span class="sig-name descname"><span class="pre">run_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/run_chain.html#run_chunk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#run_chain.run_chunk" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">run_chain.</span></span><span class="sig-name descname"><span class="pre">run_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/run_chain.html#run_chunk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#run_chain.run_chunk" title="Link to this definition"></a></dt>
 <dd><p>Run a chunk of the processing chain, managing job execution and logging.</p>
 <p>This function sets up and manages the execution of a Processing Chain, handling
 job execution, logging, and various configuration settings.</p>
@@ -415,7 +416,7 @@ job execution, logging, and various configuration settings.</p>
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="run_chain.restart_runs">
-<span class="sig-prename descclassname"><span class="pre">run_chain.</span></span><span class="sig-name descname"><span class="pre">restart_runs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/run_chain.html#restart_runs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#run_chain.restart_runs" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">run_chain.</span></span><span class="sig-name descname"><span class="pre">restart_runs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/run_chain.html#restart_runs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#run_chain.restart_runs" title="Link to this definition"></a></dt>
 <dd><p>Start subchains in specified intervals and manage restarts.</p>
 <p>This function slices the total runtime of the processing chain according to the
 <cite>cfg.restart_step_hours</cite> configuration. It calls <cite>run_chunk()</cite> for each

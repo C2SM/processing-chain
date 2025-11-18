@@ -1,28 +1,26 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Namelist and Runscript Templates &mdash; Processing Chain v3.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=09616d5f" />
 
   
     <link rel="shortcut icon" href="_static/processing-chain-favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=de725823"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
-        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="_static/copybutton.js?v=a5fa425f"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a6b2a995"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=a5fa425f"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -42,9 +40,6 @@
             
               <img src="_static/processing-chain-logo-small.png" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                v3.1
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -110,6 +105,7 @@
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.prepare_icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.reduce_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.reduce_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.verify_chain.main"><code class="docutils literal notranslate"><span class="pre">jobs.verify_chain.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.prepare_art_full_chem.main"><code class="docutils literal notranslate"><span class="pre">jobs.prepare_art_full_chem.main()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html#tools">Tools</a><ul>
@@ -123,6 +119,11 @@
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.vprmsplit.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.vprmsplit.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.write_cosmo_input_ghg.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_cosmo_input_ghg.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.write_int2lm_input_art.main"><code class="docutils literal notranslate"><span class="pre">jobs.tools.write_int2lm_input_art.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_ic"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_ic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_ic_lbc_reggrid.process_lbc"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_ic_lbc_reggrid.process_lbc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_interpolation.time_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.time_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_interpolation.vert_intpl"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.vert_intpl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.tools.camchem_interpolation.extract_timeslice"><code class="docutils literal notranslate"><span class="pre">jobs.tools.camchem_interpolation.extract_timeslice()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -152,7 +153,7 @@
            <div itemprop="articleBody">
              
   <section id="namelist-and-runscript-templates">
-<span id="namelists-section"></span><h1>Namelist and Runscript Templates<a class="headerlink" href="#namelist-and-runscript-templates" title="Permalink to this heading"></a></h1>
+<span id="namelists-section"></span><h1>Namelist and Runscript Templates<a class="headerlink" href="#namelist-and-runscript-templates" title="Link to this heading"></a></h1>
 <p>The namelists and run jobs for <strong>int2lm</strong> and <strong>COSMO</strong>, as well as for <strong>icontools</strong> and <strong>ICON</strong> are dynamically generated
 using templates located in the <code class="docutils literal notranslate"><span class="pre">cases/&lt;casename&gt;</span></code> directory. These templates are essentially
 text files containing “normal” namelist parameters alongside Python variables enclosed in curly braces.</p>
@@ -173,7 +174,7 @@ from <code class="docutils literal notranslate"><span class="pre">.csv</span></c
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.tools.write_int2lm_input_art.main">
-<span class="sig-prename descclassname"><span class="pre">jobs.tools.write_int2lm_input_art.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trcr_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nml_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hstart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/tools/write_int2lm_input_art.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.tools.write_int2lm_input_art.main" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">jobs.tools.write_int2lm_input_art.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trcr_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nml_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hstart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/tools/write_int2lm_input_art.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.tools.write_int2lm_input_art.main" title="Link to this definition"></a></dt>
 <dd><p>Write the INPUT_ART namelist file for int2lm from <code class="docutils literal notranslate"><span class="pre">.csv</span></code> files</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -190,7 +191,7 @@ from <code class="docutils literal notranslate"><span class="pre">.csv</span></c
 <hr class="docutils" />
 <dl class="py function">
 <dt class="sig sig-object py" id="jobs.tools.write_cosmo_input_ghg.main">
-<span class="sig-prename descclassname"><span class="pre">jobs.tools.write_cosmo_input_ghg.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namelist_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/tools/write_cosmo_input_ghg.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.tools.write_cosmo_input_ghg.main" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">jobs.tools.write_cosmo_input_ghg.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namelist_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/tools/write_cosmo_input_ghg.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.tools.write_cosmo_input_ghg.main" title="Link to this definition"></a></dt>
 <dd><p>Convert a table (<code class="docutils literal notranslate"><span class="pre">.csv</span></code> file) to namelist file (<code class="docutils literal notranslate"><span class="pre">INPUT_GHG</span></code>)
 read by <strong>COSMO</strong>.</p>
 <dl class="field-list simple">
