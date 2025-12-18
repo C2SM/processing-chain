@@ -21,10 +21,11 @@ set -e -x
 # Check if we are on Euler
 if [[ $(hostname) == eu-* ]]; then
     host=euler
-elif [[ $(hostname) == daint* ]]; then
-    host=daint
+elif [[ $(hostname) == santis* ]]; then
+    host=santis
+else
+    echo "Unknown hostname: $(hostname)"
 fi
-
 
 # Activate conda environment
 eval "$(conda shell.bash hook)"
@@ -83,14 +84,6 @@ if [[ -f ext/icon/bin/icon ]]; then
 else
   echo building icon...
   ./jenkins/scripts/build_icon.sh
-fi
-
-# Build ICON-ART
-if [[ -f ext/icon-art/bin/icon ]]; then
-  echo icon-art executable already exists - skipping build.
-else
-  echo building icon-art...
-  ./jenkins/scripts/build_icon-art.sh
 fi
 
 # Test COSMO-GHG
