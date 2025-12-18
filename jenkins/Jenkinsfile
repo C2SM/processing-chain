@@ -29,8 +29,10 @@ pipeline {
                         sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
                         sh 'rm -fr ${WORKSPACE}/miniconda'
                         sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
+                        sh 'conda config --remove channels defaults'
                         sh 'conda config --set always_yes yes --set changeps1 no'
                         sh 'conda config --add channels conda-forge'
+                        sh 'conda config --set channel_priority strict'
                         sh 'conda update -n base -c defaults conda'
                         sh 'conda env create -f env/environment.yml'
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
