@@ -11,15 +11,13 @@ SPACK_TAG_COSMO=v0.18.1.12
 
 if [[ $(hostname) == eu-* ]]; then
     source /cluster/apps/local/env2lmod.sh
-    module load git/2.31.1
-    SPACK_TAG=main
-elif [[ $(hostname) == daint* ]]; then 
-    git clone --depth 1 git@github.com:C2SM/icon.git icon-tag
-    SPACK_TAG=`cat icon-tag/config/cscs/SPACK_TAG_DAINT`
+    module load git
+    git clone --depth 1 git@gitlab.dkrz.de:icon/icon-model.git icon-tag
+    SPACK_TAG=`cat icon-tag/config/ethz/SPACK_TAG_EULER`
     rm -fr icon-tag
-elif [[ $(hostname) == balfrin* ]]; then 
-    git clone --depth 1 git@github.com:C2SM/icon.git icon-tag
-    SPACK_TAG=`cat icon-tag/config/cscs/SPACK_TAG_BALFRIN`
+elif [[ $(hostname) == santis* ]]; then 
+    git clone --depth 1 git@gitlab.dkrz.de:icon/icon-model.git icon-tag
+    SPACK_TAG=`cat icon-tag/config/cscs/SPACK_TAG_SANTIS`
     rm -fr icon-tag
 else
     error "Unknown hostname: $(hostname)"
