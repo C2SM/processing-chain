@@ -31,16 +31,6 @@ fi
 eval "$(conda shell.bash hook)"
 conda activate proc-chain
 
-# Setup spack
-if [[ -d ext/spack-c2sm ]]; then
-  echo spack folder already exists - skipping build...
-else
-  echo building spack...
-  ./jenkins/scripts/setup-spack.sh
-fi
-echo activating spack...
-. ext/spack-c2sm/setup-env.sh
-
 # Preparation
 size=$(du -sb input | awk '{print $1}')
 if [[ $size -gt 12000000000 ]]; then
