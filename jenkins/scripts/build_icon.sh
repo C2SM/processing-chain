@@ -7,8 +7,8 @@ set -e -x
 
 source jenkins/scripts/common.sh
 
-BRANCH=main
-GIT_REMOTE=git@github.com:C2SM/icon.git
+BRANCH=release-2025.10-public
+GIT_REMOTE=https://gitlab.dkrz.de/icon/icon-model.git
 MODEL=icon
 
 pushd ext
@@ -21,17 +21,15 @@ fi
 pushd ${MODEL}
 
 if [[ $(hostname) == eu-* ]]; then
-    ./jenkins/scripts/jenkins_euler.sh -b -fc gcc --configure euler.cpu.gcc.O2
-elif [[ $(hostname) == daint* ]]; then 
-    SPACK_TAG=`cat config/cscs/SPACK_TAG_DAINT`
-    . ../spack-c2sm/setup-env.sh
-    spack env activate -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc
-    spack install -u build
-elif [[ $(hostname) == balfrin* ]]; then 
-    SPACK_TAG=`cat config/cscs/SPACK_TAG_BALFRIN`
-    . ../spack-c2sm/setup-env.sh
-    spack env activate -d config/cscs/spack/${SPACK_TAG}/daint_cpu_nvhpc
-    spack install -u build
+    # Setup spack
+    SPACK_TAG=$(cat "config/ethz/SPACK_TAG_EULER")
+    git clone --depth 1 --recurse-submodules --shallow-submodules -b ${SPACK_TAG} https://github.com/C2SM/spack-c2sm.git
+    . spack-c2sm/setup-env.sh
+    # Load module to access external services on compute nodes
+    module load eth_proxy
+    # Build ICON
+    spack env activate -d config/ethz/spack/${SPACK_TAG}/euler_cpu_gcc
+    srun -N 1 -n 12 --mem-per-cpu=1G spack install -j 12
 else
     error "Unknown hostname: $(hostname)"
 fi
