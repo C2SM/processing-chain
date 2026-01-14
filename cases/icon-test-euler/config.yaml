@@ -18,6 +18,7 @@ era5:
   dir: ./input/era5
   ml_filename:   "era5_ml_{ymd}.grib"  
   sfc_filename:  "era5_surf_{ymd}.grib"
+  global_nudging: False
 
 era5_partab: ./cases/icon-euler-test/partab_era5_to_icon.txt
 era5_ic_runjob_filename: era5_ic_runjob.cfg
