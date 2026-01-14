@@ -8,6 +8,14 @@ ntasks_per_node: 12
 restart_step: PT6H
 startdate: 2018-01-01T00:00:00Z
 enddate:   2018-01-01T12:00:00Z
+era5_partab: ./cases/icon-euler-test/partab_era5_to_icon.txt
+era5_ic_runjob_filename: era5_ic_runjob.cfg
+inidata_prefix: "era5_init_R02B05_"
+inidata_nameformat: "%Y%m%d%H"
+inidata_filename_suffix: ".nc"
+output_filename: icon-test-euler
+filename_format: <output_filename>_DOM<physdom>_<ddhhmmss>
+lateral_boundary_grid_order: lateral_boundary
 
 walltime:
   prepare_icon: "00:10:00"
@@ -19,12 +27,6 @@ era5:
   ml_filename:   "era5_ml_{ymd}.grib"  
   sfc_filename:  "era5_surf_{ymd}.grib"
   global_nudging: False
-
-era5_partab: ./cases/icon-euler-test/partab_era5_to_icon.txt
-era5_ic_runjob_filename: era5_ic_runjob.cfg
-inidata_prefix: "era5_init_R02B05_"
-inidata_nameformat: "%Y%m%d%H"
-inidata_filename_suffix: ".nc"
 
 meteo:
   dir: ./input/meteo
