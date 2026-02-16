@@ -627,7 +627,7 @@ class Config():
         # Get job info for all jobs
         self.slurm_info = {}
         for job_name in self.jobs:
-            for job_id in self.job_ids['previous'][job_name]:
+            for job_id in self.job_ids['previous'].get(job_name, []):
                 self.slurm_info[job_name] = []
                 self.slurm_info[job_name].append(
                     self.get_job_info(job_id, slurm_keys=info_keys,
@@ -665,7 +665,7 @@ class Config():
             f.write(table_header)
             f.write('\n')
             for job_name in self.jobs:
-                for info in self.slurm_info[job_name]:
+                for info in self.slurm_info.get(job_name, []):
                     f.write(line_format.format(**info))
                     f.write('\n')
             f.write('\n')

@@ -22,8 +22,17 @@ def set_cfg_variables(cfg):
 
     cfg.input_files_scratch = {}
     for dsc, file in cfg.input_files.items():
-        cfg.input_files[dsc] = (p := Path(file))
+        p = Path(file)
+        if not p.is_absolute():
+            # resolve relative input_files paths relative to the case directory
+            p = (cfg.case_path / p).resolve()
+        cfg.input_files[dsc] = p
         cfg.input_files_scratch[dsc] = cfg.icon_input / p.name
+
+
+#    for dsc, file in cfg.input_files.items():
+#        cfg.input_files[dsc] = (p := Path(file))
+#        cfg.input_files_scratch[dsc] = cfg.icon_input / p.name
 
     cfg.create_vars_from_dicts()
 
@@ -51,6 +60,9 @@ def set_cfg_variables(cfg):
         cfg, 'species_inicond') and cfg.species_inicond else 0
 
     cfg.startdate_sim_yyyymmdd_hh = cfg.startdate_sim.strftime('%Y%m%d_%H')
+    cfg.startdate_sim_yyyymmddhh = cfg.startdate_sim.strftime('%Y%m%d%H')
+    cfg.enddate_sim_yyyymmddhh = cfg.enddate_sim.strftime('%Y%m%d%H')
+
 
 
 def main(cfg):

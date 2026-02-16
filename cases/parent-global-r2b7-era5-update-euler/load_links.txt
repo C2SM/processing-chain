@@ -1,0 +1,37 @@
+in /processing-chain/work/CASE/YYYYMMDD_CHUNK/icon/run do this:
+
+# Base dirs you showed
+ECRAD=/cluster/work/climate/lroither/icon_c2sm/icon/externals/ecrad/data
+ICONDATA=/cluster/work/climate/lroither/icon_c2sm/icon/data
+
+# Kinne (coa)
+ln -sf $ECRAD/bc_aeropt_kinne_sw_b14_coa.nc bc_aeropt_kinne_sw_b14_coa.nc
+ln -sf $ECRAD/bc_aeropt_kinne_lw_b16_coa.nc bc_aeropt_kinne_lw_b16_coa.nc
+
+# Kinne (fin) -> ICON expects the generic name without year
+ln -sf $ECRAD/bc_aeropt_kinne_sw_b14_fin_2013.nc bc_aeropt_kinne_sw_b14_fin.nc
+
+# CMIP6 volcanic aerosols for 2013
+ln -sf $ECRAD/bc_aeropt_cmip6_volc_lw_b16_sw_b14_2013.nc bc_aeropt_cmip6_volc_lw_b16_sw_b14_2013.nc
+
+# MACv2 dataset
+ln -sf $ICONDATA/MACv2.0-SP_v1.nc MACv2.0-SP_v1.nc
+
+# bc_ozone dataset
+ln -sf $ECRAD/bc_ozone_ssp370_2013.nc bc_ozone_2013.nc
+
+then check: 
+
+ls -l bc_aeropt_kinne_sw_b14_coa.nc \
+      bc_aeropt_kinne_lw_b16_coa.nc \
+      bc_aeropt_kinne_sw_b14_fin.nc \
+      bc_aeropt_cmip6_volc_lw_b16_sw_b14_2013.nc \
+      MACv2.0-SP_v1.nc
+
+# and actually test file exists behind link
+for f in bc_aeropt_kinne_sw_b14_coa.nc bc_aeropt_kinne_lw_b16_coa.nc bc_aeropt_kinne_sw_b14_fin.nc \
+         bc_aeropt_cmip6_volc_lw_b16_sw_b14_2013.nc MACv2.0-SP_v1.nc
+do
+  test -r "$f" && echo "OK: $f" || echo "MISSING: $f"
+done
+

@@ -67,6 +67,27 @@ def main(cfg):
     cfg.era5_ymd = cfg.startdate_sim.strftime('%Y-%m-%d')  # e.g. 2021-01-01
     cfg.era5_yyyymmddhh = cfg.startdate_sim.strftime('%Y%m%d%H')  # 2021010100
 
+    # ------------------------------------------------------------------
+    # Expand ERA5 input filename patterns from config.yaml
+    # Supports placeholders like {ymd} and {yyyymmddhh}.
+    # This is critical because bash will NOT expand "{ymd}".
+    # ------------------------------------------------------------------
+    if hasattr(cfg, "era5_ml_filename"):
+        cfg.era5_ml_file = cfg.era5_ml_filename.format(
+            ymd=cfg.era5_ymd,
+            yyyymmddhh=cfg.era5_yyyymmddhh,
+        )
+    if hasattr(cfg, "era5_sfc_filename"):
+        cfg.era5_sfc_file = cfg.era5_sfc_filename.format(
+            ymd=cfg.era5_ymd,
+            yyyymmddhh=cfg.era5_yyyymmddhh,
+        )
+
+    # Make the partab path absolute (case-relative -> absolute)
+    if hasattr(cfg, "era5_partab"):
+        p = Path(str(cfg.era5_partab))
+        cfg.era5_partab_path = p if p.is_absolute() else (cfg.case_path / p)
+
     # Compute the *exact* file that ICON will later read
     inidata_filename = _compute_inidata_filename(cfg)
 

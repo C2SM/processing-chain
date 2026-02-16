@@ -1,0 +1,81 @@
+# Parent global run: ERA5 IC -> ICON R2B7 (global, no LBC)
+workflow: icon-global-era5-parent-r2b7-nosst
+
+# Simulation window
+startdate: 2013-05-25T00:00:00Z
+enddate:   2013-05-25T06:00:00Z
+
+# HPC settings
+constraint: EPYC_7H12
+compute_queue: normal.4h
+run_on: cpu
+ntasks_per_node: 128
+
+# Restart cadence (ISO-8601 duration). P1D == PT24H.
+restart_step: PT6H
+# For the very first parent run from ERA5, lrestart must be false.
+# (later chunks can set this automatically via the chain feature "restart")
+lrestart: '.FALSE.'
+
+walltime:
+  prepare_icon: "00:10:00"
+  era5_ic:      "00:40:00"
+  icon:         "02:00:00"
+
+# -------------------------------------------------------------------
+# ERA5 inputs for the era5_ic job (MATCHES jobs/era5_ic.py EXPECTATIONS)
+# -------------------------------------------------------------------
+era5_dir: /cluster/work/climate/lroither/icon_c2sm/icon_era5_global/era5_raw
+era5_ml_filename:  "era5_ml_{ymd}.grib"
+era5_sfc_filename: "era5_surf_{ymd}.grib"
+
+# Partab: case-relative path (do NOT hardcode /cases/... here)
+era5_partab: tables/partab_era5_to_icon.txt
+
+# Script template used by jobs/era5_ic.py (path relative to case_path)
+era5_ic_runjob_filename: templates/era5_ic_runjob.cfg
+
+# -------------------------------------------------------------------
+# IC naming contract used by jobs/icon.py when generating inidata filename
+# (era5_ic_runjob must write exactly this file)
+# -------------------------------------------------------------------
+inidata_prefix: "era5_init_R2B7_"
+inidata_nameformat: "%Y%m%d%H"
+inidata_filename_suffix: ".nc"
+
+# -------------------------------------------------------------------
+# Files staged by prepare_icon into icon/input and referenced by runjobs
+# Use case-relative paths so the case is self-contained.
+# -------------------------------------------------------------------
+input_files:
+  dynamics_grid_filename: ../../input/icon/grid/zonda_output_I/I_DOM01.nc
+  radiation_grid_filename: ../../input/icon/grid/zonda_output_I/I_DOM01.parent.nc
+  extpar_filename: ../../input/icon/grid/zonda_output_I/I_DOM01_external_parameter.nc
+
+  # radiation coeffs
+  lrtm_filename: /cluster/work/climate/lroither/icon_c2sm/icon/data/rrtmg_lw.nc
+  cldopt_filename: /cluster/work/climate/lroither/icon_c2sm/icon/data/ECHAM6_CldOptProps.nc
+  map_file_ana: /cluster/work/climate/lroither/icon_c2sm/icon/run/ana_varnames_map_file.txt
+
+
+ecrad_data_path: /cluster/work/climate/lroither/icon_c2sm/icon/externals/ecrad/data
+icon_data_path: /cluster/work/climate/lroither/icon_c2sm/icon/data
+start_year: 2013
+
+output_filename: "parent_R2B7"
+parent_eval_reg_lon_def: "-179.875,0.25,179.875"
+parent_eval_reg_lat_def: "89.875,-0.25,-89.875"
+parent_eval_p_levels_pa: "100000,92500,85000,70000,50000,30000,20000,10000"
+
+
+# -------------------------------------------------------------------
+# ICON execution config
+# runjob_filename is case-relative (recommended).
+# -------------------------------------------------------------------
+icon:
+  binary_file: /cluster/work/climate/lroither/icon_c2sm/icon/bin/icon
+  runjob_filename: templates/icon_runjob_parent_global.cfg
+  np_tot: 512
+  np_io: 4
+  np_restart: 4
+  np_prefetch: 0

@@ -1,3 +1,46 @@
+
+icon-global-era5-parent-r2b7:
+  features:
+    - restart
+  jobs:
+    - prepare_icon
+    - era5_ic
+    - era5_sstice
+    - icon
+  dependencies:
+    era5_ic:
+      current:
+        - prepare_icon
+    era5_sstice:
+      current:
+        - prepare_icon
+    icon:
+      current:
+        - prepare_icon
+        - era5_ic
+        - era5_sstice
+      previous:
+        - icon
+
+icon-global-era5-parent-r2b7-nosst:
+  features:
+    - restart
+  jobs:
+    - prepare_icon
+    - era5_ic
+    - icon
+  dependencies:
+    era5_ic:
+      current:
+        - prepare_icon
+    icon:
+      current:
+        - prepare_icon
+        - era5_ic
+      previous:
+        - icon
+
+
 cosmo:
   features:
     - restart
