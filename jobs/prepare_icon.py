@@ -64,7 +64,6 @@ def set_cfg_variables(cfg):
     cfg.enddate_sim_yyyymmddhh = cfg.enddate_sim.strftime('%Y%m%d%H')
 
 
-
 def main(cfg):
     """
     **ICON Data Preparation**
