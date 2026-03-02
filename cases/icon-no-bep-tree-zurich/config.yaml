@@ -1,0 +1,57 @@
+# Configuration file for the 'icon-no-bep-tree-zurich' case with ICON
+
+workflow: icon-no-bep-tree-zurich
+constraint: mc
+run_on: cpu
+compute_queue: debug
+ntasks_per_node: 128
+startdate: 2023-07-01T18:00:00Z
+enddate: 2023-07-03T18:00:00Z
+restart_step: PT48H
+lterra_urb: .FALSE.
+lurbalb: .FALSE.
+lurbahf: .FALSE.
+
+walltime:
+    prepare_icon: '00:30:00'
+    oem: '00:30:00'
+    icon: '00:30:00'
+
+eccodes_dir: /capstor/store/cscs/c2sm/amrs/kdnmez/eccodes_definitions
+iconremap_bin: iconremap
+iconsub_bin: iconsub
+latbc_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
+latbc_copy_path: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/icbc_input/zurich/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T0*
+inidata_prefix: ncks_ICON-ART-UNSTRUCTURED_DOM01_
+inidata_nameformat: '<y><m><d>T<h>0000Z'
+inidata_filename_suffix: .nc
+inicond_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/icbc_input/zurich/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T000000Z.nc
+output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
+filename_format: <output_filename>_DOM<physdom>_<datetime2>
+lateral_boundary_grid_order: lateral_boundary
+dwdfg_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T180000Z.nc
+
+icontools_runjobs:
+    - copy_icbc.cfg
+
+input_files:
+    radiation_grid_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich/zonda_output_zurich_beptree/zurich_beptree_DOM01.parent.nc
+    dynamics_grid_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich/zonda_output_zurich_beptree/zurich_beptree_DOM01.nc
+    map_file_latbc: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/map_file_ZH.latbc
+    lateral_boundary_grid: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich/zonda_output_zurich_beptree/zurich_lateral_boundary.grid.nc
+    lrtm_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/icon-nwp-new/data/rrtmg_lw.nc
+    map_file_ana: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/map_file.ana
+    chemtracer_xml_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/xml/updated_summer23.xml
+    extpar_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich/zonda_output_zurich_beptree/zurich_beptree_DOM01_external_parameter.nc
+
+# the right extpar data to use for clcplus is: spatially_varying_extpar_final_output_CLCplus_UrbaNature.nc both for spatially varying and constant cases.
+
+icon:
+    binary_file: /capstor/store/cscs/c2sm/amrs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-dwd-3.0-yz24yagkmcpsceppzcjebqynoqpelmar/bin/icon
+    runjob_filename: icon_runjob.cfg
+    compute_queue: debug
+    walltime: '00:30:00'
+    np_tot: 5
+    np_io: 1
+    np_restart: 0
+    np_prefetch: 1
