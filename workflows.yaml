@@ -455,3 +455,17 @@ icon-bep-tree-withtrees-zurich:
         - copy_icbc
       previous:
         - icon
+
+icon-bep-tree-notrees-basel:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
