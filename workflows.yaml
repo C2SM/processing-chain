@@ -414,7 +414,7 @@ icon-bep-tree-test:
       previous:
         - icon
 
-icon-no-bep-tree-zurich:
+icon-oneway-bep-tree-trees-zurich:
   features:
   - restart
   jobs:
@@ -428,7 +428,7 @@ icon-no-bep-tree-zurich:
       previous:
         - icon
 
-icon-bep-tree-notrees-zurich:
+icon-oneway-bep-tree-trees-zurich:
   features:
   - restart
   jobs:
@@ -442,7 +442,7 @@ icon-bep-tree-notrees-zurich:
       previous:
         - icon
 
-icon-bep-tree-withtrees-zurich:
+icon-twoway-bep-tree-trees-zurich:
   features:
   - restart
   jobs:
@@ -456,7 +456,7 @@ icon-bep-tree-withtrees-zurich:
       previous:
         - icon
 
-icon-bep-tree-notrees-basel:
+icon-oneway-bep-tree-trees-basel:
   features:
   - restart
   jobs:
