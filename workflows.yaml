@@ -414,7 +414,7 @@ icon-bep-tree-test:
       previous:
         - icon
 
-icon-oneway-bep-tree-trees-zurich:
+icon-oneway-bep-tree-notrees-zurich:
   features:
   - restart
   jobs:
