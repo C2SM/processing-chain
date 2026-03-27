@@ -456,6 +456,20 @@ icon-twoway-bep-tree-trees-zurich:
       previous:
         - icon
 
+icon-twoway-bep-tree-trees-wradiation-zurich:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
 icon-oneway-bep-tree-trees-basel:
   features:
   - restart
@@ -469,3 +483,5 @@ icon-oneway-bep-tree-trees-basel:
         - copy_icbc
       previous:
         - icon
+
+
