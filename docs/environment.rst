@@ -47,7 +47,7 @@ If you already have the environment but want to update it:
 
 .. code-block:: bash
 
-    conda env update --file env/environment.yml --prune
+    conda env update --file environment.yml --prune
 
 3. Store user-specific data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
