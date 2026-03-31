@@ -1,0 +1,13 @@
+numpy
+cartopy
+matplotlib
+scipy
+xarray
+netcdf4
+pyyaml
+cdsapi
+scikit-learn
+f90nml
+sphinx
+sphinx_rtd_theme
+sphinx-copybutton
