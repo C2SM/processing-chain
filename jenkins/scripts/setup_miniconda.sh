@@ -9,7 +9,7 @@ export PATH="$WORKSPACE/miniconda/bin:$PATH"
 conda config --set always_yes yes --set changeps1 no
 conda config --add channels conda-forge
 conda update -n base -c defaults conda
-conda env create -f env/environment.yml
+conda env create -f environment.yml
 source "$WORKSPACE/miniconda/etc/profile.d/conda.sh"
 conda activate proc-chain
 conda deactivate

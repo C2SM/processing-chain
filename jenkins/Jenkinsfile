@@ -23,7 +23,7 @@ pipeline {
                         sh 'conda config --add channels conda-forge'
                         sh 'conda config --set channel_priority strict'
                         sh 'conda update -n base -c defaults conda'
-                        sh 'conda env create -f env/environment.yml'
+                        sh 'conda env create -f environment.yml'
                         sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
                             conda activate proc-chain
                             conda deactivate
