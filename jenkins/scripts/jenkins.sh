@@ -1,19 +1,25 @@
 #!/bin/bash
 
+
 # Argument parsing
 force_execution=false
+use_pip=false
 
 while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        -f|--force)
-            force_execution=true
-            shift
-            ;;
-        *)
-            echo "Unknown parameter: $1"
-            exit 1
-            ;;
-    esac
+  case $1 in
+    -f|--force)
+      force_execution=true
+      shift
+      ;;
+    --pip)
+      use_pip=true
+      shift
+      ;;
+    *)
+      echo "Unknown parameter: $1"
+      exit 1
+      ;;
+  esac
 done
 
 set -e -x
@@ -29,9 +35,26 @@ else
     echo "Unknown hostname: $(hostname)"
 fi
 
-# Activate conda environment
-eval "$(conda shell.bash hook)"
-conda activate proc-chain
+
+# Build environment if not present
+if [[ "$use_pip" == true ]]; then
+  if [[ ! -d venv ]]; then
+    echo "Creating Python venv and installing requirements..."
+    ./jenkins/scripts/setup_env.sh --pip
+  else
+    echo "Python venv already exists - skipping build."
+  fi
+  source venv/bin/activate
+else
+  if ! conda info --envs | grep -q "proc-chain"; then
+    echo "Creating conda environment..."
+    ./jenkins/scripts/setup_env.sh
+  else
+    echo "Conda environment 'proc-chain' already exists - skipping build."
+  fi
+  eval "$(conda shell.bash hook)"
+  conda activate proc-chain
+fi
 
 # Preparation
 size=$(du -sb input | awk '{print $1}')
