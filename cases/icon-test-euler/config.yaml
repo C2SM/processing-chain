@@ -43,7 +43,7 @@ input_files:
   map_file_ana:             ./input/icon/mapping/map_file.ana
 
 icon:
-  binary_file: /cluster/work/climate/lroither/icon_c2sm/icon/bin/icon
+  binary_file: ./ext/icon/bin/icon
   runjob_filename: icon_runjob.cfg
   np_tot: 96
   np_io: 1
