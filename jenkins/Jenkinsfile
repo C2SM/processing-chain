@@ -4,30 +4,18 @@ pipeline {
     }
     agent {
         node {
-            label 'daint'
+            label 'euler'
         }
     }
     stages {
         stage('Preparation') {
             parallel {
-                stage('Setup miniconda') {
+                stage('Setup env') {
                     environment {
-                        PATH = "${WORKSPACE}/miniconda/bin:$PATH"
+                        PATH = "${WORKSPACE}/miniforge/bin:$PATH"
                     }
                     steps {
-                        sh 'wget -O ${WORKSPACE}/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh'
-                        sh 'rm -fr ${WORKSPACE}/miniconda'
-                        sh 'bash miniconda.sh -b -p $WORKSPACE/miniconda'
-                        sh 'conda config --remove channels defaults'
-                        sh 'conda config --set always_yes yes --set changeps1 no'
-                        sh 'conda config --add channels conda-forge'
-                        sh 'conda config --set channel_priority strict'
-                        sh 'conda update -n base -c defaults conda'
-                        sh 'conda env create -f environment.yml'
-                        sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                            conda activate proc-chain
-                            conda deactivate
-                            rm miniconda.sh'''
+                        ./jenkins/scripts/setup_env.sh --pip
                     }
                     post {
                         failure {
@@ -47,39 +35,6 @@ pipeline {
                         }
                     }
                 }
-                stage('Build int2lm') {
-                    steps {
-                        sh './jenkins/scripts/build_int2lm.sh'
-                    }
-                    post {
-                        failure {
-                            echo 'Cleaning up workspace'
-                            deleteDir()
-                        }
-                    }
-                }
-                stage('Build icontools') {
-                    steps {
-                        sh './jenkins/scripts/build_icontools.sh'
-                    }
-                    post {
-                        failure {
-                            echo 'Cleaning up workspace'
-                            deleteDir()
-                        }
-                    }
-                }
-                stage('Build COSMO-GHG') {
-                    steps {
-                        sh './jenkins/scripts/build_cosmo-ghg.sh'
-                    }
-                    post {
-                        failure {
-                            echo 'Cleaning up workspace'
-                            deleteDir()
-                        }
-                    }
-                }
                 stage('Build ICON') {
                     steps {
                         sh './jenkins/scripts/build_icon.sh'
@@ -91,51 +46,6 @@ pipeline {
                         }
                     }
                 }
-                stage('Build ICON-ART') {
-                    steps {
-                        sh './jenkins/scripts/build_icon-art.sh'
-                    }
-                    post {
-                        failure {
-                            echo 'Cleaning up workspace'
-                            deleteDir()
-                        }
-                    }
-                }
-            }
-        }
-        stage('Test COSMO-GHG') {
-            environment {
-                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
-            }
-            steps {
-                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                conda activate proc-chain
-                . ${WORKSPACE}/ext/spack-c2sm/setup-env.sh
-                ./jenkins/scripts/test_cosmo-ghg.sh'''
-            }
-            post {
-                failure {
-                    echo 'Cleaning up workspace'
-                    deleteDir()
-                }
-            }
-        }
-        stage('Test COSMO-GHG (spinup)') {
-            environment {
-                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
-            }
-            steps {
-                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                conda activate proc-chain
-                . ${WORKSPACE}/ext/spack-c2sm/setup-env.sh
-                ./jenkins/scripts/test_cosmo-ghg-spinup.sh'''
-            }
-            post {
-                failure {
-                    echo 'Cleaning up workspace'
-                    deleteDir()
-                }
             }
         }
         stage('Test ICON') {
@@ -143,44 +53,8 @@ pipeline {
                 PATH = "${WORKSPACE}/miniconda/bin:$PATH"
             }
             steps {
-                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                conda activate proc-chain
-                . ${WORKSPACE}/ext/spack-c2sm/setup-env.sh
-                ./jenkins/scripts/test_icon.sh'''
-            }                     
-            post {
-                failure {
-                    echo 'Cleaning up workspace'
-                    deleteDir()
-                }
-            }
-        }
-        stage('Test ICON-ART (OEM)') {
-            environment {
-                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
-            }
-            steps {
-                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                conda activate proc-chain
-                . ${WORKSPACE}/ext/spack-c2sm/setup-env.sh
-                ./jenkins/scripts/test_icon-art-oem.sh'''
-            }                     
-            post {
-                failure {
-                    echo 'Cleaning up workspace'
-                    deleteDir()
-                }
-            }
-        }
-        stage('Test ICON-ART (global)') {
-            environment {
-                PATH = "${WORKSPACE}/miniconda/bin:$PATH"
-            }
-            steps {
-                sh '''source ${WORKSPACE}/miniconda/etc/profile.d/conda.sh
-                conda activate proc-chain
-                . ${WORKSPACE}/ext/spack-c2sm/setup-env.sh
-                ./jenkins/scripts/test_icon-art-global.sh'''
+                sh 'source "$WORKSPACE/venv/bin/activate"'
+                sh './jenkins/scripts/test_icon.sh'
             }                     
             post {
                 failure {
