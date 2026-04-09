@@ -36,8 +36,8 @@ meteo:
   inc: 3
 
 input_files:
-  dynamics_grid_filename:   ./input/icon/grid/iconR2B05-DOM01.nc
-  extpar_filename:          ./input/icon/grid/extpar_iconR2B05-DOM01.nc
+  dynamics_grid_filename:   ./input/icon/grid/icon_grid_0002_R02B06_G.nc
+  extpar_filename:          ./input/icon/grid/icon_extpar_0002_R02B06_G.nc
   lrtm_filename:            ./input/icon/rad/rrtmg_lw.nc
   cldopt_filename:          ./input/icon/rad/rrtm_cldopt.nc
   map_file_ana:             ./input/icon/mapping/map_file.ana
