@@ -9,14 +9,34 @@ e.g., by creating your own case or adding new jobs.
 
 ## Environment Setup
 
-To setup your conda environment for the Processing Chain, please refer
-to the part in the [official documentation](https://c2sm.github.io/processing-chain/latest/environment.html).
+You can set up the Processing Chain environment using either **conda** (recommended) or **pip**.
+
+**Conda:**
+
+    conda env create --prefix $PROJECT/envs/proc-chain -f env/environment.yml
+    conda activate proc-chain
+
+**pip (virtual environment):**
+
+> **Note**: `cdo` and `nco` are not available via pip and must be installed separately.
+
+    python3 -m venv $PROJECT/envs/proc-chain
+    source $PROJECT/envs/proc-chain/bin/activate
+    pip install -r requirements.txt
+
+For full details, refer to the [official documentation](https://c2sm.github.io/processing-chain/latest/environment.html).
 
 ## Run the Chain
 
-To activate your conda environment, type:
+To activate your environment, type:
+
+**Conda:**
 
     conda activate proc-chain
+
+**pip:**
+
+    source $PROJECT/envs/proc-chain/bin/activate
 
 To test if your environment has been successfully set, use the command
 line help to display the available arguments for the main script:

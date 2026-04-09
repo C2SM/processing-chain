@@ -1,9 +1,12 @@
 .. _environment-section:
 
-Conda Environment
+Environment Setup
 =================
 
-The following steps allow you to create and use your own virtual environment to run the Processing Chain. We recommend using a conda environment for the usage of the provided scripts. Please follow the instructions for the installation. The following steps only need to be performed once.
+The following steps allow you to create and use your own virtual environment to run the Processing Chain. You can use either **conda** (recommended) or **pip** with a standard Python virtual environment. Please follow the instructions for your preferred method. The following steps only need to be performed once.
+
+Option A: Conda
+---------------
 
 1. Install Miniconda
 ~~~~~~~~~~~~~~~~~~~~
@@ -60,3 +63,53 @@ To register your email address and standard project account, store them in these
     echo <your_email_address> > ~/.forward
 
 These settings are optional. The Processing Chain will first check the content of those files. If desired, the corresponding variables can be overridden by setting the ``compute_account`` and ``user_mail`` variables in the ``config.yaml`` file.
+
+Option B: pip (virtual environment)
+-------------------------------------
+
+If you prefer not to use conda, you can set up a standard Python virtual environment with pip instead.
+
+.. note::
+   Python 3.11 or later is required. Note that ``cdo`` and ``nco`` are not available via pip and must be installed separately (e.g., via your system package manager or a module system).
+
+1. Create and activate the virtual environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a virtual environment, for example in your ``$PROJECT`` directory:
+
+.. code-block:: bash
+
+    python3 -m venv $PROJECT/envs/proc-chain
+    source $PROJECT/envs/proc-chain/bin/activate
+
+2. Install the requirements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Install all Python dependencies from ``requirements.txt``:
+
+.. code-block:: bash
+
+    pip install -r requirements.txt
+
+To update an existing virtual environment:
+
+.. code-block:: bash
+
+    pip install --upgrade -r requirements.txt
+
+3. Activate the environment in future sessions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Each time you start a new session, activate the environment with:
+
+.. code-block:: bash
+
+    source $PROJECT/envs/proc-chain/bin/activate
+
+You can add this line to your ``.bashrc`` to activate it automatically.
+
+4. Store user-specific data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Follow the same steps as described in the conda section above (store
+``~/.acct`` and ``~/.forward``) if needed.
