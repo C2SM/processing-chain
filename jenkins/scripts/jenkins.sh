@@ -24,7 +24,7 @@ done
 
 set -e -x
 
-# Check if we are on Euler and load modules
+# Prepare the environment (machine-specific)
 if [[ $(hostname) == eu-* ]]; then
     host=euler
     module load stack/2024-06 gcc/12.2.0 openmpi/4.1.6 python/3.12.8 || true

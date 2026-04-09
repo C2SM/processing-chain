@@ -113,3 +113,122 @@ You can add this line to your ``.bashrc`` to activate it automatically.
 
 Follow the same steps as described in the conda section above (store
 ``~/.acct`` and ``~/.forward``) if needed.
+
+Machine-specific Setup
+----------------------
+
+The ``machines/`` directory contains ready-made scripts for loading the
+correct system modules and activating the Python environment on supported
+HPC systems. Each machine has its own sub-directory:
+
+.. code-block:: text
+
+    machines/
+    ├── euler/
+    │   ├── modules.sh    # module load commands only
+    │   └── setup_env.sh  # modules + venv activation (one-stop setup)
+    └── santis/
+        ├── modules.sh    # uenv image/view reference
+        └── setup_env.sh  # uenv start + venv activation
+
+Euler (ETH Zürich)
+~~~~~~~~~~~~~~~~~~
+
+**Load modules only** (useful inside Slurm job scripts):
+
+.. code-block:: bash
+
+    source machines/euler/modules.sh
+
+This loads:
+
+.. code-block:: bash
+
+    module load stack/2024-06 gcc/12.2.0 openmpi/4.1.6 python/3.12.8
+    module load cdo/2.2.2 nco/5.1.6 netcdf-c/4.9.2
+
+**Full interactive-session setup** (modules + venv activation):
+
+.. code-block:: bash
+
+    source machines/euler/setup_env.sh
+
+By default this activates the virtual environment at ``<repo>/venv``.
+To use a different location, set ``PROC_CHAIN_VENV`` before sourcing:
+
+.. code-block:: bash
+
+    export PROC_CHAIN_VENV=$PROJECT/envs/proc-chain
+    source machines/euler/setup_env.sh
+
+If the virtual environment does not exist yet, create it first (see
+:ref:`Option B <environment-section>` above):
+
+.. code-block:: bash
+
+    python3 -m venv $PROJECT/envs/proc-chain
+    pip install -r requirements.txt
+
+Santis (CSCS)
+~~~~~~~~~~~~~
+
+On Santis, software is provided through **uenv** (user environments) instead
+of the traditional module system.  Because ``uenv start`` spawns a new shell,
+it cannot be sourced inside an existing session.
+
+**Start an interactive session** with the required environment:
+
+.. code-block:: bash
+
+    uenv start climtools/25.2:v1 --view=climtools
+
+**Or use the provided wrapper** (starts the uenv and activates the venv):
+
+.. code-block:: bash
+
+    bash machines/santis/setup_env.sh
+
+If the virtual environment already exists and you are **already inside the
+uenv**, you can activate it directly:
+
+.. code-block:: bash
+
+    source machines/santis/setup_env.sh --no-uenv
+
+To use a custom venv location, set ``PROC_CHAIN_VENV`` first:
+
+.. code-block:: bash
+
+    export PROC_CHAIN_VENV=$SCRATCH/envs/proc-chain
+    bash machines/santis/setup_env.sh
+
+**Run a single command** inside the uenv without entering an interactive shell:
+
+.. code-block:: bash
+
+    uenv run climtools/25.2:v1 --view=climtools -- ./run_chain.py <casename>
+
+If the virtual environment does not exist yet, enter the uenv first and
+create it:
+
+.. code-block:: bash
+
+    uenv start climtools/25.2:v1 --view=climtools
+    python3 -m venv $SCRATCH/envs/proc-chain
+    pip install -r requirements.txt
+
+Adding support for a new machine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a new sub-directory under ``machines/`` following the same
+pattern:
+
+.. code-block:: text
+
+    machines/
+    └── <machine-name>/
+        ├── modules.sh
+        └── setup_env.sh
+
+Use ``machines/euler/`` as a template and adapt the ``module load``
+commands for the target system.

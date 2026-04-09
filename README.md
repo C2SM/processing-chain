@@ -26,6 +26,37 @@ You can set up the Processing Chain environment using either **conda** (recommen
 
 For full details, refer to the [official documentation](https://c2sm.github.io/processing-chain/latest/environment.html).
 
+### Machine-specific setup
+
+Ready-made environment scripts are provided under `machines/` for supported HPC systems.
+
+**Euler (ETH Zürich)**
+
+```bash
+# Load system modules only (useful in job scripts):
+source machines/euler/modules.sh
+
+# Load modules + activate the venv (recommended for interactive sessions):
+source machines/euler/setup_env.sh
+```
+
+**Santis (CSCS)**
+
+On Santis, software is provided via `uenv`. Because `uenv start` spawns a new shell, source-based activation is not supported; use the wrapper instead:
+
+```bash
+# Start an interactive shell with the full environment:
+bash machines/santis/setup_env.sh
+
+# Or start the uenv manually:
+uenv start climtools/25.2:v1 --view=climtools
+
+# Run a single command without an interactive shell:
+uenv run climtools/25.2:v1 --view=climtools -- ./run_chain.py <casename>
+```
+
+See `machines/` for the structure to follow when adding other machines.
+
 ## Run the Chain
 
 To activate your environment, type:
