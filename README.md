@@ -9,43 +9,57 @@ e.g., by creating your own case or adding new jobs.
 
 ## Environment Setup
 
-You can set up the Processing Chain environment using either **conda** (recommended) or **pip**.
+Two installation paths are available. See the
+[full documentation](https://c2sm.github.io/processing-chain/latest/environment.html)
+for step-by-step instructions.
 
-**Conda:**
+**Option A — Conda (Miniforge, recommended):**
 
-    conda env create --prefix $PROJECT/envs/proc-chain -f env/environment.yml
-    conda activate proc-chain
+```bash
+# 1. Install Miniforge (once)
+wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+bash Miniforge3-Linux-x86_64.sh
 
-**pip (virtual environment):**
+# 2. Create the environment
+conda env create --prefix $PROJECT/envs/proc-chain -f env/environment.yml
 
-> **Note**: `cdo` and `nco` are not available via pip and must be installed separately.
+# 3. Activate
+conda activate proc-chain
+```
 
-    python3 -m venv $PROJECT/envs/proc-chain
-    source $PROJECT/envs/proc-chain/bin/activate
-    pip install -r requirements.txt
+**Option B — pip (virtual environment):**
 
-For full details, refer to the [official documentation](https://c2sm.github.io/processing-chain/latest/environment.html).
+> **Note**: `cdo` and `nco` are not available via pip. On HPC systems, load
+> them via the module system first (see machine-specific setup below).
+
+```bash
+python3 -m venv $PROJECT/envs/proc-chain
+source $PROJECT/envs/proc-chain/bin/activate
+pip install -r requirements.txt
+```
 
 ### Machine-specific setup
 
-Ready-made environment scripts are provided under `machines/` for supported HPC systems.
+Ready-made scripts under `machines/` load system software and activate the
+environment in one step.
 
 **Euler (ETH Zürich)**
 
 ```bash
-# Load system modules only (useful in job scripts):
+# Load system modules only (e.g. in job scripts):
 source machines/euler/modules.sh
 
-# Load modules + activate the venv (recommended for interactive sessions):
+# Modules + venv activation (interactive sessions):
 source machines/euler/setup_env.sh
 ```
 
 **Santis (CSCS)**
 
-On Santis, software is provided via `uenv`. Because `uenv start` spawns a new shell, source-based activation is not supported; use the wrapper instead:
+On Santis, `uenv start` spawns a new shell and cannot be sourced; use the
+wrapper instead:
 
 ```bash
-# Start an interactive shell with the full environment:
+# One-stop interactive setup (uenv + venv):
 bash machines/santis/setup_env.sh
 
 # Or start the uenv manually:
