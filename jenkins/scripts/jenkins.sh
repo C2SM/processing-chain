@@ -27,8 +27,7 @@ set -e -x
 # Prepare the environment (machine-specific)
 if [[ $(hostname) == eu-* ]]; then
     host=euler
-    module load stack/2024-06 gcc/12.2.0 openmpi/4.1.6 python/3.12.8 || true
-    module load cdo/2.2.2 nco/5.1.6 netcdf-c/4.9.2 || true
+    source machines/euler/modules.sh || true
 elif [[ $(hostname) == santis* ]]; then
     host=santis
 else
@@ -40,7 +39,8 @@ fi
 if [[ "$use_pip" == true ]]; then
   if [[ ! -d venv ]]; then
     echo "Creating Python venv and installing requirements..."
-    ./jenkins/scripts/setup_env.sh --pip
+    python3 -m venv venv
+    venv/bin/pip install -r requirements.txt
   else
     echo "Python venv already exists - skipping build."
   fi
@@ -48,7 +48,7 @@ if [[ "$use_pip" == true ]]; then
 else
   if ! conda info --envs | grep -q "proc-chain"; then
     echo "Creating conda environment..."
-    ./jenkins/scripts/setup_env.sh
+    conda env create -f environment.yml
   else
     echo "Conda environment 'proc-chain' already exists - skipping build."
   fi
