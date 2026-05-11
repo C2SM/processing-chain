@@ -1,6 +1,6 @@
-# Configuration file for the 'icon-twoway-bep-tree-trees-wradiation-zurich' case with ICON
+# Configuration file for the 'icon-twoway-bep-tree-trees-wradiation-onlyddtupdate-zurich' case with ICON
 
-workflow: icon-twoway-bep-tree-trees-wradiation-zurich
+workflow: icon-twoway-bep-tree-trees-wradiation-onlyddtupdate-zurich
 constraint: mc
 run_on: cpu
 compute_queue: normal
@@ -50,7 +50,7 @@ icon:
     binary_file: /capstor/store/cscs/c2sm/amrs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-dwd-3.0-yz24yagkmcpsceppzcjebqynoqpelmar/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
-    walltime: '01:30:00'
+    walltime: '00:30:00'
     np_tot: 5
     np_io: 1
     np_restart: 0

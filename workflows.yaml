@@ -470,6 +470,48 @@ icon-twoway-bep-tree-trees-wradiation-zurich:
       previous:
         - icon
 
+icon-twoway-bep-tree-trees-wradiation-ddtupdate-zurich:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-twoway-bep-tree-trees-wradiation-onlyddtupdate-zurich:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-terraurb-zurich:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
 icon-oneway-bep-tree-trees-basel:
   features:
   - restart

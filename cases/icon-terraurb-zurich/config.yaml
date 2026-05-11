@@ -1,6 +1,6 @@
-# Configuration file for the 'icon-twoway-bep-tree-trees-wradiation-zurich' case with ICON
+# Configuration file for the 'icon-terraurb-zurich' case with ICON
 
-workflow: icon-twoway-bep-tree-trees-wradiation-zurich
+workflow: icon-terraurb-zurich
 constraint: mc
 run_on: cpu
 compute_queue: normal
@@ -8,9 +8,9 @@ ntasks_per_node: 128
 startdate: 2023-08-16T01:00:00Z
 enddate: 2023-08-24T23:00:00Z
 restart_step: PT214H
-lterra_urb: .FALSE.
-lurbalb: .FALSE.
-lurbahf: .FALSE.
+lterra_urb: .TRUE.
+lurbalb: .TRUE.
+lurbahf: .TRUE.
 
 walltime:
     prepare_icon: '00:30:00'

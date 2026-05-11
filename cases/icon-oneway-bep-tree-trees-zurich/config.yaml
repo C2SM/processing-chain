@@ -5,9 +5,9 @@ constraint: mc
 run_on: cpu
 compute_queue: normal
 ntasks_per_node: 128
-startdate: 2023-07-01T01:00:00Z
-enddate: 2023-07-09T00:00:00Z
-restart_step: PT191H
+startdate: 2023-08-16T01:00:00Z
+enddate: 2023-08-24T23:00:00Z
+restart_step: PT214H
 lterra_urb: .FALSE.
 lurbalb: .FALSE.
 lurbahf: .FALSE.
@@ -21,15 +21,15 @@ eccodes_dir: /capstor/store/cscs/c2sm/amrs/kdnmez/eccodes_definitions
 iconremap_bin: iconremap
 iconsub_bin: iconsub
 latbc_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
-latbc_copy_path: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/icbc_input/zurich/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_2023070*
+latbc_copy_path: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/icbc_input/zurich/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_202308*
 inidata_prefix: ncks_ICON-ART-UNSTRUCTURED_DOM01_
 inidata_nameformat: '<y><m><d>T<h>0000Z'
 inidata_filename_suffix: .nc
-inicond_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/icbc_input/zurich/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T010000Z.nc
+inicond_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/icbc_input/zurich/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230816T010000Z.nc
 output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
 filename_format: <output_filename>_DOM<physdom>_<datetime2>
 lateral_boundary_grid_order: lateral_boundary
-dwdfg_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_20230701T010000Z.nc
+dwdfg_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_20230816T010000Z.nc
 
 icontools_runjobs:
     - copy_icbc.cfg

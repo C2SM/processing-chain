@@ -1,6 +1,6 @@
-# Configuration file for the 'icon-twoway-bep-tree-trees-wradiation-zurich' case with ICON
+# Configuration file for the 'icon-twoway-bep-tree-trees-wradiation-ddtupdate-zurich' case with ICON
 
-workflow: icon-twoway-bep-tree-trees-wradiation-zurich
+workflow: icon-twoway-bep-tree-trees-wradiation-ddtupdate-zurich
 constraint: mc
 run_on: cpu
 compute_queue: normal
