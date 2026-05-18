@@ -498,6 +498,48 @@ icon-twoway-bep-tree-trees-wradiation-onlyddtupdate-zurich:
       previous:
         - icon
 
+icon-twoway-bep-tree-trees-wradiation-onlyddtupdate-ddt-tke-zurich:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-twoway-bep-tree-trees-after-turb-zurich:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-twoway-bep-tree-trees-after-surface-zurich:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+        
 icon-terraurb-zurich:
   features:
   - restart
@@ -513,6 +555,34 @@ icon-terraurb-zurich:
         - icon
 
 icon-oneway-bep-tree-trees-basel:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-twoway-bep-tree-trees-after-surface-basel:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-terraurb-basel:
   features:
   - restart
   jobs:

@@ -1,6 +1,6 @@
-# Configuration file for the 'icon-oneway-bep-tree-trees-basel' case with ICON
+# Configuration file for the 'icon-terraurb-basel' case with ICON
 
-workflow: icon-oneway-bep-tree-trees-basel
+workflow: icon-terraurb-basel
 constraint: mc
 run_on: cpu
 compute_queue: normal
@@ -8,9 +8,9 @@ ntasks_per_node: 128
 startdate: 2023-07-01T18:00:00Z
 enddate: 2023-07-08T18:00:00Z
 restart_step: PT168H
-lterra_urb: .FALSE.
-lurbalb: .FALSE.
-lurbahf: .FALSE.
+lterra_urb: .TRUE.
+lurbalb: .TRUE.
+lurbahf: .TRUE.
 
 walltime:
     prepare_icon: '00:30:00'

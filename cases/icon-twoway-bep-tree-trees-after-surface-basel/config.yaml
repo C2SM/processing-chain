@@ -1,6 +1,6 @@
-# Configuration file for the 'icon-oneway-bep-tree-trees-basel' case with ICON
+# Configuration file for the 'icon-twoway-bep-tree-trees-after-surface-basel' case with ICON
 
-workflow: icon-oneway-bep-tree-trees-basel
+workflow: icon-twoway-bep-tree-trees-after-surface-basel
 constraint: mc
 run_on: cpu
 compute_queue: normal
