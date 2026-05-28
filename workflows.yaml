@@ -596,4 +596,102 @@ icon-terraurb-basel:
       previous:
         - icon
 
+icon-twoway-bep-tree-trees-after-surface-no-ddt-tke-basel:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-twoway-bep-tree-trees-after-turb-basel:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-twoway-bep-tree-trees-after-turb-imodetran-sensitivity-basel:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-twoway-bep-tree-trees-after-surface-with-tke-basel:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-twoway-bep-tree-trees-after-surface-with-ddt-uv-turb-update-basel:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-twoway-bep-tree-trees-after-surface-no-ddt-tke-constant-ucps-basel:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-twoway-bep-tree-trees-after-surface-for-testing-basel:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
 
