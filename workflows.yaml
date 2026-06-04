@@ -694,4 +694,45 @@ icon-twoway-bep-tree-trees-after-surface-for-testing-basel:
       previous:
         - icon
 
+icon-twoway-bep-tree-trees-after-surface-for-testing-zurich:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-standard-oneway-zurich:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
+icon-twoway-bep-tree-notrees-after-surface-zurich:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
 
