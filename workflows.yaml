@@ -736,3 +736,17 @@ icon-twoway-bep-tree-notrees-after-surface-zurich:
       previous:
         - icon
 
+icon-twoway-bep-tree-notrees-after-surface-for-testing-zurich:
+  features:
+  - restart
+  jobs:
+    - prepare_icon
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - copy_icbc
+      previous:
+        - icon
+
