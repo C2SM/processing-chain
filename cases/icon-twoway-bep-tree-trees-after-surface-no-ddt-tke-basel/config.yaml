@@ -48,7 +48,7 @@ input_files:
 
 # real working beptree: /capstor/store/cscs/c2sm/amrs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-dwd-3.0-yz24yagkmcpsceppzcjebqynoqpelmar/bin/icon
 icon:
-    binary_file: /capstor/store/cscs/c2sm/amrs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-dwd-3.0-yz24yagkmcpsceppzcjebqynoqpelmar/bin/icon
+    binary_file: /capstor/store/cscs/c2sm/amrs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2026.04-dwd-1.9-iixu6iy4vfqrwof2kahqlhcvbsxyqrjy/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
     walltime: '01:30:00'
