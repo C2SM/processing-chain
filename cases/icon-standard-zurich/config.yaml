@@ -1,9 +1,9 @@
 # Configuration file for the 'icon-standard-zurich' case with ICON
 
 workflow: icon-standard-zurich
-constraint: mc
 run_on: cpu
 compute_queue: normal
+compute_account: em05-0
 ntasks_per_node: 128
 startdate: 2023-08-16T01:00:00Z
 enddate: 2023-08-24T23:00:00Z

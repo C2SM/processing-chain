@@ -290,7 +290,7 @@ def main():
     Notes
     -----
     - This script uses command-line arguments to specify cases and job lists.
-    - It loads model configurations, converts paths to absolute, sets restart 
+    - It loads model configurations, converts paths to absolute, sets restart
       settings, and starts the chain.
     - Depending on the model's features, it may run with or without restarts
       or utilize spin-up restarts.
@@ -324,13 +324,10 @@ def main():
         else:
             cfg.force_sync = False
 
-        # Check constraint
-        if cfg.constraint and cfg.machine == 'daint':
-            assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
-                                                     "gpu or mc")
-        elif cfg.constraint and cfg.machine == 'eiger':
-            assert cfg.constraint in ['mc'], ("Unknown constraint, use"
-                                              "gpu or mc")
+        # NOTE: The former 'constraint' check (gpu/mc) was removed.
+        # The mc/gpu node features no longer exist on Eiger.Alps, and
+        # 'constraint' is no longer read from config.yaml at all. The
+        # CPU/GPU distinction is handled by 'run_on' in Config.set_node_info().
 
         # Get complete chunk list
         cfg.get_chunk_list()

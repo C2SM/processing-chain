@@ -170,6 +170,12 @@ class Config():
         per node and CUDA-related environment variables, based on the provided
         configuration settings in the instance.
 
+        `constraint` is no longer used anywhere: the old Eiger `mc`/`gpu`
+        features do not exist on Eiger.Alps, and passing them makes `sbatch`
+        reject the job with "Invalid account or account/partition combination
+        specified". The CPU/GPU distinction is taken from `run_on` instead,
+        which defaults to 'cpu'.
+
         Returns
         -------
         Config
@@ -178,30 +184,26 @@ class Config():
         Raises
         ------
         ValueError
-            If the 'constraint' or 'run_on' configuration values are invalid.
+            If the 'run_on' configuration value is invalid.
         """
-        if self.constraint == 'gpu':
-            if hasattr(self, 'icon'):
-                if self.run_on == 'gpu':
-                    self.ntasks_per_node = 1
-                elif self.run_on == 'cpu':
-                    self.ntasks_per_node = 12
-                else:
-                    raise ValueError(
-                        "Invalid value for 'run_on' in the configuration."
-                        "It should be either 'gpu' or 'cpu'.")
-            else:
-                self.ntasks_per_node = 12
-                self.mpich_cuda = ('export MPICH_RDMA_ENABLED_CUDA=1\n'
-                                   'export MPICH_G2G_PIPELINE=256\n'
-                                   'export CRAY_CUDA_MPS=1\n')
-        elif self.constraint == 'mc':
-            self.ntasks_per_node = 36
+        run_on = getattr(self, 'run_on', 'cpu')
+
+        if run_on == 'cpu':
+            # Eiger.Alps: 128 cores/node. An explicit ntasks_per_node in
+            # config.yaml always wins.
+            if not hasattr(self, 'ntasks_per_node'):
+                self.ntasks_per_node = 128
             self.mpich_cuda = ''
+        elif run_on == 'gpu':
+            if not hasattr(self, 'ntasks_per_node'):
+                self.ntasks_per_node = 1 if hasattr(self, 'icon') else 12
+            self.mpich_cuda = ('export MPICH_RDMA_ENABLED_CUDA=1\n'
+                               'export MPICH_G2G_PIPELINE=256\n'
+                               'export CRAY_CUDA_MPS=1\n')
         else:
             raise ValueError(
-                "Invalid value for 'constraint' in the configuration."
-                "It should be either 'gpu' or 'mc'.")
+                "Invalid value for 'run_on' in the configuration."
+                "It should be either 'gpu' or 'cpu'.")
 
     def set_workflow(self):
         """set workflow and async attr, initiate job ids dict"""
@@ -424,9 +426,20 @@ class Config():
                          capture_output=True,
                          check=True)
         except CalledProcessError as e:
+            # Slurm's own rejection message goes to stderr; without this it is
+            # swallowed and you only see the generic CalledProcessError.
+            stderr = e.stderr.decode(errors='replace') if e.stderr else ''
+            stdout = e.stdout.decode(errors='replace') if e.stdout else ''
+            msg = (f"sbatch failed for job '{job_name}' "
+                   f"(script: {script_path})\n"
+                   f"command: {' '.join(sbatch_cmd)}\n"
+                   f"stdout: {stdout}\n"
+                   f"stderr: {stderr}\n")
+            print(msg)
             with self.logfile.open(mode='a') as f:
+                f.write(msg)
                 f.write(str(e))
-                raise (e)
+            raise (e)
 
         job_id = int(result.stdout)
         print(f'        └── Submitted batch job {job_id}')
@@ -454,7 +467,6 @@ class Config():
                 '#SBATCH --open-mode=append',
                 f'#SBATCH --account={self.compute_account}',
                 f'#SBATCH --partition={self.compute_queue}',
-                f'#SBATCH --constraint={self.constraint}',
                 '',
                 f'cd {self.chain_src_dir}',
                 f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
@@ -469,7 +481,6 @@ class Config():
                 f'#SBATCH --output={self.logfile}',
                 '#SBATCH --open-mode=append',
                 f'#SBATCH --partition={self.compute_queue}',
-                f'#SBATCH --constraint={self.constraint}',
                 '',
                 f'cd {self.chain_src_dir}',
                 'eval "$(conda shell.bash hook)"',
@@ -478,6 +489,8 @@ class Config():
                 '',
             ]
         elif self.machine == 'eiger':
+            # Eiger.Alps: no --constraint (the 'mc'/'gpu' features are gone),
+            # and the account comes from self.compute_account, not hardcoded.
             script_lines = [
                 '#!/usr/bin/env bash',
                 f'#SBATCH --job-name={job_name}',
@@ -485,9 +498,8 @@ class Config():
                 f'#SBATCH --time={walltime}',
                 f'#SBATCH --output={self.logfile}',
                 '#SBATCH --open-mode=append',
-                f'#SBATCH --account=em05',
+                f'#SBATCH --account={self.compute_account}',
                 f'#SBATCH --partition={self.compute_queue}',
-                f'#SBATCH --constraint={self.constraint}',
                 '',
                 f'cd {self.chain_src_dir}',
                 f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
@@ -523,8 +535,7 @@ class Config():
                     f'#SBATCH --output={log_file}',
                     f'#SBATCH --account={self.compute_account}',
                     f'#SBATCH --partition={self.compute_queue}',
-                    f'#SBATCH --constraint={self.constraint}',
-                    f'#SBATCH --dependency=afterany:{dep_str}', '',
+                        f'#SBATCH --dependency=afterany:{dep_str}', '',
                     '# Do nothing', 'exit 0'
                 ]
             elif self.machine == 'euler':
@@ -533,17 +544,17 @@ class Config():
                     '#SBATCH --ntasks=1', '#SBATCH --time=00:01:00',
                     f'#SBATCH --output={log_file}',
                     f'#SBATCH --partition={self.compute_queue}',
-                    f'#SBATCH --constraint={self.constraint}',
-                    f'#SBATCH --dependency=afterany:{dep_str}', '',
+                        f'#SBATCH --dependency=afterany:{dep_str}', '',
                     '# Do nothing', 'exit 0'
                 ]
             elif self.machine == 'eiger':
+                # Eiger.Alps: no --constraint, account from self.compute_account
                 script_lines = [
                     '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
                     '#SBATCH --nodes=1', '#SBATCH --time=00:01:00',
-                    f'#SBATCH --output={log_file}', f'#SBATCH --account=em05',
+                    f'#SBATCH --output={log_file}',
+                    f'#SBATCH --account={self.compute_account}',
                     f'#SBATCH --partition={self.compute_queue}',
-                    f'#SBATCH --constraint={self.constraint}',
                     f'#SBATCH --dependency=afterany:{dep_str}', '',
                     '# Do nothing', 'exit 0'
                 ]
