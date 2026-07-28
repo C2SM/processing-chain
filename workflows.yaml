@@ -708,7 +708,7 @@ icon-twoway-bep-tree-trees-after-surface-for-testing-zurich:
       previous:
         - icon
 
-icon-standard-oneway-zurich:
+icon-standard-zurich:
   features:
   - restart
   jobs:
