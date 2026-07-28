@@ -1,9 +1,9 @@
 # Configuration file for the 'icon-terraurb-zurich' case with ICON
 
 workflow: icon-terraurb-zurich
-constraint: mc
 run_on: cpu
 compute_queue: normal
+compute_account: em05-0
 ntasks_per_node: 128
 startdate: 2023-08-16T01:00:00Z
 enddate: 2023-08-24T23:00:00Z
@@ -47,7 +47,7 @@ input_files:
 # the right extpar data to use for clcplus is: spatially_varying_extpar_final_output_CLCplus_UrbaNature.nc both for spatially varying and constant cases.
 
 icon:
-    binary_file: /capstor/store/cscs/c2sm/amrs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2024.10-dwd-3.0-yz24yagkmcpsceppzcjebqynoqpelmar/bin/icon
+    binary_file: /capstor/store/cscs/c2sm/amrs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2026.04-dwd-1.9-iixu6iy4vfqrwof2kahqlhcvbsxyqrjy/bin/icon
     runjob_filename: icon_runjob.cfg
     compute_queue: normal
     walltime: '01:30:00'

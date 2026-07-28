@@ -198,16 +198,13 @@ def run_chunk(cfg, force, resume):
 
                 exitcode = 0
             except Exception:
-                #exitcode = 0
+                import traceback
                 exitcode = 1
                 subject = "ERROR or TIMEOUT in job '%s' for chunk '%s'" % (
                     job_name, cfg.chunk_id)
+                print(f">>> EXCEPTION in {job_name}:", flush=True)
+                print(traceback.format_exc(), flush=True)
                 logging.exception(subject)
-                #if cfg.user_mail:
-                #    message = tools.prepare_message(cfg.log_working_dir /
-                #                                    job_name)
-                #    logging.info('Sending log file to %s' % cfg.user_mail)
-                #    tools.send_mail(cfg.user_mail, subject, message)
 
             if exitcode != 0 or not (cfg.log_finished_dir / job_name).exists():
                 print("2")

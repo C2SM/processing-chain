@@ -79,12 +79,16 @@ def main(cfg):
 
     logging.info('Copy ICON input data (IC/BC) to working directory')
     # Copy input files to scratch
+    # NOTE (Eiger.Alps): no '#SBATCH --constraint=' line - the mc/gpu node
+    # features no longer exist and sbatch rejects the job with
+    # "Invalid account or account/partition combination specified".
+    # The account comes from cfg.compute_account (set via ~/.acct or 'id -gn'),
+    # not hardcoded, since the Slurm association is 'em05-0'.
     script_lines = [
         '#!/usr/bin/env bash',
         f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
-        f'#SBATCH --account=em05', '#SBATCH --time=00:10:00',
-        f'#SBATCH --partition={cfg.compute_queue}',
-        f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
+        f'#SBATCH --account={cfg.compute_account}', '#SBATCH --time=00:10:00',
+        f'#SBATCH --partition={cfg.compute_queue}', '#SBATCH --nodes=1',
         f'#SBATCH --output={cfg.logfile}', '#SBATCH --open-mode=append',
         f'#SBATCH --chdir={cfg.icon_work}', ''
     ]
