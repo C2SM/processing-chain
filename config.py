@@ -201,9 +201,8 @@ class Config():
                                'export MPICH_G2G_PIPELINE=256\n'
                                'export CRAY_CUDA_MPS=1\n')
         else:
-            raise ValueError(
-                "Invalid value for 'run_on' in the configuration."
-                "It should be either 'gpu' or 'cpu'.")
+            raise ValueError("Invalid value for 'run_on' in the configuration."
+                             "It should be either 'gpu' or 'cpu'.")
 
     def set_workflow(self):
         """set workflow and async attr, initiate job ids dict"""
@@ -535,7 +534,7 @@ class Config():
                     f'#SBATCH --output={log_file}',
                     f'#SBATCH --account={self.compute_account}',
                     f'#SBATCH --partition={self.compute_queue}',
-                        f'#SBATCH --dependency=afterany:{dep_str}', '',
+                    f'#SBATCH --dependency=afterany:{dep_str}', '',
                     '# Do nothing', 'exit 0'
                 ]
             elif self.machine == 'euler':
@@ -544,7 +543,7 @@ class Config():
                     '#SBATCH --ntasks=1', '#SBATCH --time=00:01:00',
                     f'#SBATCH --output={log_file}',
                     f'#SBATCH --partition={self.compute_queue}',
-                        f'#SBATCH --dependency=afterany:{dep_str}', '',
+                    f'#SBATCH --dependency=afterany:{dep_str}', '',
                     '# Do nothing', 'exit 0'
                 ]
             elif self.machine == 'eiger':
