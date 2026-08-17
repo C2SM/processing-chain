@@ -38,14 +38,19 @@ iconsub_bin: iconsub
 # lead-time names (ilbff.../igfff...), since ICON's <y><m><d><h> templating
 # in latbc_filename needs one file per real timestamp.
 latbc_filename: lbc_<y><m><d><h>.nc
-# broad glob (matches all 937 generated files, only 217 are actually needed
-# for this 9-day window) - simpler/more robust than an exact date list, the
-# unused extra copies are harmless once-off waste, not a correctness issue.
-latbc_copy_path: /capstor/scratch/cscs/kdnmez/heatwave2026/icbc/lbc/lbc_2026*.nc
+# Moved off scratch to durable store 2026-08-17: heatwave2026/icbc/ on
+# /capstor/scratch is subject to purge, this copy on /capstor/store isn't.
+# rsync -H preserved the hard-link structure (ic_<date>.nc/lbc_<date>.nc are
+# still hard links to igfff.../ilbff..., not separate copies - matters for
+# downstream cp -rf, see icon_icbc_prep/README.md gotcha #13). 1680 files
+# now available (23 May - 31 Jul); the broad glob matches all of them, only
+# this case's own window (see startdate/enddate above) actually gets used -
+# harmless once-off extra copy, not a correctness issue.
+latbc_copy_path: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/icbc_input/zurich_small/remapped/lbc/lbc_2026*.nc
 inidata_prefix: ic_
 inidata_nameformat: '<y><m><d><h>'
 inidata_filename_suffix: .nc
-inicond_filename: /capstor/scratch/cscs/kdnmez/heatwave2026/icbc/ic/ic_2026052300.nc
+inicond_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/icbc_input/zurich_small/remapped/ic/ic_2026052300.nc
 output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
 filename_format: <output_filename>_DOM<physdom>_<datetime2>
 lateral_boundary_grid_order: lateral_boundary
