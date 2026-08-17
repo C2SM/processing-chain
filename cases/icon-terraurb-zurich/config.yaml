@@ -5,9 +5,18 @@ run_on: cpu
 compute_queue: normal
 compute_account: em05-0
 ntasks_per_node: 128
-startdate: 2023-08-16T01:00:00Z
-enddate: 2023-08-24T23:00:00Z
-restart_step: PT214H
+startdate: 2026-05-23T00:00:00Z
+enddate: 2026-06-01T00:00:00Z
+# Spin-up-only window (set 2026-08-17), matching icon-standard-zurich: 216h
+# = 9 days (23 May - 1 Jun). Full production window is 936h (23 May - 1 Jul);
+# ICBC for that whole range is already generated and verified
+# (heatwave2026/icbc, 937 files, ALL CHECKS PASSED). To extend: set enddate
+# to 2026-07-01T00:00:00Z and restart_step to PT936H (must always equal
+# enddate-startdate exactly, or config.py's get_chunk_list() silently drops
+# the only chunk - see icon-standard-zurich/config.yaml for the full note).
+# restart_step = the whole window: one chunk, no restart chaining, matching
+# how these cases are always run.
+restart_step: PT216H
 lterra_urb: .TRUE.
 lurbalb: .TRUE.
 lurbahf: .TRUE.
@@ -20,29 +29,45 @@ walltime:
 eccodes_dir: /capstor/store/cscs/c2sm/amrs/kdnmez/eccodes_definitions
 iconremap_bin: iconremap
 iconsub_bin: iconsub
-latbc_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_<y><m><d>T<h>0000Z_lbc.nc
-latbc_copy_path: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/icbc_input/zurich/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_202308*
-inidata_prefix: ncks_ICON-ART-UNSTRUCTURED_DOM01_
-inidata_nameformat: '<y><m><d>T<h>0000Z'
+# ICBC now comes from icon_icbc_prep (CDO-based, replaces the old
+# iconremap/ncks pipeline) - see /capstor/scratch/cscs/kdnmez/heatwave2026/.
+# latbc_copy_path/inicond_filename feed prepare_icon.py's "extras for kutay's
+# version" cp step; latbc_filename/dwdfg_filename must match what actually
+# lands in cfg.icon_input_icbc after that copy - both point at the
+# calendar-dated names (lbc_<date>.nc / ic_<date>.nc), not the DWD
+# lead-time names (ilbff.../igfff...), since ICON's <y><m><d><h> templating
+# in latbc_filename needs one file per real timestamp.
+latbc_filename: lbc_<y><m><d><h>.nc
+# broad glob (matches all 937 generated files, only 217 are actually needed
+# for this 9-day window) - simpler/more robust than an exact date list, the
+# unused extra copies are harmless once-off waste, not a correctness issue.
+latbc_copy_path: /capstor/scratch/cscs/kdnmez/heatwave2026/icbc/lbc/lbc_2026*.nc
+inidata_prefix: ic_
+inidata_nameformat: '<y><m><d><h>'
 inidata_filename_suffix: .nc
-inicond_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/icbc_input/zurich/remapped/ncks_ICON-ART-UNSTRUCTURED_DOM01_20230816T010000Z.nc
+inicond_filename: /capstor/scratch/cscs/kdnmez/heatwave2026/icbc/ic/ic_2026052300.nc
 output_filename: ICON-NWP-URBANATURE-UNSTRUCTURED
 filename_format: <output_filename>_DOM<physdom>_<datetime2>
 lateral_boundary_grid_order: lateral_boundary
-dwdfg_filename: ncks_ICON-ART-UNSTRUCTURED_DOM01_20230816T010000Z.nc
+dwdfg_filename: ic_2026052300.nc
 
 icontools_runjobs:
     - copy_icbc.cfg
 
+# Domain grid/extpar switched to zurich_small (2026-08-17) - the same
+# pipeline that produced the ICBC (icon_icbc_prep) targets zurich_small, and
+# it's confirmed the identical physical grid as zurich_beptree used before
+# (matching uuidOfHGrid for both the dynamics grid and the lateral boundary
+# grid), so this is a path-naming update only, not a domain change.
 input_files:
-    radiation_grid_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich/zonda_output_zurich_beptree/zurich_beptree_DOM01.parent.nc
-    dynamics_grid_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich/zonda_output_zurich_beptree/zurich_beptree_DOM01.nc
+    radiation_grid_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich_small/zonda_output_zurich_small/data/DOM01/zurich_small_DOM01.parent.nc
+    dynamics_grid_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich_small/zonda_output_zurich_small/data/DOM01/zurich_small_DOM01.nc
     map_file_latbc: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/map_file_ZH.latbc
-    lateral_boundary_grid: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich/zonda_output_zurich_beptree/zurich_lateral_boundary.grid.nc
+    lateral_boundary_grid: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich_small/zonda_output_zurich_small/data/DOM01/zurich_small_DOM01_latbc.grid.nc
     lrtm_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/icon-nwp-new/data/rrtmg_lw.nc
     map_file_ana: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/map_file.ana
     chemtracer_xml_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/xml/updated_summer23.xml
-    extpar_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich/zonda_output_zurich_beptree/zurich_beptree_DOM01_external_parameter.nc
+    extpar_filename: /capstor/store/cscs/c2sm/amrs/kdnmez/UrbaNature/icon_beptree_run/input/grid_extpar_input/zurich_small/zonda_output_zurich_small/data/DOM01/zurich_small_DOM01_external_parameter.nc
 
 # the right extpar data to use for clcplus is: spatially_varying_extpar_final_output_CLCplus_UrbaNature.nc both for spatially varying and constant cases.
 
