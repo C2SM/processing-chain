@@ -2,7 +2,7 @@
 
 workflow: icon-twoway-bep-tree-trees-after-surface-for-testing-zurich
 run_on: cpu
-compute_queue: debug
+compute_queue: normal
 compute_account: em05-0
 ntasks_per_node: 128
 startdate: 2026-05-23T00:00:00Z
@@ -24,7 +24,7 @@ lurbahf: .FALSE.
 walltime:
     prepare_icon: '00:30:00'
     oem: '00:30:00'
-    icon: '00:30:00'
+    icon: '01:30:00'
 
 eccodes_dir: /capstor/store/cscs/c2sm/amrs/kdnmez/eccodes_definitions
 iconremap_bin: iconremap
@@ -79,8 +79,8 @@ input_files:
 icon:
     binary_file: /capstor/store/cscs/c2sm/amrs/kdnmez/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/icon-icon-2026.04-dwd-1.9-iixu6iy4vfqrwof2kahqlhcvbsxyqrjy/bin/icon
     runjob_filename: icon_runjob.cfg
-    compute_queue: debug
-    walltime: '00:30:00'
+    compute_queue: normal
+    walltime: '01:30:00'
     np_tot: 5
     np_io: 1
     np_restart: 0
