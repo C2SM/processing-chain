@@ -10,3 +10,4 @@ work/
 ext/*/
 *.code-workspace
 .vscode/
+venv/
