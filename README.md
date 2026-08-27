@@ -21,7 +21,7 @@ wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge
 bash Miniforge3-Linux-x86_64.sh
 
 # 2. Create the environment
-conda env create --prefix $PROJECT/envs/proc-chain -f env/environment.yml
+conda env create --prefix $PROJECT/envs/proc-chain -f environment.yml
 
 # 3. Activate
 conda activate proc-chain

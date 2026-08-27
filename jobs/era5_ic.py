@@ -42,15 +42,23 @@ def _compute_inidata_filename(cfg) -> Path:
 
 
 def main(cfg):
-    """
-    1) Prepare standard ICON paths (same helper as other jobs)
-    2) Create a Slurm script from the case template cfg.era5_ic_runjob_filename
-    3) Submit it
+    """Generate ICON initial conditions from ERA5 input.
+
+    1. Prepare standard ICON paths (same helper as other jobs)
+    2. Create a Slurm script from the case template ``cfg.era5_ic_runjob_filename``
+    3. Submit it
+
     The Slurm script is responsible for:
+
     - converting ERA5 GRIB -> NetCDF
     - renaming variables to ICON-like naming (via a partab)
     - remapping to the ICON triangular grid
-    - writing the final IC file to cfg.icon_input/icbc
+    - writing the final IC file to ``cfg.icon_input/icbc``
+
+    Parameters
+    ----------
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
     """
 
     prepare_icon.set_cfg_variables(cfg)
