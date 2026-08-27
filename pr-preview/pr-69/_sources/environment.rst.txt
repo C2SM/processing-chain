@@ -150,7 +150,6 @@ environment. Each supported machine has its own sub-directory:
     │   ├── modules.sh    # module load commands only
     │   └── setup_env.sh  # modules + venv activation (one-stop setup)
     └── santis/
-        ├── modules.sh    # uenv image/view reference
         └── setup_env.sh  # uenv start + venv activation
 
 Euler (ETH Zürich)
@@ -250,11 +249,14 @@ Create a new sub-directory under ``machines/`` following the same pattern:
 
     machines/
     └── <machine-name>/
-        ├── modules.sh    # load system software
+        ├── modules.sh    # load system software (optional)
         └── setup_env.sh  # system software + venv activation
 
-Use ``machines/euler/`` as a template and adapt the ``module load``
-commands for the target system.
+``setup_env.sh`` is the entry point and the only required file. Split the
+software loading into a separate ``modules.sh`` when it is also useful on
+its own, e.g. inside batch scripts, as on Euler. Use ``machines/euler/``
+as a template and adapt the ``module load`` commands for the target
+system.
 
 Store User-specific Data (Optional)
 -------------------------------------

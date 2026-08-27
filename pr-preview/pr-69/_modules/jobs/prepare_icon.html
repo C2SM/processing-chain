@@ -214,6 +214,35 @@
     <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim_yyyymmddhh</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">get_inidata_filename</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the initial-condition file ICON reads for the current chunk.</span>
+
+<span class="sd">    Both ``icon`` and ``era5_ic`` rely on this name: the latter has to write</span>
+<span class="sd">    exactly the file the former later reads.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pathlib.Path</span>
+<span class="sd">        Absolute path of the initial-condition file in ``icon_input_icbc``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inicond_filename&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inicond_filename</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_prefix&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_nameformat&#39;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_filename_suffix&#39;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">inidata_prefix</span> <span class="o">+</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_nameformat</span> <span class="o">+</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_filename_suffix</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">meteo</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">]</span> <span class="o">+</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">meteo</span><span class="p">[</span><span class="s1">&#39;nameformat&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../functions.html#jobs.prepare_icon.main">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>

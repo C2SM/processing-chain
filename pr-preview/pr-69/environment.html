@@ -272,7 +272,6 @@ environment. Each supported machine has its own sub-directory:</p>
 │   ├── modules.sh    # module load commands only
 │   └── setup_env.sh  # modules + venv activation (one-stop setup)
 └── santis/
-    ├── modules.sh    # uenv image/view reference
     └── setup_env.sh  # uenv start + venv activation
 </pre></div>
 </div>
@@ -345,12 +344,15 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <p>Create a new sub-directory under <code class="docutils literal notranslate"><span class="pre">machines/</span></code> following the same pattern:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>machines/
 └── &lt;machine-name&gt;/
-    ├── modules.sh    # load system software
+    ├── modules.sh    # load system software (optional)
     └── setup_env.sh  # system software + venv activation
 </pre></div>
 </div>
-<p>Use <code class="docutils literal notranslate"><span class="pre">machines/euler/</span></code> as a template and adapt the <code class="docutils literal notranslate"><span class="pre">module</span> <span class="pre">load</span></code>
-commands for the target system.</p>
+<p><code class="docutils literal notranslate"><span class="pre">setup_env.sh</span></code> is the entry point and the only required file. Split the
+software loading into a separate <code class="docutils literal notranslate"><span class="pre">modules.sh</span></code> when it is also useful on
+its own, e.g. inside batch scripts, as on Euler. Use <code class="docutils literal notranslate"><span class="pre">machines/euler/</span></code>
+as a template and adapt the <code class="docutils literal notranslate"><span class="pre">module</span> <span class="pre">load</span></code> commands for the target
+system.</p>
 </section>
 </section>
 <section id="store-user-specific-data-optional">

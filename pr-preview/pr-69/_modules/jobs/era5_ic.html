@@ -176,25 +176,6 @@
 <span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">True</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_compute_inidata_filename</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Replicate the same IC filename logic used by jobs/icon.py,</span>
-<span class="sd">    so that era5_ic produces *exactly* the file ICON will read.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inicond_filename&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inicond_filename</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_prefix&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_nameformat&#39;</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_filename_suffix&#39;</span><span class="p">)):</span>
-        <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span>
-            <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">inidata_prefix</span> <span class="o">+</span>
-                                   <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_nameformat</span> <span class="o">+</span>
-                                   <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_filename_suffix</span><span class="p">))</span>
-    <span class="c1"># fallback: match icon.py default behavior</span>
-    <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span>
-        <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">meteo</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">]</span> <span class="o">+</span>
-                                   <span class="n">cfg</span><span class="o">.</span><span class="n">meteo</span><span class="p">[</span><span class="s1">&#39;nameformat&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span><span class="p">)</span>
-
-
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../functions.html#jobs.era5_ic.main">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
@@ -253,7 +234,7 @@
         <span class="n">cfg</span><span class="o">.</span><span class="n">era5_partab_path</span> <span class="o">=</span> <span class="n">p</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">()</span> <span class="k">else</span> <span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">case_path</span> <span class="o">/</span> <span class="n">p</span><span class="p">)</span>
 
     <span class="c1"># Compute the *exact* file that ICON will later read</span>
-    <span class="n">inidata_filename</span> <span class="o">=</span> <span class="n">_compute_inidata_filename</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="n">inidata_filename</span> <span class="o">=</span> <span class="n">prepare_icon</span><span class="o">.</span><span class="n">get_inidata_filename</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
 
     <span class="c1"># Case template name (kept configurable)</span>
     <span class="c1"># Put in config.yaml: era5_ic_runjob_filename: era5_ic_runjob.cfg</span>

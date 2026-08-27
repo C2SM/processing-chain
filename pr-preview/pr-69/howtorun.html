@@ -239,20 +239,18 @@ taking job dependencies into account.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-test</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">icon-test</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">icon-test-euler</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">icon-art-oem-test</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">icon-art-global-test</span></code></p></li>
 </ul>
-<p>To be able to run these test cases, it is necessary to provide the input data,
-to setup spack and to compile the models and tools. All this is automized via
-the script:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./jenkins/scripts/jenkins.sh
+<p>To be able to run these test cases, it is necessary to provide the input data
+and to compile the models and tools. This is automized via the script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./testing/run_tests.sh --pip
 </pre></div>
 </div>
-<p>This will run all the individual scripts in <code class="docutils literal notranslate"><span class="pre">jenkins/scripts/</span></code>, which
-can also be launched separately if desired.</p>
-<p>These cases undergo regulary testing to ensure that the Processing Chain runs
-correctly. A corresponding Jenkins plan is launched on a weekly basis and
-when triggered within a GitHub pull request.</p>
+<p>This will run all the individual scripts in <code class="docutils literal notranslate"><span class="pre">testing/scripts/</span></code>, which
+can also be launched separately if desired. Note that the driver currently
+only covers the <code class="docutils literal notranslate"><span class="pre">icon-test-euler</span></code> case.</p>
 </section>
 <section id="directory-structure">
 <h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Link to this heading"></a></h2>
