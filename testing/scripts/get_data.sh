@@ -13,13 +13,13 @@ function error {
 URL=https://data.iac.ethz.ch/c2sm-ci-input/processing-chain/input_processing-chain.tgz
 ARCHIVE=input_processing-chain.tgz
 
-# Files the test cases need; checked after extraction so that a truncated
-# download fails here instead of halfway through a chain run.
+# Sanity check after extraction, so that a truncated download fails here
+# instead of halfway through a chain run. icon-test-euler is not covered:
+# it reads its input from a shared directory, staged by
+# testing/scripts/stage_icon-test-euler_input.sh.
 REQUIRED=(
-    icon/grid/icon_grid_0002_R02B06_G.nc
-    icon/grid/icon_extpar_0002_R02B06_G.nc
-    era5/era5_ml_2018-01-01.grib
-    era5/era5_surf_2018-01-01.grib
+    icon/grid/VERIFY_DOM_DOM01.nc
+    icon/rad/rrtmg_lw.nc
 )
 
 mkdir -p input

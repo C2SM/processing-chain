@@ -93,6 +93,13 @@ This will run all the individual scripts in ``testing/scripts/``, which
 can also be launched separately if desired. Note that the driver currently
 only covers the ``icon-test-euler`` case.
 
+``icon-test-euler`` reads its grid, extpar and ERA5 files from
+``/cluster/work/climate/icon_input/processing-chain/icon-test-euler``.
+``testing/scripts/stage_icon-test-euler_input.sh`` copies them there from
+their sources on Euler and only has to run once per system. The remaining
+test cases still use the input archive fetched by
+``testing/scripts/get_data.sh``.
+
 The ICON executable is not built by the Processing Chain. On Euler a
 pre-built one is provided at
 ``/cluster/work/climate/icon_input/icon-model/release-2026.04-public/bin/icon``

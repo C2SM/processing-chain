@@ -6,8 +6,8 @@ run_on: cpu
 compute_queue: normal.4h
 ntasks_per_node: 12
 restart_step: PT6H
-startdate: 2018-01-01T00:00:00Z
-enddate:   2018-01-01T12:00:00Z
+startdate: 2013-05-25T00:00:00Z
+enddate:   2013-05-25T12:00:00Z
 era5_partab: tables/partab_era5_to_icon.txt
 era5_ic_runjob_filename: era5_ic_runjob.cfg
 inidata_prefix: "era5_init_R02B06_"
@@ -23,21 +23,14 @@ walltime:
   icon:         "00:30:00"
 
 era5:
-  dir: ./input/era5
-  ml_filename:   "era5_ml_{ymd}.grib"  
+  dir: /cluster/work/climate/icon_input/processing-chain/icon-test-euler/era5
+  ml_filename:   "era5_ml_{ymd}.grib"
   sfc_filename:  "era5_surf_{ymd}.grib"
   global_nudging: False
 
-meteo:
-  dir: ./input/meteo
-  prefix: ifs_
-  nameformat: "%Y%m%d%H"
-  suffix: .grb
-  inc: 3
-
 input_files:
-  dynamics_grid_filename:   ./input/icon/grid/icon_grid_0002_R02B06_G.nc
-  extpar_filename:          ./input/icon/grid/icon_extpar_0002_R02B06_G.nc
+  dynamics_grid_filename:   /cluster/work/climate/icon_input/processing-chain/icon-test-euler/grid/icon_grid_0024_R02B06_G.nc
+  extpar_filename:          /cluster/work/climate/icon_input/processing-chain/icon-test-euler/grid/icon_extpar_0024_R02B06_G_20150805_tiles.nc
   lrtm_filename:            /cluster/work/climate/icon_input/icon-model/release-2026.04-public/data/rrtmg_lw.nc
   cldopt_filename:          /cluster/work/climate/icon_input/icon-model/release-2026.04-public/data/ECHAM6_CldOptProps.nc
   map_file_ana:             /cluster/work/climate/icon_input/icon-model/release-2026.04-public/run/ana_varnames_map_file.txt

@@ -56,23 +56,20 @@ else
   conda activate proc-chain
 fi
 
-# Preparation
-size=$(du -sb input 2>/dev/null | awk '{print $1}')
-if [[ ${size:-0} -gt 12000000000 ]]; then
-  echo input data already present - skipping download...
-else
-  echo downloading input data...
-  ./testing/scripts/get_data.sh
-fi
-
-# Test ICON
+# Prepare and run the test case.
+# icon-test-euler reads its grid, extpar and ERA5 from a shared directory,
+# so nothing has to be downloaded here. The other cases still use
+# ./testing/scripts/get_data.sh, which has to be run separately.
 if [[ "$host" == euler ]]; then
-    if [[ -f work/icon-test-euler/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
-      echo icon test case already finished - skipping test.
-    else
-      echo running icon test case...
-      ./testing/scripts/test_icon.sh
-    fi
+  ./testing/scripts/stage_icon-test-euler_input.sh
+
+  # last chunk of the case period (see startdate/enddate in config.yaml)
+  if [[ -f work/icon-test-euler/2013052506_2013052512/checkpoints/finished/icon && "$force_execution" == false ]]; then
+    echo icon test case already finished - skipping test.
+  else
+    echo running icon test case...
+    ./testing/scripts/test_icon.sh
+  fi
 fi
 
 # Print success message
