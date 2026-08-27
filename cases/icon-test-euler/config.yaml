@@ -8,9 +8,9 @@ ntasks_per_node: 12
 restart_step: PT6H
 startdate: 2018-01-01T00:00:00Z
 enddate:   2018-01-01T12:00:00Z
-era5_partab: ./cases/icon-euler-test/partab_era5_to_icon.txt
+era5_partab: tables/partab_era5_to_icon.txt
 era5_ic_runjob_filename: era5_ic_runjob.cfg
-inidata_prefix: "era5_init_R02B05_"
+inidata_prefix: "era5_init_R02B06_"
 inidata_nameformat: "%Y%m%d%H"
 inidata_filename_suffix: ".nc"
 output_filename: icon-test-euler
