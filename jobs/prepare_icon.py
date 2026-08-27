@@ -29,11 +29,6 @@ def set_cfg_variables(cfg):
         cfg.input_files[dsc] = p
         cfg.input_files_scratch[dsc] = cfg.icon_input / p.name
 
-
-#    for dsc, file in cfg.input_files.items():
-#        cfg.input_files[dsc] = (p := Path(file))
-#        cfg.input_files_scratch[dsc] = cfg.icon_input / p.name
-
     cfg.create_vars_from_dicts()
 
     cfg.ini_datetime_string = cfg.startdate.strftime('%Y-%m-%dT%H:00:00Z')
@@ -43,7 +38,7 @@ def set_cfg_variables(cfg):
         cfg.restart_filename = 'restart_atm_DOM01.nc'
         cfg.restart_file = cfg.icon_restart_in / cfg.restart_filename
         cfg.restart_file_scratch = cfg.icon_work / cfg.restart_filename
-        if hasattr(cfg, 'ini_LBC_filename'):
+        if hasattr(cfg, 'lbcdata_prefix'):
             cfg.ini_LBC_filename = cfg.startdate.strftime(
                 cfg.lbcdata_prefix + cfg.lbcdata_nameformat +
                 cfg.lbcdata_filename_suffix)
