@@ -167,8 +167,13 @@ This executes:
 
 .. code-block:: bash
 
-    module load stack/2024-06 gcc/12.2.0 openmpi/4.1.6 python/3.12.8
-    module load cdo/2.2.2 nco/5.1.6 netcdf-c/4.9.2
+    module load stack/2025-06 gcc/12.2.0 openmpi/4.1.7
+    module load cdo/2.4.4 nco/5.2.4 netcdf-c/4.9.2
+    module load python/3.13.0
+
+These versions are kept in sync with the Euler site settings of `cesm2icon
+<https://github.com/C2SM/cesm2icon/blob/main/run/sites/euler.sh>`_, so that
+the provided ICON executable runs in the environment it was built against.
 
 **2. One-stop interactive setup** (modules + venv activation):
 
