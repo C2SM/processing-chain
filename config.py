@@ -69,9 +69,7 @@ class Config():
         self.set_workflow()
 
         # Specific settings based on the node type ('gpu' or 'mc')
-        if self.machine == 'daint':
-            self.set_node_info()
-        elif self.machine == 'eiger':
+        if self.machine == 'eiger':
             self.set_node_info()
 
     def load_config_file(self):
@@ -150,10 +148,10 @@ class Config():
     def set_machine(self):
         try:
             hostname = socket.gethostname()
-            if hostname.startswith('daint') or hostname.startswith('nid'):
-                self.machine = 'daint'
-            elif hostname.startswith('eu-'):
+            if hostname.startswith('eu-'):
                 self.machine = 'euler'
+            elif hostname.startswith('santis') or hostname.startswith('nid'):
+                self.machine = 'santis'
             elif hostname.startswith('eiger'):
                 self.machine = 'eiger'
             else:
@@ -443,7 +441,22 @@ class Config():
         """
         # Build job script
         walltime = getattr(self, 'walltime', {}).get(job_name, "00:30:00")
-        if self.machine == 'daint':
+        if self.machine == 'euler':
+            script_lines = [
+                '#!/usr/bin/env bash',
+                f'#SBATCH --job-name={job_name}',
+                '#SBATCH --ntasks=1',
+                f'#SBATCH --time={walltime}',
+                f'#SBATCH --output={self.logfile}',
+                '#SBATCH --open-mode=append',
+                f'#SBATCH --constraint={self.constraint}',
+                '',
+                f'cd {self.chain_src_dir}',
+                f'source machines/{self.machine}/setup_env.sh',
+                f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
+                '',
+            ]
+        elif self.machine == 'santis':
             script_lines = [
                 '#!/usr/bin/env bash',
                 f'#SBATCH --job-name={job_name}',
@@ -453,26 +466,9 @@ class Config():
                 '#SBATCH --open-mode=append',
                 f'#SBATCH --account={self.compute_account}',
                 f'#SBATCH --partition={self.compute_queue}',
-                f'#SBATCH --constraint={self.constraint}',
                 '',
                 f'cd {self.chain_src_dir}',
-                f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
-                '',
-            ]
-        elif self.machine == 'euler':
-            script_lines = [
-                '#!/usr/bin/env bash',
-                f'#SBATCH --job-name={job_name}',
-                '#SBATCH --ntasks=1',
-                f'#SBATCH --time={walltime}',
-                f'#SBATCH --output={self.logfile}',
-                '#SBATCH --open-mode=append',
-                f'#SBATCH --partition={self.compute_queue}',
-                f'#SBATCH --constraint={self.constraint}',
-                '',
-                f'cd {self.chain_src_dir}',
-                'eval "$(conda shell.bash hook)"',
-                'conda activate proc-chain',
+                f'source machines/{self.machine}/setup_env.sh --no-uenv',
                 f'./run_chain.py {self.casename} -j {job_name} -c {self.chunk_id} -f -s --no-logging',
                 '',
             ]
@@ -515,24 +511,22 @@ class Config():
             job_file = self.case_root / 'submit.wait.slurm'
             log_file = self.case_root / 'wait.log'
             dep_str = ':'.join(map(str, dep_ids))
-            if self.machine == 'daint':
+            if self.machine == 'euler':
+                script_lines = [
+                    '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
+                    '#SBATCH --ntasks=1', '#SBATCH --time=00:01:00',
+                    f'#SBATCH --output={log_file}',
+                    f'#SBATCH --constraint={self.constraint}',
+                    f'#SBATCH --dependency=afterany:{dep_str}', '',
+                    '# Do nothing', 'exit 0'
+                ]
+            elif self.machine == 'santis':
                 script_lines = [
                     '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
                     '#SBATCH --nodes=1', '#SBATCH --time=00:01:00',
                     f'#SBATCH --output={log_file}',
                     f'#SBATCH --account={self.compute_account}',
                     f'#SBATCH --partition={self.compute_queue}',
-                    f'#SBATCH --constraint={self.constraint}',
-                    f'#SBATCH --dependency=afterany:{dep_str}', '',
-                    '# Do nothing', 'exit 0'
-                ]
-            elif self.machine == 'euler':
-                script_lines = [
-                    '#!/usr/bin/env bash', '#SBATCH --job-name="wait"',
-                    '#SBATCH --ntasks=1', '#SBATCH --time=00:01:00',
-                    f'#SBATCH --output={log_file}',
-                    f'#SBATCH --partition={self.compute_queue}',
-                    f'#SBATCH --constraint={self.constraint}',
                     f'#SBATCH --dependency=afterany:{dep_str}', '',
                     '# Do nothing', 'exit 0'
                 ]

@@ -319,11 +319,6 @@ def main():
         else:
             cfg.force_sync = False
 
-        # Check constraint
-        if cfg.constraint and cfg.machine == 'daint':
-            assert cfg.constraint in ['gpu', 'mc'], ("Unknown constraint, use"
-                                                     "gpu or mc")
-
         # Get complete chunk list
         cfg.get_chunk_list()
 
