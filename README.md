@@ -1,11 +1,11 @@
 # <img src="https://polybox.ethz.ch/index.php/s/yc3zMmoXKyI2rJm/download" width="64" valign="middle" alt="Processing Chain"/> Processing Chain
 
 The Processing Chain is a python script that prepares necessary input
-data, submits compute-jobs to the queue on Piz Daint and does
-post-processing steps. It supports different types of models and simulation types,
-including **COSMO**, **COSMO-GHG**, **COSMO-ART**, **ICON** and
-**ICON-ART**. The chain can flexibly be adapted according to your needs,
-e.g., by creating your own case or adding new jobs.
+data, submits compute-jobs to the Slurm queue of the supported HPC systems
+and does post-processing steps. It supports different types of models and
+simulation types, including **COSMO**, **COSMO-GHG**, **COSMO-ART**,
+**ICON** and **ICON-ART**. The chain can flexibly be adapted according to
+your needs, e.g., by creating your own case or adding new jobs.
 
 ## Environment Setup
 
