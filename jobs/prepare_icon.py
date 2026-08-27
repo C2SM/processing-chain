@@ -60,6 +60,35 @@ def set_cfg_variables(cfg):
     cfg.enddate_sim_yyyymmddhh = cfg.enddate_sim.strftime('%Y%m%d%H')
 
 
+def get_inidata_filename(cfg):
+    """Return the initial-condition file ICON reads for the current chunk.
+
+    Both ``icon`` and ``era5_ic`` rely on this name: the latter has to write
+    exactly the file the former later reads.
+
+    Parameters
+    ----------
+    cfg : Config
+        Object holding all user-configuration parameters as attributes.
+
+    Returns
+    -------
+    pathlib.Path
+        Absolute path of the initial-condition file in ``icon_input_icbc``.
+    """
+    if hasattr(cfg, 'inicond_filename'):
+        return cfg.icon_input_icbc / cfg.inicond_filename
+    if (hasattr(cfg, 'inidata_prefix') and hasattr(cfg, 'inidata_nameformat')
+            and hasattr(cfg, 'inidata_filename_suffix')):
+        return cfg.icon_input_icbc / str(
+            cfg.startdate.strftime(cfg.inidata_prefix +
+                                   cfg.inidata_nameformat +
+                                   cfg.inidata_filename_suffix))
+    return cfg.icon_input_icbc / str(
+        cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
+                                   cfg.meteo['nameformat']) + '.nc')
+
+
 def main(cfg):
     """
     **ICON Data Preparation**

@@ -22,25 +22,6 @@ from . import tools, prepare_icon
 BASIC_PYTHON_JOB = True
 
 
-def _compute_inidata_filename(cfg) -> Path:
-    """
-    Replicate the same IC filename logic used by jobs/icon.py,
-    so that era5_ic produces *exactly* the file ICON will read.
-    """
-    if hasattr(cfg, 'inicond_filename'):
-        return cfg.icon_input_icbc / cfg.inicond_filename
-    if (hasattr(cfg, 'inidata_prefix') and hasattr(cfg, 'inidata_nameformat')
-            and hasattr(cfg, 'inidata_filename_suffix')):
-        return cfg.icon_input_icbc / str(
-            cfg.startdate.strftime(cfg.inidata_prefix +
-                                   cfg.inidata_nameformat +
-                                   cfg.inidata_filename_suffix))
-    # fallback: match icon.py default behavior
-    return cfg.icon_input_icbc / str(
-        cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
-                                   cfg.meteo['nameformat']) + '.nc')
-
-
 def main(cfg):
     """Generate ICON initial conditions from ERA5 input.
 
@@ -97,7 +78,7 @@ def main(cfg):
         cfg.era5_partab_path = p if p.is_absolute() else (cfg.case_path / p)
 
     # Compute the *exact* file that ICON will later read
-    inidata_filename = _compute_inidata_filename(cfg)
+    inidata_filename = prepare_icon.get_inidata_filename(cfg)
 
     # Case template name (kept configurable)
     # Put in config.yaml: era5_ic_runjob_filename: era5_ic_runjob.cfg
