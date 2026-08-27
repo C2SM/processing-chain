@@ -53,13 +53,13 @@ input_files:
   extpar_filename: ../../input/icon/grid/zonda_output_I/I_DOM01_external_parameter.nc
 
   # radiation coeffs
-  lrtm_filename: /cluster/work/climate/lroither/icon_c2sm/icon/data/rrtmg_lw.nc
-  cldopt_filename: /cluster/work/climate/lroither/icon_c2sm/icon/data/ECHAM6_CldOptProps.nc
-  map_file_ana: /cluster/work/climate/lroither/icon_c2sm/icon/run/ana_varnames_map_file.txt
+  lrtm_filename: /cluster/work/climate/icon_input/icon-model/release-2026.04-public/data/rrtmg_lw.nc
+  cldopt_filename: /cluster/work/climate/icon_input/icon-model/release-2026.04-public/data/ECHAM6_CldOptProps.nc
+  map_file_ana: /cluster/work/climate/icon_input/icon-model/release-2026.04-public/run/ana_varnames_map_file.txt
 
 
-ecrad_data_path: /cluster/work/climate/lroither/icon_c2sm/icon/externals/ecrad/data
-icon_data_path: /cluster/work/climate/lroither/icon_c2sm/icon/data
+ecrad_data_path: /cluster/work/climate/icon_input/icon-model/release-2026.04-public/externals/ecrad/data
+icon_data_path: /cluster/work/climate/icon_input/icon-model/release-2026.04-public/data
 start_year: 2013
 
 output_filename: "parent_R2B7"
@@ -73,7 +73,7 @@ parent_eval_p_levels_pa: "100000,92500,85000,70000,50000,30000,20000,10000"
 # runjob_filename is case-relative (recommended).
 # -------------------------------------------------------------------
 icon:
-  binary_file: /cluster/work/climate/lroither/icon_c2sm/icon/bin/icon
+  binary_file: /cluster/work/climate/icon_input/icon-model/release-2026.04-public/bin/icon
   runjob_filename: templates/icon_runjob_parent_global.cfg
   np_tot: 512
   np_io: 4

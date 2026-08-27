@@ -18,9 +18,6 @@ ARCHIVE=input_processing-chain.tgz
 REQUIRED=(
     icon/grid/icon_grid_0002_R02B06_G.nc
     icon/grid/icon_extpar_0002_R02B06_G.nc
-    icon/rad/rrtmg_lw.nc
-    icon/rad/rrtm_cldopt.nc
-    icon/mapping/map_file.ana
     era5/era5_ml_2018-01-01.grib
     era5/era5_surf_2018-01-01.grib
 )

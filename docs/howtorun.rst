@@ -84,14 +84,22 @@ The following test cases are available:
 * ``icon-art-oem-test``
 * ``icon-art-global-test``
 
-To be able to run these test cases, it is necessary to provide the input data
-and to compile the models and tools. This is automized via the script::
+To be able to run these test cases, the input data has to be provided. This
+is automized via the script::
 
 	$ ./testing/run_tests.sh --pip
 
 This will run all the individual scripts in ``testing/scripts/``, which
 can also be launched separately if desired. Note that the driver currently
 only covers the ``icon-test-euler`` case.
+
+The ICON executable is not built by the Processing Chain. On Euler a
+pre-built one is provided at
+``/cluster/work/climate/icon_input/icon-model/release-2026.04-public/bin/icon``
+and referenced from the case configuration via ``icon.binary_file``.
+``machines/euler/modules.sh`` loads the module set that executable was
+built against, kept in sync with the Euler site settings of `cesm2icon
+<https://github.com/C2SM/cesm2icon/blob/main/run/sites/euler.sh>`_.
 
 Directory Structure
 -------------------

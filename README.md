@@ -105,8 +105,15 @@ For the pre-defined test cases, you can use the driver script
 This script calls the other scripts in `testing/scripts/` and will:
 - create the Python environment (`--pip` for a venv, otherwise conda)
 - download input data to `input/`
-- build `icon`
 - test the `icon-test-euler` case
+
+The ICON executable is not built by the Processing Chain. On Euler a
+pre-built one is provided at
+
+    /cluster/work/climate/icon_input/icon-model/release-2026.04-public/bin/icon
+
+and referenced from the case configuration via `icon.binary_file`. Point
+that key at your own build if you need a different version.
 
 To run the test cases manually, type:
 

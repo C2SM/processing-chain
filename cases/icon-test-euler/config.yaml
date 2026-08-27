@@ -38,12 +38,12 @@ meteo:
 input_files:
   dynamics_grid_filename:   ./input/icon/grid/icon_grid_0002_R02B06_G.nc
   extpar_filename:          ./input/icon/grid/icon_extpar_0002_R02B06_G.nc
-  lrtm_filename:            ./input/icon/rad/rrtmg_lw.nc
-  cldopt_filename:          ./input/icon/rad/rrtm_cldopt.nc
-  map_file_ana:             ./input/icon/mapping/map_file.ana
+  lrtm_filename:            /cluster/work/climate/icon_input/icon-model/release-2026.04-public/data/rrtmg_lw.nc
+  cldopt_filename:          /cluster/work/climate/icon_input/icon-model/release-2026.04-public/data/ECHAM6_CldOptProps.nc
+  map_file_ana:             /cluster/work/climate/icon_input/icon-model/release-2026.04-public/run/ana_varnames_map_file.txt
 
 icon:
-  binary_file: ./ext/icon/bin/icon
+  binary_file: /cluster/work/climate/icon_input/icon-model/release-2026.04-public/bin/icon
   runjob_filename: icon_runjob.cfg
   np_tot: 96
   np_io: 1

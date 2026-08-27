@@ -65,14 +65,6 @@ else
   ./testing/scripts/get_data.sh
 fi
 
-# Build ICON
-if [[ -f ext/icon/bin/icon ]]; then
-  echo icon executable already exists - skipping build.
-else
-  echo building icon...
-  ./testing/scripts/build_icon.sh
-fi
-
 # Test ICON
 if [[ "$host" == euler ]]; then
     if [[ -f work/icon-test-euler/2018010106_2018010112/checkpoints/finished/icon && "$force_execution" == false ]]; then
