@@ -91,6 +91,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs.era5_ic.main"><code class="docutils literal notranslate"><span class="pre">jobs.era5_ic.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
@@ -159,6 +160,7 @@
 <li><p><a class="reference internal" href="#jobs.check_output.main" title="jobs.check_output.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.cosmo.main" title="jobs.cosmo.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.emissions.main" title="jobs.emissions.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#jobs.era5_ic.main" title="jobs.era5_ic.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.era5_ic.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.icon.main" title="jobs.icon.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.icontools.main" title="jobs.icontools.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#jobs.int2lm.main" title="jobs.int2lm.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></p></li>
@@ -242,6 +244,30 @@ paths), they are copied as follows:</p>
 <span class="n">cfg</span><span class="o">.</span><span class="n">emissions</span><span class="p">[</span><span class="s1">&#39;dir&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">cfg</span><span class="o">.</span><span class="n">emissions</span><span class="p">[</span><span class="s1">&#39;gridname&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="n">YYYYMMDD</span><span class="o">.</span><span class="n">nc</span> <span class="o">-&gt;</span> <span class="n">int2lm_input</span><span class="o">/</span><span class="n">emissions3</span><span class="o">/</span><span class="n">emis_YYYYMMDD</span><span class="o">.</span><span class="n">nc</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg</strong> (<em>Config</em>) – Object holding all user-configuration parameters as attributes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="jobs.era5_ic.main">
+<span class="sig-prename descclassname"><span class="pre">jobs.era5_ic.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jobs/era5_ic.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jobs.era5_ic.main" title="Link to this definition"></a></dt>
+<dd><p>Generate ICON initial conditions from ERA5 input.</p>
+<ol class="arabic simple">
+<li><p>Prepare standard ICON paths (same helper as other jobs)</p></li>
+<li><p>Create a Slurm script from the case template <code class="docutils literal notranslate"><span class="pre">cfg.era5_ic_runjob_filename</span></code></p></li>
+<li><p>Submit it</p></li>
+</ol>
+<p>The Slurm script is responsible for:</p>
+<ul class="simple">
+<li><p>converting ERA5 GRIB -&gt; NetCDF</p></li>
+<li><p>renaming variables to ICON-like naming (via a partab)</p></li>
+<li><p>remapping to the ICON triangular grid</p></li>
+<li><p>writing the final IC file to <code class="docutils literal notranslate"><span class="pre">cfg.icon_input/icbc</span></code></p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>cfg</strong> (<em>Config</em>) – Object holding all user-configuration parameters as attributes.</p>

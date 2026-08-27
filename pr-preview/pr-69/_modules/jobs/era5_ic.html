@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>jobs.photo_rate &mdash; Processing Chain v3.1 documentation</title>
+  <title>jobs.era5_ic &mdash; Processing Chain v3.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -142,7 +142,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">jobs.photo_rate</li>
+      <li class="breadcrumb-item active">jobs.era5_ic</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -151,48 +151,124 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for jobs.photo_rate</h1><div class="highlight"><pre>
+  <h1>Source code for jobs.era5_ic</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">era5_ic.py</span>
+<span class="sd">Processing-chain job that generates ICON initial conditions (IC) from ERA5 input.</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="sd">Design goals</span>
+<span class="sd">------------</span>
+<span class="sd">- Keep the job modular:</span>
+<span class="sd">  * all paths and filenames come from cfg / case templates</span>
+<span class="sd">  * the actual transformation is executed in a Slurm job script produced</span>
+<span class="sd">    from a case-provided template (similar to icontools runjobs)</span>
+<span class="sd">- Support global runs:</span>
+<span class="sd">  * generate a single IC file on the ICON grid</span>
+<span class="sd">  * do NOT generate LBC files</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">tools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">tools</span><span class="p">,</span> <span class="n">prepare_icon</span>
 
 <span class="n">BASIC_PYTHON_JOB</span> <span class="o">=</span> <span class="kc">True</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_inidata_filename</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replicate the same IC filename logic used by jobs/icon.py,</span>
+<span class="sd">    so that era5_ic produces *exactly* the file ICON will read.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inicond_filename&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inicond_filename</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_prefix&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_nameformat&#39;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_filename_suffix&#39;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">inidata_prefix</span> <span class="o">+</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_nameformat</span> <span class="o">+</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_filename_suffix</span><span class="p">))</span>
+    <span class="c1"># fallback: match icon.py default behavior</span>
+    <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">meteo</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">]</span> <span class="o">+</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">meteo</span><span class="p">[</span><span class="s1">&#39;nameformat&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="main">
-<a class="viewcode-back" href="../../functions.html#jobs.photo_rate.main">[docs]</a>
+<a class="viewcode-back" href="../../functions.html#jobs.era5_ic.main">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy photolysis-rate file to the **COSMOART** input directory.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate ICON initial conditions from ERA5 input.</span>
 
-<span class="sd">    Only necessary for **COSMOART** simulations.</span>
+<span class="sd">    1. Prepare standard ICON paths (same helper as other jobs)</span>
+<span class="sd">    2. Create a Slurm script from the case template ``cfg.era5_ic_runjob_filename``</span>
+<span class="sd">    3. Submit it</span>
 
-<span class="sd">    Copy the photolysis-rate file from the project (`cfg.photo_rate_file`) to</span>
-<span class="sd">    the **COSMOART** input folder on scratch (`cfg.cosmo_input/art_photolysis`).</span>
+<span class="sd">    The Slurm script is responsible for:</span>
+
+<span class="sd">    - converting ERA5 GRIB -&gt; NetCDF</span>
+<span class="sd">    - renaming variables to ICON-like naming (via a partab)</span>
+<span class="sd">    - remapping to the ICON triangular grid</span>
+<span class="sd">    - writing the final IC file to ``cfg.icon_input/icbc``</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    cfg : Config</span>
 <span class="sd">        Object holding all user-configuration parameters as attributes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">prepare_icon</span><span class="o">.</span><span class="n">set_cfg_variables</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
     <span class="n">tools</span><span class="o">.</span><span class="n">change_logfile</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Generate global ICON initial conditions from ERA5 (IC only).&quot;</span><span class="p">)</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Copying photolysis-rate file from </span><span class="si">{}</span><span class="s2"> to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-        <span class="n">cfg</span><span class="o">.</span><span class="n">photo_rate_file</span><span class="p">,</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_input</span><span class="p">,</span> <span class="s2">&quot;art_photolysis&quot;</span><span class="p">,</span> <span class="s2">&quot;papa_data.p&quot;</span><span class="p">)))</span>
+    <span class="c1"># Ensure run + icbc directories exist (prepare_icon usually created them,</span>
+    <span class="c1"># but being explicit makes the job robust if invoked in isolation).</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_work</span><span class="p">,</span> <span class="s2">&quot;icon_work&quot;</span><span class="p">)</span>
+    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s2">&quot;icon_input_icbc&quot;</span><span class="p">)</span>
 
-    <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_input</span><span class="p">,</span> <span class="s2">&quot;art_photolysis&quot;</span><span class="p">),</span>
-                     <span class="s2">&quot;photolysis rate input&quot;</span><span class="p">)</span>
+    <span class="c1"># Useful formatted dates for the template (avoid bash date gymnastics)</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">era5_ymd</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># e.g. 2021-01-01</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">era5_yyyymmddhh</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>  <span class="c1"># 2021010100</span>
 
-    <span class="n">src_file</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">photo_rate_file</span>
-    <span class="n">dest_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">cosmo_input</span><span class="p">,</span> <span class="s1">&#39;art_photolysis&#39;</span><span class="p">,</span> <span class="s1">&#39;papa_data.d&#39;</span><span class="p">)</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Expand ERA5 input filename patterns from config.yaml</span>
+    <span class="c1"># Supports placeholders like {ymd} and {yyyymmddhh}.</span>
+    <span class="c1"># This is critical because bash will NOT expand &quot;{ymd}&quot;.</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;era5_ml_filename&quot;</span><span class="p">):</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">era5_ml_file</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">era5_ml_filename</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">ymd</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">era5_ymd</span><span class="p">,</span>
+            <span class="n">yyyymmddhh</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">era5_yyyymmddhh</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;era5_sfc_filename&quot;</span><span class="p">):</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">era5_sfc_file</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">era5_sfc_filename</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">ymd</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">era5_ymd</span><span class="p">,</span>
+            <span class="n">yyyymmddhh</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">era5_yyyymmddhh</span><span class="p">,</span>
+        <span class="p">)</span>
 
-    <span class="n">tools</span><span class="o">.</span><span class="n">copy_file</span><span class="p">(</span><span class="n">src_file</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">)</span>
+    <span class="c1"># Make the partab path absolute (case-relative -&gt; absolute)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;era5_partab&quot;</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">era5_partab</span><span class="p">))</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">era5_partab_path</span> <span class="o">=</span> <span class="n">p</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">()</span> <span class="k">else</span> <span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">case_path</span> <span class="o">/</span> <span class="n">p</span><span class="p">)</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finished&quot;</span><span class="p">)</span></div>
+    <span class="c1"># Compute the *exact* file that ICON will later read</span>
+    <span class="n">inidata_filename</span> <span class="o">=</span> <span class="n">_compute_inidata_filename</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+    <span class="c1"># Case template name (kept configurable)</span>
+    <span class="c1"># Put in config.yaml: era5_ic_runjob_filename: era5_ic_runjob.cfg</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;era5_ic_runjob_filename&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;era5_ic_runjob.cfg&#39;</span><span class="p">)</span>
+    <span class="n">template</span> <span class="o">=</span> <span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">case_path</span> <span class="o">/</span> <span class="n">template_name</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+    <span class="n">script_str</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span>
+        <span class="n">inidata_filename</span><span class="o">=</span><span class="n">inidata_filename</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">script</span> <span class="o">=</span> <span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_work</span> <span class="o">/</span> <span class="s1">&#39;run_era5_ic.job&#39;</span><span class="p">)</span>
+    <span class="n">script</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">script_str</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Submitting ERA5 IC generation job: </span><span class="si">{</span><span class="n">script</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="s1">&#39;era5_ic&#39;</span><span class="p">,</span> <span class="n">script</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">)</span></div>
 
 </pre></div>
 

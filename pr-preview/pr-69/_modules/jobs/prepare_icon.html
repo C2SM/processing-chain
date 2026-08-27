@@ -89,6 +89,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.era5_ic.main"><code class="docutils literal notranslate"><span class="pre">jobs.era5_ic.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
@@ -182,11 +183,6 @@
         <span class="n">cfg</span><span class="o">.</span><span class="n">input_files</span><span class="p">[</span><span class="n">dsc</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
         <span class="n">cfg</span><span class="o">.</span><span class="n">input_files_scratch</span><span class="p">[</span><span class="n">dsc</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input</span> <span class="o">/</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span>
 
-
-<span class="c1">#    for dsc, file in cfg.input_files.items():</span>
-<span class="c1">#        cfg.input_files[dsc] = (p := Path(file))</span>
-<span class="c1">#        cfg.input_files_scratch[dsc] = cfg.icon_input / p.name</span>
-
     <span class="n">cfg</span><span class="o">.</span><span class="n">create_vars_from_dicts</span><span class="p">()</span>
 
     <span class="n">cfg</span><span class="o">.</span><span class="n">ini_datetime_string</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:00:00Z&#39;</span><span class="p">)</span>
@@ -196,7 +192,7 @@
         <span class="n">cfg</span><span class="o">.</span><span class="n">restart_filename</span> <span class="o">=</span> <span class="s1">&#39;restart_atm_DOM01.nc&#39;</span>
         <span class="n">cfg</span><span class="o">.</span><span class="n">restart_file</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_restart_in</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">restart_filename</span>
         <span class="n">cfg</span><span class="o">.</span><span class="n">restart_file_scratch</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_work</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">restart_filename</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;ini_LBC_filename&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;lbcdata_prefix&#39;</span><span class="p">):</span>
             <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_filename</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
                 <span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_nameformat</span> <span class="o">+</span>
                 <span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_filename_suffix</span><span class="p">)</span>

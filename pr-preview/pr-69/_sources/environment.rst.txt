@@ -46,7 +46,7 @@ Create a conda environment named ``proc-chain`` with all dependencies:
 
 .. code-block:: bash
 
-    conda env create --prefix $PROJECT/envs/proc-chain -f env/environment.yml
+    conda env create --prefix $PROJECT/envs/proc-chain -f environment.yml
 
 To be able to activate the environment with the short name
 ``proc-chain`` instead of the full path, add the following to your
@@ -65,7 +65,7 @@ Step 3: Activate the Environment
 
 Use ``source activate proc-chain`` if ``conda activate`` does not work.
 
-You are now ready to :ref:`run the chain <howtorun>`.
+You are now ready to :ref:`run the chain <howtorun-section>`.
 
 Step 4: Update the Environment (if needed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -75,7 +75,7 @@ update it with:
 
 .. code-block:: bash
 
-    conda env update --prefix $PROJECT/envs/proc-chain --file env/environment.yml --prune
+    conda env update --prefix $PROJECT/envs/proc-chain --file environment.yml --prune
 
 .. _pip-option:
 

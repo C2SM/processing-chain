@@ -46,6 +46,10 @@ The Processing Chain code is structured as follows:
     │   ├── tools/
     │   │   └── *.py                # tool scripts
     │   └── *.py                    # job scripts
+    ├── machines/                   # machine-specific environment setup
+    │   └── <machine>/
+    │       ├── modules.sh          # load system software
+    │       └── setup_env.sh        # system software + venv activation
     ├── LICENSE                     # license file
     ├── README.md                   # README file
     ├── config.py                   # file containing the Config class

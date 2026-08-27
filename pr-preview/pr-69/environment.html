@@ -92,6 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.era5_ic.main"><code class="docutils literal notranslate"><span class="pre">jobs.era5_ic.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
@@ -188,7 +189,7 @@ home directory.</p>
 <section id="step-2-create-the-environment">
 <h3>Step 2: Create the Environment<a class="headerlink" href="#step-2-create-the-environment" title="Link to this heading"></a></h3>
 <p>Create a conda environment named <code class="docutils literal notranslate"><span class="pre">proc-chain</span></code> with all dependencies:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>--prefix<span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain<span class="w"> </span>-f<span class="w"> </span>env/environment.yml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>--prefix<span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain<span class="w"> </span>-f<span class="w"> </span>environment.yml
 </pre></div>
 </div>
 <p>To be able to activate the environment with the short name
@@ -204,13 +205,13 @@ home directory.</p>
 </pre></div>
 </div>
 <p>Use <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">proc-chain</span></code> if <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span></code> does not work.</p>
-<p>You are now ready to <span class="xref std std-ref">run the chain</span>.</p>
+<p>You are now ready to <a class="reference internal" href="howtorun.html#howtorun-section"><span class="std std-ref">run the chain</span></a>.</p>
 </section>
 <section id="step-4-update-the-environment-if-needed">
 <h3>Step 4: Update the Environment (if needed)<a class="headerlink" href="#step-4-update-the-environment-if-needed" title="Link to this heading"></a></h3>
 <p>If the <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code> has changed since you created the environment,
 update it with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>update<span class="w"> </span>--prefix<span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain<span class="w"> </span>--file<span class="w"> </span>env/environment.yml<span class="w"> </span>--prune
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>update<span class="w"> </span>--prefix<span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain<span class="w"> </span>--file<span class="w"> </span>environment.yml<span class="w"> </span>--prune
 </pre></div>
 </div>
 </section>

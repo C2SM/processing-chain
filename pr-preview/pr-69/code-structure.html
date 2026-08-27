@@ -92,6 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.era5_ic.main"><code class="docutils literal notranslate"><span class="pre">jobs.era5_ic.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
@@ -195,6 +196,10 @@
 │<span class="w">   </span>├──<span class="w"> </span>tools/
 │<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>*.py<span class="w">                </span><span class="c1"># tool scripts</span>
 │<span class="w">   </span>└──<span class="w"> </span>*.py<span class="w">                    </span><span class="c1"># job scripts</span>
+├──<span class="w"> </span>machines/<span class="w">                   </span><span class="c1"># machine-specific environment setup</span>
+│<span class="w">   </span>└──<span class="w"> </span>&lt;machine&gt;/
+│<span class="w">       </span>├──<span class="w"> </span>modules.sh<span class="w">          </span><span class="c1"># load system software</span>
+│<span class="w">       </span>└──<span class="w"> </span>setup_env.sh<span class="w">        </span><span class="c1"># system software + venv activation</span>
 ├──<span class="w"> </span>LICENSE<span class="w">                     </span><span class="c1"># license file</span>
 ├──<span class="w"> </span>README.md<span class="w">                   </span><span class="c1"># README file</span>
 ├──<span class="w"> </span>config.py<span class="w">                   </span><span class="c1"># file containing the Config class</span>
