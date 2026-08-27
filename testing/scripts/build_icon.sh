@@ -5,7 +5,7 @@ set -e -x
 # Check if script is called correctly
 [[ $(git rev-parse --show-toplevel 2>/dev/null) = $(pwd) ]] || error "$0 not launched from toplevel of repository"
 
-source jenkins/scripts/common.sh
+source testing/scripts/common.sh
 
 BRANCH=release-2025.10-public
 GIT_REMOTE=https://gitlab.dkrz.de/icon/icon-model.git

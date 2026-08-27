@@ -98,21 +98,15 @@ itself.
 > adapt the configuration file `config.yaml` in your case folder so that
 > the output files are written to a specified folder on `$SCRATCH`.
 
-For these pre-defined test cases, you can use the Jenkins script
+For the pre-defined test cases, you can use the driver script
 
-    ./jenkins/scripts/jenkins.sh
+    ./testing/run_tests.sh --pip
 
-This script calls other scripts that are located in `jenkins/scripts/` and will: 
-- activate the conda environment
-- setup spack-c2sm
+This script calls the other scripts in `testing/scripts/` and will:
+- create the Python environment (`--pip` for a venv, otherwise conda)
 - download input data to `input/`
-- build `int2lm`, `cosmo-ghg`, `icon` and `icon-art`
-- test the following cases:
-    - `cosmo-ghg-spinup-test`
-    - `cosmo-ghg-test`
-    - `icon-test`
-    - `icon-art-oem-test`
-    - `icon-art-global-test`
+- build `icon`
+- test the `icon-test-euler` case
 
 To run the test cases manually, type:
 

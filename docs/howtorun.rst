@@ -80,21 +80,18 @@ The following test cases are available:
 * ``cosmo-ghg-spinup-test``
 * ``cosmo-ghg-test``
 * ``icon-test``
+* ``icon-test-euler``
 * ``icon-art-oem-test``
 * ``icon-art-global-test``
 
-To be able to run these test cases, it is necessary to provide the input data,
-to setup spack and to compile the models and tools. All this is automized via
-the script::
+To be able to run these test cases, it is necessary to provide the input data
+and to compile the models and tools. This is automized via the script::
 
-	$ ./jenkins/scripts/jenkins.sh
+	$ ./testing/run_tests.sh --pip
 
-This will run all the individual scripts in ``jenkins/scripts/``, which 
-can also be launched separately if desired.
-
-These cases undergo regulary testing to ensure that the Processing Chain runs
-correctly. A corresponding Jenkins plan is launched on a weekly basis and 
-when triggered within a GitHub pull request.
+This will run all the individual scripts in ``testing/scripts/``, which
+can also be launched separately if desired. Note that the driver currently
+only covers the ``icon-test-euler`` case.
 
 Directory Structure
 -------------------

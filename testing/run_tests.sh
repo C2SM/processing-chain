@@ -62,7 +62,7 @@ if [[ $size -gt 12000000000 ]]; then
   echo input data already present - skipping download...
 else
   echo downloading input data...
-  ./jenkins/scripts/get_data.sh
+  ./testing/scripts/get_data.sh
 fi
 
 # Build ICON
@@ -70,7 +70,7 @@ if [[ -f ext/icon/bin/icon ]]; then
   echo icon executable already exists - skipping build.
 else
   echo building icon...
-  ./jenkins/scripts/build_icon.sh
+  ./testing/scripts/build_icon.sh
 fi
 
 # Test ICON
@@ -79,7 +79,7 @@ if [[ "$host" == euler ]]; then
       echo icon test case already finished - skipping test.
     else
       echo running icon test case...
-      ./jenkins/scripts/test_icon.sh
+      ./testing/scripts/test_icon.sh
     fi
 fi
 
