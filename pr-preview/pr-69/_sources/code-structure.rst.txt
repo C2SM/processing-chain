@@ -46,9 +46,9 @@ The Processing Chain code is structured as follows:
     │   └── <machine>/
     │       ├── modules.sh          # load system software
     │       └── setup_env.sh        # system software + venv activation
-    ├── testing/                    # scripts to build and test the chain
+    ├── testing/                    # scripts to test the chain
     │   ├── scripts/
-    │   │   └── *.sh                # build, data-download and test scripts
+    │   │   └── *.sh                # data-download and test scripts
     │   └── run_tests.sh            # driver running all of the above
     ├── LICENSE                     # license file
     ├── README.md                   # README file

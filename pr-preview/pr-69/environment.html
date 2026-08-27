@@ -283,10 +283,13 @@ environment. Each supported machine has its own sub-directory:</p>
 </pre></div>
 </div>
 <p>This executes:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>module<span class="w"> </span>load<span class="w"> </span>stack/2024-06<span class="w"> </span>gcc/12.2.0<span class="w"> </span>openmpi/4.1.6<span class="w"> </span>python/3.12.8
-module<span class="w"> </span>load<span class="w"> </span>cdo/2.2.2<span class="w"> </span>nco/5.1.6<span class="w"> </span>netcdf-c/4.9.2
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>module<span class="w"> </span>load<span class="w"> </span>stack/2025-06<span class="w"> </span>gcc/12.2.0<span class="w"> </span>openmpi/4.1.7
+module<span class="w"> </span>load<span class="w"> </span>cdo/2.4.4<span class="w"> </span>nco/5.2.4<span class="w"> </span>netcdf-c/4.9.2
+module<span class="w"> </span>load<span class="w"> </span>python/3.13.0
 </pre></div>
 </div>
+<p>These versions are kept in sync with the Euler site settings of <a class="reference external" href="https://github.com/C2SM/cesm2icon/blob/main/run/sites/euler.sh">cesm2icon</a>, so that
+the provided ICON executable runs in the environment it was built against.</p>
 <p><strong>2. One-stop interactive setup</strong> (modules + venv activation):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>machines/euler/setup_env.sh
 </pre></div>
