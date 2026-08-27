@@ -36,6 +36,15 @@ else
     error "Unknown hostname: $(hostname)"
 fi
 
+# The runjobs source modules.env to reproduce the build environment. Report
+# whether the build produced one so a fallback is not a silent surprise.
+[[ -f bin/icon ]] || error "build finished but bin/icon is missing"
+if [[ -f modules.env ]]; then
+    echo "ICON build environment available at ext/icon/modules.env"
+else
+    echo "Note: no modules.env produced; runjobs fall back to machines/euler/modules.sh"
+fi
+
 popd
 
 popd
