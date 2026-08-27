@@ -57,8 +57,8 @@ else
 fi
 
 # Preparation
-size=$(du -sb input | awk '{print $1}')
-if [[ $size -gt 12000000000 ]]; then
+size=$(du -sb input 2>/dev/null | awk '{print $1}')
+if [[ ${size:-0} -gt 12000000000 ]]; then
   echo input data already present - skipping download...
 else
   echo downloading input data...
