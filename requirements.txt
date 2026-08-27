@@ -1,4 +1,6 @@
 numpy
+pandas
+pytz
 cartopy
 matplotlib
 scipy
