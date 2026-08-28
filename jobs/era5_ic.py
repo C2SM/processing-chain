@@ -52,9 +52,9 @@ def main(cfg):
     tools.create_dir(cfg.icon_work, "icon_work")
     tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
 
-    # Walltime of the Slurm job submitted below. Kept separate from
-    # cfg.walltime_era5_ic, which sizes this wrapper job and therefore also has
-    # to cover the queue time of the job it waits for.
+    # Walltime of the Slurm job submitted below, kept separate from
+    # cfg.walltime_era5_ic, which sizes this wrapper job and must therefore
+    # also account for the queue time of the job it waits for.
     cfg.walltime_jobs_era5_ic = getattr(cfg, 'walltime_jobs',
                                         {}).get('era5_ic',
                                                 cfg.walltime_era5_ic)

@@ -5,10 +5,10 @@
 # This file can be sourced standalone in interactive sessions or
 # included at the top of Slurm job scripts.
 #
-# The compiler, MPI, cdo, nco and netcdf-c versions are kept in sync with
-# the Euler site settings of cesm2icon, so that the ICON executable we run
-# (see icon.binary_file in the case configuration) is launched in the
-# environment it was built and tested against:
+# The compiler, MPI, cdo, nco and netcdf-c versions are kept consistent with
+# the Euler site settings of cesm2icon, so that the ICON executable used by
+# the Processing Chain (see icon.binary_file in the case configuration) runs
+# in the environment for which it was built and tested:
 #   https://github.com/C2SM/cesm2icon/blob/main/run/sites/euler.sh
 #
 # Usage:

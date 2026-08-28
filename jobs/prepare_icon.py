@@ -118,9 +118,9 @@ def main(cfg):
     tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
 
     logging.info('Copy ICON input data (IC/BC) to working directory')
-    # Walltime of the copy job. Kept separate from cfg.walltime['prepare_icon'],
-    # which sizes the wrapper job waiting for this one and therefore also has to
-    # cover its queue time.
+    # Walltime of the copy job, kept separate from cfg.walltime['prepare_icon'],
+    # which sizes the wrapper job that waits for this job and must therefore
+    # also account for its queue time.
     walltime = getattr(cfg, 'walltime_jobs', {}).get('prepare_icon',
                                                      '00:10:00')
 

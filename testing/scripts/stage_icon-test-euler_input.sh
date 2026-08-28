@@ -2,9 +2,9 @@
 #
 # Stage the input data for the icon-test-euler case on Euler.
 #
-# The case reads its grid, extpar and ERA5 files straight from a shared
-# directory rather than from the input/ archive, so this only has to be run
-# once per system (and again if the case period changes).
+# The case reads its grid, extpar and ERA5 files directly from a shared
+# directory rather than from the input/ archive, so this script only needs
+# to be run once per system, or again if the case period is changed.
 #
 # Usage:
 #   ./testing/scripts/stage_icon-test-euler_input.sh

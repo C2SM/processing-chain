@@ -1,7 +1,8 @@
 in /processing-chain/work/CASE/YYYYMMDD_CHUNK/icon/run do this:
 
-# MACv2 ships with the provided ICON install; the Kinne, CMIP6 volcanic and
-# ozone boundary conditions do NOT - adapt ECRAD_BC to wherever you keep them.
+# MACv2 is included in the provided ICON installation; the Kinne, CMIP6
+# volcanic and ozone boundary conditions are not. Set ECRAD_BC to the
+# directory where these files are stored.
 ECRAD_BC=/cluster/work/climate/lroither/icon_c2sm/icon/externals/ecrad/data
 ICONDATA=/cluster/work/climate/icon_input/icon-model/release-2026.04-public/data
 

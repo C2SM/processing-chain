@@ -13,10 +13,10 @@ function error {
 URL=https://data.iac.ethz.ch/c2sm-ci-input/processing-chain/input_processing-chain.tgz
 ARCHIVE=input_processing-chain.tgz
 
-# Sanity check after extraction, so that a truncated download fails here
-# instead of halfway through a chain run. icon-test-euler is not covered:
-# it reads its input from a shared directory, staged by
-# testing/scripts/stage_icon-test-euler_input.sh.
+# Verification check performed after extraction, so that a truncated
+# download is detected here rather than during a later chain run.
+# icon-test-euler is not included, as it reads its input from a shared
+# directory staged by testing/scripts/stage_icon-test-euler_input.sh.
 REQUIRED=(
     icon/grid/VERIFY_DOM_DOM01.nc
     icon/rad/rrtmg_lw.nc
@@ -24,7 +24,8 @@ REQUIRED=(
 
 mkdir -p input
 pushd input
-    # -c resumes a partial download instead of starting a second .tgz.1
+    # The -c option resumes an incomplete download instead of creating a
+    # second archive file (.tgz.1)
     wget -c -O "${ARCHIVE}" "${URL}" || error "failed to download ${URL}"
     tar -xzf "${ARCHIVE}" || error "failed to extract ${ARCHIVE} (truncated download?)"
 
