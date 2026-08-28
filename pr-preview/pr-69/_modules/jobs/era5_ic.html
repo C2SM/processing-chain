@@ -208,6 +208,13 @@
     <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_work</span><span class="p">,</span> <span class="s2">&quot;icon_work&quot;</span><span class="p">)</span>
     <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span><span class="p">,</span> <span class="s2">&quot;icon_input_icbc&quot;</span><span class="p">)</span>
 
+    <span class="c1"># Walltime of the Slurm job submitted below, kept separate from</span>
+    <span class="c1"># cfg.walltime_era5_ic, which sizes this wrapper job and must therefore</span>
+    <span class="c1"># also account for the queue time of the job it waits for.</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">walltime_jobs_era5_ic</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;walltime_jobs&#39;</span><span class="p">,</span>
+                                        <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;era5_ic&#39;</span><span class="p">,</span>
+                                                <span class="n">cfg</span><span class="o">.</span><span class="n">walltime_era5_ic</span><span class="p">)</span>
+
     <span class="c1"># Useful formatted dates for the template (avoid bash date gymnastics)</span>
     <span class="n">cfg</span><span class="o">.</span><span class="n">era5_ymd</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># e.g. 2021-01-01</span>
     <span class="n">cfg</span><span class="o">.</span><span class="n">era5_yyyymmddhh</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>  <span class="c1"># 2021010100</span>

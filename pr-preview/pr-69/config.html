@@ -358,6 +358,29 @@ method is implemented in Python. For that reason, the Processing Chain automatic
 creates new variables in the form of <code class="docutils literal notranslate"><span class="pre">cfg.meteo_dir</span></code>, <code class="docutils literal notranslate"><span class="pre">cfg.meteo_prefix</span></code>, etc.
 at the start to make them accessible for namelist and runjob templates.</p>
 </div>
+<section id="walltimes">
+<h4>Walltimes<a class="headerlink" href="#walltimes" title="Link to this heading"></a></h4>
+<p>Two dictionaries control Slurm walltimes, and the distinction matters:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">walltime</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">prepare_icon</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;01:00:00&quot;</span>
+<span class="w">    </span><span class="nt">era5_ic</span><span class="p">:</span><span class="w">      </span><span class="s">&quot;02:00:00&quot;</span>
+
+<span class="nt">walltime_jobs</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">prepare_icon</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;00:10:00&quot;</span>
+<span class="w">    </span><span class="nt">era5_ic</span><span class="p">:</span><span class="w">      </span><span class="s">&quot;00:40:00&quot;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">walltime</span></code> sizes the <em>wrapper</em> job that the Processing Chain submits for a
+job with <code class="docutils literal notranslate"><span class="pre">BASIC_PYTHON_JOB</span> <span class="pre">=</span> <span class="pre">True</span></code>. That wrapper runs <code class="docutils literal notranslate"><span class="pre">run_chain.py</span> <span class="pre">-s</span></code>,
+which submits the actual Slurm job with <code class="docutils literal notranslate"><span class="pre">sbatch</span> <span class="pre">--wait</span></code> and blocks until it
+finishes. Its walltime therefore has to cover the <strong>queue time</strong> of the job it
+waits for, not just that job’s runtime, and should be generous.</p>
+<p><code class="docutils literal notranslate"><span class="pre">walltime_jobs</span></code> sizes those submitted jobs themselves and should reflect the
+actual compute time. It is optional; when a job is not listed, the chain falls
+back to the <code class="docutils literal notranslate"><span class="pre">walltime</span></code> entry (or, for the input copy job, to ten minutes).</p>
+<p>Jobs with <code class="docutils literal notranslate"><span class="pre">BASIC_PYTHON_JOB</span> <span class="pre">=</span> <span class="pre">False</span></code> such as <code class="docutils literal notranslate"><span class="pre">icon</span></code> are not wrapped: their
+<code class="docutils literal notranslate"><span class="pre">walltime</span></code> entry sizes the model job directly.</p>
+</section>
 <section id="list-of-dictionary-variables">
 <h4>List of dictionary variables<a class="headerlink" href="#list-of-dictionary-variables" title="Link to this heading"></a></h4>
 <p>The following is a list of dictionary variables that exist for the Processing Chain.

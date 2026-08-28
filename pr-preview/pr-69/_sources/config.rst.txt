@@ -144,6 +144,34 @@ as they are Python dictionaries.
     creates new variables in the form of ``cfg.meteo_dir``, ``cfg.meteo_prefix``, etc.
     at the start to make them accessible for namelist and runjob templates.
 
+Walltimes
+*********
+
+Two dictionaries control Slurm walltimes, and the distinction matters:
+
+..  code-block:: yaml
+
+    walltime:
+        prepare_icon: "01:00:00"
+        era5_ic:      "02:00:00"
+
+    walltime_jobs:
+        prepare_icon: "00:10:00"
+        era5_ic:      "00:40:00"
+
+``walltime`` sizes the *wrapper* job that the Processing Chain submits for a
+job with ``BASIC_PYTHON_JOB = True``. That wrapper runs ``run_chain.py -s``,
+which submits the actual Slurm job with ``sbatch --wait`` and blocks until it
+finishes. Its walltime therefore has to cover the **queue time** of the job it
+waits for, not just that job's runtime, and should be generous.
+
+``walltime_jobs`` sizes those submitted jobs themselves and should reflect the
+actual compute time. It is optional; when a job is not listed, the chain falls
+back to the ``walltime`` entry (or, for the input copy job, to ten minutes).
+
+Jobs with ``BASIC_PYTHON_JOB = False`` such as ``icon`` are not wrapped: their
+``walltime`` entry sizes the model job directly.
+
 List of dictionary variables
 ****************************
 
