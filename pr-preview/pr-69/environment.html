@@ -52,8 +52,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="features.html">Feature Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Environment Setup</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#option-a-conda-miniforge">Option A: Conda (Miniforge)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#option-b-pip-virtual-environment">Option B: pip (Virtual Environment)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pip-virtual-environment">pip (Virtual Environment)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#machine-specific-setup">Machine-specific Setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#store-user-specific-data-optional">Store User-specific Data (Optional)</a></li>
 </ul>
@@ -158,66 +157,8 @@
 <span id="environment-section"></span><h1>Environment Setup<a class="headerlink" href="#environment-setup" title="Link to this heading"></a></h1>
 <p>The following steps guide you through setting up a Python environment for the
 Processing Chain. <strong>All steps only need to be performed once.</strong></p>
-<p>Two installation paths are available:</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="#conda-option"><span class="std std-ref">Option A</span></a> — <strong>Conda (Miniforge)</strong>: self-contained,
-installs its own Python and all tools including <code class="docutils literal notranslate"><span class="pre">cdo</span></code> and <code class="docutils literal notranslate"><span class="pre">nco</span></code>.
-Recommended for most users.</p></li>
-<li><p><a class="reference internal" href="#pip-option"><span class="std std-ref">Option B</span></a> — <strong>pip</strong>: uses a system-provided Python.
-Requires <code class="docutils literal notranslate"><span class="pre">cdo</span></code> and <code class="docutils literal notranslate"><span class="pre">nco</span></code> to be available separately
-(e.g. via the HPC module system — see <a class="reference internal" href="#machine-setup"><span class="std std-ref">Machine-specific Setup</span></a>).</p></li>
-</ul>
-<section id="option-a-conda-miniforge">
-<span id="conda-option"></span><h2>Option A: Conda (Miniforge)<a class="headerlink" href="#option-a-conda-miniforge" title="Link to this heading"></a></h2>
-<section id="step-1-install-miniforge">
-<h3>Step 1: Install Miniforge<a class="headerlink" href="#step-1-install-miniforge" title="Link to this heading"></a></h3>
-<p>Install Miniforge as a user-specific conda distribution, e.g., into your
-<code class="docutils literal notranslate"><span class="pre">$HOME</span></code> directory (the default location):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
-bash<span class="w"> </span>Miniforge3-Linux-x86_64.sh
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Only Miniforge itself should be installed in <code class="docutils literal notranslate"><span class="pre">$HOME</span></code>. Store all
-environments in <code class="docutils literal notranslate"><span class="pre">$PROJECT</span></code> (or <code class="docutils literal notranslate"><span class="pre">$SCRATCH</span></code>) to avoid filling up your
-home directory.</p>
-</div>
-<p>Further details can be found on the
-<a class="reference external" href="https://github.com/conda-forge/miniforge">Miniforge documentation page</a>.</p>
-</section>
-<section id="step-2-create-the-environment">
-<h3>Step 2: Create the Environment<a class="headerlink" href="#step-2-create-the-environment" title="Link to this heading"></a></h3>
-<p>Create a conda environment named <code class="docutils literal notranslate"><span class="pre">proc-chain</span></code> with all dependencies:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>--prefix<span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain<span class="w"> </span>-f<span class="w"> </span>environment.yml
-</pre></div>
-</div>
-<p>To be able to activate the environment with the short name
-<code class="docutils literal notranslate"><span class="pre">proc-chain</span></code> instead of the full path, add the following to your
-<code class="docutils literal notranslate"><span class="pre">.bashrc</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">CONDA_ENVS_PATH</span><span class="o">=</span><span class="nv">$PROJECT</span>/envs
-</pre></div>
-</div>
-</section>
-<section id="step-3-activate-the-environment">
-<h3>Step 3: Activate the Environment<a class="headerlink" href="#step-3-activate-the-environment" title="Link to this heading"></a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>proc-chain
-</pre></div>
-</div>
-<p>Use <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">proc-chain</span></code> if <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span></code> does not work.</p>
-<p>You are now ready to <a class="reference internal" href="howtorun.html#howtorun-section"><span class="std std-ref">run the chain</span></a>.</p>
-</section>
-<section id="step-4-update-the-environment-if-needed">
-<h3>Step 4: Update the Environment (if needed)<a class="headerlink" href="#step-4-update-the-environment-if-needed" title="Link to this heading"></a></h3>
-<p>If the <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code> has changed since you created the environment,
-update it with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>update<span class="w"> </span>--prefix<span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain<span class="w"> </span>--file<span class="w"> </span>environment.yml<span class="w"> </span>--prune
-</pre></div>
-</div>
-</section>
-</section>
-<section id="option-b-pip-virtual-environment">
-<span id="pip-option"></span><h2>Option B: pip (Virtual Environment)<a class="headerlink" href="#option-b-pip-virtual-environment" title="Link to this heading"></a></h2>
+<section id="pip-virtual-environment">
+<span id="pip-option"></span><h2>pip (Virtual Environment)<a class="headerlink" href="#pip-virtual-environment" title="Link to this heading"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Python 3.11 or later is required. <code class="docutils literal notranslate"><span class="pre">cdo</span></code> and <code class="docutils literal notranslate"><span class="pre">nco</span></code> are not available
@@ -233,23 +174,24 @@ directly to Step 2.</p>
 </section>
 <section id="step-2-create-the-virtual-environment">
 <h3>Step 2: Create the Virtual Environment<a class="headerlink" href="#step-2-create-the-virtual-environment" title="Link to this heading"></a></h3>
-<p>Create a virtual environment, for example in <code class="docutils literal notranslate"><span class="pre">$PROJECT</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain
+<p>Create the virtual environment at <code class="docutils literal notranslate"><span class="pre">&lt;repo_root&gt;/.venv</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
 </pre></div>
 </div>
 </section>
 <section id="step-3-activate-and-install">
 <h3>Step 3: Activate and Install<a class="headerlink" href="#step-3-activate-and-install" title="Link to this heading"></a></h3>
 <p>Activate the environment and install all Python dependencies:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain/bin/activate
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
 pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
 </pre></div>
 </div>
+<p>You are now ready to <a class="reference internal" href="howtorun.html#howtorun-section"><span class="std std-ref">run the chain</span></a>.</p>
 </section>
 <section id="step-4-activate-in-future-sessions">
 <h3>Step 4: Activate in Future Sessions<a class="headerlink" href="#step-4-activate-in-future-sessions" title="Link to this heading"></a></h3>
 <p>Each time you open a new session, activate the environment with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain/bin/activate
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
 </pre></div>
 </div>
 <p>You can add this line to your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> to activate it automatically, or
@@ -294,16 +236,17 @@ the provided ICON executable runs in the environment it was built against.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>machines/euler/setup_env.sh
 </pre></div>
 </div>
-<p>By default, this activates the virtual environment at <code class="docutils literal notranslate"><span class="pre">&lt;repo&gt;/venv</span></code>.
+<p>By default, this activates the virtual environment at <code class="docutils literal notranslate"><span class="pre">&lt;repo_root&gt;/.venv</span></code>.
 To use a different location, set <code class="docutils literal notranslate"><span class="pre">PROC_CHAIN_VENV</span></code> before sourcing:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PROC_CHAIN_VENV</span><span class="o">=</span><span class="nv">$PROJECT</span>/envs/proc-chain
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PROC_CHAIN_VENV</span><span class="o">=</span>/path/to/your/venv
 <span class="nb">source</span><span class="w"> </span>machines/euler/setup_env.sh
 </pre></div>
 </div>
 <p>If the virtual environment does not exist yet, load the modules first and
-then create it (see <a class="reference internal" href="#pip-option"><span class="std std-ref">Option B</span></a> above):</p>
+then create it (see <a class="reference internal" href="#pip-option"><span class="std std-ref">pip (Virtual Environment)</span></a> above):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>machines/euler/modules.sh
-python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span><span class="nv">$PROJECT</span>/envs/proc-chain
+python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
 pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
 </pre></div>
 </div>
@@ -325,8 +268,9 @@ existing session.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>machines/santis/setup_env.sh<span class="w"> </span>--no-uenv
 </pre></div>
 </div>
-<p>To use a custom venv location, set <code class="docutils literal notranslate"><span class="pre">PROC_CHAIN_VENV</span></code> first:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PROC_CHAIN_VENV</span><span class="o">=</span><span class="nv">$SCRATCH</span>/envs/proc-chain
+<p>By default, this activates the virtual environment at <code class="docutils literal notranslate"><span class="pre">&lt;repo_root&gt;/.venv</span></code>.
+To use a different location, set <code class="docutils literal notranslate"><span class="pre">PROC_CHAIN_VENV</span></code> first:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PROC_CHAIN_VENV</span><span class="o">=</span>/path/to/your/venv
 bash<span class="w"> </span>machines/santis/setup_env.sh
 </pre></div>
 </div>
@@ -335,9 +279,10 @@ bash<span class="w"> </span>machines/santis/setup_env.sh
 </pre></div>
 </div>
 <p>If the virtual environment does not exist yet, enter the uenv first and
-create it (see <a class="reference internal" href="#pip-option"><span class="std std-ref">Option B</span></a> above):</p>
+create it (see <a class="reference internal" href="#pip-option"><span class="std std-ref">pip (Virtual Environment)</span></a> above):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uenv<span class="w"> </span>start<span class="w"> </span>climtools/25.2:v1<span class="w"> </span>--view<span class="o">=</span>climtools
-python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span><span class="nv">$SCRATCH</span>/envs/proc-chain
+python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
 pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
 </pre></div>
 </div>
