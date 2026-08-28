@@ -17,10 +17,17 @@ restart_step: PT6H
 # (later chunks can set this automatically via the chain feature "restart")
 lrestart: '.FALSE.'
 
+# Wrapper jobs: these wait for the job they submit, so their walltime has to
+# cover that job's queue time as well as its runtime.
 walltime:
+  prepare_icon: "01:00:00"
+  era5_ic:      "02:00:00"
+  icon:         "02:00:00"
+
+# Slurm jobs submitted by the wrapper jobs above: actual compute only.
+walltime_jobs:
   prepare_icon: "00:10:00"
   era5_ic:      "00:40:00"
-  icon:         "02:00:00"
 
 # -------------------------------------------------------------------
 # ERA5 inputs for the era5_ic job (MATCHES jobs/era5_ic.py EXPECTATIONS)

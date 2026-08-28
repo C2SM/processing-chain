@@ -52,6 +52,13 @@ def main(cfg):
     tools.create_dir(cfg.icon_work, "icon_work")
     tools.create_dir(cfg.icon_input_icbc, "icon_input_icbc")
 
+    # Walltime of the Slurm job submitted below. Kept separate from
+    # cfg.walltime_era5_ic, which sizes this wrapper job and therefore also has
+    # to cover the queue time of the job it waits for.
+    cfg.walltime_jobs_era5_ic = getattr(cfg, 'walltime_jobs',
+                                        {}).get('era5_ic',
+                                                cfg.walltime_era5_ic)
+
     # Useful formatted dates for the template (avoid bash date gymnastics)
     cfg.era5_ymd = cfg.startdate_sim.strftime('%Y-%m-%d')  # e.g. 2021-01-01
     cfg.era5_yyyymmddhh = cfg.startdate_sim.strftime('%Y%m%d%H')  # 2021010100

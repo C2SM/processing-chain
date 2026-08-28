@@ -118,13 +118,19 @@ def main(cfg):
     tools.create_dir(cfg.icon_restart_out, "icon_restart_out")
 
     logging.info('Copy ICON input data (IC/BC) to working directory')
+    # Walltime of the copy job. Kept separate from cfg.walltime['prepare_icon'],
+    # which sizes the wrapper job waiting for this one and therefore also has to
+    # cover its queue time.
+    walltime = getattr(cfg, 'walltime_jobs', {}).get('prepare_icon',
+                                                     '00:10:00')
+
     # Copy input files to scratch
     if cfg.machine == 'santis':
         script_lines = [
             '#!/usr/bin/env bash',
             f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
             f'#SBATCH --account={cfg.compute_account}',
-            '#SBATCH --time=00:10:00',
+            f'#SBATCH --time={walltime}',
             f'#SBATCH --partition={cfg.compute_queue}',
             f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --nodes=1',
             f'#SBATCH --output={cfg.logfile}', '#SBATCH --open-mode=append',
@@ -134,7 +140,7 @@ def main(cfg):
         script_lines = [
             '#!/usr/bin/env bash',
             f'#SBATCH --job-name="copy_input_{cfg.casename}_{cfg.startdate_sim_yyyymmddhh}_{cfg.enddate_sim_yyyymmddhh}"',
-            '#SBATCH --time=00:10:00',
+            f'#SBATCH --time={walltime}',
             f'#SBATCH --constraint={cfg.constraint}', '#SBATCH --ntasks=1',
             f'#SBATCH --output={cfg.logfile}', '#SBATCH --open-mode=append',
             f'#SBATCH --chdir={cfg.icon_work}', ''
