@@ -8,7 +8,7 @@
 # Usage (interactive session):
 #   source machines/euler/setup_env.sh
 #
-# The virtual environment is expected at <repo_root>/venv by default.
+# The virtual environment is expected at <repo_root>/.venv by default.
 # Override by setting PROC_CHAIN_VENV before sourcing:
 #   export PROC_CHAIN_VENV=/path/to/your/venv
 #   source machines/euler/setup_env.sh
@@ -21,7 +21,7 @@ _REPO_ROOT="$(cd "${_SCRIPT_DIR}/../.." && pwd)"
 source "${_SCRIPT_DIR}/modules.sh"
 
 # 2) Activate the Python virtual environment (pip)
-_VENV_DIR="${PROC_CHAIN_VENV:-${_REPO_ROOT}/venv}"
+_VENV_DIR="${PROC_CHAIN_VENV:-${_REPO_ROOT}/.venv}"
 if [[ -f "${_VENV_DIR}/bin/activate" ]]; then
     source "${_VENV_DIR}/bin/activate"
     echo "Processing Chain environment activated (${_VENV_DIR})"

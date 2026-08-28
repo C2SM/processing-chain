@@ -3,16 +3,11 @@
 
 # Argument parsing
 force_execution=false
-use_pip=false
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
     -f|--force)
       force_execution=true
-      shift
-      ;;
-    --pip)
-      use_pip=true
       shift
       ;;
     *)
@@ -36,25 +31,14 @@ fi
 
 
 # Build environment if not present
-if [[ "$use_pip" == true ]]; then
-  if [[ ! -d venv ]]; then
-    echo "Creating Python venv and installing requirements..."
-    python3 -m venv venv
-    venv/bin/pip install -r requirements.txt
-  else
-    echo "Python venv already exists - skipping build."
-  fi
-  source venv/bin/activate
+if [[ ! -d .venv ]]; then
+  echo "Creating Python venv and installing requirements..."
+  python3 -m venv .venv
+  .venv/bin/pip install -r requirements.txt
 else
-  if ! conda info --envs | grep -q "proc-chain"; then
-    echo "Creating conda environment..."
-    conda env create -f environment.yml
-  else
-    echo "Conda environment 'proc-chain' already exists - skipping build."
-  fi
-  eval "$(conda shell.bash hook)"
-  conda activate proc-chain
+  echo "Python venv already exists - skipping build."
 fi
+source .venv/bin/activate
 
 # Prepare and run the test case.
 # icon-test-euler reads its grid, extpar and ERA5 from a shared directory,

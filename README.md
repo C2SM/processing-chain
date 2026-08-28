@@ -9,32 +9,17 @@ your needs, e.g., by creating your own case or adding new jobs.
 
 ## Environment Setup
 
-Two installation paths are available. See the
+The Processing Chain uses a pip virtual environment at `<repo_root>/.venv`.
+See the
 [full documentation](https://c2sm.github.io/processing-chain/latest/environment.html)
 for step-by-step instructions.
-
-**Option A — Conda (Miniforge, recommended):**
-
-```bash
-# 1. Install Miniforge (once)
-wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
-bash Miniforge3-Linux-x86_64.sh
-
-# 2. Create the environment
-conda env create --prefix $PROJECT/envs/proc-chain -f environment.yml
-
-# 3. Activate
-conda activate proc-chain
-```
-
-**Option B — pip (virtual environment):**
 
 > **Note**: `cdo` and `nco` are not available via pip. On HPC systems, load
 > them via the module system first (see machine-specific setup below).
 
 ```bash
-python3 -m venv $PROJECT/envs/proc-chain
-source $PROJECT/envs/proc-chain/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -44,6 +29,18 @@ Ready-made scripts under `machines/` load system software and activate the
 environment in one step.
 
 **Euler (ETH Zürich)**
+
+```bash
+# 1. Load system modules
+source machines/euler/modules.sh
+
+# 2. Create the environment (once)
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Afterwards, activate everything in one step:
 
 ```bash
 # Load system modules only (e.g. in job scripts):
@@ -75,13 +72,7 @@ See `machines/` for the structure to follow when adding other machines.
 
 To activate your environment, type:
 
-**Conda:**
-
-    conda activate proc-chain
-
-**pip:**
-
-    source $PROJECT/envs/proc-chain/bin/activate
+    source .venv/bin/activate
 
 To test if your environment has been successfully set, use the command
 line help to display the available arguments for the main script:
@@ -100,10 +91,10 @@ itself.
 
 For the pre-defined test cases, you can use the driver script
 
-    ./testing/run_tests.sh --pip
+    ./testing/run_tests.sh
 
 This script calls the other scripts in `testing/scripts/` and will:
-- create the Python environment (`--pip` for a venv, otherwise conda)
+- create the Python virtual environment
 - stage the input data for `icon-test-euler`
 - test the `icon-test-euler` case
 

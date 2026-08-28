@@ -15,7 +15,7 @@
 #
 #   source machines/santis/setup_env.sh --no-uenv
 #
-# The virtual environment is expected at <repo_root>/venv by default.
+# The virtual environment is expected at <repo_root>/.venv by default.
 # Override by setting PROC_CHAIN_VENV before calling:
 #   export PROC_CHAIN_VENV=/path/to/your/venv
 #   bash machines/santis/setup_env.sh
@@ -25,7 +25,7 @@ _REPO_ROOT="$(cd "${_SCRIPT_DIR}/../.." && pwd)"
 
 UENV_IMAGE="climtools/25.2:v1"
 UENV_VIEW="climtools"
-_VENV_DIR="${PROC_CHAIN_VENV:-${_REPO_ROOT}/venv}"
+_VENV_DIR="${PROC_CHAIN_VENV:-${_REPO_ROOT}/.venv}"
 
 _activate_venv() {
     if [[ -f "${_VENV_DIR}/bin/activate" ]]; then

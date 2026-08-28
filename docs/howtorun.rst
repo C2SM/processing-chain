@@ -87,7 +87,7 @@ The following test cases are available:
 To be able to run these test cases, the input data has to be provided. This
 is automized via the script::
 
-	$ ./testing/run_tests.sh --pip
+	$ ./testing/run_tests.sh
 
 This will run all the individual scripts in ``testing/scripts/``, which
 can also be launched separately if desired. Note that the driver currently

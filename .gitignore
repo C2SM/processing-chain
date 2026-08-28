@@ -11,3 +11,4 @@ ext/*/
 *.code-workspace
 .vscode/
 venv/
+.venv/

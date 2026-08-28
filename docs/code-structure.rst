@@ -53,7 +53,6 @@ The Processing Chain code is structured as follows:
     ├── LICENSE                     # license file
     ├── README.md                   # README file
     ├── config.py                   # file containing the Config class
-    ├── environment.yml             # conda environment file
     ├── requirements.txt            # pip requirements file
     ├── run_chain.py                # main script
     └── workflows.yaml              # file to store workflows with job dependencies
