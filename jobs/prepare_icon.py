@@ -35,7 +35,7 @@ def set_cfg_variables(cfg):
     cfg.end_datetime_string = cfg.enddate.strftime('%Y-%m-%dT%H:00:00Z')
 
     if cfg.lrestart == '.TRUE.':
-        cfg.restart_filename = 'restart_atm_DOM01.nc'
+        cfg.restart_filename = 'restart_ATMO_DOM01.nc'
         cfg.restart_file = cfg.icon_restart_in / cfg.restart_filename
         cfg.restart_file_scratch = cfg.icon_work / cfg.restart_filename
         if hasattr(cfg, 'lbcdata_prefix'):
