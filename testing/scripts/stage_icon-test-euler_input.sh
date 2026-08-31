@@ -27,6 +27,7 @@ DEST=${PROC_CHAIN_INPUT_DIR:-/cluster/work/climate/icon_input/processing-chain/i
 GRID_SRC=/cluster/work/climate/icon_input/DWD_Tutorial2017/test_cases/case2/input
 GRID_FILES=(
     icon_grid_0024_R02B06_G.nc
+    icon_grid_0024_R02B06_G-grfinfo.nc
     icon_extpar_0024_R02B06_G_20150805_tiles.nc
 )
 

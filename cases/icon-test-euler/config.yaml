@@ -37,10 +37,13 @@ era5:
 
 input_files:
   dynamics_grid_filename:   /cluster/work/climate/icon_input/processing-chain/icon-test-euler/grid/icon_grid_0024_R02B06_G.nc
+  dynamics_grid_grfinfo_filename: /cluster/work/climate/icon_input/processing-chain/icon-test-euler/grid/icon_grid_0024_R02B06_G-grfinfo.nc
   extpar_filename:          /cluster/work/climate/icon_input/processing-chain/icon-test-euler/grid/icon_extpar_0024_R02B06_G_20150805_tiles.nc
   lrtm_filename:            /cluster/work/climate/icon_input/icon-model/release-2026.04-public/data/rrtmg_lw.nc
   cldopt_filename:          /cluster/work/climate/icon_input/icon-model/release-2026.04-public/data/ECHAM6_CldOptProps.nc
   map_file_ana:             /cluster/work/climate/icon_input/icon-model/release-2026.04-public/run/ana_varnames_map_file.txt
+
+ecrad_data_path: /cluster/work/climate/icon_input/icon-model/release-2026.04-public/externals/ecrad/data
 
 icon:
   binary_file: /cluster/work/climate/icon_input/icon-model/release-2026.04-public/bin/icon
