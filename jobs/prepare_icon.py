@@ -145,6 +145,7 @@ def main(cfg):
             f'#SBATCH --output={cfg.logfile}', '#SBATCH --open-mode=append',
             f'#SBATCH --chdir={cfg.icon_work}', ''
         ]
+    script_lines.append('set -euo pipefail')
     for target, destination in zip(cfg.input_files.values(),
                                    cfg.input_files_scratch.values()):
         script_lines.append(f'rsync -av {target} {destination}')
