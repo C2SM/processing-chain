@@ -165,6 +165,42 @@ icon:
       previous:
         - icon
 
+icon-global-era5:
+  features:
+    - restart
+  jobs:
+    - prepare_icon
+    - era5_ic
+    - icon
+  dependencies:
+    era5_ic:
+      current:
+        - prepare_icon
+    icon:
+      current:
+        - prepare_icon
+        - era5_ic
+      previous:
+        - icon
+
+icon-global-era5-parent-r2b7-nosst:
+  features:
+    - restart
+  jobs:
+    - prepare_icon
+    - era5_ic
+    - icon
+  dependencies:
+    era5_ic:
+      current:
+        - prepare_icon
+    icon:
+      current:
+        - prepare_icon
+        - era5_ic
+      previous:
+        - icon
+
 icon-art:
   features:
     - restart

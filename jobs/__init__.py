@@ -5,6 +5,7 @@ from . import biofluxes
 from . import check_output
 from . import cosmo
 from . import emissions
+from . import era5_ic
 from . import icon
 from . import icontools
 from . import int2lm

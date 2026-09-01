@@ -80,21 +80,33 @@ The following test cases are available:
 * ``cosmo-ghg-spinup-test``
 * ``cosmo-ghg-test``
 * ``icon-test``
+* ``icon-test-euler``
 * ``icon-art-oem-test``
 * ``icon-art-global-test``
 
-To be able to run these test cases, it is necessary to provide the input data,
-to setup spack and to compile the models and tools. All this is automized via
-the script::
+To be able to run these test cases, the input data has to be provided. This
+is automized via the script::
 
-	$ ./jenkins/scripts/jenkins.sh
+	$ ./testing/run_tests.sh
 
-This will run all the individual scripts in ``jenkins/scripts/``, which 
-can also be launched separately if desired.
+This will run all the individual scripts in ``testing/scripts/``, which
+can also be launched separately if desired. Note that the driver currently
+only covers the ``icon-test-euler`` case.
 
-These cases undergo regulary testing to ensure that the Processing Chain runs
-correctly. A corresponding Jenkins plan is launched on a weekly basis and 
-when triggered within a GitHub pull request.
+``icon-test-euler`` reads its grid, extpar and ERA5 files from
+``/cluster/work/climate/icon_input/processing-chain/icon-test-euler``.
+``testing/scripts/stage_icon-test-euler_input.sh`` copies them there from
+their sources on Euler and only has to run once per system. The remaining
+test cases still use the input archive fetched by
+``testing/scripts/get_data.sh``.
+
+The ICON executable is not built by the Processing Chain. On Euler a
+pre-built one is provided at
+``/cluster/work/climate/icon_input/icon-model/release-2026.04-public/bin/icon``
+and referenced from the case configuration via ``icon.binary_file``.
+``machines/euler/modules.sh`` loads the module set that executable was
+built against, kept in sync with the Euler site settings of `cesm2icon
+<https://github.com/C2SM/cesm2icon/blob/main/run/sites/euler.sh>`_.
 
 Directory Structure
 -------------------

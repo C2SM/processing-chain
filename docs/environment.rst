@@ -1,62 +1,214 @@
 .. _environment-section:
 
-Conda Environment
+Environment Setup
 =================
 
-The following steps allow you to create and use your own virtual environment to run the Processing Chain. We recommend using a conda environment for the usage of the provided scripts. Please follow the instructions for the installation. The following steps only need to be performed once.
+The following steps guide you through setting up a Python environment for the
+Processing Chain. **All steps only need to be performed once.**
 
-1. Install Miniconda
-~~~~~~~~~~~~~~~~~~~~
+.. _pip-option:
 
-Install Miniconda as user-specific Miniconda, e.g., in your ``$HOME`` directory, which is the default location.
+pip (Virtual Environment)
+--------------------------
 
 .. note::
-   Only conda itself should be installed in your ``$HOME``. All environments should be stored in your ``$PROJECT`` directory; otherwise, you risk filling up your ``$HOME`` directory. See below for instructions.
+   Python 3.11 or later is required. ``cdo`` and ``nco`` are not available
+   via pip and must be provided by the system (e.g. loaded via modules on
+   HPC clusters — see :ref:`machine-setup`).
 
-To install the latest Miniconda, type:
-
-.. code-block:: bash
-
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-    bash Miniconda3-latest-Linux-x86_64.sh
-
-Further details on Miniconda can be found on the `Miniconda documentation page <https://docs.conda.io/en/latest/miniconda.html>`_.
-
-2. Create the Conda Environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Create a conda environment ``proc-chain`` and install the requirements:
-
-.. code-block:: bash
-
-    conda env create --prefix $PROJECT/envs/proc-chain -f env/environment.yml
-
-To be able to activate your conda environment by simply using ``conda activate proc-chain`` instead of the full path, add the following to your ``.bashrc``:
-
-.. code-block:: bash
-
-    export CONDA_ENVS_PATH=$PROJECT/envs
-
-Activate the environment (use "source activate" in case "conda activate" does not work):
-
-.. code-block:: bash
-
-    conda activate proc-chain
-
-If you already have the environment but want to update it:
-
-.. code-block:: bash
-
-    conda env update --file env/environment.yml --prune
-
-3. Store user-specific data
+Step 1: Load System Python
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To register your email address and standard project account, store them in these files within your home directory:
+On HPC systems, load the appropriate modules before continuing.
+See :ref:`machine-setup` for machine-specific instructions.
+
+On a generic Linux system with Python 3.11+ already installed, skip
+directly to Step 2.
+
+Step 2: Create the Virtual Environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create the virtual environment at ``<repo_root>/.venv``:
+
+.. code-block:: bash
+
+    python3 -m venv .venv
+
+Step 3: Activate and Install
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Activate the environment and install all Python dependencies:
+
+.. code-block:: bash
+
+    source .venv/bin/activate
+    pip install -r requirements.txt
+
+You are now ready to :ref:`run the chain <howtorun-section>`.
+
+Step 4: Activate in Future Sessions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Each time you open a new session, activate the environment with:
+
+.. code-block:: bash
+
+    source .venv/bin/activate
+
+You can add this line to your ``.bashrc`` to activate it automatically, or
+use the machine-specific convenience scripts described in :ref:`machine-setup`.
+
+Step 5: Update the Environment (if needed)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+    pip install --upgrade -r requirements.txt
+
+.. _machine-setup:
+
+Machine-specific Setup
+-----------------------
+
+The ``machines/`` directory provides ready-made scripts that load the
+required system software and optionally activate the Python virtual
+environment. Each supported machine has its own sub-directory:
+
+.. code-block:: text
+
+    machines/
+    ├── euler/
+    │   ├── modules.sh    # module load commands only
+    │   └── setup_env.sh  # modules + venv activation (one-stop setup)
+    └── santis/
+        └── setup_env.sh  # uenv start + venv activation
+
+Euler (ETH Zürich)
+~~~~~~~~~~~~~~~~~~
+
+Euler uses the traditional ``module`` system.
+
+**1. Load modules** (required before using pip or running job scripts):
+
+.. code-block:: bash
+
+    source machines/euler/modules.sh
+
+This executes:
+
+.. code-block:: bash
+
+    module load stack/2025-06 gcc/12.2.0 openmpi/4.1.7
+    module load cdo/2.4.4 nco/5.2.4 netcdf-c/4.9.2
+    module load python/3.13.0
+
+These versions are kept in sync with the Euler site settings of `cesm2icon
+<https://github.com/C2SM/cesm2icon/blob/main/run/sites/euler.sh>`_, so that
+the provided ICON executable runs in the environment it was built against.
+
+**2. One-stop interactive setup** (modules + venv activation):
+
+.. code-block:: bash
+
+    source machines/euler/setup_env.sh
+
+By default, this activates the virtual environment at ``<repo_root>/.venv``.
+To use a different location, set ``PROC_CHAIN_VENV`` before sourcing:
+
+.. code-block:: bash
+
+    export PROC_CHAIN_VENV=/path/to/your/venv
+    source machines/euler/setup_env.sh
+
+If the virtual environment does not exist yet, load the modules first and
+then create it (see :ref:`pip (Virtual Environment) <pip-option>` above):
+
+.. code-block:: bash
+
+    source machines/euler/modules.sh
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+
+Santis (CSCS)
+~~~~~~~~~~~~~
+
+On Santis, software is provided through **uenv** (user environments).
+Because ``uenv start`` spawns a new shell, it cannot be sourced inside an
+existing session.
+
+**1. Start an interactive shell** with the required environment:
+
+.. code-block:: bash
+
+    uenv start climtools/25.2:v1 --view=climtools
+
+**2. One-stop interactive setup** (uenv + venv activation, recommended):
+
+.. code-block:: bash
+
+    bash machines/santis/setup_env.sh
+
+If you are already inside the uenv and only need to activate the venv:
+
+.. code-block:: bash
+
+    source machines/santis/setup_env.sh --no-uenv
+
+By default, this activates the virtual environment at ``<repo_root>/.venv``.
+To use a different location, set ``PROC_CHAIN_VENV`` first:
+
+.. code-block:: bash
+
+    export PROC_CHAIN_VENV=/path/to/your/venv
+    bash machines/santis/setup_env.sh
+
+**Run a single command** without entering an interactive shell:
+
+.. code-block:: bash
+
+    uenv run climtools/25.2:v1 --view=climtools -- ./run_chain.py <casename>
+
+If the virtual environment does not exist yet, enter the uenv first and
+create it (see :ref:`pip (Virtual Environment) <pip-option>` above):
+
+.. code-block:: bash
+
+    uenv start climtools/25.2:v1 --view=climtools
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+
+Adding Support for a New Machine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a new sub-directory under ``machines/`` following the same pattern:
+
+.. code-block:: text
+
+    machines/
+    └── <machine-name>/
+        ├── modules.sh    # load system software (optional)
+        └── setup_env.sh  # system software + venv activation
+
+``setup_env.sh`` is the entry point and the only required file. Split the
+software loading into a separate ``modules.sh`` when it is also useful on
+its own, e.g. inside batch scripts, as on Euler. Use ``machines/euler/``
+as a template and adapt the ``module load`` commands for the target
+system.
+
+Store User-specific Data (Optional)
+-------------------------------------
+
+To register your email address and standard compute account, store them in
+these files in your home directory:
 
 .. code-block:: bash
 
     echo <your_account_id> > ~/.acct
     echo <your_email_address> > ~/.forward
 
-These settings are optional. The Processing Chain will first check the content of those files. If desired, the corresponding variables can be overridden by setting the ``compute_account`` and ``user_mail`` variables in the ``config.yaml`` file.
+The Processing Chain reads these files automatically. They can be overridden
+at any time by setting ``compute_account`` and ``user_mail`` in your case's
+``config.yaml``.
+
