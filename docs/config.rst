@@ -35,7 +35,9 @@ This is a non-exhaustive list containing the most important configuration variab
 +------------------------+-------------------------------------------------------------------------+
 | ``compute_account``    | The compute account to be used based on user information.               |
 +------------------------+-------------------------------------------------------------------------+
-| ``constraint``         | The computational constraint (``gpu`` or ``mc``).                       |
+|| ``constraint``        || The computational constraint. On eiger, ``gpu`` or ``mc``. On Euler    |
+||                       || and Santis, a literal Slurm ``--constraint`` node-feature value (e.g.  |
+||                       || ``EPYC_7H12``).                                                        |
 +------------------------+-------------------------------------------------------------------------+
 || ``email``             || The user's email address, initially set to None and updated using the  |
 ||                       || set_email method.                                                      |
