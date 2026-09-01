@@ -27,7 +27,7 @@ walltime:
 # Slurm jobs submitted by the wrapper jobs above: actual compute only.
 walltime_jobs:
   prepare_icon: "00:10:00"
-  era5_ic:      "00:40:00"
+  era5_ic:      "01:00:00"
 
 # -------------------------------------------------------------------
 # ERA5 inputs for the era5_ic job (MATCHES jobs/era5_ic.py EXPECTATIONS)
