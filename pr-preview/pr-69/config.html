@@ -203,8 +203,18 @@ of the <code class="docutils literal notranslate"><span class="pre">Config()</sp
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">compute_account</span></code></p></td>
 <td><p>The compute account to be used based on user information.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">constraint</span></code></p></td>
-<td><p>The computational constraint (<code class="docutils literal notranslate"><span class="pre">gpu</span></code> or <code class="docutils literal notranslate"><span class="pre">mc</span></code>).</p></td>
+<tr class="row-even"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">constraint</span></code></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line">The computational constraint. On eiger, <code class="docutils literal notranslate"><span class="pre">gpu</span></code> or <code class="docutils literal notranslate"><span class="pre">mc</span></code>. On Euler</div>
+<div class="line">and Santis, a literal Slurm <code class="docutils literal notranslate"><span class="pre">--constraint</span></code> node-feature value (e.g.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">EPYC_7H12</span></code>).</div>
+</div>
+</td>
 </tr>
 <tr class="row-odd"><td><div class="line-block">
 <div class="line"><code class="docutils literal notranslate"><span class="pre">email</span></code></div>
