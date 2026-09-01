@@ -1,4 +1,4 @@
-# Parent global run: ERA5 IC -> ICON R2B7 (global, no LBC)
+# ICON global R2B7 run: ERA5 IC -> ICON R2B7 (global, no LBC)
 workflow: icon-global-era5-parent-r2b7-nosst
 
 # Simulation window
@@ -32,7 +32,7 @@ walltime_jobs:
 # -------------------------------------------------------------------
 # ERA5 inputs for the era5_ic job (MATCHES jobs/era5_ic.py EXPECTATIONS)
 # -------------------------------------------------------------------
-era5_dir: /cluster/work/climate/lroither/icon_c2sm/icon_era5_global/era5_raw
+era5_dir: /cluster/work/climate/icon_testing_input/processing_chain/era5/raw
 era5_ml_filename:  "era5_ml_{ymd}.grib"
 era5_sfc_filename: "era5_surf_{ymd}.grib"
 
@@ -52,12 +52,11 @@ inidata_filename_suffix: ".nc"
 
 # -------------------------------------------------------------------
 # Files staged by prepare_icon into icon/input and referenced by runjobs
-# Use case-relative paths so the case is self-contained.
 # -------------------------------------------------------------------
 input_files:
-  dynamics_grid_filename: ../../input/icon/grid/zonda_output_I/I_DOM01.nc
-  radiation_grid_filename: ../../input/icon/grid/zonda_output_I/I_DOM01.parent.nc
-  extpar_filename: ../../input/icon/grid/zonda_output_I/I_DOM01_external_parameter.nc
+  dynamics_grid_filename: /cluster/work/climate/icon_testing_input/processing_chain/icon/grid/zonda_output_I/I_DOM01.nc
+  radiation_grid_filename: /cluster/work/climate/icon_testing_input/processing_chain/icon/grid/zonda_output_I/I_DOM01.parent.nc
+  extpar_filename: /cluster/work/climate/icon_testing_input/processing_chain/icon/grid/zonda_output_I/I_DOM01_external_parameter.nc
 
   # radiation coeffs
   lrtm_filename: /cluster/work/climate/icon_input/icon-model/release-2026.04-public/data/rrtmg_lw.nc
