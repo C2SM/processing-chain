@@ -6,7 +6,7 @@ compute_queue: normal
 compute_account: em05-0
 ntasks_per_node: 128
 startdate: 2026-05-23T00:00:00Z
-enddate: 2026-06-01T00:00:00Z
+enddate: 2026-07-01T00:00:00Z
 # Spin-up-only window (set 2026-08-17), matching icon-standard-zurich: 216h
 # = 9 days (23 May - 1 Jun). Full production window is 936h (23 May - 1 Jul);
 # ICBC for that whole range is already generated and verified
@@ -16,7 +16,7 @@ enddate: 2026-06-01T00:00:00Z
 # the only chunk - see icon-standard-zurich/config.yaml for the full note).
 # restart_step = the whole window: one chunk, no restart chaining, matching
 # how these cases are always run.
-restart_step: PT216H
+restart_step: PT936H
 lterra_urb: .FALSE.
 lurbalb: .FALSE.
 lurbahf: .FALSE.
