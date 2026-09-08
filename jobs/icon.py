@@ -42,18 +42,7 @@ def main(cfg):
         tools.symlink_file(cfg.restart_file, cfg.restart_file_scratch)
 
     # Get name of initial file
-    if hasattr(cfg, 'inicond_filename'):
-        inidata_filename = cfg.icon_input_icbc / cfg.inicond_filename
-    elif (hasattr(cfg, 'inidata_prefix') and hasattr(cfg, 'inidata_nameformat')
-          and hasattr(cfg, 'inidata_filename_suffix')):
-        inidata_filename = cfg.icon_input_icbc / str(
-            cfg.startdate.strftime(cfg.inidata_prefix +
-                                   cfg.inidata_nameformat +
-                                   cfg.inidata_filename_suffix))
-    else:
-        inidata_filename = cfg.icon_input_icbc / str(
-            cfg.startdate_sim.strftime(cfg.meteo['prefix'] +
-                                       cfg.meteo['nameformat']) + '.nc')
+    inidata_filename = prepare_icon.get_inidata_filename(cfg)
 
     # Write run script (run_icon.job)
     template = (cfg.case_path / cfg.icon_runjob_filename).read_text()

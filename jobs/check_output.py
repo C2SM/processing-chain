@@ -5,7 +5,6 @@ import logging
 import os
 from os.path import dirname, realpath, basename
 import shutil
-from distutils.dir_util import copy_tree
 import datetime as dt
 import glob
 import numpy as np
@@ -846,7 +845,7 @@ srun python jobs/check_output.py {casename} {cosmo_output} {output_root} {chain}
         for varname in varnames:
             fromDirectory = os.path.join(src_folder, varname)
             toDirectory = os.path.join(dest_folder, 'maps', varname)
-            copy_tree(fromDirectory, toDirectory)
+            shutil.copytree(fromDirectory, toDirectory, dirs_exist_ok=True)
 
     # Animations
     logging.info('Creating animations in %s' % animations_path(cfg))

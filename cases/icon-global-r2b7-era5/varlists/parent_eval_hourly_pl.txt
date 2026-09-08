@@ -1,0 +1,6 @@
+geopot
+temp
+u
+v
+qv
+w

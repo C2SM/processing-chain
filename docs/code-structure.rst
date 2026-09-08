@@ -37,19 +37,22 @@ The Processing Chain code is structured as follows:
     │   │   └── *.csv               # CSV files containing table data
     │   ├── conf.py                 # configuration file for the Sphinx builder
     │   └── *.rst                   # documentation files (reStructuredText)
-    ├── env/
-    │   └── environment.yml         # conda environment file
     ├── ext/                        # folder for other code (spack, models, etc.)
-    ├── jenkins/                    # automated Jenkins testing
-    │   ├── scripts/                
-    │   │   └── *.sh                # individual Shell scripts for testing
-    │   └── Jenkinsfile             # text file containing the Jenkins pipeline 
     ├── jobs/
     │   ├── tools/
     │   │   └── *.py                # tool scripts
     │   └── *.py                    # job scripts
+    ├── machines/                   # machine-specific environment setup
+    │   └── <machine>/
+    │       ├── modules.sh          # load system software
+    │       └── setup_env.sh        # system software + venv activation
+    ├── testing/                    # scripts to test the chain
+    │   ├── scripts/
+    │   │   └── *.sh                # data-download and test scripts
+    │   └── run_tests.sh            # driver running all of the above
     ├── LICENSE                     # license file
     ├── README.md                   # README file
     ├── config.py                   # file containing the Config class
+    ├── requirements.txt            # pip requirements file
     ├── run_chain.py                # main script
     └── workflows.yaml              # file to store workflows with job dependencies

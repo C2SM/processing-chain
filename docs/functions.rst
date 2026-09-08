@@ -7,6 +7,7 @@ Jobs
 * :func:`jobs.check_output.main`
 * :func:`jobs.cosmo.main`
 * :func:`jobs.emissions.main`
+* :func:`jobs.era5_ic.main`
 * :func:`jobs.icon.main`
 * :func:`jobs.icontools.main`
 * :func:`jobs.int2lm.main`
@@ -38,6 +39,10 @@ Jobs
 -------------------------------------------
 
 .. autofunction:: jobs.emissions.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.era5_ic.main
 
 -------------------------------------------
 

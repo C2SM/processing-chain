@@ -1,0 +1,117 @@
+&parameter  ! temperature
+name      = "t"
+out_name     = "T"
+/
+&parameter  ! horiz. wind comp. u
+name      = "u"
+out_name     = "U"
+/
+&parameter  ! horiz. wind comp. u
+name      = "v"
+out_name     = "V"
+/
+&parameter  ! vertical velocity
+name      = "w"
+out_name     = "W"
+/
+&parameter  ! specific humidity
+name      = "q"
+out_name     = "QV"
+/
+&parameter  ! cloud liquid water content
+name      = "clwc"
+out_name     = "QC"
+/
+&parameter  ! cloud ice water content
+name      = "ciwc"
+out_name     = "QI"
+/
+&parameter  ! rain water content
+name      = "crwc"
+out_name     = "QR"
+/
+&parameter  ! snow water content
+name      = "cswc"
+out_name     = "QS" 
+/
+&parameter  ! snow temperature
+name      = "TSN"
+out_name     = "T_SNOW" 
+/
+&parameter ! water content of snow
+name      = "SD"
+out_name     = "W_SNOW" 
+/
+&parameter  ! density of snow
+name      = "RSN"
+out_name     = "RHO_SNOW" 
+/
+&parameter  ! snow albedo
+name      = "ASN"
+out_name     = "ALB_SNOW" 
+/
+&parameter  ! skin temperature
+name      = "SKT"
+out_name     = "SKT" 
+/
+&parameter  ! sea surface temperature
+name      = "SSTK"
+out_name     = "SST" 
+/
+&parameter  ! soil temperature level 1
+name      = "STL1"
+out_name     = "STL1" 
+/
+&parameter  ! soil temperature level 2
+name      = "STL2"
+out_name     = "STL2" 
+/
+&parameter  ! soil temperature level 3
+name      = "STL3"
+out_name     = "STL3" 
+/
+&parameter  ! soil temperature level 4
+name      = "STL4"
+out_name     = "STL4" 
+/
+&parameter  ! sea-ice cover
+name      = "CI"
+out_name     = "CI" 
+/
+&parameter  ! water cont. of interception storage
+name      = "SRC"
+out_name     = "W_I" 
+/
+&parameter  ! Land/sea mask
+name      = "LSM"
+out_name     = "LSM" 
+/
+&parameter  ! soil moisture index layer 1
+name      = "SWVL1"
+out_name     = "SMIL1" 
+/
+&parameter  ! soil moisture index layer 2
+name      = "SWVL2"
+out_name     = "SMIL2" 
+/
+&parameter  ! soil moisture index layer 3
+name      = "SWVL3"
+out_name     = "SMIL3" 
+/
+&parameter  ! soil moisture index layer 4
+name      =  "SWVL4"
+out_name     = "SMIL4" 
+/
+&parameter  ! logarithm of surface pressure
+name      = "LNSP"
+out_name     = "LNPS"
+/
+&parameter  ! logarithm of surface pressure
+name      = "SP"
+out_name     = "PS"
+/
+&parameter
+name = "Z"
+out_name = "GEOSP"
+/
+
