@@ -48,10 +48,10 @@
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../features.html">Feature Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../environment.html">Conda Environment</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../environment.html#install-miniconda">1. Install Miniconda</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environment.html">Environment Setup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#pip-virtual-environment">pip (Virtual Environment)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#machine-specific-setup">Machine-specific Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environment.html#store-user-specific-data-optional">Store User-specific Data (Optional)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../howtorun.html">How to Run</a><ul>
@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.era5_ic.main"><code class="docutils literal notranslate"><span class="pre">jobs.era5_ic.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
@@ -174,7 +175,11 @@
 
     <span class="n">cfg</span><span class="o">.</span><span class="n">input_files_scratch</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">dsc</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">input_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">cfg</span><span class="o">.</span><span class="n">input_files</span><span class="p">[</span><span class="n">dsc</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">:=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">():</span>
+            <span class="c1"># resolve relative input_files paths relative to the case directory</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">case_path</span> <span class="o">/</span> <span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">input_files</span><span class="p">[</span><span class="n">dsc</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
         <span class="n">cfg</span><span class="o">.</span><span class="n">input_files_scratch</span><span class="p">[</span><span class="n">dsc</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input</span> <span class="o">/</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span>
 
     <span class="n">cfg</span><span class="o">.</span><span class="n">create_vars_from_dicts</span><span class="p">()</span>
@@ -183,14 +188,15 @@
     <span class="n">cfg</span><span class="o">.</span><span class="n">end_datetime_string</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enddate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:00:00Z&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">lrestart</span> <span class="o">==</span> <span class="s1">&#39;.TRUE.&#39;</span><span class="p">:</span>
-        <span class="n">cfg</span><span class="o">.</span><span class="n">restart_filename</span> <span class="o">=</span> <span class="s1">&#39;restart_atm_DOM01.nc&#39;</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">restart_filename</span> <span class="o">=</span> <span class="s1">&#39;restart_ATMO_DOM01.nc&#39;</span>
         <span class="n">cfg</span><span class="o">.</span><span class="n">restart_file</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_restart_in</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">restart_filename</span>
         <span class="n">cfg</span><span class="o">.</span><span class="n">restart_file_scratch</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_work</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">restart_filename</span>
-        <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_filename</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
-            <span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_nameformat</span> <span class="o">+</span>
-            <span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_filename_suffix</span><span class="p">)</span>
-        <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_file</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc_prev</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_filename</span>
-        <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_file_scratch</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_filename</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;lbcdata_prefix&#39;</span><span class="p">):</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_filename</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_prefix</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_nameformat</span> <span class="o">+</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">lbcdata_filename_suffix</span><span class="p">)</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_file</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc_prev</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_filename</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_file_scratch</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ini_LBC_filename</span>
 
     <span class="c1"># Nudge type (global or nothing)</span>
     <span class="n">cfg</span><span class="o">.</span><span class="n">nudge_type</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span>
@@ -203,6 +209,37 @@
         <span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;species_inicond&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cfg</span><span class="o">.</span><span class="n">species_inicond</span> <span class="k">else</span> <span class="mi">0</span>
 
     <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim_yyyymmdd_hh</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">_%H&#39;</span><span class="p">)</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim_yyyymmddhh</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim_yyyymmddhh</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_inidata_filename</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the initial-condition file ICON reads for the current chunk.</span>
+
+<span class="sd">    Both ``icon`` and ``era5_ic`` rely on this name: the latter has to write</span>
+<span class="sd">    exactly the file the former later reads.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg : Config</span>
+<span class="sd">        Object holding all user-configuration parameters as attributes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pathlib.Path</span>
+<span class="sd">        Absolute path of the initial-condition file in ``icon_input_icbc``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inicond_filename&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">inicond_filename</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_prefix&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_nameformat&#39;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;inidata_filename_suffix&#39;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">startdate</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">inidata_prefix</span> <span class="o">+</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_nameformat</span> <span class="o">+</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">inidata_filename_suffix</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">icon_input_icbc</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">meteo</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">]</span> <span class="o">+</span>
+                                   <span class="n">cfg</span><span class="o">.</span><span class="n">meteo</span><span class="p">[</span><span class="s1">&#39;nameformat&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="main">
@@ -236,13 +273,19 @@
     <span class="n">tools</span><span class="o">.</span><span class="n">create_dir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_restart_out</span><span class="p">,</span> <span class="s2">&quot;icon_restart_out&quot;</span><span class="p">)</span>
 
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Copy ICON input data (IC/BC) to working directory&#39;</span><span class="p">)</span>
+    <span class="c1"># Walltime of the copy job, kept separate from cfg.walltime[&#39;prepare_icon&#39;],</span>
+    <span class="c1"># which sizes the wrapper job that waits for this job and must therefore</span>
+    <span class="c1"># also account for its queue time.</span>
+    <span class="n">walltime</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="s1">&#39;walltime_jobs&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;prepare_icon&#39;</span><span class="p">,</span>
+                                                     <span class="s1">&#39;00:10:00&#39;</span><span class="p">)</span>
+
     <span class="c1"># Copy input files to scratch</span>
-    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">machine</span> <span class="o">==</span> <span class="s1">&#39;daint&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">machine</span> <span class="o">==</span> <span class="s1">&#39;santis&#39;</span><span class="p">:</span>
         <span class="n">script_lines</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s1">&#39;#!/usr/bin/env bash&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;#SBATCH --job-name=&quot;copy_input_</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">casename</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim_yyyymmddhh</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim_yyyymmddhh</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;#SBATCH --account=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">compute_account</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;#SBATCH --time=00:10:00&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;#SBATCH --time=</span><span class="si">{</span><span class="n">walltime</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;#SBATCH --partition=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">compute_queue</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;#SBATCH --constraint=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">constraint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;#SBATCH --nodes=1&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;#SBATCH --output=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;#SBATCH --open-mode=append&#39;</span><span class="p">,</span>
@@ -252,12 +295,12 @@
         <span class="n">script_lines</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s1">&#39;#!/usr/bin/env bash&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;#SBATCH --job-name=&quot;copy_input_</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">casename</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">startdate_sim_yyyymmddhh</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">enddate_sim_yyyymmddhh</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;#SBATCH --time=00:10:00&#39;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">&#39;#SBATCH --partition=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">compute_queue</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;#SBATCH --time=</span><span class="si">{</span><span class="n">walltime</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;#SBATCH --constraint=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">constraint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;#SBATCH --ntasks=1&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;#SBATCH --output=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">logfile</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;#SBATCH --open-mode=append&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;#SBATCH --chdir=</span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">icon_work</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
         <span class="p">]</span>
+    <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set -euo pipefail&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">target</span><span class="p">,</span> <span class="n">destination</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">input_files</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
                                    <span class="n">cfg</span><span class="o">.</span><span class="n">input_files_scratch</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
         <span class="n">script_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;rsync -av </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>

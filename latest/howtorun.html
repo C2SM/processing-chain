@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Code Structure" href="code-structure.html" />
-    <link rel="prev" title="Conda Environment" href="environment.html" /> 
+    <link rel="prev" title="Environment Setup" href="environment.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,10 +51,10 @@
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="features.html">Feature Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="environment.html">Conda Environment</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="environment.html#install-miniconda">1. Install Miniconda</a></li>
-<li class="toctree-l2"><a class="reference internal" href="environment.html#create-the-conda-environment">2. Create the Conda Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="environment.html#store-user-specific-data">3. Store user-specific data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment.html">Environment Setup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#pip-virtual-environment">pip (Virtual Environment)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#machine-specific-setup">Machine-specific Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment.html#store-user-specific-data-optional">Store User-specific Data (Optional)</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">How to Run</a><ul>
@@ -91,6 +91,7 @@
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.check_output.main"><code class="docutils literal notranslate"><span class="pre">jobs.check_output.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.cosmo.main"><code class="docutils literal notranslate"><span class="pre">jobs.cosmo.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.emissions.main"><code class="docutils literal notranslate"><span class="pre">jobs.emissions.main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.era5_ic.main"><code class="docutils literal notranslate"><span class="pre">jobs.era5_ic.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.icon.main"><code class="docutils literal notranslate"><span class="pre">jobs.icon.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.icontools.main"><code class="docutils literal notranslate"><span class="pre">jobs.icontools.main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#jobs.int2lm.main"><code class="docutils literal notranslate"><span class="pre">jobs.int2lm.main()</span></code></a></li>
@@ -237,20 +238,30 @@ taking job dependencies into account.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-spinup-test</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cosmo-ghg-test</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">icon-test</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">icon-test-euler</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">icon-art-oem-test</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">icon-art-global-test</span></code></p></li>
 </ul>
-<p>To be able to run these test cases, it is necessary to provide the input data,
-to setup spack and to compile the models and tools. All this is automized via
-the script:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./jenkins/scripts/jenkins.sh
+<p>To be able to run these test cases, the input data has to be provided. This
+is automized via the script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./testing/run_tests.sh
 </pre></div>
 </div>
-<p>This will run all the individual scripts in <code class="docutils literal notranslate"><span class="pre">jenkins/scripts/</span></code>, which
-can also be launched separately if desired.</p>
-<p>These cases undergo regulary testing to ensure that the Processing Chain runs
-correctly. A corresponding Jenkins plan is launched on a weekly basis and
-when triggered within a GitHub pull request.</p>
+<p>This will run all the individual scripts in <code class="docutils literal notranslate"><span class="pre">testing/scripts/</span></code>, which
+can also be launched separately if desired. Note that the driver currently
+only covers the <code class="docutils literal notranslate"><span class="pre">icon-test-euler</span></code> case.</p>
+<p><code class="docutils literal notranslate"><span class="pre">icon-test-euler</span></code> reads its grid, extpar and ERA5 files from
+<code class="docutils literal notranslate"><span class="pre">/cluster/work/climate/icon_input/processing-chain/icon-test-euler</span></code>.
+<code class="docutils literal notranslate"><span class="pre">testing/scripts/stage_icon-test-euler_input.sh</span></code> copies them there from
+their sources on Euler and only has to run once per system. The remaining
+test cases still use the input archive fetched by
+<code class="docutils literal notranslate"><span class="pre">testing/scripts/get_data.sh</span></code>.</p>
+<p>The ICON executable is not built by the Processing Chain. On Euler a
+pre-built one is provided at
+<code class="docutils literal notranslate"><span class="pre">/cluster/work/climate/icon_input/icon-model/release-2026.04-public/bin/icon</span></code>
+and referenced from the case configuration via <code class="docutils literal notranslate"><span class="pre">icon.binary_file</span></code>.
+<code class="docutils literal notranslate"><span class="pre">machines/euler/modules.sh</span></code> loads the module set that executable was
+built against, kept in sync with the Euler site settings of <a class="reference external" href="https://github.com/C2SM/cesm2icon/blob/main/run/sites/euler.sh">cesm2icon</a>.</p>
 </section>
 <section id="directory-structure">
 <h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Link to this heading"></a></h2>
@@ -444,7 +455,7 @@ specified interval.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="environment.html" class="btn btn-neutral float-left" title="Conda Environment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="environment.html" class="btn btn-neutral float-left" title="Environment Setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="code-structure.html" class="btn btn-neutral float-right" title="Code Structure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
