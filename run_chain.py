@@ -335,12 +335,12 @@ def main():
 
         tools.create_dir(cfg.case_root, "case_root")
 
-        print("╔════════════════════════════════════════╗")
-        print("║       Starting Processing Chain        ║")
-        print("╠════════════════════════════════════════╣")
-        print(f"║      Case: {casename: <27} ║")
-        print(f"║  Workflow: {cfg.workflow_name: <27} ║")
-        print("╚════════════════════════════════════════╝")
+        print("╔══════════════════════════════════════════╗")
+        print("║        Starting Processing Chain         ║")
+        print("╠══════════════════════════════════════════╣")
+        print(f"║      Case: {casename: <29} ║")
+        print(f"║  Workflow: {cfg.workflow_name: <29} ║")
+        print("╚══════════════════════════════════════════╝")
 
         # Check for restart compatibility and spinup
         if 'restart' in cfg.workflow['features']:
@@ -351,9 +351,9 @@ def main():
             cfg.enddate_sim = cfg.enddate
             run_chunk(cfg=cfg, force=args.force, resume=args.resume)
 
-    print("╔════════════════════════════════════════╗")
-    print("║       Processing Chain Completed       ║")
-    print("╚════════════════════════════════════════╝")
+    print("╔══════════════════════════════════════════╗")
+    print("║        Processing Chain Completed        ║")
+    print("╚══════════════════════════════════════════╝")
 
 
 if __name__ == '__main__':

@@ -412,7 +412,7 @@ class Config():
     def submit(self, job_name, script, add_dep=None):
         """Submit job with dependencies"""
         script_path = Path(script)
-        sbatch_cmd = ['sbatch', '--parsable']
+        sbatch_cmd = ['sbatch', '--parsable', '--uenv-passthrough=use']
         if dep_cmd := self.get_dep_cmd(job_name, add_dep=add_dep):
             sbatch_cmd.append(dep_cmd)
         sbatch_cmd.append(script_path.name)
@@ -550,7 +550,7 @@ class Config():
             with open(job_file, mode='w') as wait_job:
                 wait_job.write('\n'.join(script_lines))
 
-            run(['sbatch', '--wait', job_file], check=True)
+            run(['sbatch', '--wait', '--uenv-passthrough=use', job_file], check=True)
 
     def cycle(self):
         """Cycle to next chunk

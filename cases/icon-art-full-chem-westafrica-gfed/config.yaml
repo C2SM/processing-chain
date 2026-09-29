@@ -1,0 +1,83 @@
+# Configuration file for the 'icon-art-full-chem-test' case with ICON
+
+workflow: icon-art-full-chem
+constraint: mc
+run_on: cpu
+compute_queue: normal
+compute_account: em05-0
+ntasks_per_node: 128
+restart_step: PT03H
+startdate: 2023-03-01T00:00:00Z
+enddate: 2023-03-01T09:00:00Z
+
+eccodes_dir: /users/msteiner/git/spack/opt/spack/linux-sles15-zen2/gcc-13.3.0/eccodes-2.34.0-fkped54gqnv7o6lelj2beskz4usdjbrj/share/eccodes/definitions
+latbc_filename: LBC_<y><m><d><h>.nc
+inidata_prefix: IC_
+inidata_nameformat: '%Y%m%d%H'
+inidata_filename_suffix: .nc
+lbcdata_prefix: LBC_
+lbcdata_nameformat: '%Y%m%d%H'
+lbcdata_filename_suffix: .nc
+output_filename: icon-full-chem-test
+filename_format: <output_filename>_<ddhhmmss>
+lateral_boundary_grid_order: lateral_boundary
+art_input_folder: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/art
+
+walltime:
+    prepare_icon: '00:20:00'
+    prepare_art_full_chem: '00:30:00'
+    icon: '01:00:00'
+
+meteo:
+    dir: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/meteo
+    prefix: ERA5_
+    nameformat: '%Y%m%d%H'
+    suffix: .nc
+    inc: 3
+
+chem:
+    dir: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/chem/fake_camchem
+    prefix: camchem_
+    nameformat: '%Y%m%d%H'
+    suffix: .nc
+    inc: 3
+    icbc_filename: camchem-20230301-20230301.nc
+    ref_date: '2000-01-01 00:00:00' #'2000-03-01 00:00:00'
+
+
+input_files:
+    radiation_grid_filename: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/grid/zonda_output_westafrica_air_quality/data/DOM01/westafrica_air_quality_DOM01.parent.nc
+    dynamics_grid_filename: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/grid/zonda_output_westafrica_air_quality/data/DOM01/westafrica_air_quality_DOM01.nc
+    map_file_latbc: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/grid/zonda_output_westafrica_air_quality/data/DOM01/map_file.latbc
+    lateral_boundary_grid: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/grid/zonda_output_westafrica_air_quality/data/DOM01/westafrica_air_quality_DOM01_latbc.grid.nc
+    extpar_filename: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/grid/zonda_output_westafrica_air_quality/data/DOM01/westafrica_air_quality_DOM01_external_parameter.nc
+    cldopt_filename: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/rad/rrtm_cldopt.nc
+    lrtm_filename: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/rad/rrtmg_lw.nc
+    map_file_ana: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/mapping/map_file.ana
+    meccatracer_xml_filename: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/xml/mecca_tracers_oem_wetchem_gfed.xml
+    oem_vertical_profiles_nc: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/oem/vertical_profiles.nc
+    oem_gridded_emissions_nc: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/oem/oem_gridded_emissions_speciated.nc
+    oem_hourofday_nc: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/oem/hourofday.nc
+    oem_dayofweek_nc: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/oem/dayofweek.nc
+    oem_monthofyear_nc: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/oem/monthofyear.nc
+    aerodyn_tracers: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/aerodyn/tracers_aerosol_westafrica.xml
+    aerodyn_modes: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/aerodyn/modes.xml
+    aerodyn_coag: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/aerodyn/coagulate.xml
+    aerodyn_emiss: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/aerodyn/emiss.xml
+    aerodyn_diag: /capstor/store/cscs/userlab/lp171/msteiner/westafrica/inputs/aerodyn/diag.xml
+
+icon:
+    binary_file: /capstor/store/cscs/userlab/lp171/msteiner/icon-kit/bin/icon
+    runjob_filename: icon_runjob.cfg
+    era5_icjob: icon_era5_ic.sh
+    era5_lbcjob: icon_era5_lbc.sh
+    chem_icjob: icon_camchem_ic.sh
+    chem_lbcjob: icon_camchem_lbc.sh
+    compute_queue: normal
+    walltime: '01:00:00'
+    np_tot: 8
+    np_io: 3
+    np_restart: 1
+    np_prefetch: 1
+    timestep: 120.
+

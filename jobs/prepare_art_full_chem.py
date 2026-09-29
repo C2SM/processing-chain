@@ -65,6 +65,7 @@ def main(cfg):
         with open(os.path.join(cfg.case_path, 'icon_era5_ic.sh')) as inf:
             to_write = inf.read()
         output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_ic.sh')
+        print(output_file,cfg)
         with open(output_file, "w") as outf:
             outf.write(to_write.format(cfg=cfg))
 
@@ -115,113 +116,169 @@ def main(cfg):
     MW_NACL = 58.453
     MW_NH4 = 18.04
 
+    # aero_mode_dict = {
+    #     'pom_a4': {
+    #         'pom_mixed_ait': 0.9,  # 90%-->mixed, 10%-->sol/insol 
+    #         'pom_insol_ait': 0.1
+    #     },
+    #     'pom_a1': {
+    #         'pom_mixed_acc': 0.9,
+    #         'pom_insol_acc': 0.1
+    #     },
+    #     'bc_a4': {
+    #         'soot_mixed_ait': 0.9,
+    #         'soot_insol_ait': 0.1
+    #     },
+    #     'bc_a1': {
+    #         'soot_mixed_acc': 0.9,
+    #         'soot_insol_acc': 0.1
+    #     },
+    #     'so4_a2': {
+    #         'so4_mixed_ait': 0.9 * MW_SO4 /
+    #         MW_NH4HSO4,  # Sulfat aerosol in CAM-Chem has composition NH4HSO4
+    #         'so4_sol_ait': 0.1 * MW_SO4 / MW_NH4HSO4,
+    #         'nh4_mixed_ait': 0.9 * MW_NH4 / MW_NH4HSO4,
+    #         'nh4_sol_ait': 0.1 * MW_NH4 / MW_NH4HSO4
+    #     },
+    #     'so4_a1': {
+    #         'so4_mixed_acc': 0.9 * MW_SO4 / MW_NH4HSO4,
+    #         'so4_sol_acc': 0.1 * MW_SO4 / MW_NH4HSO4,
+    #         'nh4_mixed_acc': 0.9 * MW_NH4 / MW_NH4HSO4,
+    #         'nh4_sol_acc': 0.1 * MW_NH4 / MW_NH4HSO4
+    #     },
+    #     'so4_a3': {
+    #         'so4_mixed_coa': 0.9 * MW_SO4 / MW_NH4HSO4,
+    #         'so4_sol_coa': 0.1 * MW_SO4 / MW_NH4HSO4,
+    #         'nh4_mixed_coa': 0.9 * MW_NH4 / MW_NH4HSO4,
+    #         'nh4_sol_coa': 0.1 * MW_NH4 / MW_NH4HSO4
+    #     },
+    #     'ncl_a1': {
+    #         'na_mixed_acc': 0.9 * MW_NA / MW_NACL,
+    #         'na_sol_acc': 0.1 * MW_NA / MW_NACL,
+    #         'cl_mixed_acc': 0.9 * MW_CL / MW_NACL,
+    #         'cl_sol_acc': 0.1 * MW_CL / MW_NACL
+    #     },
+    #     'ncl_a3': {
+    #         'na_mixed_coa': 0.9 * MW_NA / MW_NACL,
+    #         'na_sol_coa': 0.1 * MW_NA / MW_NACL,
+    #         'cl_mixed_coa': 0.9 * MW_CL / MW_NACL,
+    #         'cl_sol_coa': 0.1 * MW_CL / MW_NACL
+    #     },
+    #     'dst_a2': {
+    #         'dust_mixed_ait': 0.9,
+    #         'dust_insol_ait': 0.1
+    #     },
+    #     'dst_a1': {
+    #         'dust_mixed_acc': 0.9,
+    #         'dust_insol_acc': 0.1
+    #     },
+    #     'dst_a3': {
+    #         'dust_mixed_coa': 0.9,
+    #         'dust_insol_coa': 0.1
+    #     },
+    # }
+
     aero_mode_dict = {
-        'pom_a4': {
-            'pom_mixed_ait': 0.9,  # 90%-->mixed, 10%-->sol/insol 
-            'pom_insol_ait': 0.1
-        },
-        'pom_a1': {
-            'pom_mixed_acc': 0.9,
-            'pom_insol_acc': 0.1
-        },
-        'bc_a4': {
-            'soot_mixed_ait': 0.9,
-            'soot_insol_ait': 0.1
-        },
-        'bc_a1': {
-            'soot_mixed_acc': 0.9,
-            'soot_insol_acc': 0.1
-        },
-        'so4_a2': {
-            'so4_mixed_ait': 0.9 * MW_SO4 /
-            MW_NH4HSO4,  # Sulfat aerosol in CAM-Chem has composition NH4HSO4
-            'so4_sol_ait': 0.1 * MW_SO4 / MW_NH4HSO4,
-            'nh4_mixed_ait': 0.9 * MW_NH4 / MW_NH4HSO4,
-            'nh4_sol_ait': 0.1 * MW_NH4 / MW_NH4HSO4
-        },
-        'so4_a1': {
-            'so4_mixed_acc': 0.9 * MW_SO4 / MW_NH4HSO4,
-            'so4_sol_acc': 0.1 * MW_SO4 / MW_NH4HSO4,
-            'nh4_mixed_acc': 0.9 * MW_NH4 / MW_NH4HSO4,
-            'nh4_sol_acc': 0.1 * MW_NH4 / MW_NH4HSO4
-        },
-        'so4_a3': {
-            'so4_mixed_coa': 0.9 * MW_SO4 / MW_NH4HSO4,
-            'so4_sol_coa': 0.1 * MW_SO4 / MW_NH4HSO4,
-            'nh4_mixed_coa': 0.9 * MW_NH4 / MW_NH4HSO4,
-            'nh4_sol_coa': 0.1 * MW_NH4 / MW_NH4HSO4
-        },
-        'ncl_a1': {
-            'na_mixed_acc': 0.9 * MW_NA / MW_NACL,
-            'na_sol_acc': 0.1 * MW_NA / MW_NACL,
-            'cl_mixed_acc': 0.9 * MW_CL / MW_NACL,
-            'cl_sol_acc': 0.1 * MW_CL / MW_NACL
-        },
-        'ncl_a3': {
-            'na_mixed_coa': 0.9 * MW_NA / MW_NACL,
-            'na_sol_coa': 0.1 * MW_NA / MW_NACL,
-            'cl_mixed_coa': 0.9 * MW_CL / MW_NACL,
-            'cl_sol_coa': 0.1 * MW_CL / MW_NACL
-        },
-        'dst_a2': {
-            'dust_mixed_ait': 0.9,
-            'dust_insol_ait': 0.1
-        },
-        'dst_a1': {
-            'dust_mixed_acc': 0.9,
-            'dust_insol_acc': 0.1
-        },
-        'dst_a3': {
-            'dust_mixed_coa': 0.9,
-            'dust_insol_coa': 0.1
-        },
+        'pom_mixed_ait': {'pom_mixed_ait': 1.0},
+        'pom_insol_ait': {'pom_insol_ait': 1.0},
+
+        'pom_mixed_acc': {'pom_mixed_acc': 1.0},
+        'pom_insol_acc': {'pom_insol_acc': 1.0},
+
+        'soot_mixed_ait': {'soot_mixed_ait': 1.0},
+        'soot_insol_ait': {'soot_insol_ait': 1.0},
+
+        'soot_mixed_acc': {'soot_mixed_acc': 1.0},
+        'soot_insol_acc': {'soot_insol_acc': 1.0},
+
+        'so4_mixed_ait': {'so4_mixed_ait': 1.0},
+        'so4_sol_ait': {'so4_sol_ait': 1.0},
+        'so4_mixed_acc': {'so4_mixed_acc': 1.0},
+        'so4_sol_acc': {'so4_sol_acc': 1.0},
+        'so4_mixed_coa': {'so4_mixed_coa': 1.0},
+        'so4_sol_coa': {'so4_sol_coa': 1.0},
+
+        # 'nh4_mixed_ait': {'nh4_mixed_ait': 1.0},
+        # 'nh4_sol_ait': {'nh4_sol_ait': 1.0},
+        # 'nh4_mixed_acc': {'nh4_mixed_acc': 1.0},
+        # 'nh4_sol_acc': {'nh4_sol_acc': 1.0},
+        # 'nh4_mixed_coa': {'nh4_mixed_coa': 1.0},
+        # 'nh4_sol_coa': {'nh4_sol_coa': 1.0},
+
+        'na_mixed_acc': {'na_mixed_acc': 1.0},
+        'na_sol_acc': {'na_sol_acc': 1.0},
+        'na_mixed_coa': {'na_mixed_coa': 1.0},
+        'na_sol_coa': {'na_sol_coa': 1.0},
+
+        'cl_mixed_acc': {'cl_mixed_acc': 1.0},
+        'cl_sol_acc': {'cl_sol_acc': 1.0},
+        'cl_mixed_coa': {'cl_mixed_coa': 1.0},
+        'cl_sol_coa': {'cl_sol_coa': 1.0},
+
+        'dust_mixed_ait': {'dust_mixed_ait': 1.0},
+        'dust_insol_ait': {'dust_insol_ait': 1.0},
+        'dust_mixed_acc': {'dust_mixed_acc': 1.0},
+        'dust_insol_acc': {'dust_insol_acc': 1.0},
+        'dust_mixed_coa': {'dust_mixed_coa': 1.0},
+        'dust_insol_coa': {'dust_insol_coa': 1.0},
     }
 
     # -- Define chemical tracers and molar weights for VMR --> MMR
     chem_mw_dict = {
-        'ALKNIT': 133.1460,
-        'BENZENE': 78.1121,
-        'BIGALD': 98.1001,
-        'BIGALD1': 84.0735,
-        'BIGALD2': 98.1001,
-        'BIGALD3': 98.1001,
-        'BIGALD4': 112.1268,
-        'BIGALK': 72.1490,
-        'BIGENE': 56.1065,
-        'C2H2': 26.0374,
+        # 'ALKNIT': 133.1460, # --> ALKNO3
+        'ALKNO3': 133.1460,
+
+        # 'BENZENE': 78.1121,
+        # 'BIGALD': 98.1001,
+        # 'BIGALD1': 84.0735,
+        # 'BIGALD2': 98.1001,
+        # 'BIGALD3': 98.1001,
+        # 'BIGALD4': 112.1268,
+
+        # 'BIGALK': 72.1490, # --> C5H12
+        'C5H12': 72.1490,
+        # 'BIGENE': 56.1065, # --> C4H8
+        'C4H8': 56.1065,
+        # 'C2H2': 26.0374,
         'C2H4': 28.0532,
         'C2H5OH': 46.0685,
         'C2H6': 30.0691,
         'C3H6': 42.0799,
         'C3H8': 44.0957,
-        'CH2O': 30.0260,
+        # 'CH2O': 30.0260, # --> HCHO
+        'HCHO': 30.0260,
         'CH3CHO': 44.0526,
         'CH3COCH3': 58.0793,
-        'CH3COCHO': 72.0628,
-        'CH3COOH': 60.0520,
+        # 'CH3COCHO': 72.0628, # --> MGLYOX
+        'MGLYOX': 72.0628,
+        # 'CH3COOH': 60.0520, # --> CH3CO2H (aber haben wir nicht)
+        # 'CH3CO2H': 60.0520,
         'CH3OH': 32.0419,
         'CH3OOH': 48.0413,
         'CH4': 16.0425,
         'CO': 28.0101,
-        'CRESOL': 108.1381,
+        # 'CRESOL': 108.1381,
         'DMS': 62.1340,
-        'GLYOXAL': 26.0374,
+        # 'GLYOXAL': 26.0374, # --> GLYOX (haben wir nicht)
+        # 'GLYOX': 26.0374,
         'H2O': 18.0153,
         'H2O2': 34.0147,
         'HCOOH': 46.0254,
         'HNO3': 63.0128,
         'HO2': 33.0068,
-        'HO2NO2': 79.0123,
+        # 'HO2NO2': 79.0123, # --> HNO4
+        'HNO4': 79.0123,
         'HONITR': 135.1188,
-        'HYAC': 74.0787,
-        'ISOP': 68.1172,
+        # 'HYAC': 74.0787,
+        # 'ISOP': 68.1172, # --> C5H8
+        'C5H8': 68.1172,
         'ISOPNITA': 147.1295,
         'ISOPNITB': 147.1295,
         'MACR': 70.0900,
-        'MEK': 72.1059,
-        'MPAN': 147.0864,
+        # 'MEK': 72.1059,
+        # 'MPAN': 147.0864,
         'MVK': 70.0900,
-        'N2O': 44.0129,
+        # 'N2O': 44.0129,
         'N2O5': 108.0105,
         'NH3': 17.0306,
         'NO': 30.0061,
@@ -233,11 +290,11 @@ def main(cfg):
         'ONITR': 133.1029,
         'PAN': 121.0491,
         'PBZNIT': 183.1186,
-        'PHENOL': 94.1115,
+        # 'PHENOL': 94.1115,
         'SO2': 64.0648,
         'TERPNIT': 215.2467,
-        'TOLUENE': 92.1387,
-        'XYLENES': 106.1653
+        # 'TOLUENE': 92.1387,
+        # 'XYLENES': 106.1653
     }
 
     camchem_spec = list(aero_mode_dict.keys()) + list(chem_mw_dict.keys())
@@ -363,7 +420,7 @@ def main(cfg):
                 ds_chem = xr.open_dataset(chem_file)
                 # Replace "PS" from CAM-Chem by ERA5 value
                 ds_chem["PS"] = np.exp(ds_meteo["LNPS"])
-                ds_chem["PS"] = ds_chem["PS"].squeeze(dim="lev_2")
+                ds_chem["PS"] = ds_chem["PS"] #.squeeze(dim="lev_2")
                 #if 'Q' not in ds_chem:
                 ds_chem['Q'] = ds_meteo['QV']
                 logging.info(f"Added PS and Q to file {merged_file}")
@@ -442,7 +499,7 @@ def main(cfg):
         if "PS" not in ds:
             merging = True
             ds["PS"] = np.exp(ds["LNPS"])
-            ds_chem["PS"] = ds_chem["PS"].squeeze(dim="lev_2")
+            ds_chem["PS"] = ds_chem["PS"] #.squeeze(dim="lev_2")
             for var in ds.data_vars:
                 ds[var].encoding = {}
                 logging.info(f"Added PS to file {ic_file}")
