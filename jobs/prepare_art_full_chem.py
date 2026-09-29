@@ -65,7 +65,7 @@ def main(cfg):
         with open(os.path.join(cfg.case_path, 'icon_era5_ic.sh')) as inf:
             to_write = inf.read()
         output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_ic.sh')
-        print(output_file,cfg)
+        print(output_file, cfg)
         with open(output_file, "w") as outf:
             outf.write(to_write.format(cfg=cfg))
 
@@ -118,7 +118,7 @@ def main(cfg):
 
     # aero_mode_dict = {
     #     'pom_a4': {
-    #         'pom_mixed_ait': 0.9,  # 90%-->mixed, 10%-->sol/insol 
+    #         'pom_mixed_ait': 0.9,  # 90%-->mixed, 10%-->sol/insol
     #         'pom_insol_ait': 0.1
     #     },
     #     'pom_a1': {
@@ -179,24 +179,48 @@ def main(cfg):
     # }
 
     aero_mode_dict = {
-        'pom_mixed_ait': {'pom_mixed_ait': 1.0},
-        'pom_insol_ait': {'pom_insol_ait': 1.0},
-
-        'pom_mixed_acc': {'pom_mixed_acc': 1.0},
-        'pom_insol_acc': {'pom_insol_acc': 1.0},
-
-        'soot_mixed_ait': {'soot_mixed_ait': 1.0},
-        'soot_insol_ait': {'soot_insol_ait': 1.0},
-
-        'soot_mixed_acc': {'soot_mixed_acc': 1.0},
-        'soot_insol_acc': {'soot_insol_acc': 1.0},
-
-        'so4_mixed_ait': {'so4_mixed_ait': 1.0},
-        'so4_sol_ait': {'so4_sol_ait': 1.0},
-        'so4_mixed_acc': {'so4_mixed_acc': 1.0},
-        'so4_sol_acc': {'so4_sol_acc': 1.0},
-        'so4_mixed_coa': {'so4_mixed_coa': 1.0},
-        'so4_sol_coa': {'so4_sol_coa': 1.0},
+        'pom_mixed_ait': {
+            'pom_mixed_ait': 1.0
+        },
+        'pom_insol_ait': {
+            'pom_insol_ait': 1.0
+        },
+        'pom_mixed_acc': {
+            'pom_mixed_acc': 1.0
+        },
+        'pom_insol_acc': {
+            'pom_insol_acc': 1.0
+        },
+        'soot_mixed_ait': {
+            'soot_mixed_ait': 1.0
+        },
+        'soot_insol_ait': {
+            'soot_insol_ait': 1.0
+        },
+        'soot_mixed_acc': {
+            'soot_mixed_acc': 1.0
+        },
+        'soot_insol_acc': {
+            'soot_insol_acc': 1.0
+        },
+        'so4_mixed_ait': {
+            'so4_mixed_ait': 1.0
+        },
+        'so4_sol_ait': {
+            'so4_sol_ait': 1.0
+        },
+        'so4_mixed_acc': {
+            'so4_mixed_acc': 1.0
+        },
+        'so4_sol_acc': {
+            'so4_sol_acc': 1.0
+        },
+        'so4_mixed_coa': {
+            'so4_mixed_coa': 1.0
+        },
+        'so4_sol_coa': {
+            'so4_sol_coa': 1.0
+        },
 
         # 'nh4_mixed_ait': {'nh4_mixed_ait': 1.0},
         # 'nh4_sol_ait': {'nh4_sol_ait': 1.0},
@@ -204,23 +228,48 @@ def main(cfg):
         # 'nh4_sol_acc': {'nh4_sol_acc': 1.0},
         # 'nh4_mixed_coa': {'nh4_mixed_coa': 1.0},
         # 'nh4_sol_coa': {'nh4_sol_coa': 1.0},
-
-        'na_mixed_acc': {'na_mixed_acc': 1.0},
-        'na_sol_acc': {'na_sol_acc': 1.0},
-        'na_mixed_coa': {'na_mixed_coa': 1.0},
-        'na_sol_coa': {'na_sol_coa': 1.0},
-
-        'cl_mixed_acc': {'cl_mixed_acc': 1.0},
-        'cl_sol_acc': {'cl_sol_acc': 1.0},
-        'cl_mixed_coa': {'cl_mixed_coa': 1.0},
-        'cl_sol_coa': {'cl_sol_coa': 1.0},
-
-        'dust_mixed_ait': {'dust_mixed_ait': 1.0},
-        'dust_insol_ait': {'dust_insol_ait': 1.0},
-        'dust_mixed_acc': {'dust_mixed_acc': 1.0},
-        'dust_insol_acc': {'dust_insol_acc': 1.0},
-        'dust_mixed_coa': {'dust_mixed_coa': 1.0},
-        'dust_insol_coa': {'dust_insol_coa': 1.0},
+        'na_mixed_acc': {
+            'na_mixed_acc': 1.0
+        },
+        'na_sol_acc': {
+            'na_sol_acc': 1.0
+        },
+        'na_mixed_coa': {
+            'na_mixed_coa': 1.0
+        },
+        'na_sol_coa': {
+            'na_sol_coa': 1.0
+        },
+        'cl_mixed_acc': {
+            'cl_mixed_acc': 1.0
+        },
+        'cl_sol_acc': {
+            'cl_sol_acc': 1.0
+        },
+        'cl_mixed_coa': {
+            'cl_mixed_coa': 1.0
+        },
+        'cl_sol_coa': {
+            'cl_sol_coa': 1.0
+        },
+        'dust_mixed_ait': {
+            'dust_mixed_ait': 1.0
+        },
+        'dust_insol_ait': {
+            'dust_insol_ait': 1.0
+        },
+        'dust_mixed_acc': {
+            'dust_mixed_acc': 1.0
+        },
+        'dust_insol_acc': {
+            'dust_insol_acc': 1.0
+        },
+        'dust_mixed_coa': {
+            'dust_mixed_coa': 1.0
+        },
+        'dust_insol_coa': {
+            'dust_insol_coa': 1.0
+        },
     }
 
     # -- Define chemical tracers and molar weights for VMR --> MMR
@@ -420,7 +469,7 @@ def main(cfg):
                 ds_chem = xr.open_dataset(chem_file)
                 # Replace "PS" from CAM-Chem by ERA5 value
                 ds_chem["PS"] = np.exp(ds_meteo["LNPS"])
-                ds_chem["PS"] = ds_chem["PS"] #.squeeze(dim="lev_2")
+                ds_chem["PS"] = ds_chem["PS"]  #.squeeze(dim="lev_2")
                 #if 'Q' not in ds_chem:
                 ds_chem['Q'] = ds_meteo['QV']
                 logging.info(f"Added PS and Q to file {merged_file}")
@@ -499,7 +548,7 @@ def main(cfg):
         if "PS" not in ds:
             merging = True
             ds["PS"] = np.exp(ds["LNPS"])
-            ds_chem["PS"] = ds_chem["PS"] #.squeeze(dim="lev_2")
+            ds_chem["PS"] = ds_chem["PS"]  #.squeeze(dim="lev_2")
             for var in ds.data_vars:
                 ds[var].encoding = {}
                 logging.info(f"Added PS to file {ic_file}")

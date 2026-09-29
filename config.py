@@ -550,7 +550,8 @@ class Config():
             with open(job_file, mode='w') as wait_job:
                 wait_job.write('\n'.join(script_lines))
 
-            run(['sbatch', '--wait', '--uenv-passthrough=use', job_file], check=True)
+            run(['sbatch', '--wait', '--uenv-passthrough=use', job_file],
+                check=True)
 
     def cycle(self):
         """Cycle to next chunk

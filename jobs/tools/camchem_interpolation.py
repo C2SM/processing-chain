@@ -591,7 +591,6 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
 
             var_copier_m = [VariableCopier(**kwargs) for kwargs in dict_m]
 
-
             for op in dim_copier_m + var_copier_m:
                 op.apply_to(m_ds, out_ds)
 
