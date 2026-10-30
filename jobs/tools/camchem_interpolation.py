@@ -3,19 +3,42 @@
 import numpy as np
 import glob
 import os
-from netCDF4 import Dataset
+from netCDF4 import Dataset, num2date
 from os.path import join
 import multiprocessing
 from .nc_operations import VariableCreator, VariableCopier, DimensionCopier
 from datetime import datetime, timedelta, timezone
 
 ##########################################################################################
-## - Vertical interpolation of chemistry fields from CAM-Chem (CESM2.1) output.
+## - Vertical interpolation of chemistry fields (CAM-Chem / CAMS) that are ALREADY
+##   remapped horizontally onto the ICON grid (unstructured, dimension 'ncells').
 ## - Extraction of one NetCDF file per time step.
 ## - Interpolation of chemistry fields with respect to time variable.
 ##
 ## Based on 'mozart2int2m.py', with additions by Louise Aubet and Corina Keller (Empa).
+## Adapted for chemistry input on the ICON grid (clat/clon, ncells).
 ##########################################################################################
+
+# -- Name of the horizontal (unstructured) dimension and coordinates
+HDIM = 'ncells'
+HCOORDS = ['clat', 'clon']
+
+# -- Physical constants
+G = 9.80665  # m s-2
+RD = 287.05  # J kg-1 K-1
+
+
+def _timestamps(time_var):
+    """Convert a CF time variable to a list of python datetimes (UTC)."""
+    dates = num2date(time_var[:],
+                     units=time_var.units,
+                     calendar=getattr(time_var, 'calendar', 'standard'),
+                     only_use_cftime_datetimes=False,
+                     only_use_python_datetimes=True)
+    return [
+        datetime(d.year, d.month, d.day, d.hour, d.minute, d.second,
+                 tzinfo=timezone.utc) for d in np.atleast_1d(dates)
+    ]
 
 
 def time_intpl(file_path, prefix):
@@ -23,7 +46,7 @@ def time_intpl(file_path, prefix):
     Interpolate chemistry fields with respect to time between consecutive NetCDF files.
 
     This function generates new NetCDF files at intermediate times between existing
-    CAM-Chem output files. Takes the arithmetic mean of chemical and surface pressure 
+    output files. Takes the arithmetic mean of chemical and surface pressure
     fields and creates interpolated 'time' and 'datesec' variables.
 
     Parameters
@@ -39,15 +62,20 @@ def time_intpl(file_path, prefix):
 
     """
 
-    files = sorted([f for f in os.listdir(file_path) if f.startswith(prefix)])
+    # -- Only files named <prefix>YYYYMMDDHH.nc
+    files = sorted([
+        f for f in os.listdir(file_path) if f.startswith(prefix)
+        and f.endswith('.nc') and len(f) == len(prefix) + len('YYYYMMDDHH.nc')
+    ])
 
     for i in range(len(files) - 1):
 
         in_filename1 = join(file_path, files[i])
         in_filename2 = join(file_path, files[i + 1])
 
-        date_str1 = files[i].split('_')[1].split('.')[0]
-        date_str2 = files[i + 1].split('_')[1].split('.')[0]
+        # -- Date string follows the prefix (prefix itself may contain '_')
+        date_str1 = files[i][len(prefix):].split('.')[0]
+        date_str2 = files[i + 1][len(prefix):].split('.')[0]
 
         # Time difference between two files
         date1 = datetime.strptime(date_str1, '%Y%m%d%H')
@@ -78,8 +106,9 @@ def time_intpl(file_path, prefix):
                     for src_name, dst_name in dimpairs
                 ]
                 var_to_copy = [
-                    'lev_s', 'lev_m', 'lon', 'lat', 'hyam', 'hybm', 'hyai',
-                    'hybi', 'date'
+                    v for v in ['lev_s', 'lev_m', *HCOORDS, 'hyam', 'hybm',
+                                'hyai', 'hybi', 'date']
+                    if v in ds1.variables
                 ]
                 dict_var = [{
                     'src_names': var,
@@ -123,31 +152,18 @@ def time_intpl(file_path, prefix):
                                  },
                                  var_vals=datesec).apply_to(out_ds))
 
-                # -- Interpolate surface pressure
-                mean_pres = np.mean([ds1['PS'][:], ds2['PS'][:]], axis=0)
-                (VariableCreator(var_args={
-                    'varname': 'PS',
-                    'datatype': 'f8',
-                    'dimensions': ('time', 'lat', 'lon')
-                },
-                                 var_attrs={
-                                     'long_name': 'surface pressure',
-                                     'units': 'Pa'
-                                 },
-                                 var_vals=mean_pres).apply_to(out_ds))
-
-                # -- Interpolate chemical fields
-                var_to_copy.extend(('time', 'datesec', 'PS'))
+                # -- Interpolate surface pressure and chemical fields
+                # -- (dimensions are taken from the input, e.g. (time, ncells)
+                # -- for PS and (time, lev_m, ncells) for the tracers)
+                var_to_copy.extend(('time', 'datesec'))
                 for var_name, var in ds1.variables.items():
                     if var_name not in var_to_copy:
                         mean_field = np.mean(
                             [ds1[var_name][:], ds2[var_name][:]], axis=0)
                         (VariableCreator(var_args={
-                            'varname':
-                            var_name,
-                            'datatype':
-                            'f8',
-                            'dimensions': ('time', 'lev_m', 'lat', 'lon')
+                            'varname': var_name,
+                            'datatype': 'f8',
+                            'dimensions': var.dimensions
                         },
                                          var_attrs=var.__dict__,
                                          var_vals=mean_field).apply_to(out_ds))
@@ -173,16 +189,33 @@ def date_from_days_since_ref(days_since_ref, ref_date):
                             datetime.min.time()) + timestamp_time
 
 
+def date_from_hours_since_ref(hours_since_ref, ref_date):
+    """Convert a float counting hours since a reference date to a datetime object.
+
+    Parameters:
+    - hours_since_ref: float, the number of hours since the reference date.
+    - ref_date: str, the reference date in the format 'yyyy-mm-dd hh:mm:ss'.
+
+    Returns:
+    - datetime object corresponding to the given number of hours since the reference date.
+    """
+    timestamp_date = datetime.strptime(ref_date, '%Y-%m-%d %H:%M:%S').date()
+    timestamp_time = timedelta(hours=hours_since_ref)
+
+    return datetime.combine(timestamp_date,
+                            datetime.min.time()) + timestamp_time
+
+
 ##################################
 
 
-def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date):
+def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date=None):
     """
-    Extract a single time slice from a NetCDF file and adjust longitudes.
+    Extract a single time slice from a NetCDF file (output of vert_intpl).
 
     Copies selected species and metadata from an input NetCDF file into a new
-    NetCDF file for each time step. 
-    Longitudes are adjusted from [0, 360) to [-180, 180).
+    NetCDF file for each time step. Fields are on the ICON grid (ncells), so no
+    longitude transformation is applied.
 
     Parameters
     ----------
@@ -192,8 +225,8 @@ def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date):
         Template string for the output filename.
     spec_intpl : list of str
         List of chemical species to extract from the input file.
-    ref_date : str
-        Reference date (YYYY-MM-DD HH:MM:SS) used to convert time variables.
+    ref_date : str, optional
+        Not used anymore; the time is read from the CF 'units' attribute.
 
     Returns
     -------
@@ -201,8 +234,8 @@ def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date):
     """
 
     # -- Create list of DimensionCopier objects for copying dimensions.
-    dimpairs = [('lat', 'lat'), ('lon', 'lon'), ('lev_m', 'lev_m'),
-                ('lev_s', 'lev_s'), ('nhym', 'nhym'), ('nhyi', 'nhyi')]
+    dimpairs = [(HDIM, HDIM), ('lev_m', 'lev_m'), ('lev_s', 'lev_s'),
+                ('nhym', 'nhym'), ('nhyi', 'nhyi')]
 
     dim_copier = [
         DimensionCopier(src_name, dst_name) for src_name, dst_name in dimpairs
@@ -211,12 +244,15 @@ def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date):
     # -- Create list of VariableCopier objects for copying variables for each time step.
     varpairs_to_copy = [(spc, spc) for spc in spec_intpl]
 
-    for time_index in range(Dataset(in_file).dimensions['time'].size):
+    with Dataset(in_file) as ds:
+        timestamps = _timestamps(ds['time'])
+
+    for time_index, timestamp in enumerate(timestamps):
 
         # -- Specify the slices of the variable values to be copied.
         sliced_variable_options = {
             'var_args': {
-                'dimensions': ('time', 'lev_m', 'lat', 'lon')
+                'dimensions': ('time', 'lev_m', HDIM)
             },
             'var_val_indices': np.s_[time_index, :]
         }
@@ -228,16 +264,15 @@ def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date):
         } for src, dst in varpairs_to_copy]
 
         var_opts += [{
-            'src_names': 'lat',
-            'dst_name': 'lat'
-        }, {
-            'src_names': 'lon',
-            'dst_name': 'lon'
-        }, {
+            'src_names': c,
+            'dst_name': c
+        } for c in HCOORDS]
+
+        var_opts += [{
             'src_names': 'PS',
             'dst_name': 'PS',
             'var_args': {
-                'dimensions': ('time', 'lat', 'lon')
+                'dimensions': ('time', HDIM)
             },
             'var_val_indices': np.s_[time_index, :]
         }, {
@@ -276,8 +311,7 @@ def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date):
 
         # -- Extract data for given time step.
         with Dataset(in_file) as ds:
-            days_since_ref = float(ds.variables['time'][time_index])
-            timestamp = date_from_days_since_ref(days_since_ref, ref_date)
+            timestamp = timestamp.replace(tzinfo=None)
             out_path = timestamp.strftime(out_file_template)
 
             with Dataset(out_path, 'w') as out_ds:
@@ -333,20 +367,14 @@ def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date):
                 },
                                  var_attrs={
                                      'long_name':
-                                     ('seconds to complete', 'current date'),
-                                     'units':
-                                     's'
+                                     'seconds to complete current date',
+                                     'units': 's'
                                  },
                                  var_vals=sec_from_midnight).apply_to(out_ds))
 
                 # -- Write specified dimensions and variables to output.
                 for op in dim_copier + var_copier:
                     op.apply_to(ds, out_ds)
-
-                # -- Transform longitude: [0,360) -> [-180,180).
-                for i in range(len(out_ds['lon'])):
-                    if out_ds['lon'][i] > 180:
-                        out_ds['lon'][i] -= 360
 
 
 ##################################
@@ -357,7 +385,9 @@ def log_intpl_timeslice(pres_m, pres, var_data):
     Perform vertical interpolation of chemical data using log-pressure weighting.
 
     For each chemistry level, the two nearest meteorological levels are identified
-    and a logarithmic interpolation is applied.
+    and a logarithmic interpolation is applied. Works for any horizontal layout,
+    i.e. arrays of shape (lev, lat, lon) or (lev, ncells); level index 0 is the
+    model top.
 
     Parameters
     ----------
@@ -407,7 +437,8 @@ def log_intpl_timeslice(pres_m, pres, var_data):
         axis=0)  # this is the pressure of the upper level (lower pressure)
 
     # -- Compute interpolation weights
-    alpha = (np.log(pres_m_flipped / pk_up)) / (np.log(pk_below / pk_up))
+    with np.errstate(divide='ignore', invalid='ignore'):
+        alpha = (np.log(pres_m_flipped / pk_up)) / (np.log(pk_below / pk_up))
     weights = np.stack([alpha, 1 - alpha], axis=0)
 
     # -- Weights for chem levels lying above/below all meteo levels
@@ -440,7 +471,8 @@ def hybrid_pressure_interpolation(in_ds, out_ds, var_name, time_indices):
     Returns
     -------
     ndarray
-        Array of vertically interpolated variable on meteorological levels.
+        Array of vertically interpolated variable on meteorological levels,
+        shape (time, lev_m, ncells).
     """
     # Pressure on vertical levels of meteo data
     pres_m = out_ds['pres_m'][:]
@@ -448,30 +480,93 @@ def hybrid_pressure_interpolation(in_ds, out_ds, var_name, time_indices):
     pres = out_ds['pres'][:]
     var_data = in_ds[var_name][np.s_[time_indices, :]]
 
-    var_arr = np.zeros(
-        (out_ds.dimensions['time'].size, out_ds.dimensions['lev_m'].size,
-         out_ds.dimensions['lat'].size, out_ds.dimensions['lon'].size))
+    var_arr = np.zeros(pres_m.shape)
 
-    for dt in range(len(out_ds['time'][:])):
-        var_arr[dt, :, :, :] = log_intpl_timeslice(pres_m[dt, :, :, :],
-                                                   pres[dt, :, :, :],
-                                                   var_data[dt, :, :, :])
+    # -- log_intpl_timeslice expects level index 0 = model top (lowest
+    # -- pressure). CAMS/TM5 levels are ordered surface -> top, so flip the
+    # -- chemistry data if needed. Meteo levels are flipped for the
+    # -- interpolation only; the output keeps the order of the meteo file.
+    chem_surface_first = np.mean(pres[:, 0]) > np.mean(pres[:, -1])
+    meteo_surface_first = np.mean(pres_m[:, 0]) > np.mean(pres_m[:, -1])
+
+    for dt in range(pres_m.shape[0]):
+        p_c, v_c, p_m = pres[dt], var_data[dt], pres_m[dt]
+        if chem_surface_first:
+            p_c, v_c = np.flip(p_c, axis=0), np.flip(v_c, axis=0)
+        if meteo_surface_first:
+            p_m = np.flip(p_m, axis=0)
+        intpl = log_intpl_timeslice(p_m, p_c, v_c)
+        var_arr[dt] = np.flip(intpl, axis=0) if meteo_surface_first else intpl
 
     return var_arr
 
 
+def chem_pressure_from_altitude(c_ds, time_indices):
+    """
+    Reconstruct the pressure on the chemistry full levels hydrostatically.
+
+    Fallback only: used if the remapped CAMS/TM5 file does not contain the
+    hybrid coefficients (hyam, hybm). Such a file still provides
+    surface pressure 'ps', temperature 'T', specific humidity 'Q'
+    (on full levels) and the geometric 'altitude' of the half levels. Starting
+    from ps at the lowest half level, the hypsometric equation is integrated
+    upwards:
+
+        p_half(k) = p_half(k+1) * exp(-g * (z(k) - z(k+1)) / (Rd * Tv(k)))
+
+    Full-level pressure is the mean of the bounding half levels (TM5 convention,
+    equivalent to ap_full = mean(ap_half), b_full = mean(b_half)).
+
+    Returns
+    -------
+    ndarray
+        Pressure on chemistry full levels, shape (time, level, ncells), with the
+        same vertical ordering as the chemistry fields in the file.
+    """
+    ps = np.ma.filled(c_ds['ps'][time_indices, :].astype('f8'), np.nan)
+    temp = np.ma.filled(c_ds['T'][time_indices, :].astype('f8'), np.nan)
+    qv = np.ma.filled(c_ds['Q'][time_indices, :].astype('f8'), 0.)
+    z = np.ma.filled(c_ds['altitude'][time_indices, :].astype('f8'), np.inf)
+
+    # -- Ensure ordering top -> surface (index 0 = model top)
+    top_first = np.nanmedian(z[:, 0, :]) > np.nanmedian(z[:, -1, :])
+    if not top_first:
+        temp, qv, z = (np.flip(a, axis=1) for a in (temp, qv, z))
+
+    tv = temp * (1. + 0.608 * qv)
+    nlev = temp.shape[1]
+
+    p_half = np.empty_like(z)
+    p_half[:, -1, :] = ps
+    with np.errstate(over='ignore', invalid='ignore'):
+        for k in range(nlev - 1, -1, -1):
+            dz = z[:, k, :] - z[:, k + 1, :]
+            p_half[:, k, :] = p_half[:, k + 1, :] * np.exp(-G * dz /
+                                                           (RD * tv[:, k, :]))
+    # Model top (z = inf or missing) -> p = 0
+    p_half = np.where(np.isfinite(p_half), p_half, 0.)
+
+    p_full = 0.5 * (p_half[:, :-1, :] + p_half[:, 1:, :])
+
+    if not top_first:
+        p_full = np.flip(p_full, axis=1)
+
+    return p_full
+
+
 def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
-               end_chunk, ref_date):
+               end_chunk, ref_date=None):
     """
     Perform vertical interpolation of chemical fields using meteorological data.
 
-    This function interpolates chemical species from their CAM-Chem vertical levels
-    onto the hybrid sigma-pressure levels of the meteorological dataset.
+    This function interpolates chemical species, which are already remapped onto
+    the ICON grid (dimension 'ncells'), from their native vertical levels onto
+    the hybrid sigma-pressure levels of the meteorological dataset.
 
     Parameters
     ----------
     chem_filename : str
-        Path to the NetCDF file containing chemical data.
+        Path to the NetCDF file containing chemical data (on ICON grid).
     meteo_filename : str
         Path to the NetCDF file containing meteorological data.
     out_filename : str
@@ -479,53 +574,57 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
     spec : list of str
         List of chemical species to interpolate.
     start_chunk : datetime.datetime
-        Start of the simulation time window to process.
+        Start of the simulation time window to process (tz-aware, UTC).
     end_chunk : datetime.datetime
-        End of the simulation time window to process.
-    ref_date : str
-        Reference date (YYYY-MM-DD HH:MM:SS) used to convert time variables.
+        End of the simulation time window to process (tz-aware, UTC).
+    ref_date : str, optional
+        Not used anymore; the time is read from the CF 'units' attribute.
 
     Returns
     -------
     None
-    
+
     """
 
     with Dataset(chem_filename, 'r') as c_ds, Dataset(meteo_filename,
                                                       'r') as m_ds:
 
+        # -- Horizontal dimension of the chemistry file (e.g. 'ncells' or 'cell')
+        ps_dims = c_ds['ps'].dimensions
+        if len(ps_dims) != 2:
+            raise ValueError(
+                f"{chem_filename}: 'ps' has dimensions {ps_dims}, expected "
+                "(time, <cells>). Is this file already remapped onto the "
+                "ICON grid?")
+        hdim_src = ps_dims[-1]
+
         # -- Extract indices for times between simulation start and end
+        # -- (plus the neighbouring step needed for time interpolation)
+        timestamps = _timestamps(c_ds['time'])
         time_index_lst = []
 
-        for time_index in range(c_ds.dimensions['time'].size):
-            days_since_ref_now = float(c_ds.variables['time'][time_index])
-            timestamp_now = date_from_days_since_ref(days_since_ref_now,
-                                                     ref_date)
-            timestamp_now = timestamp_now.replace(tzinfo=timezone.utc)
+        for time_index, timestamp_now in enumerate(timestamps):
 
             if start_chunk <= timestamp_now <= end_chunk:
                 if time_index not in time_index_lst:
                     time_index_lst.append(time_index)
 
-            if time_index != c_ds.dimensions['time'].size - 1:
-                days_since_ref_next = float(c_ds.variables['time'][time_index +
-                                                                   1])
-                timestamp_next = date_from_days_since_ref(
-                    days_since_ref_next, ref_date)
-                timestamp_next = timestamp_next.replace(tzinfo=timezone.utc)
-
-                # Time difference of two time steps
-                time_difference = (timestamp_next -
-                                   timestamp_now).total_seconds() / 3600.0
+            if time_index != len(timestamps) - 1:
+                timestamp_next = timestamps[time_index + 1]
 
                 # Date between two time steps
-                delta_t = time_difference / 2.
-                timestamp_interp = timestamp_now + timedelta(hours=delta_t)
+                timestamp_interp = timestamp_now + (timestamp_next -
+                                                    timestamp_now) / 2
 
                 if start_chunk <= timestamp_interp <= end_chunk:
                     if time_index not in time_index_lst:
                         time_index_lst.append(time_index)
-                    time_index_lst.append(time_index + 1)
+                    if time_index + 1 not in time_index_lst:
+                        time_index_lst.append(time_index + 1)
+
+        time_index_lst.sort()
+        sel_timestamps = [timestamps[i] for i in time_index_lst]
+        ntime = len(time_index_lst)
 
         with Dataset(out_filename, 'w') as out_ds:
             # -- Set global attributes
@@ -534,11 +633,11 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
             # -- Create new dimensions
             out_ds.createDimension("lev_m", len(m_ds['lev'][:]))
             out_ds.createDimension("lev_s", 1)
-            out_ds.createDimension('time', size=len(time_index_lst))
+            out_ds.createDimension("lev", c_ds.dimensions['level'].size)
+            out_ds.createDimension('time', size=ntime)
 
-            # -- Copy dimensions
-            dimpairs_c = [('lev', 'lev'), ('lat', 'lat'), ('lon', 'lon'),
-                          ('ilev', 'ilev'), ('nbnd', 'nbnd')]
+            # -- Copy dimensions (horizontal dim of the input is renamed to HDIM)
+            dimpairs_c = [(hdim_src, HDIM)]
             dim_copier_c = [
                 DimensionCopier(src_name, dst_name)
                 for src_name, dst_name in dimpairs_c
@@ -549,39 +648,62 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
                 for src_name, dst_name in dimpairs_m
             ]
 
-            # -- Copy variables
-            copy_from_chem = ['lat', 'lon']
+            # -- Copy variables (ICON grid coordinates, surface pressure, time)
             dict_c = [{
                 'src_names': var,
-                'dst_name': var
-            } for var in copy_from_chem]
+                'dst_name': var,
+                'var_args': {
+                    'dimensions': (HDIM, )
+                }
+            } for var in HCOORDS]
 
             dict_c += [{
-                'src_names': 'PS',
+                'src_names': 'ps',
                 'dst_name': 'PS',
                 'var_args': {
-                    'dimensions': ('time', 'lat', 'lon')
+                    'dimensions': ('time', HDIM)
                 },
                 'var_val_indices': np.s_[time_index_lst, :]
-            }]
-
-            sliced_variable_options = {
+            }, {
+                'src_names': 'time',
+                'dst_name': 'time',
                 'var_args': {
-                    'dimensions': ('time')
+                    'dimensions': ('time', )
                 },
                 'var_val_indices': np.s_[time_index_lst]
-            }
-            dict_c += [{
-                'src_names': src,
-                'dst_name': dst,
-                **sliced_variable_options
-            } for src, dst in [('time',
-                                'time'), ('date',
-                                          'date'), ('datesec', 'datesec')]]
+            }]
 
             var_copier_c = [VariableCopier(**kwargs) for kwargs in dict_c]
             for op in dim_copier_c + var_copier_c:
                 op.apply_to(c_ds, out_ds)
+
+            # -- date / datesec are not in the CAMS file -> create them
+            (VariableCreator(var_args={
+                'varname': 'date',
+                'datatype': 'i4',
+                'dimensions': ('time', )
+            },
+                             var_attrs={
+                                 'long_name':
+                                 'current date as 8 digit integer (YYYYMMDD)'
+                             },
+                             var_vals=[
+                                 int(t.strftime('%Y%m%d'))
+                                 for t in sel_timestamps
+                             ]).apply_to(out_ds))
+            (VariableCreator(var_args={
+                'varname': 'datesec',
+                'datatype': 'i4',
+                'dimensions': ('time', )
+            },
+                             var_attrs={
+                                 'long_name': 'seconds to complete current date',
+                                 'units': 's'
+                             },
+                             var_vals=[
+                                 t.hour * 3600 + t.minute * 60 + t.second
+                                 for t in sel_timestamps
+                             ]).apply_to(out_ds))
 
             copy_from_meteo = ['hyam', 'hybm', 'hyai', 'hybi']
             dict_m = [{
@@ -590,7 +712,6 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
             } for var in copy_from_meteo]
 
             var_copier_m = [VariableCopier(**kwargs) for kwargs in dict_m]
-
 
             for op in dim_copier_m + var_copier_m:
                 op.apply_to(m_ds, out_ds)
@@ -622,21 +743,21 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
                              },
                              var_vals=1).apply_to(out_ds))
 
-            # Pressure array for chem data
-            pres_c_arr = np.zeros(
-                (len(time_index_lst), c_ds.dimensions['lev'].size,
-                 c_ds.dimensions['lat'].size, c_ds.dimensions['lon'].size))
-
-            for ilev in range(len(c_ds['ilev'][:]) - 1):
-                pres_c_col = c_ds['hyam'][ilev] * c_ds['P0'] + c_ds['hybm'][
-                    ilev] * c_ds['PS'][np.s_[time_index_lst, :]]
-                pres_c_arr[:, ilev, :, :] = pres_c_col
-
-            # Pressure on vertical levels of chem data
+            # Pressure on vertical levels of chem data (time, lev, ncells):
+            # p = hyam + hybm * ps (hyam in Pa, no P0). Fallback: hydrostatic
+            # reconstruction if the coefficients got lost during remapping.
+            if 'hyam' in c_ds.variables and 'hybm' in c_ds.variables:
+                ps_c = c_ds['ps'][time_index_lst, :].astype('f8')
+                pres_c_arr = (
+                    c_ds['hyam'][:].astype('f8')[np.newaxis, :, np.newaxis] +
+                    c_ds['hybm'][:].astype('f8')[np.newaxis, :, np.newaxis] *
+                    ps_c[:, np.newaxis, :])
+            else:
+                pres_c_arr = chem_pressure_from_altitude(c_ds, time_index_lst)
             (VariableCreator(var_args={
                 'varname': 'pres',
                 'datatype': 'f8',
-                'dimensions': ('time', 'lev', 'lat', 'lon')
+                'dimensions': ('time', 'lev', HDIM)
             },
                              var_attrs={
                                  'long_name':
@@ -645,21 +766,18 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
                              },
                              var_vals=pres_c_arr).apply_to(out_ds))
 
-            # Pressure array for meteo data
-            pres_m_arr = np.zeros(
-                (len(time_index_lst), m_ds.dimensions['lev'].size,
-                 c_ds.dimensions['lat'].size, c_ds.dimensions['lon'].size))
-
-            for ilev in range(len(m_ds['lev'][:])):
-                pres_m_col = m_ds['hyam'][ilev] + m_ds['hybm'][ilev] * c_ds[
-                    'PS'][np.s_[time_index_lst, :]]
-                pres_m_arr[:, ilev, :, :] = pres_m_col
-
-            # Pressure on vertical levels of meteo data
+            # Pressure on vertical levels of meteo data (time, lev_m, ncells),
+            # computed with the surface pressure of the chemistry data
+            ps = c_ds['ps'][time_index_lst, :].astype('f8')
+            hyam = m_ds['hyam'][:].astype('f8')
+            hybm = m_ds['hybm'][:].astype('f8')
+            pres_m_arr = (hyam[np.newaxis, :, np.newaxis] +
+                          hybm[np.newaxis, :, np.newaxis] *
+                          ps[:, np.newaxis, :])
             (VariableCreator(var_args={
                 'varname': 'pres_m',
                 'datatype': 'f8',
-                'dimensions': ('time', 'lev_m', 'lat', 'lon')
+                'dimensions': ('time', 'lev_m', HDIM)
             },
                              var_attrs={
                                  'long_name':
@@ -675,7 +793,7 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
                 (VariableCreator(var_args={
                     'varname': var_name,
                     'datatype': 'f8',
-                    'dimensions': ('time', 'lev_m', 'lat', 'lon')
+                    'dimensions': ('time', 'lev_m', HDIM)
                 },
                                  var_attrs=c_ds[var_name].__dict__,
                                  var_vals=arr).apply_to(out_ds))

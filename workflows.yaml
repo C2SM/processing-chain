@@ -213,26 +213,27 @@ icon-art-oem:
     - restart
   jobs:
     - prepare_icon
-    - icontools
+    # - icontools
     - prepare_art
-    - prepare_art_oem
+    # - prepare_art_oem
     - icon
   dependencies:
-    icontools:
-      current:
-        - prepare_icon
+    # icontools:
+    #   current:
+    #     - prepare_icon
     prepare_art:
       current:
-        - icontools
-    prepare_art_oem:
-      current:
-        - prepare_art
+        # - icontools
+        - prepare_icon # new
+    # prepare_art_oem:
+    #   current:
+    #     - prepare_art
     icon:
       current:
         - prepare_icon
-        - icontools
+        # - icontools
         - prepare_art
-        - prepare_art_oem
+        # - prepare_art_oem
       previous:
         - icon
 

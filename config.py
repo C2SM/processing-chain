@@ -150,7 +150,7 @@ class Config():
     def set_machine(self):
         try:
             hostname = socket.gethostname()
-            if hostname.startswith('daint') or hostname.startswith('nid'):
+            if hostname.startswith('daint') or hostname.startswith('nid') or hostname.startswith('santis'):
                 self.machine = 'daint'
             elif hostname.startswith('eu-'):
                 self.machine = 'euler'
@@ -182,7 +182,7 @@ class Config():
         if self.constraint == 'gpu':
             if hasattr(self, 'icon'):
                 if self.run_on == 'gpu':
-                    self.ntasks_per_node = 1
+                    self.ntasks_per_node = 6 #1
                 elif self.run_on == 'cpu':
                     self.ntasks_per_node = 12
                 else:

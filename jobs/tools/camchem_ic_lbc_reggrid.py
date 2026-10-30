@@ -6,15 +6,59 @@ from netCDF4 import Dataset
 from .nc_operations import VariableCreator, VariableCopier, DimensionCopier
 from .. import tools
 
+# Molar weight air [g/mol]
+MW_AIR = 28.96
 
-def process_ic(file_path_in, file_path_out, ic_datetime, aero_dict, prefix):
+
+def _mole_fraction_factor(var):
     """
-    Generate initial condition (IC) NetCDF files from CAM-Chem output.
+    Factor to convert a mole fraction variable to [mol/mol].
 
-    This function copies chemical and aerosol fields for a specified datetime 
-    from an input CAM-Chem NetCDF file. Aerosol fields can be split into 
-    different modes. 
-    No unit transformation is performed.
+    CAM-Chem provides [mol/mol] (units 'mol/mol'), CAMS/TM5 provides e.g.
+    ppb with units '1e-9'. A purely numeric units string is used as factor,
+    'ppm'/'ppb'/'ppt' are recognized, anything else is taken as [mol/mol].
+    """
+    units = str(getattr(var, 'units', '')).strip().lower()
+    known = {'ppm': 1e-6, 'ppmv': 1e-6, 'ppb': 1e-9, 'ppbv': 1e-9,
+             'ppt': 1e-12, 'pptv': 1e-12}
+    if units in known:
+        return known[units]
+    try:
+        return float(units)
+    except ValueError:
+        return 1.
+
+
+def _to_mass_mixing_ratio(ds, out_ds, var_mw_dict):
+    """Write chemical fields converted [mole fraction] --> [kg/kg]."""
+    for var_name, mw in var_mw_dict.items():
+        var = ds[var_name]
+        var_mmr = var[:] * _mole_fraction_factor(var) * mw / MW_AIR
+        (VariableCreator(var_args={
+            'varname': var_name,
+            'datatype': 'f8',
+            'dimensions': var.dimensions
+        },
+                         var_attrs={
+                             'long_name': var_name + ' mass mixing ratio',
+                             'units': 'kg/kg'
+                         },
+                         var_vals=var_mmr).apply_to(out_ds))
+
+
+def process_ic(file_path_in,
+               file_path_out,
+               ic_datetime,
+               aero_dict,
+               prefix,
+               var_mw_dict=None):
+    """
+    Generate initial condition (IC) NetCDF files from CAM-Chem/CAMS output.
+
+    This function copies chemical and aerosol fields for a specified datetime
+    from an input NetCDF file. Aerosol fields can be split into
+    different modes. Works on any horizontal grid (lat/lon or ICON 'ncells'),
+    since dimensions are taken from the input variables.
 
     Parameters
     ----------
@@ -25,11 +69,15 @@ def process_ic(file_path_in, file_path_out, ic_datetime, aero_dict, prefix):
     ic_datetime : datetime.datetime
         Datetime for the IC to process.
     aero_dict : dict
-        Dictionary specifying how aerosol variables should be split into modes 
-        and their corresponding fractions. 
+        Dictionary specifying how aerosol variables should be split into modes
+        and their corresponding fractions.
         Format: `{aerosol_var_name: {mode_name: split_fraction, ...}, ...}`.
     prefix : str
         Filename prefix for input and output NetCDF files.
+    var_mw_dict : dict, optional
+        `{var_name: molecular_weight, ...}`. If given, these chemical fields
+        are converted from mole fraction to [kg/kg] (as for the LBC).
+        If None, no unit transformation is performed.
 
     Returns
     -------
@@ -42,6 +90,7 @@ def process_ic(file_path_in, file_path_out, ic_datetime, aero_dict, prefix):
     - Variables not present in `aero_dict` are copied directly.
     - Aerosol variables are split according to the fractions defined in `aero_dict`.
     """
+    var_mw_dict = var_mw_dict or {}
 
     in_template = prefix + '%Y%m%d%H.nc'
     outname_template = prefix + '%Y%m%d%H_ic.nc'
@@ -68,7 +117,7 @@ def process_ic(file_path_in, file_path_out, ic_datetime, aero_dict, prefix):
             # -- Copy variables
             var_to_copy = [
                 var_name for var_name, v in ds.variables.items()
-                if var_name not in aero_dict
+                if var_name not in aero_dict and var_name not in var_mw_dict
             ]
             dict_var = [{
                 'src_names': var,
@@ -79,16 +128,17 @@ def process_ic(file_path_in, file_path_out, ic_datetime, aero_dict, prefix):
             for op in dim_copier + var_copier:
                 op.apply_to(ds, out_ds)
 
+            # -- Transform units [mol/mol] --> [kg/kg] of chemical fields
+            _to_mass_mixing_ratio(ds, out_ds, var_mw_dict)
+
             # -- Split aerosols into modes
             for var_name, modes_dict in aero_dict.items():
                 for mode_name, split in modes_dict.items():
                     var_mmr = ds[var_name][:] * split
                     (VariableCreator(var_args={
-                        'varname':
-                        mode_name,
-                        'datatype':
-                        'f8',
-                        'dimensions': ('time', 'lev_m', 'lat', 'lon')
+                        'varname': mode_name,
+                        'datatype': 'f8',
+                        'dimensions': ds[var_name].dimensions
                     },
                                      var_attrs={
                                          'long_name':
@@ -106,10 +156,11 @@ def process_lbc(file_path_in, file_path_out, start_time, end_time, inc, prefix,
     """
     Generate lateral boundary condition (LBC) NetCDF files from CAM-Chem output.
 
-    This function processes CAM-Chem NetCDF files and produces LBC files with 
-    appropriate unit transformations. 
-    Chemical fields are converted from [mol/mol] to [kg/kg], while aerosol fields 
-    are split into modes and converted from [kg/kg] to [μg/kg]. 
+    This function processes CAM-Chem/CAMS NetCDF files and produces LBC files
+    with appropriate unit transformations.
+    Chemical fields are converted from mole fraction to [kg/kg], while aerosol
+    fields are split into modes and converted from [kg/kg] to [μg/kg].
+    Works on any horizontal grid (lat/lon or ICON 'ncells').
 
     Parameters
     ----------
@@ -130,11 +181,11 @@ def process_lbc(file_path_in, file_path_out, start_time, end_time, inc, prefix,
     nameformat : str
         Datetime format string used in the filenames (e.g., '%Y%m%d%H').
     var_mw_dict : dict
-        Dictionary mapping chemical variable names to their molecular weights 
+        Dictionary mapping chemical variable names to their molecular weights
         for unit conversion. Format: `{var_name: molecular_weight, ...}`.
     aero_dict : dict
-        Dictionary specifying how aerosol variables should be split into modes 
-        and their corresponding fractions. 
+        Dictionary specifying how aerosol variables should be split into modes
+        and their corresponding fractions.
         Format: `{aerosol_var_name: {mode_name: split_fraction, ...}, ...}`.
 
     Returns
@@ -143,10 +194,12 @@ def process_lbc(file_path_in, file_path_out, start_time, end_time, inc, prefix,
 
     Notes
     -----
-    - Input files are iterated over using specified increments between `start_time` 
+    - Input files are iterated over using specified increments between `start_time`
       and `end_time`.
-    - Chemical fields are converted from [mol/mol] to [kg/kg] using the molecular 
-      weight of air (28.96 g/mol) and the variable-specific molecular weight.
+    - Chemical fields are converted from mole fraction to [kg/kg] using the
+      molecular weight of air (28.96 g/mol) and the variable-specific molecular
+      weight. A scaling given in the units attribute (e.g. '1e-9' = ppb) is
+      taken into account.
     - Aerosol fields are split into modes and converted from [kg/kg] to [μg/kg].
     - Essential variables like coordinates and pressure are copied directly
     - Output files are saved with `_lbc` appended to the original filename.
@@ -175,10 +228,12 @@ def process_lbc(file_path_in, file_path_out, start_time, end_time, inc, prefix,
                     for src_name, dst_name in dimpairs
                 ]
 
-                # -- Copy variables
+                # -- Copy variables (lat/lon or clat/clon, whichever exist)
                 var_to_copy = [
-                    'lev_s', 'lev_m', 'lon', 'lat', 'hyam', 'hybm', 'hyai',
-                    'hybi', 'time', 'date', 'datesec', 'PS'
+                    v for v in [
+                        'lev_s', 'lev_m', 'lon', 'lat', 'clon', 'clat', 'hyam',
+                        'hybm', 'hyai', 'hybi', 'time', 'date', 'datesec', 'PS'
+                    ] if v in ds.variables
                 ]
                 dict_var = [{
                     'src_names': var,
@@ -190,24 +245,7 @@ def process_lbc(file_path_in, file_path_out, start_time, end_time, inc, prefix,
                     op.apply_to(ds, out_ds)
 
                 # -- Transform units [mol/mol] --> [kg/kg] of chemical fields
-                # Molar weight air
-                mw_air = 28.96
-                for var_name, mw in var_mw_dict.items():
-                    # [mol/mol] --> [kg/kg]
-                    var_mmr = ds[var_name][:] * mw / mw_air
-                    (VariableCreator(var_args={
-                        'varname':
-                        var_name,
-                        'datatype':
-                        'f8',
-                        'dimensions': ('time', 'lev_m', 'lat', 'lon')
-                    },
-                                     var_attrs={
-                                         'long_name':
-                                         var_name + ' mass mixing ratio',
-                                         'units': 'kg/kg'
-                                     },
-                                     var_vals=var_mmr).apply_to(out_ds))
+                _to_mass_mixing_ratio(ds, out_ds, var_mw_dict)
 
                 # -- Split aerosols into modes and transform units [kg/kg] --> [ug/kg]
                 kg_to_mug = 1.e9
@@ -216,11 +254,9 @@ def process_lbc(file_path_in, file_path_out, start_time, end_time, inc, prefix,
                         # [kg/kg] --> [ug/kg]
                         var_mmr = ds[var_name][:] * split * kg_to_mug
                         (VariableCreator(var_args={
-                            'varname':
-                            mode_name,
-                            'datatype':
-                            'f8',
-                            'dimensions': ('time', 'lev_m', 'lat', 'lon')
+                            'varname': mode_name,
+                            'datatype': 'f8',
+                            'dimensions': ds[var_name].dimensions
                         },
                                          var_attrs={
                                              'long_name':

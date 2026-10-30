@@ -1,0 +1,88 @@
+# Configuration file for the 'icon-art-oem-test' case with ICON
+
+workflow: icon-art-oem
+constraint: gpu
+run_on: gpu
+compute_queue: normal
+ntasks_per_node: 6
+restart_step: PT24H
+compute_account: lp171
+startdate: 2023-03-01T00:00:00Z
+enddate: 2023-03-04T00:00:00Z
+
+eccodes_dir: /users/msteiner/lp171/msteiner/romania/inputs/eccodes_definitions
+# iconremap_bin: ./ext/icontools/icontools/iconremap
+# iconsub_bin: ./ext/icontools/icontools/iconsub
+latbc_filename: ERA5_<y><m><d><h>_lbc.nc
+lbcdata_prefix: ERA5_
+lbcdata_nameformat: '%Y%m%d%H'
+lbcdata_filename_suffix: .nc
+inidata_prefix: ERA5_
+inidata_nameformat: '%Y%m%d%H'
+inidata_filename_suffix: .nc
+output_filename: icon-art-oem-test
+filename_format: <output_filename>_DOM<physdom>_<ddhhmmss>
+lateral_boundary_grid_order: lateral_boundary
+art_input_folder: /users/msteiner/lp171/msteiner/romania/inputs/art
+ecrad_data_path : /users/msteiner/lp171/msteiner/romania/icon-nwp/externals/ecrad/data
+
+walltime:
+    prepare_icon: '00:10:00'
+    icontools: '00:30:00'
+    prepare_art: '00:10:00'
+    prepare_art_oem: '00:10:00'
+    icon: '00:30:00'
+
+meteo:
+    dir: /capstor/store/cscs/userlab/lp171/msteiner/romania/inputs/meteo
+    prefix: ERA5_
+    nameformat: '%Y%m%d%H'
+    suffix: .nc
+    inc: 3
+
+chem:
+    dir: /capstor/store/cscs/userlab/lp171/msteiner/romania/inputs/chem
+    prefix: cams73_v25r1_ch4_conc_surface_satellite_inst_
+    nameformat: '%Y%m'
+    suffix: .nc
+    inc: 3
+    ref_date: '2023-01-01 00:00:00'
+
+# -- C2H6 background from EAC4 (monthly file from eac4_c2h6_to_monthly.py);
+# -- remove this section to run without C2H6 background
+chem_c2h6:
+    dir: /capstor/store/cscs/userlab/lp171/msteiner/romania/inputs/chem
+    prefix: EAC4_c2h6_
+    nameformat: '%Y%m'
+    suffix: .nc
+
+
+input_files:
+    radiation_grid_filename: /users/msteiner/lp171/msteiner/romania/inputs/grid/zonda_output_romania_outer/data/DOM01/romania_outer_DOM01.parent.nc
+    dynamics_grid_filename: /users/msteiner/lp171/msteiner/romania/inputs/grid/zonda_output_romania_outer/data/DOM01/romania_outer_DOM01.nc
+    map_file_latbc: /users/msteiner/lp171/msteiner/romania/inputs/grid/zonda_output_romania_outer/data/DOM01/map_file.latbc
+    lateral_boundary_grid: /users/msteiner/lp171/msteiner/romania/inputs/grid/zonda_output_romania_outer/data/DOM01/romania_outer_DOM01_latbc.grid.nc
+    extpar_filename: /users/msteiner/lp171/msteiner/romania/inputs/grid/zonda_output_romania_outer/data/DOM01/romania_outer_DOM01_external_parameter.nc
+    cldopt_filename: /users/msteiner/lp171/msteiner/romania/inputs/rad/rrtm_cldopt.nc
+    lrtm_filename: /users/msteiner/lp171/msteiner/romania/inputs/rad/rrtmg_lw.nc
+    map_file_ana: /users/msteiner/lp171/msteiner/romania/inputs/mapping/map_file.ana
+    chemtracer_xml_filename: /users/msteiner/lp171/msteiner/romania/inputs/XML/tracers_outer.xml
+    oem_gridded_emissions_nc: /users/msteiner/lp171/msteiner/romania/inputs/OEM/oem_gridded_emissions_13CH4_C2H6.nc
+    oem_vertical_profiles_nc: /users/msteiner/lp171/msteiner/romania/inputs/OEM/vertical_profiles.nc
+    oem_hourofday_nc: /users/msteiner/lp171/msteiner/romania/inputs/OEM/hourofday.nc
+    oem_dayofweek_nc: /users/msteiner/lp171/msteiner/romania/inputs/OEM/dayofweek.nc
+    oem_monthofyear_nc: /users/msteiner/lp171/msteiner/romania/inputs/OEM/monthofyear.nc
+
+icon:
+    binary_file: /users/msteiner/lp171/msteiner/romania/icon-nwp/gpu/bin/icon
+    runjob_filename: icon_runjob.cfg
+    era5_icjob: icon_era5_ic.sh
+    era5_lbcjob: icon_era5_lbc.sh
+    chem_icjob: icon_camchem_ic.sh
+    chem_lbcjob: icon_camchem_lbc.sh
+    compute_queue: normal
+    walltime: '00:30:00'
+    np_tot: 1
+    np_io: 1
+    np_restart: 0
+    np_prefetch: 1

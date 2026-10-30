@@ -242,6 +242,7 @@ def restart_runs(cfg, force, resume):
         cfg.chunk_id = chunk_id
         cfg.get_previous_chunk_id(cfg.chunk_id)
         cfg.startdate_sim_yyyymmddhh = cfg.chunk_id[0:10]
+        cfg.startdate_sim_yyyymm = cfg.chunk_id[0:6]
         cfg.enddate_sim_yyyymmddhh = cfg.chunk_id[-10:]
         cfg.startdate_sim = datetime.strptime(
             cfg.startdate_sim_yyyymmddhh, "%Y%m%d%H").replace(tzinfo=pytz.UTC)
