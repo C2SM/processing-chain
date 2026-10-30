@@ -198,7 +198,7 @@ class VariableCreator:
         dst_dataset[self.varname][:] = self.var_vals
         for attrname, attrval in self.var_attrs.items():
             # print(self.varname,attrname,attrval)
-            if attrname=="_FillValue":
+            if attrname == "_FillValue":
                 continue
             dst_dataset[self.varname].setncattr(name=attrname, value=attrval)
 

@@ -19,8 +19,14 @@ def _mole_fraction_factor(var):
     'ppm'/'ppb'/'ppt' are recognized, anything else is taken as [mol/mol].
     """
     units = str(getattr(var, 'units', '')).strip().lower()
-    known = {'ppm': 1e-6, 'ppmv': 1e-6, 'ppb': 1e-9, 'ppbv': 1e-9,
-             'ppt': 1e-12, 'pptv': 1e-12}
+    known = {
+        'ppm': 1e-6,
+        'ppmv': 1e-6,
+        'ppb': 1e-9,
+        'ppbv': 1e-9,
+        'ppt': 1e-12,
+        'pptv': 1e-12
+    }
     if units in known:
         return known[units]
     try:

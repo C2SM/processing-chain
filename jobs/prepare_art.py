@@ -25,17 +25,22 @@ def chem_sources(cfg):
     not be put into one file before the vertical interpolation.
     """
     sources = [
-        dict(dir=cfg.chem_dir, prefix=cfg.chem_prefix, suffix=cfg.chem_suffix,
+        dict(dir=cfg.chem_dir,
+             prefix=cfg.chem_prefix,
+             suffix=cfg.chem_suffix,
              mw={'CH4': 16.0425})
     ]
     if getattr(cfg, 'chem_c2h6_prefix', None):
         sources.append(
-            dict(dir=cfg.chem_c2h6_dir, prefix=cfg.chem_c2h6_prefix,
-                 suffix=cfg.chem_c2h6_suffix, mw={'C2H6': 30.069}))
+            dict(dir=cfg.chem_c2h6_dir,
+                 prefix=cfg.chem_c2h6_prefix,
+                 suffix=cfg.chem_c2h6_suffix,
+                 mw={'C2H6': 30.069}))
     for src in sources:
         # -- Monthly input file (lat/lon)
         src['monthly'] = os.path.join(
-            src['dir'], src['prefix'] + cfg.startdate_sim_yyyymm + src['suffix'])
+            src['dir'],
+            src['prefix'] + cfg.startdate_sim_yyyymm + src['suffix'])
     return sources
 
 
@@ -60,8 +65,8 @@ def run_chem_remap_script(cfg, script_name, chem_in, chem_filename):
             f"{chem_filename} not created")
 
 
-def chem_to_timeslices(cfg, src, chem_filename, meteo_filename, tmp_dir,
-                       start, end, nameformat):
+def chem_to_timeslices(cfg, src, chem_filename, meteo_filename, tmp_dir, start,
+                       end, nameformat):
     """Vertically interpolate remapped chemistry fields onto the meteo levels
     and write one file per time step (incl. time interpolation) to tmp_dir.
 
@@ -71,8 +76,8 @@ def chem_to_timeslices(cfg, src, chem_filename, meteo_filename, tmp_dir,
     spec = list(src['mw'])
 
     # -- Vertically interpolate CAM-Chem fields
-    vert_intpl(chem_filename, meteo_filename, tmp_filename, spec, start,
-               end, cfg.chem_ref_date)
+    vert_intpl(chem_filename, meteo_filename, tmp_filename, spec, start, end,
+               cfg.chem_ref_date)
 
     # -- Remove remapped monthly chemistry file (large)
     tools.remove_file(chem_filename)
@@ -137,7 +142,6 @@ def main(cfg):
     prepare_icon.set_cfg_variables(cfg)
     tools.change_logfile(cfg.logfile)
 
-
     ## ---------------------------
     ## -- Meteorological fields --
     ## ---------------------------
@@ -153,7 +157,7 @@ def main(cfg):
         with open(os.path.join(cfg.case_path, 'icon_era5_ic.sh')) as inf:
             to_write = inf.read()
         output_file = os.path.join(cfg.icon_input_icbc, 'icon_era5_ic.sh')
-        print(output_file,cfg)
+        print(output_file, cfg)
         with open(output_file, "w") as outf:
             outf.write(to_write.format(cfg=cfg))
 
@@ -164,13 +168,10 @@ def main(cfg):
         #     stdout=subprocess.PIPE)
         process = subprocess.Popen(
             # ["uenv", "run", "netcdf-tools/2025:v1", "--view=default", "--",
-            ["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_ic.sh')],
+            ["bash",
+             os.path.join(cfg.icon_input_icbc, 'icon_era5_ic.sh')],
             stdout=subprocess.PIPE)
         process.communicate()
-
-
-
-        
 
     # -- Create lateral boundary conditions on ICON grid
 
@@ -198,8 +199,6 @@ def main(cfg):
         ["bash", os.path.join(cfg.icon_input_icbc, 'icon_era5_lbc.sh')],
         stdout=subprocess.PIPE)
     process.communicate()
-
-
 
     aero_mode_dict = {}
     sources = chem_sources(cfg)
@@ -229,9 +228,8 @@ def main(cfg):
         # -- Initial conditions (ICON grid)
         if cfg.lrestart == '.FALSE.':
             chem_filename = os.path.join(
-                cfg.icon_input_icbc, src['prefix'] +
-                cfg.startdate_sim_yyyymm + '_icon' +
-                cfg.inidata_filename_suffix)
+                cfg.icon_input_icbc, src['prefix'] + cfg.startdate_sim_yyyymm +
+                '_icon' + cfg.inidata_filename_suffix)
             run_chem_remap_script(cfg, 'icon_camchem_ic.sh', src['monthly'],
                                   chem_filename)
             chem_to_timeslices(cfg, src, chem_filename, meteo_filename,
@@ -361,13 +359,13 @@ def main(cfg):
                 )
                 zero_hour = time.replace(hour=0, minute=0, second=0)
                 zero_hour_file = os.path.join(
-                    cfg.icon_input_icbc,
-                    zero_hour.strftime(lbc_target_format))
+                    cfg.icon_input_icbc, zero_hour.strftime(lbc_target_format))
 
                 try:
                     with xr.open_dataset(zero_hour_file) as ds_zero_hour:
                         if 'GEOP_ML' in ds_zero_hour.variables:
-                            ds_meteo['GEOP_ML'] = ds_zero_hour['GEOP_ML'].load()
+                            ds_meteo['GEOP_ML'] = ds_zero_hour['GEOP_ML'].load(
+                            )
                             logging.info(
                                 f"Copied 'GEOP_ML' from {zero_hour_file} to {meteo_file}."
                             )

@@ -36,7 +36,12 @@ def _timestamps(time_var):
                      only_use_cftime_datetimes=False,
                      only_use_python_datetimes=True)
     return [
-        datetime(d.year, d.month, d.day, d.hour, d.minute, d.second,
+        datetime(d.year,
+                 d.month,
+                 d.day,
+                 d.hour,
+                 d.minute,
+                 d.second,
                  tzinfo=timezone.utc) for d in np.atleast_1d(dates)
     ]
 
@@ -106,9 +111,10 @@ def time_intpl(file_path, prefix):
                     for src_name, dst_name in dimpairs
                 ]
                 var_to_copy = [
-                    v for v in ['lev_s', 'lev_m', *HCOORDS, 'hyam', 'hybm',
-                                'hyai', 'hybi', 'date']
-                    if v in ds1.variables
+                    v for v in [
+                        'lev_s', 'lev_m', *HCOORDS, 'hyam', 'hybm', 'hyai',
+                        'hybi', 'date'
+                    ] if v in ds1.variables
                 ]
                 dict_var = [{
                     'src_names': var,
@@ -263,10 +269,7 @@ def extract_timeslice(in_file, out_file_template, spec_intpl, ref_date=None):
             **sliced_variable_options
         } for src, dst in varpairs_to_copy]
 
-        var_opts += [{
-            'src_names': c,
-            'dst_name': c
-        } for c in HCOORDS]
+        var_opts += [{'src_names': c, 'dst_name': c} for c in HCOORDS]
 
         var_opts += [{
             'src_names': 'PS',
@@ -554,8 +557,13 @@ def chem_pressure_from_altitude(c_ds, time_indices):
     return p_full
 
 
-def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
-               end_chunk, ref_date=None):
+def vert_intpl(chem_filename,
+               meteo_filename,
+               out_filename,
+               spec,
+               start_chunk,
+               end_chunk,
+               ref_date=None):
     """
     Perform vertical interpolation of chemical fields using meteorological data.
 
@@ -678,26 +686,25 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
                 op.apply_to(c_ds, out_ds)
 
             # -- date / datesec are not in the CAMS file -> create them
-            (VariableCreator(var_args={
-                'varname': 'date',
-                'datatype': 'i4',
-                'dimensions': ('time', )
-            },
-                             var_attrs={
-                                 'long_name':
-                                 'current date as 8 digit integer (YYYYMMDD)'
-                             },
-                             var_vals=[
-                                 int(t.strftime('%Y%m%d'))
-                                 for t in sel_timestamps
-                             ]).apply_to(out_ds))
+            (VariableCreator(
+                var_args={
+                    'varname': 'date',
+                    'datatype': 'i4',
+                    'dimensions': ('time', )
+                },
+                var_attrs={
+                    'long_name': 'current date as 8 digit integer (YYYYMMDD)'
+                },
+                var_vals=[int(t.strftime('%Y%m%d'))
+                          for t in sel_timestamps]).apply_to(out_ds))
             (VariableCreator(var_args={
                 'varname': 'datesec',
                 'datatype': 'i4',
                 'dimensions': ('time', )
             },
                              var_attrs={
-                                 'long_name': 'seconds to complete current date',
+                                 'long_name':
+                                 'seconds to complete current date',
                                  'units': 's'
                              },
                              var_vals=[
@@ -771,9 +778,9 @@ def vert_intpl(chem_filename, meteo_filename, out_filename, spec, start_chunk,
             ps = c_ds['ps'][time_index_lst, :].astype('f8')
             hyam = m_ds['hyam'][:].astype('f8')
             hybm = m_ds['hybm'][:].astype('f8')
-            pres_m_arr = (hyam[np.newaxis, :, np.newaxis] +
-                          hybm[np.newaxis, :, np.newaxis] *
-                          ps[:, np.newaxis, :])
+            pres_m_arr = (
+                hyam[np.newaxis, :, np.newaxis] +
+                hybm[np.newaxis, :, np.newaxis] * ps[:, np.newaxis, :])
             (VariableCreator(var_args={
                 'varname': 'pres_m',
                 'datatype': 'f8',
