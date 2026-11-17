@@ -272,6 +272,23 @@ icon-art-oem:
       previous:
         - icon
 
+icon-art-oem-era5:
+  features:
+    - restart
+  jobs:
+    - prepare_icon
+    - get_icbc_data
+    - remap_icbc
+    - prepare_oem
+    - icon
+  dependencies:
+    icon:
+      current:
+        - prepare_icon
+        - remap_icbc
+      previous:
+        - icon
+
 icon-art-full-chem:
   features:
     - restart

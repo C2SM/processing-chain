@@ -8,6 +8,7 @@ Jobs
 * :func:`jobs.cosmo.main`
 * :func:`jobs.emissions.main`
 * :func:`jobs.era5_ic.main`
+* :func:`jobs.get_icbc_data.main`
 * :func:`jobs.icon.main`
 * :func:`jobs.icontools.main`
 * :func:`jobs.int2lm.main`
@@ -20,7 +21,9 @@ Jobs
 * :func:`jobs.post_int2lm.main`
 * :func:`jobs.prepare_cosmo.main`
 * :func:`jobs.prepare_icon.main`
+* :func:`jobs.prepare_oem.main`
 * :func:`jobs.reduce_output.main`
+* :func:`jobs.remap_icbc.main`
 * :func:`jobs.verify_chain.main`
 * :func:`jobs.prepare_art_full_chem.main`
 
@@ -43,6 +46,10 @@ Jobs
 -------------------------------------------
 
 .. autofunction:: jobs.era5_ic.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.get_icbc_data.main
 
 -------------------------------------------
 
@@ -94,7 +101,15 @@ Jobs
 
 -------------------------------------------
 
+.. autofunction:: jobs.prepare_oem.main
+
+-------------------------------------------
+
 .. autofunction:: jobs.reduce_output.main
+
+-------------------------------------------
+
+.. autofunction:: jobs.remap_icbc.main
 
 -------------------------------------------
 
@@ -127,6 +142,10 @@ a look into ``jobs/tools`` directly.
 * :func:`jobs.tools.camchem_interpolation.time_intpl`
 * :func:`jobs.tools.camchem_interpolation.vert_intpl`
 * :func:`jobs.tools.camchem_interpolation.extract_timeslice`
+* :func:`jobs.tools.fetch_external_data.icon_grid_bounds`
+* :func:`jobs.tools.fetch_external_data.fetch_era5_arco`
+* :func:`jobs.tools.fetch_external_data.fetch_cams_co2_months`
+* :func:`jobs.tools.generate_tracers_xml.generate_tracers_xml`
 
 
 
@@ -189,3 +208,19 @@ a look into ``jobs/tools`` directly.
 -------------------------------------------
 
 .. autofunction:: jobs.tools.camchem_interpolation.extract_timeslice
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.fetch_external_data.icon_grid_bounds
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.fetch_external_data.fetch_era5_arco
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.fetch_external_data.fetch_cams_co2_months
+
+-------------------------------------------
+
+.. autofunction:: jobs.tools.generate_tracers_xml.generate_tracers_xml

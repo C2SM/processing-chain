@@ -8,6 +8,21 @@ from jobs import tools
 from pathlib import Path
 
 
+def uenv_sbatch_args(script):
+    """Extra sbatch arguments to submit `script` from within a uenv.
+
+    On systems with uenv (e.g. Santis), sbatch refuses to submit from within
+    a uenv session unless the job states how to treat that uenv. A job
+    script that selects its own uenv (``#SBATCH --uenv=...``) is submitted as
+    is; any other job runs in the uenv the chain itself runs in.
+    """
+    if not os.environ.get('UENV_MOUNT_LIST'):
+        return []
+    if '#SBATCH --uenv' in Path(script).read_text():
+        return []
+    return ['--uenv-passthrough=use']
+
+
 class Config():
 
     def __init__(self, casename):
@@ -290,7 +305,7 @@ class Config():
                 for item in value:
                     item_type = "Path" if type(
                         item).__name__ == "PosixPath" else type(item).__name__
-                    print(f"  - {item:<{max_col_width-4}} {item_type}")
+                    print(f"  - {str(item):<{max_col_width-4}} {item_type}")
             elif isinstance(value, dict):
                 # If the value is a dictionary, format it as before
                 print(f"{key:<{max_col_width}} dict")
@@ -336,7 +351,10 @@ class Config():
                 subkey = k if key is None else key + '_' + k
                 if isinstance(v, dict):
                     self.create_vars_from_dicts(dct=v, key=subkey)
-                else:
+                elif key is not None:
+                    # Top-level attributes are skipped: re-assigning them
+                    # from the copy above would overwrite attributes that
+                    # were just updated from their (changed) dictionary.
                     setattr(self, subkey, v)
 
     def get_chunk_list(self):
@@ -391,7 +409,37 @@ class Config():
                         # if dep job is deactivated or it's the first chunk
                         if dep_id := self.job_ids[stage].get(job):
                             dep_id_list.extend(dep_id)
-        return dep_id_list
+        return self.drop_completed_jobs(dep_id_list)
+
+    @staticmethod
+    def drop_completed_jobs(job_ids):
+        """Remove the jobs that completed successfully from `job_ids`.
+
+        Slurm forgets a finished job after ``MinJobAge`` (e.g. 5 minutes)
+        and then rejects any dependency on it, which happens when a job
+        running on the login node (e.g. a download) takes longer than that.
+        A completed job no longer needs to be waited for, so it is dropped.
+        All other jobs are kept. If ``sacct`` is not available, `job_ids` is
+        returned unchanged.
+        """
+        if not job_ids:
+            return job_ids
+        try:
+            result = run([
+                'sacct', '--allocations', '--noheader', '--parsable2',
+                '--format=JobID,State', '--jobs', ','.join(map(str, job_ids))
+            ],
+                         capture_output=True,
+                         text=True,
+                         check=True)
+        except (OSError, CalledProcessError):
+            return job_ids
+        completed = {
+            line.split('|')[0]
+            for line in result.stdout.splitlines()
+            if line.endswith('|COMPLETED')
+        }
+        return [job_id for job_id in job_ids if str(job_id) not in completed]
 
     def get_dep_cmd(self, job_name, add_dep=None):
         """Generate the part of the sbatch command that sepcifies dependencies for `job_name`"""
@@ -410,7 +458,7 @@ class Config():
     def submit(self, job_name, script, add_dep=None):
         """Submit job with dependencies"""
         script_path = Path(script)
-        sbatch_cmd = ['sbatch', '--parsable']
+        sbatch_cmd = ['sbatch', '--parsable'] + uenv_sbatch_args(script_path)
         if dep_cmd := self.get_dep_cmd(job_name, add_dep=add_dep):
             sbatch_cmd.append(dep_cmd)
         sbatch_cmd.append(script_path.name)
@@ -421,8 +469,10 @@ class Config():
                          capture_output=True,
                          check=True)
         except CalledProcessError as e:
+            message = f"{e}\nsbatch: {e.stderr.decode().strip()}"
+            print(message)
             with self.logfile.open(mode='a') as f:
-                f.write(str(e))
+                f.write(message)
                 raise (e)
 
         job_id = int(result.stdout)
@@ -544,7 +594,8 @@ class Config():
             with open(job_file, mode='w') as wait_job:
                 wait_job.write('\n'.join(script_lines))
 
-            run(['sbatch', '--wait', job_file], check=True)
+            run(['sbatch', '--wait'] + uenv_sbatch_args(job_file) + [job_file],
+                check=True)
 
     def cycle(self):
         """Cycle to next chunk
