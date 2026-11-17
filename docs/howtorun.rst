@@ -82,6 +82,7 @@ The following test cases are available:
 * ``icon-test``
 * ``icon-test-euler``
 * ``icon-art-oem-test``
+* ``icon-art-oem-era5-test``
 * ``icon-art-global-test``
 
 To be able to run these test cases, the input data has to be provided. This
@@ -99,6 +100,13 @@ only covers the ``icon-test-euler`` case.
 their sources on Euler and only has to run once per system. The remaining
 test cases still use the input archive fetched by
 ``testing/scripts/get_data.sh``.
+
+``icon-art-oem-era5-test`` additionally fetches its initial and boundary
+conditions while running: ERA5 from the public Google ARCO archive (no
+account needed) and CAMS CO2 from the Atmosphere Data Store, which needs an
+ADS account and API key in ``~/.cdsapirc``. Its remapping job runs in the
+``netcdf-tools/2025:v1`` uenv on Santis, because the vertical interpolation
+of the CAMS data needs NCO 4.9.0 or >= 5.3.2.
 
 The ICON executable is not built by the Processing Chain. On Euler a
 pre-built one is provided at

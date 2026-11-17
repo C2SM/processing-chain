@@ -26,6 +26,13 @@ The Processing Chain code is structured as follows:
     │   ├── icon-art-oem-test/      # ICON-ART test case with online emissions
     │   │   ├── config.yaml
     │   │   └── *.cfg
+    │   ├── icon-art-oem-era5-test/ # ICON-ART-OEM with ERA5/CAMS boundary data,
+    │   │   │                       # VPRM fluxes and a generated tracers.xml
+    │   │   ├── config.yaml
+    │   │   ├── ICBC/               # remapping scripts run by remap_icbc
+    │   │   ├── icon_runjob.cfg
+    │   │   ├── icon_wrapper.sh     # NUMA binding wrapper for srun
+    │   │   └── map_file.ana        # ICON input variable name mapping
     │   └── icon-test/              # ICON test case
     │       ├── config.yaml
     │       └── *.cfg

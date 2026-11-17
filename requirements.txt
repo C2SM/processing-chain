@@ -13,3 +13,6 @@ f90nml
 sphinx
 sphinx_rtd_theme
 sphinx-copybutton
+gcsfs
+zarr
+lxml
